@@ -1,0 +1,53 @@
+import type { Pool } from 'pg';
+import { z } from 'zod';
+import { asPrincipal } from './postgres.js';
+import { ApiError, databaseError } from '../apps/api/src/lib/errors.js';
+import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, type Repository } from '../apps/api/src/lib/repository.js';
+
+/** Test-only transport. Real PostgreSQL evaluates every query under actual RLS roles.
+ * Supabase Auth/HTTP are covered separately by the local Supabase acceptance suite. */
+export function createPgBackend(pool: Pool, sessions: Record<string, string>): Backend {
+  return {
+    async authenticate(token) {
+      const id = sessions[token];
+      if (!id) throw new ApiError(401, 'UNAUTHORIZED', 'A valid Supabase session is required');
+      return { id };
+    },
+    repository(token): Repository {
+      const userId = token ? sessions[token] ?? null : null;
+      const query = async (sql: string, values: unknown[] = []) => {
+        try { return await asPrincipal(pool, userId, client => client.query(sql, values)); }
+        catch (error) { databaseError(typeof error === 'object' && error !== null && 'code' in error ? { code: String(error.code) } : {}); }
+      };
+      return {
+        async insertPlan(row) {
+          const result = await query(`insert into public.plans (user_id,prompt,seed,variant,plan_data,qa_orthogonal,bounds_width_m,bounds_depth_m,room_count,share_token)
+            values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id,plan_data`,
+          [row.user_id,row.prompt,row.seed,row.variant,JSON.stringify(row.plan_data),row.qa_orthogonal,row.bounds_width_m,row.bounds_depth_m,row.room_count,row.share_token]);
+          return PlanRecordSchema.parse(result.rows[0]);
+        },
+        async getPlan(id) {
+          const result = await query('select id,plan_data from public.plans where id=$1', [id]);
+          return result.rows[0] ? PlanRecordSchema.parse(result.rows[0]) : null;
+        },
+        async patchPlan(id, isPublic) {
+          const result = await query('update public.plans set is_public=$2 where id=$1 returning id,plan_data', [id,isPublic]);
+          return result.rows[0] ? PlanRecordSchema.parse(result.rows[0]) : null;
+        },
+        async getRateVersions() {
+          const result = await query("select id,version_label,to_char(effective_date,'YYYY-MM-DD') effective_date,to_char(created_at at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') created_at from public.rate_table_versions order by effective_date desc,created_at desc");
+          return z.array(RateVersionSchema).parse(result.rows);
+        },
+        async getRateEntries(versionId) {
+          const result = await query('select id,version_id,region,building_type,tier,rate_per_sqft_min,rate_per_sqft_max,category_breakdown,is_active from public.rate_table_entries where version_id=$1 and is_active', [versionId]);
+          return z.array(RateEntrySchema).parse(result.rows);
+        },
+        async insertEstimate(row) {
+          await query(`insert into public.cost_estimates (plan_id,user_id,location,building_type,built_up_area_sqft,floors,budget_provided,rate_table_version,tier_basic,tier_standard,tier_premium,soil_note)
+            values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+          [row.plan_id,row.user_id,row.location,row.building_type,row.built_up_area_sqft,row.floors,row.budget_provided,row.rate_table_version,JSON.stringify(row.tier_basic),JSON.stringify(row.tier_standard),JSON.stringify(row.tier_premium),row.soil_note]);
+        },
+      };
+    },
+  };
+}

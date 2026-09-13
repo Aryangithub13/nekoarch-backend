@@ -1,0 +1,10 @@
+import * as Sentry from '@sentry/node';
+import { randomUUID } from 'node:crypto';
+import { parseEnv } from '../apps/api/src/config/env.js';
+import { initializeSentry, flushSentry } from '../apps/api/src/lib/sentry.js';
+const env = parseEnv();
+if (!env.SENTRY_DSN || env.NODE_ENV === 'production') throw new Error('Set a non-production SENTRY_DSN and NODE_ENV=test for the smoke check');
+initializeSentry(env);
+const eventId = Sentry.captureException(new Error('DesignFlow deliberate smoke test'), { tags: { requestId: randomUUID(), code: 'SMOKE_TEST' } });
+if (!await flushSentry()) throw new Error('Sentry transport did not flush within the deadline');
+process.stdout.write(`Smoke event submitted: ${eventId}. Verify this event in the configured Sentry project.\n`);

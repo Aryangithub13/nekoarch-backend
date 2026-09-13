@@ -1,0 +1,220 @@
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { z } from 'zod';
+import {
+  ApiErrorResponseSchema,
+  CreatePlanResponseSchema,
+  EstimateResponseSchema,
+  GetPlanResponseSchema,
+  PatchPlanResponseSchema,
+  RegionsResponseSchema,
+  TierEstimateSchema,
+} from '@designflow/shared';
+import { buildApp } from '../src/app.js';
+import { parseEnv, type Env } from '../src/config/env.js';
+import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
+import { fixtureEstimate, fixturePlan } from '../../../test-support/fixtures.js';
+
+// Opt-in acceptance suite: npm run test:supabase. This uses actual local Auth,
+// PostgREST, triggers and RLS; no alternate Backend or mocked fetch is installed.
+// All administrative mutations are restricted to users created by this suite.
+function localEnvironment(): Env {
+  const dotenv = fileURLToPath(new URL('../../../.env', import.meta.url));
+  if (existsSync(dotenv)) process.loadEnvFile(dotenv);
+  const required = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY'] as const;
+  const missing = required.filter(name => !process.env[name]?.trim());
+  if (missing.length > 0) {
+    throw new Error(`Local Supabase acceptance requires ${missing.join(', ')}. Start and reset the local Supabase stack, then configure its keys in the project .env or environment. This suite does not skip missing configuration.`);
+  }
+  const env = parseEnv({ ...process.env, NODE_ENV: 'test', LOG_LEVEL: 'silent' });
+  const url = new URL(env.SUPABASE_URL);
+  if (!['localhost', '127.0.0.1'].includes(url.hostname)
+    || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+    throw new Error('Local Supabase acceptance only permits a localhost or 127.0.0.1 Supabase URL without credentials, a path or query. Remote projects are refused before any requests or mutations.');
+  }
+  return env;
+}
+
+function localClient(env: Env, serviceRole = false): SupabaseClient {
+  return createClient(env.SUPABASE_URL, serviceRole ? env.SUPABASE_SERVICE_ROLE_KEY : env.SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(10_000), redirect: 'error' }),
+    },
+  });
+}
+
+type Principal = { client: SupabaseClient; id: string; headers: { authorization: string } };
+type HttpResponse = { statusCode: number; json(): unknown; headers: Record<string, unknown>; body: string };
+
+function expectFailure(response: HttpResponse, statusCode: number) {
+  expect(response.statusCode).toBe(statusCode);
+  const body = ApiErrorResponseSchema.parse(response.json());
+  expect(body.error.requestId).toBe(response.headers['x-request-id']);
+  expect(response.body).not.toContain('stack');
+  expect(response.body).not.toContain('share_token');
+  return body;
+}
+
+describe('local Supabase anonymous ownership and full persistence flow', () => {
+  let app: ReturnType<typeof buildApp> | undefined;
+  let admin: SupabaseClient | undefined;
+  let owner: Principal | undefined;
+  let other: Principal | undefined;
+  let publicClient: SupabaseClient | undefined;
+  const createdUserIds: string[] = [];
+
+  async function anonymousPrincipal(env: Env): Promise<Principal> {
+    const client = localClient(env);
+    const { data, error } = await client.auth.signInAnonymously();
+    // Track a created identity even if a later assertion fails, so afterAll can remove it.
+    if (data.user?.id) createdUserIds.push(data.user.id);
+    if (error || !data.user || !data.session) {
+      throw new Error('Local Supabase anonymous sign-in failed. Verify the local stack is running and auth.enable_anonymous_sign_ins is enabled.');
+    }
+    expect(data.user.is_anonymous).toBe(true);
+    const id = z.string().uuid().parse(data.user.id);
+    return { client, id, headers: { authorization: `Bearer ${data.session.access_token}` } };
+  }
+
+  beforeAll(async () => {
+    const env = localEnvironment();
+    admin = localClient(env, true);
+    publicClient = localClient(env);
+    owner = await anonymousPrincipal(env);
+    other = await anonymousPrincipal(env);
+    expect(owner.id).not.toBe(other.id);
+    app = buildApp({ env, captureError: () => undefined });
+    await app.ready();
+  });
+
+  afterAll(async () => {
+    const failures: string[] = [];
+    try { await app?.close(); } catch { failures.push('close API'); }
+    if (admin && createdUserIds.length > 0) {
+      // Delete data before Auth users, since ownership FKs otherwise become null.
+      // Removing plans also removes their generation logs via ON DELETE CASCADE.
+      for (const table of ['cost_estimates', 'plans'] as const) {
+        try {
+          const { error } = await admin.from(table).delete().in('user_id', createdUserIds);
+          if (error) failures.push(`delete test ${table}`);
+        } catch { failures.push(`delete test ${table}`); }
+      }
+      for (const id of createdUserIds) {
+        try {
+          const { error } = await admin.auth.admin.deleteUser(id);
+          if (error) failures.push(`delete test identity ${id}`);
+        } catch { failures.push(`delete test identity ${id}`); }
+      }
+    }
+    if (failures.length > 0) throw new Error(`Local Supabase acceptance cleanup failed: ${failures.join('; ')}`);
+  });
+
+  it('saves, audits, retrieves, shares, estimates and revokes a generated plan using real anonymous sessions', async () => {
+    if (!app || !admin || !owner || !other || !publicClient) throw new Error('Local Supabase acceptance setup did not complete');
+    const profiles = await admin.from('profiles').select('id').in('id', [owner.id, other.id]);
+    expect(profiles.error).toBeNull();
+    expect(z.array(z.object({ id: z.string().uuid() })).parse(profiles.data).map(row => row.id).sort()).toEqual([owner.id, other.id].sort());
+
+    const plan = fixturePlan();
+    const creation = await app.inject({ method: 'POST', url: '/api/plans', headers: owner.headers,
+      payload: { plan: { ...plan, user_id: other.id, is_public: true } },
+    });
+    expect(creation.statusCode).toBe(201);
+    const created = CreatePlanResponseSchema.parse(creation.json());
+    expect(created.shareToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    const planId = created.plan.id;
+
+    const stored = await admin.from('plans').select('id,user_id,is_public,share_token,plan_data').eq('id', planId).single();
+    expect(stored.error).toBeNull();
+    expect(stored.data).toEqual({ id: planId, user_id: owner.id, is_public: false, share_token: created.shareToken, plan_data: plan });
+    const audit = await admin.from('generation_logs').select('plan_id,event_type,detail').eq('plan_id', planId);
+    expect(audit.error).toBeNull();
+    expect(audit.data).toEqual([{ plan_id: planId, event_type: 'generated', detail: { variant: plan.variant, roomCount: plan.rooms.length } }]);
+
+    const retrieved = await app.inject({ method: 'GET', url: `/api/plans/${planId}`, headers: owner.headers });
+    expect(retrieved.statusCode).toBe(200);
+    expect(GetPlanResponseSchema.parse(retrieved.json()).plan).toEqual(created.plan);
+    expect(retrieved.body).not.toContain(created.shareToken);
+    for (const headers of [other.headers, {}]) {
+      const privateResponse = await app.inject({ method: 'GET', url: `/api/plans/${planId}`, headers });
+      expect(expectFailure(privateResponse, 404).error.code).toBe('NOT_FOUND');
+    }
+    const inaccessibleEstimate = await app.inject({ method: 'POST', url: '/api/estimates', headers: other.headers,
+      payload: { ...fixtureEstimate(), planId },
+    });
+    expect(expectFailure(inaccessibleEstimate, 404).error.code).toBe('NOT_FOUND');
+
+    const shared = await app.inject({ method: 'PATCH', url: `/api/plans/${planId}`, headers: owner.headers, payload: { isPublic: true } });
+    expect(shared.statusCode).toBe(200);
+    expect(PatchPlanResponseSchema.parse(shared.json()).plan).toEqual(created.plan);
+    expect(shared.body).not.toContain(created.shareToken);
+    for (const headers of [other.headers, {}]) {
+      const visible = await app.inject({ method: 'GET', url: `/api/plans/${planId}`, headers });
+      expect(visible.statusCode).toBe(200);
+      expect(GetPlanResponseSchema.parse(visible.json()).plan).toEqual(created.plan);
+      expect(visible.body).not.toContain(created.shareToken);
+    }
+    const forbiddenPatch = await app.inject({ method: 'PATCH', url: `/api/plans/${planId}`, headers: other.headers, payload: { isPublic: false } });
+    expect(expectFailure(forbiddenPatch, 404).error.code).toBe('NOT_FOUND');
+
+    for (const principal of [owner, other]) {
+      const estimated = await app.inject({ method: 'POST', url: '/api/estimates', headers: principal.headers,
+        payload: { ...fixtureEstimate(), planId },
+      });
+      expect(estimated.statusCode).toBe(200);
+      const estimate = EstimateResponseSchema.parse(estimated.json());
+      expect(estimate.disclaimer).toBe(DISCLAIMER);
+      expect(estimate.soilDisclaimer).toBe(SOIL_DISCLAIMER);
+      expect(estimate.tiers.map(tier => tier.tier)).toEqual(['basic', 'standard', 'premium']);
+      expect(estimate.tiers.every(tier => tier.rangeMin < tier.rangeMax)).toBe(true);
+      const persisted = await principal.client.from('cost_estimates')
+        .select('user_id,plan_id,budget_provided,rate_table_version,tier_basic').eq('plan_id', planId);
+      expect(persisted.error).toBeNull();
+      const rows = z.array(z.object({
+        user_id: z.string().uuid(), plan_id: z.string().uuid(), budget_provided: z.number(),
+        rate_table_version: z.string().uuid(), tier_basic: TierEstimateSchema,
+      })).parse(persisted.data);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({ user_id: principal.id, plan_id: planId, budget_provided: fixtureEstimate().budget, tier_basic: estimate.tiers[0] });
+    }
+    // Once both users have estimates on a public plan, neither can read the other's.
+    for (const [principal, forbiddenId] of [[owner, other.id], [other, owner.id]] as const) {
+      const isolated = await principal.client.from('cost_estimates').select('id').eq('plan_id', planId).eq('user_id', forbiddenId);
+      expect(isolated.error).toBeNull();
+      expect(isolated.data).toEqual([]);
+    }
+    const estimates = await admin.from('cost_estimates').select('user_id,rate_table_version').eq('plan_id', planId);
+    expect(estimates.error).toBeNull();
+    const estimateRows = z.array(z.object({ user_id: z.string().uuid(), rate_table_version: z.string().uuid() })).parse(estimates.data);
+    expect(estimateRows.map(row => row.user_id).sort()).toEqual([owner.id, other.id].sort());
+    expect(new Set(estimateRows.map(row => row.rate_table_version)).size).toBe(1);
+
+    const regionsResponse = await app.inject({ method: 'GET', url: '/api/regions' });
+    expect(regionsResponse.statusCode).toBe(200);
+    const regions = RegionsResponseSchema.parse(regionsResponse.json());
+    expect(regions.regions.some(region => region.isBaseline && region.buildingTypes.includes('residential'))).toBe(true);
+
+    // Column privileges must protect tokens even when a caller bypasses the API.
+    for (const client of [owner.client, other.client, publicClient]) {
+      const tokenRead = await client.from('plans').select('share_token').eq('id', planId);
+      expect(tokenRead.error?.code).toBe('42501');
+      expect(tokenRead.data).toBeNull();
+      expect(JSON.stringify(tokenRead)).not.toContain(created.shareToken);
+    }
+    const auditRead = await other.client.from('generation_logs').select('id').eq('plan_id', planId);
+    expect(auditRead.error?.code).toBe('42501');
+    expect(auditRead.data).toBeNull();
+
+    const revoked = await app.inject({ method: 'PATCH', url: `/api/plans/${planId}`, headers: owner.headers, payload: { isPublic: false } });
+    expect(revoked.statusCode).toBe(200);
+    expect(PatchPlanResponseSchema.parse(revoked.json()).plan).toEqual(created.plan);
+    for (const headers of [other.headers, {}]) {
+      const privateAgain = await app.inject({ method: 'GET', url: `/api/plans/${planId}?share_token=${created.shareToken}`, headers });
+      expect(expectFailure(privateAgain, 404).error.code).toBe('NOT_FOUND');
+      expect(privateAgain.body).not.toContain(created.shareToken);
+    }
+  }, 60_000);
+});

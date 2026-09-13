@@ -1,0 +1,5 @@
+{
+  "name": "@designflow/api", "version": "0.1.0", "private": true, "type": "module",
+  "scripts": { "build": "tsc -p tsconfig.build.json", "typecheck": "tsc --noEmit", "lint": "eslint src tests" },
+  "dependencies": { "@designflow/shared": "0.1.0", "@fastify/cors": "^11.1.0", "@sentry/node": "^10.0.0", "@supabase/supabase-js": "^2.0.0", "decimal.js": "^10.6.0", "fastify": "^5.6.0", "pino": "^10.0.0", "zod": "3.25.76" }
+}

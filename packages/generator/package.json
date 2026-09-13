@@ -1,0 +1,1 @@
+{ "name": "@designflow/generator", "version": "0.1.0", "private": true, "type": "module", "exports": "./dist/index.js", "scripts": { "build": "tsc -p tsconfig.json" }, "dependencies": { "@designflow/shared": "0.1.0" } }

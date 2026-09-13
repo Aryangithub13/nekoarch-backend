@@ -1,0 +1,32 @@
+import { z } from 'zod';
+import { BuildingTypeSchema, TierSchema, TierEstimateSchema } from '@designflow/shared';
+
+export const PlanRecordSchema = z.object({ id: z.string().uuid(), plan_data: z.unknown() });
+export type PlanRecord = z.infer<typeof PlanRecordSchema>;
+export const PlanInsertSchema = z.object({ user_id: z.string().uuid(), prompt: z.string(), seed: z.string(), variant: z.number(),
+  plan_data: z.unknown(), qa_orthogonal: z.number(), bounds_width_m: z.number(), bounds_depth_m: z.number(), room_count: z.number(), share_token: z.string() });
+export type PlanInsert = z.infer<typeof PlanInsertSchema>;
+export const RateVersionSchema = z.object({ id: z.string().uuid(), version_label: z.string(), effective_date: z.string(), created_at: z.string() });
+export type RateVersion = z.infer<typeof RateVersionSchema>;
+export const RateEntrySchema = z.object({ id: z.string().uuid(), version_id: z.string().uuid(), region: z.string(), building_type: BuildingTypeSchema,
+  tier: TierSchema, rate_per_sqft_min: z.union([z.number(), z.string()]), rate_per_sqft_max: z.union([z.number(), z.string()]),
+  category_breakdown: z.record(z.number()), is_active: z.boolean() });
+export type RateEntry = z.infer<typeof RateEntrySchema>;
+export const EstimateInsertSchema = z.object({ plan_id: z.string().uuid().nullable(), user_id: z.string().uuid(), location: z.string(), building_type: BuildingTypeSchema,
+  built_up_area_sqft: z.number(), floors: z.number(), budget_provided: z.number().nullable(), rate_table_version: z.string().uuid(),
+  tier_basic: TierEstimateSchema, tier_standard: TierEstimateSchema, tier_premium: TierEstimateSchema, soil_note: z.string() });
+export type EstimateInsert = z.infer<typeof EstimateInsertSchema>;
+
+/** Each instance operates under one caller's database role/JWT. */
+export interface Repository {
+  insertPlan(row: PlanInsert): Promise<PlanRecord>;
+  getPlan(id: string): Promise<PlanRecord | null>;
+  patchPlan(id: string, isPublic: boolean): Promise<PlanRecord | null>;
+  getRateVersions(): Promise<RateVersion[]>;
+  getRateEntries(versionId: string): Promise<RateEntry[]>;
+  insertEstimate(row: EstimateInsert): Promise<void>;
+}
+export interface Backend {
+  authenticate(token: string): Promise<{ id: string }>;
+  repository(token?: string): Repository;
+}

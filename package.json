@@ -1,0 +1,26 @@
+{
+  "name": "designflow", "version": "0.1.0", "private": true, "type": "module",
+  "engines": { "node": ">=22" },
+  "workspaces": ["apps/api", "packages/shared", "packages/generator"],
+  "scripts": {
+    "build": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/api",
+    "typecheck": "npm run build -w @designflow/shared && tsc --noEmit && npm run typecheck:browser -w @designflow/shared",
+    "lint": "eslint .",
+    "dev": "npm run build -w @designflow/shared && tsx watch --env-file=.env apps/api/src/server.ts",
+    "start": "node --env-file=.env apps/api/dist/server.js",
+    "test": "npm run build -w @designflow/shared && vitest run",
+    "test:unit": "npm run build -w @designflow/shared && vitest run packages/shared/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts",
+    "test:integration": "npm run build -w @designflow/shared && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts",
+    "test:supabase": "npm run build -w @designflow/shared && vitest run --config vitest.supabase.config.ts",
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "sentry:smoke": "tsx --env-file=.env scripts/sentry-smoke.ts",
+    "check": "npm run build && npm run typecheck && npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0", "@types/node": "^22.19.0", "@types/pg": "^8.15.0",
+    "embedded-postgres": "^18.1.0-beta.16", "eslint": "^9.39.0", "pg": "^8.16.0",
+    "supabase": "^2.0.0", "tsx": "^4.20.0", "typescript": "^5.9.0", "typescript-eslint": "^8.46.0", "vitest": "^3.2.4"
+  }
+}
