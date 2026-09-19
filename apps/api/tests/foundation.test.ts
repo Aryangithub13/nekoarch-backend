@@ -311,7 +311,7 @@ describe('Sentry transport privacy', () => {
   });
 });
 
-it('keeps procedural generation and Three.js out of every API source import', () => {
+it('allows only the public generator integration boundary and keeps Three.js out of API imports', () => {
   const sourceRoot = join(dirname(fileURLToPath(import.meta.url)), '../src');
   function sourceFiles(directory: string): string[] {
     return readdirSync(directory, { withFileTypes: true }).flatMap(entry =>
@@ -322,6 +322,12 @@ it('keeps procedural generation and Three.js out of every API source import', ()
   expect(files.length).toBeGreaterThan(10);
   for (const file of files) {
     const imports = [...readFileSync(file, 'utf8').matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g)];
-    for (const match of imports) expect(match[1], file).not.toMatch(/(?:generator|generation\/|^three(?:\/|$))/);
+    for (const match of imports) {
+      if (match[1] === '@designflow/generator') {
+        expect([join(sourceRoot, 'contracts/generation.ts'), join(sourceRoot, 'services/generation-service.ts')]).toContain(file);
+      } else {
+        expect(match[1], file).not.toMatch(/(?:generator|generation\/|^three(?:\/|$))/);
+      }
+    }
   }
 });

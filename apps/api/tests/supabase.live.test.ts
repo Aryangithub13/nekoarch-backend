@@ -12,6 +12,7 @@ import {
   RegionsResponseSchema,
   TierEstimateSchema,
 } from '@designflow/shared';
+import { generatePlan, parseRequirements } from '@designflow/generator';
 import { buildApp } from '../src/app.js';
 import { parseEnv, type Env } from '../src/config/env.js';
 import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
@@ -112,16 +113,25 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     if (failures.length > 0) throw new Error(`Local Supabase acceptance cleanup failed: ${failures.join('; ')}`);
   });
 
-  it('saves, audits, retrieves, shares, estimates and revokes a generated plan using real anonymous sessions', async () => {
+  it.each(['client-save', 'structured-generation', 'prompt-generation'] as const)('saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: %s', async mode => {
     if (!app || !admin || !owner || !other || !publicClient) throw new Error('Local Supabase acceptance setup did not complete');
     const profiles = await admin.from('profiles').select('id').in('id', [owner.id, other.id]);
     expect(profiles.error).toBeNull();
     expect(z.array(z.object({ id: z.string().uuid() })).parse(profiles.data).map(row => row.id).sort()).toEqual([owner.id, other.id].sort());
 
-    const plan = fixturePlan();
-    const creation = await app.inject({ method: 'POST', url: '/api/plans', headers: owner.headers,
-      payload: { plan: { ...plan, user_id: other.id, is_public: true } },
-    });
+    const prompt = '2BHK with open kitchen';
+    const requirements = parseRequirements(prompt);
+    const seed = 'phase7-live';
+    const plan = mode === 'client-save' ? fixturePlan() : generatePlan(requirements, { seed });
+    const payload = mode === 'client-save' ? { plan: { ...plan, user_id: other.id, is_public: true } }
+      : mode === 'structured-generation' ? { requirements, seed } : { prompt, seed };
+    const url = mode === 'client-save' ? '/api/plans' : '/api/plans/generate';
+    if (mode !== 'client-save') {
+      const spoofed = await app.inject({ method: 'POST', url, headers: owner.headers, payload: { ...payload, user_id: other.id } });
+      expect(expectFailure(spoofed, 400).error.code).toBe('VALIDATION_ERROR');
+      expect(expectFailure(await app.inject({ method: 'POST', url, payload }), 401).error.code).toBe('UNAUTHORIZED');
+    }
+    const creation = await app.inject({ method: 'POST', url, headers: owner.headers, payload });
     expect(creation.statusCode).toBe(201);
     const created = CreatePlanResponseSchema.parse(creation.json());
     expect(created.shareToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
