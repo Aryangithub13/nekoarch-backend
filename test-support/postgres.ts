@@ -63,6 +63,14 @@ export async function startTestDatabase(options: { seed?: boolean } = {}) {
     onError: () => undefined,
   });
   let pool: Pool | undefined;
+  const pendingDisconnects = new Set<Promise<void>>();
+  async function closePool() {
+    await pool?.end();
+    // pg-pool can resolve end() after removing clients from its list but
+    // before their asynchronous disconnections finish. Keep PostgreSQL alive
+    // until every connected client has actually emitted end.
+    await Promise.all(pendingDisconnects);
+  }
   let started = false;
   try {
     await postgres.initialise();
@@ -70,6 +78,15 @@ export async function startTestDatabase(options: { seed?: boolean } = {}) {
     started = true;
     const connectionString = `postgresql://postgres:${password}@127.0.0.1:${port}/postgres`;
     pool = new pg.Pool({ connectionString, max: 8 });
+    pool.on('connect', client => {
+      const disconnected = new Promise<void>(resolve => {
+        client.once('end', () => {
+          pendingDisconnects.delete(disconnected);
+          resolve();
+        });
+      });
+      pendingDisconnects.add(disconnected);
+    });
     await pool.query(authBootstrap);
     const migrations = (await readdir(path.join(supabaseDir, 'migrations'))).filter(name => name.endsWith('.sql')).sort();
     for (const migration of migrations) {
@@ -78,20 +95,21 @@ export async function startTestDatabase(options: { seed?: boolean } = {}) {
     }
     if (options.seed !== false) await seedTestDatabase(pool);
     const activePool = pool;
-    let stopped = false;
+    let stopping: Promise<void> | undefined;
     return {
       pool: activePool,
       connectionString,
-      async stop() {
-        if (stopped) return;
-        stopped = true;
-        await activePool.end();
-        await postgres.stop();
-        await rm(databaseDir, { recursive: true, force: true });
+      stop() {
+        stopping ??= (async () => {
+          await closePool();
+          await postgres.stop();
+          await rm(databaseDir, { recursive: true, force: true });
+        })();
+        return stopping;
       },
     };
   } catch (error) {
-    if (pool) await pool.end();
+    await closePool();
     if (started) await postgres.stop();
     await rm(databaseDir, { recursive: true, force: true });
     throw error;

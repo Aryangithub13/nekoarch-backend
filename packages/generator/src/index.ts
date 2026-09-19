@@ -1,2 +1,8 @@
-// Reserved for portable client-side generation after the backend completion gate.
 export type { Plan } from '@designflow/shared';
+export { generatePlan } from './generate.js';
+export { GenerationError } from './errors.js';
+export type { GenerationErrorCode } from './errors.js';
+export { parseRequirements, validateGenerationInput, validateGenerationOptions, GenerationInputSchema, GenerationOptionsSchema, RoomTypeSchema } from './input.js';
+export type { NormalizedGenerationInput, GenerationOptions, RoomType } from './input.js';
+export { assertPlanInvariants } from './invariants.js';
+export { placeFurniture, furnitureFootprint, FURNITURE_DIMENSIONS } from './furniture.js';
