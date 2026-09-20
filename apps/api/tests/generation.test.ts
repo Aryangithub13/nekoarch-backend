@@ -8,7 +8,7 @@ import { ApiError } from '../src/lib/errors.js';
 import { createLogger } from '../src/lib/logger.js';
 import type { Backend, Repository, PlanInsert } from '../src/lib/repository.js';
 
-const env = parseEnv({ NODE_ENV: 'test', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test', LOG_LEVEL: 'silent' });
+const env = parseEnv({ NODE_ENV: 'test', RATE_LIMIT_ENABLED: 'false', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test', LOG_LEVEL: 'silent' });
 const owner = randomUUID();
 const headers = { authorization: 'Bearer verified-session' };
 const prompt = '2BHK with open kitchen';

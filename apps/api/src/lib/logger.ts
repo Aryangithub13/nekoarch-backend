@@ -4,7 +4,7 @@ import type { Env } from '../config/env.js';
 const privateFields = new Set([
   'authorization', 'cookie', 'cookies', 'setcookie', 'sharetoken', 'prompt',
   'supabaseanonkey', 'supabaseservicerolekey', 'accesstoken', 'refreshtoken',
-  'apikey', 'password', 'token', 'url', 'originalurl', 'requesturl',
+  'body', 'plandata', 'plan', 'headers', 'config', 'env', 'idempotencykey', 'databaseurl', 'connectionstring', 'apikey', 'password', 'token', 'url', 'originalurl', 'requesturl',
 ]);
 
 function sanitizeFields(value: unknown, depth = 0): unknown {

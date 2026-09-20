@@ -1,3 +1,4 @@
+import { durablePost } from '../lib/idempotency.js';
 import type { FastifyInstance } from 'fastify';
 import { CreatePlanRequestSchema, CreatePlanResponseSchema, GetPlanResponseSchema, PatchPlanRequestSchema, PatchPlanResponseSchema, PlanParamsSchema } from '@designflow/shared';
 import type { Backend } from '../lib/repository.js';
@@ -11,13 +12,13 @@ export function plansRoutes(app: FastifyInstance, backend: Backend) {
   app.post('/api/plans/generate', async (request, reply) => {
     const input = parseRequest(GeneratePlanRequestSchema, request.body);
     const { userId, repository } = await requestContext(request, backend, true);
-    const result = await generateAndSavePlan(repository, userId!, input);
+    const result = await durablePost(request, repository, input, async repo => CreatePlanResponseSchema.parse(await generateAndSavePlan(repo, userId!, input)));
     return reply.code(201).send(CreatePlanResponseSchema.parse(result));
   });
   app.post('/api/plans', async (request, reply) => {
     const { plan } = parseRequest(CreatePlanRequestSchema, request.body);
     const { userId, repository } = await requestContext(request, backend, true);
-    const result = await createPlan(repository, userId!, plan);
+    const result = await durablePost(request, repository, { plan }, async repo => CreatePlanResponseSchema.parse(await createPlan(repo, userId!, plan)));
     return reply.code(201).send(CreatePlanResponseSchema.parse(result));
   });
   app.get('/api/plans/:id', async request => {

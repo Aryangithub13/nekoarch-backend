@@ -17,8 +17,14 @@ export const EstimateInsertSchema = z.object({ plan_id: z.string().uuid().nullab
   tier_basic: TierEstimateSchema, tier_standard: TierEstimateSchema, tier_premium: TierEstimateSchema, soil_note: z.string() });
 export type EstimateInsert = z.infer<typeof EstimateInsertSchema>;
 
+export interface IdempotencyContext { operation: string; keyHash: string; fingerprint: string }
+export type DurableWrite = { kind: 'plan'; row: PlanInsert } | { kind: 'estimate'; row: EstimateInsert };
+export interface IdempotencyRecord { fingerprint: string; response: unknown }
+
 /** Each instance operates under one caller's database role/JWT. */
 export interface Repository {
+  lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
+  commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;
   insertPlan(row: PlanInsert): Promise<PlanRecord>;
   getPlan(id: string): Promise<PlanRecord | null>;
   patchPlan(id: string, isPublic: boolean): Promise<PlanRecord | null>;
@@ -27,6 +33,8 @@ export interface Repository {
   insertEstimate(row: EstimateInsert): Promise<void>;
 }
 export interface Backend {
+  ready?(): Promise<void>;
+  close?(): Promise<void>;
   authenticate(token: string): Promise<{ id: string }>;
   repository(token?: string): Repository;
 }

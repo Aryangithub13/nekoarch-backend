@@ -20,7 +20,7 @@ describe('five API endpoints against real PostgreSQL constraints and RLS', () =>
   beforeAll(async () => {
     database = await startTestDatabase();
     await database.pool.query('insert into auth.users(id) values ($1),($2)', [owner,other]);
-    const env = parseEnv({ NODE_ENV: 'test', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test-server-only', LOG_LEVEL: 'silent' });
+    const env = parseEnv({ NODE_ENV: 'test', RATE_LIMIT_ENABLED: 'false', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test-server-only', LOG_LEVEL: 'silent' });
     app = buildApp({ env, backend: createPgBackend(database.pool, { 'owner-test-session': owner, 'other-test-session': other }) });
     await app.ready();
   });
@@ -170,7 +170,7 @@ describe('five API endpoints against real PostgreSQL constraints and RLS', () =>
     expect(response.statusCode).toBe(201);
     const second = CreatePlanResponseSchema.parse(response.json());
     expect(second.plan.id).not.toBe(savedId); expect(second.shareToken).not.toBe(savedToken);
-    const freshApp = buildApp({ env: parseEnv({ NODE_ENV: 'test', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test-server-only', LOG_LEVEL: 'silent' }),
+    const freshApp = buildApp({ env: parseEnv({ NODE_ENV: 'test', RATE_LIMIT_ENABLED: 'false', SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', SUPABASE_SERVICE_ROLE_KEY: 'test-server-only', LOG_LEVEL: 'silent' }),
       backend: createPgBackend(database.pool, { 'owner-test-session': owner }) });
     try {
       const fetched = await freshApp.inject({ method: 'GET', url: `/api/plans/${second.plan.id}`, headers: ownerHeaders });

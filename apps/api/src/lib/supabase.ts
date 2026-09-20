@@ -2,10 +2,27 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import type { Env } from '../config/env.js';
 import { ApiError, databaseError } from './errors.js';
-import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, type Repository, type PlanInsert, type EstimateInsert } from './repository.js';
+import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, type Repository, type PlanInsert, type EstimateInsert, type IdempotencyContext, type DurableWrite } from './repository.js';
 
 export class SupabaseRepository implements Repository {
   constructor(private readonly client: SupabaseClient) {}
+  async lookupIdempotency(context: IdempotencyContext) {
+    const { data, error } = await this.client.from('idempotency_records').select('fingerprint,response')
+      .eq('operation', context.operation).eq('key_hash', context.keyHash).gt('expires_at', new Date().toISOString()).maybeSingle();
+    if (error) databaseError(error);
+    if (!data) return null;
+    const record = z.object({ fingerprint: z.string(), response: z.unknown() }).parse(data);
+    return { fingerprint: record.fingerprint, response: record.response };
+  }
+  async commitIdempotency(context: IdempotencyContext, write: DurableWrite, response: unknown) {
+    const { data, error } = await this.client.rpc('commit_idempotent_creation', {
+      p_operation: context.operation, p_key_hash: context.keyHash, p_fingerprint: context.fingerprint,
+      p_kind: write.kind, p_row: write.row, p_response: response,
+    });
+    if (error?.code === 'P8001') throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+    if (error) databaseError(error);
+    return data as unknown;
+  }
   async insertPlan(row: PlanInsert) {
     const { data, error } = await this.client.from('plans').insert(row).select('id,plan_data').single();
     if (error) databaseError(error);
@@ -40,13 +57,20 @@ export class SupabaseRepository implements Repository {
 }
 
 export function createSupabaseBackend(env: Env): Backend {
-  const options = { auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false }, global: {
-    fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, { ...init, signal: AbortSignal.timeout(10_000) }),
+  // SDK retry backoff can outlive a transport deadline; let callers retry explicitly.
+  const options = { db: { retry: false }, auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false }, global: {
+    fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, { ...init, signal: init?.signal ? AbortSignal.any([init.signal, AbortSignal.timeout(env.UPSTREAM_TIMEOUT_MS)]) : AbortSignal.timeout(env.UPSTREAM_TIMEOUT_MS), redirect: 'error' }),
   } };
   const authClient = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, options);
   return {
+    async ready() {
+      const { error } = await authClient.from('rate_table_versions').select('id').limit(1)
+        .abortSignal(AbortSignal.timeout(env.READINESS_TIMEOUT_MS));
+      if (error) databaseError(error);
+    },
     async authenticate(token) {
       const { data, error } = await authClient.auth.getUser(token);
+      if (error && (error.status === undefined || error.status === 0 || error.status >= 500)) throw new ApiError(503, 'AUTH_UNAVAILABLE', 'Authentication is temporarily unavailable');
       if (error || !data.user) throw new ApiError(401, 'UNAUTHORIZED', 'A valid Supabase session is required');
       return { id: z.string().uuid().parse(data.user.id) };
     },

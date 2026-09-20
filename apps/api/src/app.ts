@@ -1,5 +1,7 @@
+import helmet from '@fastify/helmet';
+import { installLimits } from './lib/http-protection.js';
 import { randomUUID } from 'node:crypto';
-import Fastify, { type FastifyBaseLogger } from 'fastify';
+import Fastify, { LogController, type FastifyBaseLogger } from 'fastify';
 import cors from '@fastify/cors';
 import type { Logger } from 'pino';
 import { ApiErrorResponseSchema } from '@designflow/shared';
@@ -18,17 +20,31 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
   const capture = options.captureError ?? reportError;
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger(options.env);
   const app = Fastify({ loggerInstance,
-    genReqId: () => randomUUID(), requestIdHeader: false, disableRequestLogging: true,
-    bodyLimit: 1_048_576, requestTimeout: 30_000, connectionTimeout: 10_000, exposeHeadRoutes: false });
+    genReqId: () => randomUUID(), requestIdHeader: false, logController: new LogController({ disableRequestLogging: true }),
+    bodyLimit: options.env.BODY_LIMIT_BYTES, requestTimeout: options.env.REQUEST_TIMEOUT_MS,
+    connectionTimeout: options.env.CONNECTION_TIMEOUT_MS, keepAliveTimeout: options.env.KEEP_ALIVE_TIMEOUT_MS,
+    trustProxy: options.env.TRUST_PROXY ? options.env.TRUST_PROXY.split(',').map(value => value.trim()) : false,
+    exposeHeadRoutes: false });
   app.register(cors, { origin: options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
-    methods: ['GET', 'POST', 'PATCH'], allowedHeaders: ['Authorization', 'Content-Type'], exposedHeaders: ['x-request-id'] });
-  app.addHook('onRequest', async (request, reply) => { reply.header('x-request-id', request.id).header('Cache-Control', 'no-store'); });
+    methods: ['GET', 'POST', 'PATCH'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'], exposedHeaders: ['x-request-id'] });
+  app.register(helmet, { contentSecurityPolicy: false, crossOriginEmbedderPolicy: false,
+    strictTransportSecurity: options.env.NODE_ENV === 'production' && options.env.HSTS_ENABLED ? { maxAge: 31_536_000 } : false,
+    referrerPolicy: { policy: 'no-referrer' } });
+  app.addHook('onRequest', async (request, reply) => {
+    reply.header('x-request-id', request.id).header('Cache-Control', 'no-store');
+    request.log.info({ route: request.routeOptions.url ?? '<unmatched>', method: request.method }, 'request started');
+  });
+  app.addHook('onRoute', route => {
+    if (route.url === '/api/plans/generate' || route.url === '/api/estimates') route.bodyLimit = options.env.SMALL_BODY_LIMIT_BYTES;
+  });
+  let draining = false;
+  app.addHook('preClose', async () => { draining = true; });
+  app.addHook('onClose', async () => { await backend.close?.(); });
   app.addHook('onResponse', async (request, reply) => {
     // Route templates are safe; raw URL/query/body/header values never enter logs.
     request.log.info({ route: request.routeOptions.url ?? '<unmatched>', method: request.method,
       statusCode: reply.statusCode, durationMs: reply.elapsedTime }, 'request completed');
   });
-  app.setNotFoundHandler(() => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); });
   app.setErrorHandler((error, request, reply) => {
     let safe: ApiError;
     if (error instanceof ApiError) safe = error;
@@ -38,14 +54,26 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     } else safe = new ApiError(500, 'INTERNAL_ERROR', 'An unexpected error occurred');
     if (safe.statusCode >= 500) {
       request.log.error({ code: safe.code }, 'request failed');
-      try { capture(error, request.id, safe.code); } catch { request.log.warn('Error reporting unavailable'); }
+      try { capture(error, request.id, safe.code, { route: request.routeOptions.url ?? '<unmatched>', method: request.method }); } catch { request.log.warn('Error reporting unavailable'); }
     }
     const body = ApiErrorResponseSchema.parse({ error: { code: safe.code, message: safe.message, requestId: request.id,
       ...(safe.fieldErrors ? { fieldErrors: safe.fieldErrors } : {}) } });
     reply.code(safe.statusCode).send(body);
   });
-  plansRoutes(app, backend);
-  estimatesRoutes(app, backend);
-  regionsRoutes(app, backend);
+  app.register(async scope => {
+    await installLimits(scope, options.env);
+    scope.setNotFoundHandler(() => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); });
+    scope.get('/health/live', async () => ({ status: 'ok' }));
+    scope.get('/health/ready', async (_request, reply) => {
+      try {
+        if (draining || !backend.ready) throw new Error('Unavailable');
+        await backend.ready();
+        return { status: 'ok' };
+      } catch { return reply.code(503).send({ status: 'unavailable' }); }
+    });
+    plansRoutes(scope, backend);
+    estimatesRoutes(scope, backend);
+    regionsRoutes(scope, backend);
+  });
   return app;
 }

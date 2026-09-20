@@ -1,0 +1,47 @@
+name: Backend CI
+on:
+  push:
+    branches: [main, master, 'codex/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: backend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:unit
+      - run: npm run test:generator
+      - run: npm run test:integration
+      - run: docker build -t designflow-api:ci .
+      - run: node scripts/smoke-container.mjs designflow-api:ci
+  # Explicit opt-in release gate: runs only against an ephemeral local Docker stack.
+  supabase-acceptance:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1
+      - run: npx supabase db reset --local
+      - run: node scripts/test-local-supabase.mjs
+      - if: always()
+        run: npx supabase stop --no-backup

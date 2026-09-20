@@ -63,7 +63,7 @@ afterEach(async () => {
 });
 
 describe('startup configuration', () => {
-  it.each(['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY'])('requires %s with a readable failure', field => {
+  it.each(['SUPABASE_URL', 'SUPABASE_ANON_KEY'])('requires %s with a readable failure', field => {
     const source: Record<string, unknown> = { ...envInput };
     delete source[field];
     expect(() => parseEnv(source)).toThrow(`Invalid environment configuration:\n${field}:`);
@@ -182,7 +182,7 @@ describe('HTTP error boundaries', () => {
     expect(response.statusCode).toBe(500);
     const body = ApiErrorResponseSchema.parse(JSON.parse(response.body));
     expect(body.error).toEqual({ code: 'INTERNAL_ERROR', message: 'An unexpected error occurred', requestId: response.headers['x-request-id'] });
-    expect(captureError).toHaveBeenCalledWith(original, body.error.requestId, 'INTERNAL_ERROR');
+    expect(captureError).toHaveBeenCalledWith(original, body.error.requestId, 'INTERNAL_ERROR', { route: '/api/plans/:id', method: 'GET' });
     const output = response.body + lines.join('');
     for (const secret of ['database-secret', 'JWT-secret', 'stack-private', 'prompt-private', 'share-token-private', 'query-private']) {
       expect(output).not.toContain(secret);
@@ -272,7 +272,7 @@ describe('Sentry transport privacy', () => {
     expect(sanitized.tags).toEqual({ requestId, code: 'INTERNAL_ERROR' });
     expect(JSON.stringify(sanitized)).not.toContain('private');
     expect(sanitized.request).toBeUndefined();
-    expect(sanitized.exception).toBeUndefined();
+    expect(sanitized.exception?.values).toEqual([{ type: 'Error', value: 'DesignFlow backend request failure', stacktrace: { frames: [] } }]);
     expect(sanitizeEvent({ type: undefined, tags: { requestId: 'request-private', code: 'code-private' } }).tags).toEqual({});
   });
 

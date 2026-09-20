@@ -29,7 +29,7 @@ function localEnvironment(): Env {
   if (missing.length > 0) {
     throw new Error(`Local Supabase acceptance requires ${missing.join(', ')}. Start and reset the local Supabase stack, then configure its keys in the project .env or environment. This suite does not skip missing configuration.`);
   }
-  const env = parseEnv({ ...process.env, NODE_ENV: 'test', LOG_LEVEL: 'silent' });
+  const env = parseEnv({ ...process.env, NODE_ENV: 'test', RATE_LIMIT_ENABLED: 'false', LOG_LEVEL: 'silent' });
   const url = new URL(env.SUPABASE_URL);
   if (!['localhost', '127.0.0.1'].includes(url.hostname)
     || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
@@ -39,7 +39,7 @@ function localEnvironment(): Env {
 }
 
 function localClient(env: Env, serviceRole = false): SupabaseClient {
-  return createClient(env.SUPABASE_URL, serviceRole ? env.SUPABASE_SERVICE_ROLE_KEY : env.SUPABASE_ANON_KEY, {
+  return createClient(env.SUPABASE_URL, serviceRole ? process.env['SUPABASE_SERVICE_ROLE_KEY']! : env.SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     global: {
       fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(10_000), redirect: 'error' }),
@@ -111,6 +111,37 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       }
     }
     if (failures.length > 0) throw new Error(`Local Supabase acceptance cleanup failed: ${failures.join('; ')}`);
+  });
+
+  it('atomically replays concurrent durable operations through actual PostgREST and JWTs', async () => {
+    if (!app || !admin || !owner || !other) throw new Error('Local setup incomplete');
+    for (const [url, payload, status] of [
+      ['/api/plans', { plan: fixturePlan() }, 201],
+      ['/api/plans/generate', { prompt: '2BHK with open kitchen', seed: 'phase8-live' }, 201],
+      ['/api/estimates', fixtureEstimate(), 200],
+    ] as const) {
+      const headers = { ...owner.headers, 'idempotency-key': `live-${status}-${url.replaceAll('/', '-')}` };
+      const responses = await Promise.all(Array.from({ length: 4 }, () => app!.inject({ method: 'POST', url, headers, payload })));
+      for (const response of responses) { expect(response.statusCode).toBe(status); expect(response.json()).toEqual(responses[0]!.json()); }
+      const receipts = await owner.client.from('idempotency_records').select('response').eq('operation', url);
+      expect(receipts.error).toBeNull(); expect(receipts.data).toHaveLength(1);
+      const hidden = await other.client.from('idempotency_records').select('response').eq('user_id', owner.id);
+      expect(hidden.error).toBeNull(); expect(hidden.data).toEqual([]);
+      const isolated = await app.inject({ method: 'POST', url, headers: { ...other.headers, 'idempotency-key': headers['idempotency-key'] }, payload });
+      expect(isolated.statusCode).toBe(status);
+      if (status === 201) {
+        const created = responses[0]!.json();
+        expect(isolated.json().plan.id).not.toBe(created.plan.id);
+        expect(isolated.json().shareToken).not.toBe(created.shareToken);
+        const audit = await admin.from('generation_logs').select('id').eq('plan_id', created.plan.id);
+        expect(audit.error).toBeNull(); expect(audit.data).toHaveLength(1);
+      }
+      const changed = url === '/api/plans' ? { plan: { ...fixturePlan(), seed: 'different' } }
+        : url === '/api/plans/generate' ? { prompt: '1BHK', seed: 'different' } : { ...fixtureEstimate(), floors: 3 };
+      expect((await app.inject({ method: 'POST', url, headers, payload: changed })).statusCode).toBe(409);
+    }
+    expect((await app.inject('/health/live')).statusCode).toBe(200);
+    expect((await app.inject('/health/ready')).statusCode).toBe(200);
   });
 
   it.each(['client-save', 'structured-generation', 'prompt-generation'] as const)('saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: %s', async mode => {

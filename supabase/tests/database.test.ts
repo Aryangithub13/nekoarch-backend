@@ -46,11 +46,11 @@ beforeEach(async () => {
 });
 
 describe('migration replay and relational integrity on real PostgreSQL', () => {
-  it('replays all migrations into exactly six public tables with RLS enabled', async () => {
+  it('replays all migrations into exactly seven public tables with RLS enabled', async () => {
     const result = await db.pool.query<{ relname: string; relrowsecurity: boolean }>(`
       select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
       where n.nspname = 'public' and c.relkind = 'r' order by relname`);
-    expect(result.rows.map(row => row.relname)).toEqual(['cost_estimates', 'generation_logs', 'plans', 'profiles', 'rate_table_entries', 'rate_table_versions']);
+    expect(result.rows.map(row => row.relname)).toEqual(['cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'rate_table_entries', 'rate_table_versions']);
     expect(result.rows.every(row => row.relrowsecurity)).toBe(true);
   });
 
@@ -58,9 +58,10 @@ describe('migration replay and relational integrity on real PostgreSQL', () => {
     const result = await db.pool.query<{ definition: string }>(`
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and connamespace = 'public'::regnamespace`);
-    expect(result.rows).toHaveLength(7);
+    expect(result.rows).toHaveLength(8);
     expect(result.rows.map(row => row.definition)).toEqual(expect.arrayContaining([
       'FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE',
+      'FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE',
       'FOREIGN KEY (rate_table_version) REFERENCES rate_table_versions(id) ON DELETE RESTRICT',
       'FOREIGN KEY (version_id) REFERENCES rate_table_versions(id) ON DELETE CASCADE',
     ]));

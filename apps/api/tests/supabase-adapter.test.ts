@@ -79,8 +79,8 @@ function requestAt(requests: Request[], index: number): Request {
 function assertCaller(request: Request, callerToken = token) {
   expect(request.headers.get('authorization')).toBe(`Bearer ${callerToken}`);
   expect(request.headers.get('apikey')).toBe(env.SUPABASE_ANON_KEY);
-  expect(request.url).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
-  expect(JSON.stringify([...request.headers])).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+  expect(request.url).not.toContain('synthetic-server-secret-never-transmitted');
+  expect(JSON.stringify([...request.headers])).not.toContain('synthetic-server-secret-never-transmitted');
   expect(request.signal).toBeInstanceOf(AbortSignal);
   expect(request.signal.aborted).toBe(false);
 }
@@ -160,7 +160,7 @@ describe('production Supabase session and request composition', () => {
     expect(url.searchParams.get('select')).toBe('id,plan_data');
     expect(request.headers.get('prefer')).toContain('return=representation');
     expect(await request.clone().json()).toEqual(row);
-    expect(await request.clone().text()).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+    expect(await request.clone().text()).not.toContain('synthetic-server-secret-never-transmitted');
     assertCaller(request);
   });
 
@@ -224,7 +224,7 @@ describe('production Supabase session and request composition', () => {
     expect(url.searchParams.has('select')).toBe(false);
     expect(request.headers.get('prefer') ?? '').not.toContain('return=representation');
     expect(await request.clone().json()).toEqual(row);
-    expect(await request.clone().text()).not.toContain(env.SUPABASE_SERVICE_ROLE_KEY);
+    expect(await request.clone().text()).not.toContain('synthetic-server-secret-never-transmitted');
     assertCaller(request);
   });
 
@@ -243,12 +243,12 @@ describe('production Supabase database failure boundaries', () => {
     { databaseCode: '23514', statusCode: 500, code: 'DATABASE_ERROR' },
     { databaseCode: 'XX000', statusCode: 500, code: 'DATABASE_ERROR' },
   ])('sanitizes upstream $databaseCode errors into $code', async ({ databaseCode, statusCode, code }) => {
-    stubTransport(() => jsonResponse({ code: databaseCode, message: upstreamSecret, details: token, hint: env.SUPABASE_SERVICE_ROLE_KEY }, 400));
+    stubTransport(() => jsonResponse({ code: databaseCode, message: upstreamSecret, details: token, hint: 'synthetic-server-secret-never-transmitted' }, 400));
     const failure = await createSupabaseBackend(env).repository(token).insertPlan(planInsert()).catch((error: unknown) => error);
     expect(failure).toBeInstanceOf(ApiError);
     expect(failure).toMatchObject({ statusCode, code });
     const serialized = JSON.stringify(failure) + String(failure);
-    for (const secret of [upstreamSecret, token, env.SUPABASE_SERVICE_ROLE_KEY]) expect(serialized).not.toContain(secret);
+    for (const secret of [upstreamSecret, token, 'synthetic-server-secret-never-transmitted']) expect(serialized).not.toContain(secret);
   });
 
   const operations = [
@@ -319,13 +319,13 @@ describe('production Supabase returned-data validation', () => {
     const body = ApiErrorResponseSchema.parse(response.json());
     expect(body.error).toEqual({ code: 'INTERNAL_ERROR', message: 'An unexpected error occurred', requestId: response.headers['x-request-id'] });
     expect(captureError).toHaveBeenCalledOnce();
-    for (const secret of [upstreamSecret, 'ZodError', 'stack', env.SUPABASE_SERVICE_ROLE_KEY]) expect(response.body + logs.join('')).not.toContain(secret);
+    for (const secret of [upstreamSecret, 'ZodError', 'stack', 'synthetic-server-secret-never-transmitted']) expect(response.body + logs.join('')).not.toContain(secret);
   });
 
   it('sanitizes a production database write failure in HTTP responses and logs', async () => {
     const { requests } = stubTransport(request => new URL(request.url).pathname === '/auth/v1/user'
       ? jsonResponse({ id: ownerId, is_anonymous: true })
-      : jsonResponse({ code: 'XX000', message: upstreamSecret, details: token, hint: env.SUPABASE_SERVICE_ROLE_KEY }, 400));
+      : jsonResponse({ code: 'XX000', message: upstreamSecret, details: token, hint: 'synthetic-server-secret-never-transmitted' }, 400));
     const { app, logs } = productionApp();
     const response = await app.inject({ method: 'POST', url: '/api/plans', headers: { authorization: `Bearer ${token}` }, payload: { plan: fixturePlan() } });
     expect(response.statusCode).toBe(500);
@@ -333,6 +333,6 @@ describe('production Supabase returned-data validation', () => {
     expect(body.error).toEqual({ code: 'DATABASE_ERROR', message: 'The database operation could not be completed', requestId: response.headers['x-request-id'] });
     expect(requests).toHaveLength(2);
     for (const request of requests) assertCaller(request);
-    for (const secret of [upstreamSecret, token, env.SUPABASE_SERVICE_ROLE_KEY]) expect(response.body + logs.join('')).not.toContain(secret);
+    for (const secret of [upstreamSecret, token, 'synthetic-server-secret-never-transmitted']) expect(response.body + logs.join('')).not.toContain(secret);
   });
 });

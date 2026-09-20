@@ -1,3 +1,4 @@
+import { durablePost } from '../lib/idempotency.js';
 import type { FastifyInstance } from 'fastify';
 import { EstimateInputsSchema, EstimateResponseSchema } from '@designflow/shared';
 import type { Backend } from '../lib/repository.js';
@@ -8,6 +9,6 @@ export function estimatesRoutes(app: FastifyInstance, backend: Backend) {
   app.post('/api/estimates', async request => {
     const inputs = parseRequest(EstimateInputsSchema, request.body);
     const { userId, repository } = await requestContext(request, backend, true);
-    return EstimateResponseSchema.parse(await createEstimate(repository, userId!, inputs));
+    return EstimateResponseSchema.parse(await durablePost(request, repository, inputs, async repo => EstimateResponseSchema.parse(await createEstimate(repo, userId!, inputs))));
   });
 }

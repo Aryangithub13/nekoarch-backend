@@ -8,6 +8,7 @@ import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, typ
  * Supabase Auth/HTTP are covered separately by the local Supabase acceptance suite. */
 export function createPgBackend(pool: Pool, sessions: Record<string, string>): Backend {
   return {
+    async ready() { await pool.query('select 1'); },
     async authenticate(token) {
       const id = sessions[token];
       if (!id) throw new ApiError(401, 'UNAUTHORIZED', 'A valid Supabase session is required');
@@ -20,6 +21,22 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
         catch (error) { databaseError(typeof error === 'object' && error !== null && 'code' in error ? { code: String(error.code) } : {}); }
       };
       return {
+        async lookupIdempotency(context) {
+          const result = await query('select fingerprint,response from public.idempotency_records where operation=$1 and key_hash=$2 and expires_at > now()', [context.operation, context.keyHash]);
+          return result.rows[0] ?? null;
+        },
+        async commitIdempotency(context, write, response) {
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              'select public.commit_idempotent_creation($1,$2,$3,$4,$5,$6) response',
+              [context.operation, context.keyHash, context.fingerprint, write.kind, JSON.stringify(write.row), JSON.stringify(response)]));
+            return result.rows[0].response;
+          } catch (error) {
+            const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '';
+            if (code === 'P8001') throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+            databaseError({ code });
+          }
+        },
         async insertPlan(row) {
           const result = await query(`insert into public.plans (user_id,prompt,seed,variant,plan_data,qa_orthogonal,bounds_width_m,bounds_depth_m,room_count,share_token)
             values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id,plan_data`,

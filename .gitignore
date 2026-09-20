@@ -7,3 +7,8 @@ coverage/
 supabase/.temp/
 supabase/.branches/
 *.log
+credentials
+credentials.*
+**/credentials/
+*.pem
+*.key

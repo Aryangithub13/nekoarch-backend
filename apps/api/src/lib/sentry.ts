@@ -1,3 +1,4 @@
+import { safeError } from './safe-error.js';
 import * as Sentry from '@sentry/node';
 import type { Env } from '../config/env.js';
 
@@ -18,17 +19,33 @@ export function sanitizeEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
     safe.tags!['requestId'] = requestId;
   }
   const code = event.tags?.['code'];
-  if (typeof code === 'string' && ['INTERNAL_ERROR', 'DATABASE_ERROR', 'RATE_DATA_INVALID', 'RATE_DATA_UNAVAILABLE', 'RATE_GRID_INCOMPLETE'].includes(code)) {
+  if (typeof code === 'string' && ['INTERNAL_ERROR', 'DATABASE_ERROR', 'RATE_DATA_INVALID', 'RATE_DATA_UNAVAILABLE', 'RATE_GRID_INCOMPLETE', 'GENERATION_FAILED', 'IDEMPOTENCY_UNAVAILABLE', 'AUTH_UNAVAILABLE'].includes(code)) {
     safe.tags!['code'] = code;
   }
+  const method = event.tags?.['method'];
+  if (typeof method === 'string' && ['GET', 'POST', 'PATCH', 'OPTIONS', 'HEAD'].includes(method)) safe.tags!['method'] = method;
+  const route = event.tags?.['route'];
+  if (typeof route === 'string' && ['/api/plans', '/api/plans/generate', '/api/plans/:id', '/api/estimates', '/api/regions', '/health/ready', '<unmatched>'].includes(route)) safe.tags!['route'] = route;
+  if (event.release && /^[A-Za-z0-9._-]{1,100}$/.test(event.release)) safe.release = event.release;
+  safe.exception = { values: (event.exception?.values ?? []).slice(0, 1).map(exception => ({
+    type: ['Error', 'TypeError', 'RangeError', 'SyntaxError', 'ReferenceError', 'ApiError', 'ZodError'].includes(exception.type ?? '') ? exception.type! : 'Error',
+    value: 'DesignFlow backend request failure',
+    stacktrace: { frames: (exception.stacktrace?.frames ?? []).filter(frame =>
+      typeof frame.filename === 'string' && /^(apps\/api|packages\/(shared|generator))\/(src|dist)\/[A-Za-z0-9_./-]+\.[cm]?[jt]s$/.test(frame.filename)
+    ).map(frame => ({ filename: frame.filename!, ...(Number.isInteger(frame.lineno) ? { lineno: frame.lineno! } : {}),
+      ...(Number.isInteger(frame.colno) ? { colno: frame.colno! } : {}) })) },
+  })) };
   return safe;
 }
 export function initializeSentry(env: Env): void {
   if (!env.SENTRY_DSN) return;
-  Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV, sendDefaultPii: false,
+  Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV, ...(env.RELEASE ? { release: env.RELEASE } : {}), sendDefaultPii: false,
     defaultIntegrations: false, beforeSend: sanitizeEvent });
 }
-export function reportError(_error: unknown, requestId: string, code: string): void {
-  Sentry.captureException(new Error('DesignFlow backend request failure'), { tags: { requestId, code } });
+export function reportError(error: unknown, requestId: string, code: string, context?: { route: string; method: string }): void {
+  const safe = safeError(error);
+  Sentry.captureEvent({ message: 'DesignFlow backend request failure', level: 'error',
+    exception: { values: [{ type: safe.type, value: 'DesignFlow backend request failure', stacktrace: { frames: safe.frames.reverse() } }] },
+    tags: { requestId, code, ...context } });
 }
 export const flushSentry = () => Sentry.flush(5_000);
