@@ -18,3 +18,18 @@ export async function parseBrowserResponse(response: Response): Promise<GetPlanR
   const body: unknown = await response.json();
   return GetPlanResponseSchema.parse(body);
 }
+
+// Phase 9 public model, precision and adapter exports must also compile without Node.
+import {
+  BuildingModelV2Schema, deserializeBuildingModel, serializeBuildingModel,
+  toMillimetres, polygonAreaMm2, upgradePlanV1,
+} from '../src/index.js';
+export function useBuildingModelInBrowser(raw: unknown, legacy: PlanInput): string {
+  const model = BuildingModelV2Schema.parse(raw);
+  const json = serializeBuildingModel(model);
+  deserializeBuildingModel(json);
+  toMillimetres('1', 'ft');
+  polygonAreaMm2(model.levels[0]!.boundary);
+  upgradePlanV1(legacy, 'browser-building');
+  return json;
+}

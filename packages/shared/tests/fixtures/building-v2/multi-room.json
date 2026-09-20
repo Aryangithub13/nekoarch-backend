@@ -1,0 +1,504 @@
+{
+  "schemaVersion": 2,
+  "id": "building",
+  "name": "Multi-room residential floor",
+  "completeness": "architectural",
+  "units": "mm",
+  "coordinateSystem": "x-right-y-up-z-depth",
+  "site": {
+    "id": "site",
+    "name": "Plot",
+    "boundary": [
+      {
+        "x": -1000,
+        "z": -1000
+      },
+      {
+        "x": 10000,
+        "z": -1000
+      },
+      {
+        "x": 10000,
+        "z": 7000
+      },
+      {
+        "x": -1000,
+        "z": 7000
+      }
+    ],
+    "buildableBoundary": [
+      {
+        "x": -500,
+        "z": -500
+      },
+      {
+        "x": 9500,
+        "z": -500
+      },
+      {
+        "x": 9500,
+        "z": 6500
+      },
+      {
+        "x": -500,
+        "z": 6500
+      }
+    ],
+    "northMilliDegrees": 0,
+    "setbacks": [
+      {
+        "id": "setback",
+        "boundaryEdgeStart": 0,
+        "minimumMm": 500
+      }
+    ],
+    "referenceOrigin": {
+      "datum": "Local survey datum",
+      "buildingOrigin": {
+        "x": 10000,
+        "y": 0,
+        "z": 20000
+      }
+    }
+  },
+  "levels": [
+    {
+      "id": "ground",
+      "name": "Ground",
+      "index": 0,
+      "kind": "storey",
+      "elevationMm": 0,
+      "floorToFloorHeightMm": 3000,
+      "boundary": [
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": 9000,
+          "z": 0
+        },
+        {
+          "x": 9000,
+          "z": 6000
+        },
+        {
+          "x": 0,
+          "z": 6000
+        }
+      ]
+    }
+  ],
+  "spaces": [
+    {
+      "id": "space-1",
+      "name": "Living",
+      "classification": "living",
+      "levelId": "ground",
+      "boundary": [
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": 3000,
+          "z": 0
+        },
+        {
+          "x": 3000,
+          "z": 6000
+        },
+        {
+          "x": 0,
+          "z": 6000
+        }
+      ],
+      "boundaryBasis": "wall-centerline"
+    },
+    {
+      "id": "space-2",
+      "name": "Bedroom",
+      "classification": "bedroom",
+      "levelId": "ground",
+      "boundary": [
+        {
+          "x": 3000,
+          "z": 0
+        },
+        {
+          "x": 5500,
+          "z": 0
+        },
+        {
+          "x": 5500,
+          "z": 6000
+        },
+        {
+          "x": 3000,
+          "z": 6000
+        }
+      ],
+      "boundaryBasis": "wall-centerline"
+    },
+    {
+      "id": "space-3",
+      "name": "Kitchen",
+      "classification": "kitchen",
+      "levelId": "ground",
+      "boundary": [
+        {
+          "x": 5500,
+          "z": 0
+        },
+        {
+          "x": 9000,
+          "z": 0
+        },
+        {
+          "x": 9000,
+          "z": 6000
+        },
+        {
+          "x": 5500,
+          "z": 6000
+        }
+      ],
+      "boundaryBasis": "wall-centerline"
+    }
+  ],
+  "walls": [
+    {
+      "id": "wall-south-0",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 0,
+          "z": 0
+        },
+        "end": {
+          "x": 3000,
+          "z": 0
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-1"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-north-0",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 0,
+          "z": 6000
+        },
+        "end": {
+          "x": 3000,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-1"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-west",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 0,
+          "z": 0
+        },
+        "end": {
+          "x": 0,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-1"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-east-0",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 3000,
+          "z": 0
+        },
+        "end": {
+          "x": 3000,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "interior",
+      "spaceIds": [
+        "space-1",
+        "space-2"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-south-1",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 3000,
+          "z": 0
+        },
+        "end": {
+          "x": 5500,
+          "z": 0
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-2"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-north-1",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 3000,
+          "z": 6000
+        },
+        "end": {
+          "x": 5500,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-2"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-east-1",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 5500,
+          "z": 0
+        },
+        "end": {
+          "x": 5500,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "interior",
+      "spaceIds": [
+        "space-2",
+        "space-3"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-south-2",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 5500,
+          "z": 0
+        },
+        "end": {
+          "x": 9000,
+          "z": 0
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-3"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-north-2",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 5500,
+          "z": 6000
+        },
+        "end": {
+          "x": 9000,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-3"
+      ],
+      "specificationId": "masonry"
+    },
+    {
+      "id": "wall-east-2",
+      "levelId": "ground",
+      "path": {
+        "start": {
+          "x": 9000,
+          "z": 0
+        },
+        "end": {
+          "x": 9000,
+          "z": 6000
+        }
+      },
+      "pathReference": "centerline",
+      "thicknessMm": 200,
+      "heightMm": 2800,
+      "baseOffsetMm": 0,
+      "classification": "exterior",
+      "spaceIds": [
+        "space-3"
+      ],
+      "specificationId": "masonry"
+    }
+  ],
+  "openings": [],
+  "stairs": [],
+  "slabs": [
+    {
+      "id": "ground-slab",
+      "levelId": "ground",
+      "kind": "floor",
+      "footprint": {
+        "outer": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 9000,
+            "z": 0
+          },
+          {
+            "x": 9000,
+            "z": 6000
+          },
+          {
+            "x": 0,
+            "z": 6000
+          }
+        ],
+        "voids": []
+      },
+      "topOffsetMm": 0,
+      "thicknessMm": 150,
+      "specificationId": "concrete"
+    }
+  ],
+  "columns": [],
+  "dimensions": [
+    {
+      "id": "width-chain",
+      "levelId": "ground",
+      "purpose": "chain",
+      "axis": "x",
+      "anchors": [
+        {
+          "kind": "point",
+          "point": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "kind": "point",
+          "point": {
+            "x": 3000,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "kind": "point",
+          "point": {
+            "x": 5500,
+            "y": 0,
+            "z": 0
+          }
+        },
+        {
+          "kind": "point",
+          "point": {
+            "x": 9000,
+            "y": 0,
+            "z": 0
+          }
+        }
+      ],
+      "constraint": {
+        "mode": "controlling",
+        "overallMm": 9000,
+        "segmentsMm": [
+          3000,
+          2500,
+          3500
+        ]
+      }
+    }
+  ],
+  "specifications": [
+    {
+      "id": "masonry",
+      "name": "Masonry wall",
+      "material": "Masonry"
+    },
+    {
+      "id": "concrete",
+      "name": "Concrete plate",
+      "material": "Concrete"
+    }
+  ],
+  "provenance": {
+    "creationMode": "authored",
+    "measurementVersion": "mm-exact/1"
+  }
+}
