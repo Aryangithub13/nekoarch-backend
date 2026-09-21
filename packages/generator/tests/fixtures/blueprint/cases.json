@@ -1,0 +1,9 @@
+[
+  { "name": "one-bedroom", "width": 8000, "depth": 10000, "bedrooms": 1, "floors": 1, "seed": "golden-1", "rooms": 4 },
+  { "name": "two-bedroom", "width": 10000, "depth": 12000, "bedrooms": 2, "floors": 1, "seed": "golden-2", "rooms": 5 },
+  { "name": "three-bedroom", "width": 12000, "depth": 14000, "bedrooms": 3, "floors": 1, "seed": "golden-3", "rooms": 6 },
+  { "name": "compact-wide", "width": 16000, "depth": 4500, "bedrooms": 1, "floors": 1, "seed": "golden-wide", "rooms": 4 },
+  { "name": "two-floor", "width": 10000, "depth": 12000, "bedrooms": 3, "floors": 2, "seed": "golden-stair", "rooms": 6 },
+  { "name": "impossible", "width": 2500, "depth": 2500, "bedrooms": 4, "floors": 1, "seed": "golden-impossible", "rooms": 7, "failure": "IMPOSSIBLE_LAYOUT" },
+  { "name": "replay-odd-mm", "width": 10001, "depth": 12003, "bedrooms": 2, "floors": 1, "seed": "golden-replay", "rooms": 5 }
+]

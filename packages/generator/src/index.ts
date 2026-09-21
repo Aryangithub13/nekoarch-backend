@@ -6,3 +6,4 @@ export { parseRequirements, validateGenerationInput, validateGenerationOptions, 
 export type { NormalizedGenerationInput, GenerationOptions, RoomType } from './input.js';
 export { assertPlanInvariants } from './invariants.js';
 export { placeFurniture, furnitureFootprint, FURNITURE_DIMENSIONS } from './furniture.js';
+export * from './blueprint/index.js';

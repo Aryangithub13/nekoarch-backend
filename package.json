@@ -26,7 +26,8 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "sentry:smoke": "tsx --env-file=.env scripts/sentry-smoke.ts",
-    "check": "npm run build && npm run typecheck && npm run lint && npm test"
+    "check": "npm run build && npm run typecheck && npm run lint && npm test",
+    "test:blueprint": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
