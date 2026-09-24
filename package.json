@@ -21,15 +21,16 @@
     "test": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run",
     "test:unit": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts",
     "test:generator": "npm run build -w @designflow/shared && vitest run packages/generator/tests",
-    "test:integration": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts",
-    "test:supabase": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run --config vitest.supabase.config.ts",
+    "test:integration": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts",
+    "test:supabase": "npm run build && node scripts/test-local-supabase.mjs",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "sentry:smoke": "tsx --env-file=.env scripts/sentry-smoke.ts",
     "check": "npm run build && npm run typecheck && npm run lint && npm test",
     "test:blueprint": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts",
-    "test:blueprint-qa": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run packages/blueprint-qa/tests"
+    "test:blueprint-qa": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run packages/blueprint-qa/tests",
+    "test:projects": "npm run build && vitest run apps/api/tests/projects.integration.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

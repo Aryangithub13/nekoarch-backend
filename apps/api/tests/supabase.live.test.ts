@@ -1,3 +1,5 @@
+import { projectAcceptance } from '../../../test-support/project-acceptance.js';
+import { requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -97,6 +99,8 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     if (admin && createdUserIds.length > 0) {
       // Delete data before Auth users, since ownership FKs otherwise become null.
       // Removing plans also removes their generation logs via ON DELETE CASCADE.
+      const projectsCleanup = await admin.from('projects').delete().in('owner_id', createdUserIds);
+      if (projectsCleanup.error) failures.push('delete test projects');
       for (const table of ['cost_estimates', 'plans'] as const) {
         try {
           const { error } = await admin.from(table).delete().in('user_id', createdUserIds);
@@ -258,4 +262,47 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       expect(privateAgain.body).not.toContain(created.shareToken);
     }
   }, 60_000);
+  projectAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local project setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+
+  it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {
+    if (!app || !owner || !other || !publicClient || !admin) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'Direct SDK security' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id;
+    const generated = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions/generate`, headers: owner.headers, payload: { requirements: requirements() } });
+    expect(generated.statusCode, generated.body).toBe(201); const r1 = generated.json().revision;
+    const saved = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions`, headers: owner.headers, payload: { model: r1.model, baseRevisionId: r1.id } });
+    expect(saved.statusCode, saved.body).toBe(201); const r2 = saved.json().revision;
+    for (const visibility of ['PRIVATE', 'PUBLIC']) {
+      expect((await app.inject({ method: 'PATCH', url: `/api/projects/${id}`, headers: owner.headers, payload: { visibility } })).statusCode).toBe(200);
+      const targets: [string, string, string][] = [['projects', 'id', id], ['project_revisions', 'project_id', id], ['project_revision_qa_runs', 'revision_id', r1.id]];
+      for (const [table, field, value] of targets) {
+        const allowed = await owner.client.from(table!).select('*').eq(field!, value);
+        expect(allowed.error).toBeNull(); expect(allowed.data!.length).toBeGreaterThan(0);
+        const denied = await other.client.from(table!).select('*').eq(field!, value);
+        expect(denied.error).toBeNull(); expect(denied.data).toEqual([]);
+        const anon = await publicClient.from(table!).select('*').eq(field!, value);
+        expect(anon.error?.code).toBe('42501');
+      }
+      const publicRead = await publicClient.rpc('project_read', { p_action: 'public', p_project_id: id });
+      if (visibility === 'PRIVATE') expect(publicRead.error?.code).toBe('P1201');
+      else { expect(publicRead.error).toBeNull(); expect(publicRead.data.currentRevision.id).toBe(r2.id); expect(JSON.stringify(publicRead.data)).not.toContain(r1.id); }
+      const history = await other.client.rpc('project_read', { p_action: 'history', p_project_id: id });
+      expect(history.error?.code).toBe('P1201');
+    }
+    for (const [table, patch] of [['projects', { current_revision_id: r1.id }], ['project_revisions', { model_json: {} }], ['project_revision_qa_runs', { status: 'PASS' }]] as const) {
+      const changed = await owner.client.from(table).update(patch).eq('id', table === 'projects' ? id : table === 'project_revisions' ? r1.id : r1.qa.id);
+      expect(changed.error?.code).toBe('42501');
+    }
+    const forged = await owner.client.rpc('project_write', { p_action: 'revision', p_input: { projectId: id, sourceMode: 'supplied', model: r1.model, report: r1.qaRuns[0].report } });
+    expect(forged.error?.code).toBe('42501');
+    const audit = await owner.client.from('project_audit_events').select('*').eq('project_id', id);
+    expect(audit.error?.code).toBe('42501');
+    const evidence = await admin.from('project_audit_events').select('event_type,detail').eq('project_id', id);
+    expect(evidence.error).toBeNull(); expect(evidence.data!.filter(e => e.event_type === 'revision_committed')).toHaveLength(2);
+    expect(JSON.stringify(evidence.data)).not.toContain('model');
+  });
+
 });

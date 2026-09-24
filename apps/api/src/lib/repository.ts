@@ -23,6 +23,7 @@ export interface IdempotencyRecord { fingerprint: string; response: unknown }
 
 /** Each instance operates under one caller's database role/JWT. */
 export interface Repository {
+  projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;
   insertPlan(row: PlanInsert): Promise<PlanRecord>;

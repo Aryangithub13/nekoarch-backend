@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
-import type { DurableWrite, Repository } from './repository.js';
+import type { DurableWrite, Repository, IdempotencyContext } from './repository.js';
 import { ApiError } from './errors.js';
 
 // Hash validated/defaulted input, sorting objects recursively; array order is meaningful.
@@ -42,4 +42,23 @@ export async function durablePost<T>(request: FastifyRequest, repository: Reposi
   const response = await run(staged);
   if (!write) throw new Error('Missing durable write');
   return await repository.commitIdempotency(context, write, response) as T;
+}
+
+/** Reuses Phase 8 canonical identity and durable receipts for commands whose
+ * response (including DB timestamps) is assembled inside their atomic RPC. */
+export async function durableCommand<T>(request: FastifyRequest, repository: Repository, input: unknown,
+  run: (context?: IdempotencyContext) => Promise<T>): Promise<T> {
+  const key = request.headers['idempotency-key'];
+  if (key === undefined) return run();
+  if (typeof key !== 'string' || !/^[A-Za-z0-9._:-]{1,128}$/.test(key)) {
+    throw new ApiError(400, 'INVALID_IDEMPOTENCY_KEY', 'Idempotency-Key must contain 1–128 letters, digits, dots, underscores, colons or hyphens');
+  }
+  if (!repository.lookupIdempotency) throw new ApiError(503, 'IDEMPOTENCY_UNAVAILABLE', 'Retry protection is unavailable');
+  const context = { operation: request.routeOptions.url!, keyHash: hash(key), fingerprint: hash(canonical(input)) };
+  const cached = await repository.lookupIdempotency(context);
+  if (cached) {
+    if (cached.fingerprint !== context.fingerprint) throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+    return cached.response as T;
+  }
+  return run(context);
 }

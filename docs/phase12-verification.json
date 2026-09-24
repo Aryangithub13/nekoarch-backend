@@ -1,0 +1,139 @@
+{
+  "date": "2026-09-24",
+  "baseline": "f202a44 / backend-v1-phase11-complete",
+  "commands": [
+    {
+      "check": "build",
+      "command": "npm run build",
+      "exit": 0,
+      "seconds": 10.49
+    },
+    {
+      "check": "typecheck",
+      "command": "npm run typecheck",
+      "exit": 0,
+      "seconds": 18.55
+    },
+    {
+      "check": "lint",
+      "command": "npm run lint",
+      "exit": 0,
+      "seconds": 2.95
+    },
+    {
+      "check": "unit",
+      "command": "npm run test:unit",
+      "exit": 0,
+      "seconds": 29.06
+    },
+    {
+      "check": "generator",
+      "command": "npm run test:generator",
+      "exit": 0,
+      "seconds": 13.86
+    },
+    {
+      "check": "blueprint",
+      "command": "npm run test:blueprint",
+      "exit": 0,
+      "seconds": 9.14
+    },
+    {
+      "check": "blueprint-qa",
+      "command": "npm run test:blueprint-qa",
+      "exit": 0,
+      "seconds": 13.42
+    },
+    {
+      "check": "projects",
+      "command": "npm run test:projects",
+      "exit": 0,
+      "seconds": 14.23
+    },
+    {
+      "check": "integration-1",
+      "command": "npm run test:integration",
+      "exit": 0,
+      "seconds": 17.01
+    },
+    {
+      "check": "integration-2",
+      "command": "npm run test:integration",
+      "exit": 0,
+      "seconds": 16.96
+    },
+    {
+      "check": "integration-3",
+      "command": "npm run test:integration",
+      "exit": 0,
+      "seconds": 22.69
+    },
+    {
+      "check": "supabase-1",
+      "command": "npm run test:supabase",
+      "exit": 0,
+      "seconds": 27.3
+    },
+    {
+      "check": "supabase-2",
+      "command": "npm run test:supabase",
+      "exit": 0,
+      "seconds": 23.23
+    },
+    {
+      "check": "check",
+      "command": "npm run check",
+      "exit": 0,
+      "seconds": 70.26
+    }
+  ],
+  "additionalChecks": [
+    {
+      "command": "npx supabase db reset --local",
+      "exit": 0,
+      "scope": "Empty localhost stack; all migrations 0001\u20130006 plus seed applied"
+    },
+    {
+      "command": "npm run db:test",
+      "exit": 0,
+      "assertions": 24
+    },
+    {
+      "command": "docker build -t designflow-api:phase12 .",
+      "exit": 0,
+      "imageId": "92a06ca29d98"
+    },
+    {
+      "command": "node scripts/smoke-container.mjs designflow-api:phase12",
+      "exit": 0,
+      "result": "non-root; liveness 200; dependency-unavailable readiness 503; SIGTERM exit 0"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "counts": {
+    "newDefaultTests": 23,
+    "newLiveTests": 17,
+    "newScenarioDefinitions": 24,
+    "defaultTests": 1448,
+    "liveTests": 21,
+    "defaultPlusLive": 1469,
+    "sqlAssertions": 24,
+    "unit": 1372,
+    "generator": 461,
+    "blueprint": 137,
+    "blueprintQa": 177,
+    "projectPersistence": 23,
+    "integrationPerRun": 74,
+    "consecutiveIntegrationRuns": 3,
+    "consecutiveLiveRuns": 2
+  },
+  "notes": [
+    "Dedicated commands overlap with default suite; counts must not be summed again.",
+    "Shared project scenarios run independently through both PostgreSQL and live Supabase transports.",
+    "No tests skipped in final successful runs.",
+    "No commit or tag created."
+  ]
+}

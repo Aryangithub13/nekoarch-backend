@@ -1,11 +1,17 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { projectDatabaseError } from './project-repository.js';
 import type { Env } from '../config/env.js';
 import { ApiError, databaseError } from './errors.js';
 import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, type Repository, type PlanInsert, type EstimateInsert, type IdempotencyContext, type DurableWrite } from './repository.js';
 
 export class SupabaseRepository implements Repository {
   constructor(private readonly client: SupabaseClient) {}
+  async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) projectDatabaseError(error);
+    return data as unknown;
+  }
   async lookupIdempotency(context: IdempotencyContext) {
     const { data, error } = await this.client.from('idempotency_records').select('fingerprint,response')
       .eq('operation', context.operation).eq('key_hash', context.keyHash).gt('expires_at', new Date().toISOString()).maybeSingle();

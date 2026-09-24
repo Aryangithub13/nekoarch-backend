@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 6, 'exactly six normalized public tables');
+  where n.nspname = 'public' and c.relkind = 'r'), 11, 'exactly eleven public tables including native projects');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -34,8 +34,8 @@ select lives_ok('update public.profiles set display_name = ''Owner''', 'owner ca
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
 select is((select count(id)::integer from public.plans where seed = 'fixture'), 0, 'stranger cannot read private plan');
-select is((with changed as (update public.plans set is_public = true where seed = 'fixture' returning id)
-  select count(*)::integer from changed), 0, 'stranger cannot publish another plan');
+with changed as (update public.plans set is_public = true where seed = 'fixture' returning id)
+select is((select count(*)::integer from changed), 0, 'stranger cannot publish another plan');
 select throws_ok($$
   insert into public.plans (user_id,prompt,seed,variant,plan_data,qa_orthogonal,bounds_width_m,bounds_depth_m,room_count,share_token)
   values ('10000000-0000-4000-8000-000000000001','RLS fixture','fixture',1,

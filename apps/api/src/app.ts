@@ -1,3 +1,4 @@
+import { projectsRoutes } from './routes/projects.js';
 import helmet from '@fastify/helmet';
 import { installLimits } from './lib/http-protection.js';
 import { randomUUID } from 'node:crypto';
@@ -72,6 +73,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
       } catch { return reply.code(503).send({ status: 'unavailable' }); }
     });
     plansRoutes(scope, backend);
+    projectsRoutes(scope, backend, options.env);
     estimatesRoutes(scope, backend);
     regionsRoutes(scope, backend);
   });

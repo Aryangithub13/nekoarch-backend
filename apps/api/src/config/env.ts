@@ -10,6 +10,7 @@ export const EnvSchema = z.object({
   SUPABASE_URL: z.string().url().refine(value => /^https?:/.test(value), 'Must use HTTP or HTTPS'),
   SUPABASE_ANON_KEY: z.string().min(1),
 
+  PROJECT_COMMIT_SECRET: optionalDefault(z.string().regex(/^[a-f0-9]{64}$/).optional()),
   SENTRY_DSN: optionalDefault(z.string().url().optional()),
   PORT: optionalDefault(z.coerce.number().int().min(1).max(65535).default(3001)),
   HOST: optionalDefault(z.string().min(1).default('127.0.0.1')),

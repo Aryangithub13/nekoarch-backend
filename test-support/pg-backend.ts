@@ -1,5 +1,6 @@
 import type { Pool } from 'pg';
 import { z } from 'zod';
+import { projectDatabaseError } from '../apps/api/src/lib/project-repository.js';
 import { asPrincipal } from './postgres.js';
 import { ApiError, databaseError } from '../apps/api/src/lib/errors.js';
 import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, type Repository } from '../apps/api/src/lib/repository.js';
@@ -21,6 +22,18 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
         catch (error) { databaseError(typeof error === 'object' && error !== null && 'code' in error ? { code: String(error.code) } : {}); }
       };
       return {
+        async projectRpc(name, args) {
+          const keys = name === 'project_write' ? ['p_action','p_input','p_context','p_envelope','p_signature']
+            : ['p_action','p_project_id','p_revision_id','p_limit','p_cursor'];
+          const values = keys.map(key => args[key] ?? (key === 'p_limit' ? 20 : null));
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}($1,$2,$3,$4,$5) response`, values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            projectDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
         async lookupIdempotency(context) {
           const result = await query('select fingerprint,response from public.idempotency_records where operation=$1 and key_hash=$2 and expires_at > now()', [context.operation, context.keyHash]);
           return result.rows[0] ?? null;
