@@ -1,3 +1,4 @@
+import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
 import { projectAcceptance } from '../../../test-support/project-acceptance.js';
 import { requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { existsSync } from 'node:fs';
@@ -99,8 +100,21 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     if (admin && createdUserIds.length > 0) {
       // Delete data before Auth users, since ownership FKs otherwise become null.
       // Removing plans also removes their generation logs via ON DELETE CASCADE.
-      const projectsCleanup = await admin.from('projects').delete().in('owner_id', createdUserIds);
-      if (projectsCleanup.error) failures.push('delete test projects');
+      // Immutable takeoff history intentionally survives account deletion. Keep
+      // only those test projects; local db reset purges the disposable test stack.
+      const protectedRows = await admin.from('project_revision_takeoffs').select('project_revisions!inner(project_id)');
+      if (protectedRows.error) failures.push('read protected takeoff projects');
+      const protectedIds = new Set((protectedRows.data ?? []).flatMap(row => {
+        const revisions = row.project_revisions;
+        return (Array.isArray(revisions) ? revisions : [revisions]).map(r => r.project_id);
+      }));
+      const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
+      if (owned.error) failures.push('read test projects');
+      const deletable = (owned.data ?? []).map(p => p.id).filter(id => !protectedIds.has(id));
+      if (deletable.length) {
+        const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
+        if (projectsCleanup.error) failures.push('delete test projects');
+      }
       for (const table of ['cost_estimates', 'plans'] as const) {
         try {
           const { error } = await admin.from(table).delete().in('user_id', createdUserIds);
@@ -262,6 +276,32 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       expect(privateAgain.body).not.toContain(created.shareToken);
     }
   }, 60_000);
+  takeoffAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+
+  it('protects immutable takeoffs through direct SDK and PostgREST calls', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'SDK takeoff security' } });
+    const saved = await app.inject({ method: 'POST', url: `/api/projects/${p.json().id}/revisions/generate`, headers: owner.headers, payload: { requirements: requirements() } });
+    expect(saved.statusCode, saved.body).toBe(201);
+    const revision = saved.json().revision;
+    const created = await app.inject({ method: 'POST', url: `/api/projects/${p.json().id}/revisions/${revision.id}/takeoffs`, headers: owner.headers, payload: {} });
+    expect(created.statusCode, created.body).toBe(201); const dto = created.json();
+    const own = await owner.client.from('project_revision_takeoffs').select('report_json').eq('id',dto.id).single();
+    expect(own.error).toBeNull(); expect(own.data?.report_json).toEqual(dto.report);
+    const hidden = await other.client.from('project_revision_takeoffs').select('id').eq('id',dto.id); expect(hidden.error).toBeNull(); expect(hidden.data).toEqual([]);
+    expect((await publicClient.from('project_revision_takeoffs').select('id').eq('id',dto.id)).error).not.toBeNull();
+    expect((await owner.client.from('project_revision_takeoffs').update({report_json:{}}).eq('id',dto.id)).error).not.toBeNull();
+    expect((await owner.client.from('project_revision_takeoffs').delete().eq('id',dto.id)).error).not.toBeNull();
+    expect((await owner.client.from('project_revision_takeoffs').insert({project_revision_id:revision.id,report_json:dto.report})).error).not.toBeNull();
+    for (const client of [owner.client,other.client]) {
+      expect((await client.rpc('takeoff_write',{p_input:{projectId:p.json().id,projectRevisionId:revision.id,report:dto.report}})).error).not.toBeNull();
+    }
+    expect((await other.client.rpc('takeoff_read',{p_project_id:p.json().id,p_revision_id:revision.id,p_takeoff_id:dto.id})).error).not.toBeNull();
+  });
+
   projectAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local project setup incomplete');
     return { app, owner: owner.headers, other: other.headers };

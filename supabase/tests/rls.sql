@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(24);
+select plan(29);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 11, 'exactly eleven public tables including native projects');
+  where n.nspname = 'public' and c.relkind = 'r'), 12, 'exactly twelve public tables including revision takeoffs');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -69,5 +69,13 @@ select is((select count(*)::integer from public.rate_table_entries), 9, 'complet
 reset role;
 select is((select count(*)::integer from public.generation_logs g join public.plans p on p.id = g.plan_id
   where p.seed = 'fixture' and g.event_type = 'generated'), 1, 'backend trigger recorded audit atomically');
+set local role authenticated;
+select throws_ok('insert into public.project_revision_takeoffs default values', '42501', null, 'clients cannot forge takeoff reports');
+select throws_ok('update public.project_revision_takeoffs set report_json = ''{}''', '42501', null, 'clients cannot rewrite takeoff reports');
+select throws_ok('delete from public.project_revision_takeoffs', '42501', null, 'clients cannot delete takeoff history');
+select throws_ok($$select public.takeoff_write('{}')$$, '42501', null, 'unsigned takeoff RPC is forbidden');
+set local role anon;
+select throws_ok('select * from public.project_revision_takeoffs', '42501', null, 'takeoffs are never public');
+reset role;
 select * from finish();
 rollback;

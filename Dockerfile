@@ -5,6 +5,7 @@ COPY apps/api/package.json apps/api/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/generator/package.json packages/generator/package.json
 COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
+COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
 RUN npm ci
 COPY tsconfig.base.json ./
 COPY apps/api/tsconfig.build.json apps/api/tsconfig.build.json
@@ -12,6 +13,7 @@ COPY apps/api/src apps/api/src
 COPY packages/shared packages/shared
 COPY packages/generator packages/generator
 COPY packages/blueprint-qa packages/blueprint-qa
+COPY packages/quantity-takeoff packages/quantity-takeoff
 RUN npm run build
 RUN npm prune --omit=dev
 
@@ -28,6 +30,8 @@ COPY --from=build --chown=node:node /app/packages/generator/package.json ./packa
 COPY --from=build --chown=node:node /app/packages/generator/dist ./packages/generator/dist
 COPY --from=build --chown=node:node /app/packages/blueprint-qa/package.json ./packages/blueprint-qa/package.json
 COPY --from=build --chown=node:node /app/packages/blueprint-qa/dist ./packages/blueprint-qa/dist
+COPY --from=build --chown=node:node /app/packages/quantity-takeoff/package.json ./packages/quantity-takeoff/package.json
+COPY --from=build --chown=node:node /app/packages/quantity-takeoff/dist ./packages/quantity-takeoff/dist
 USER node
 EXPOSE 3001
 STOPSIGNAL SIGTERM

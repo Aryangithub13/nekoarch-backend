@@ -1,3 +1,4 @@
+import { takeoffsRoutes } from './routes/takeoffs.js';
 import { projectsRoutes } from './routes/projects.js';
 import helmet from '@fastify/helmet';
 import { installLimits } from './lib/http-protection.js';
@@ -74,6 +75,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     });
     plansRoutes(scope, backend);
     projectsRoutes(scope, backend, options.env);
+    takeoffsRoutes(scope, backend, options.env);
     estimatesRoutes(scope, backend);
     regionsRoutes(scope, backend);
   });

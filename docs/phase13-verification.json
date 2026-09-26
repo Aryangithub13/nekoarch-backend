@@ -1,0 +1,222 @@
+{
+  "phase": 13,
+  "verifiedAtUtc": "2026-09-24T17:08:25.139683+00:00",
+  "baselineCommit": "46f01177db10970c1db2f6f497fcd34a8db8968f",
+  "baselineTag": "backend-v1-phase12-complete",
+  "initialWorkingTree": "Existing uncommitted Phase 13 work; user authorized continuation after initial stop.",
+  "results": [
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "seconds": 9.39,
+      "log": "/tmp/phase13-gate-1.log",
+      "logSha256": "112d83017a4ab0818cff753a913e47511a4e7524b0e072e01bc1c4d3d68238fa",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "seconds": 17.57,
+      "log": "/tmp/phase13-gate-2.log",
+      "logSha256": "7fe730b8fa1722e51160ccf221ec74f463ba5bb94bceea24c7b95e0e9588ffa0",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "seconds": 2.95,
+      "log": "/tmp/phase13-gate-3.log",
+      "logSha256": "2f9b0662df2da93e09dfd147aecf0195bda06e3dfc5aac732335d14c8d490ff7",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "seconds": 30.64,
+      "log": "/tmp/phase13-gate-4.log",
+      "logSha256": "23461ad246989e79513f2567ce0bf668d442af82400d86ed30cf7dab1af0f243",
+      "testsPassed": 1385,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:generator",
+      "exitCode": 0,
+      "seconds": 11.44,
+      "log": "/tmp/phase13-gate-5.log",
+      "logSha256": "0530693c17992d531c64d5db9b4488177ccdf625dca99f4eef222b19f2dd1ed2",
+      "testsPassed": 461,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:blueprint",
+      "exitCode": 0,
+      "seconds": 10.42,
+      "log": "/tmp/phase13-gate-6.log",
+      "logSha256": "e4c58036347b81f52dcc6176f6439146156f33d4e686a8539efd163b9464f00b",
+      "testsPassed": 137,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:blueprint-qa",
+      "exitCode": 0,
+      "seconds": 14.34,
+      "log": "/tmp/phase13-gate-7.log",
+      "logSha256": "b79f2642a9e19c53e7a5420de4919a097bd51b10fac3a6c8b4fb07bed1dfd420",
+      "testsPassed": 177,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:projects",
+      "exitCode": 0,
+      "seconds": 14.17,
+      "log": "/tmp/phase13-gate-8.log",
+      "logSha256": "8269691872b705902468d8da26093f3b6251c798a9ffd70a067e15c7d107bba0",
+      "testsPassed": 23,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:takeoff",
+      "exitCode": 0,
+      "seconds": 17.04,
+      "log": "/tmp/phase13-gate-9.log",
+      "logSha256": "f7104519fe311ec6cbdfc059c120bbbc197f0383a034ea7f0a060630de1e7f72",
+      "testsPassed": 23,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "seconds": 18.97,
+      "log": "/tmp/phase13-final-1.log",
+      "logSha256": "47a8aeb90939bbb1f5a43a29f1a6c573fe4866703ae143a9a510cfd3c550df42",
+      "testsPassed": 84,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "seconds": 18.95,
+      "log": "/tmp/phase13-final-2.log",
+      "logSha256": "1fd07379d6ee869eaf04c7ef7fee429cd4871ba2c28a373a27427f57a699974a",
+      "testsPassed": 84,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "seconds": 19.28,
+      "log": "/tmp/phase13-final-3.log",
+      "logSha256": "27645f6e097cfd5e8ce676b869fb9fd4fb531faa694aeafac9d3bb48a9f65250",
+      "testsPassed": 84,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "seconds": 68.08,
+      "log": "/tmp/phase13-final-4.log",
+      "logSha256": "bb5229534bbd37baf4123d69d9bf78da2cbb64ceb4e320617c824d9ec4dffa60",
+      "testsPassed": 1471,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "seconds": 0.01,
+      "log": "/tmp/phase13-final-5.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "command": "npx supabase db reset --local",
+      "exitCode": 0,
+      "log": "/tmp/phase13-db-reset.log",
+      "logSha256": "22c9af01f4f16b37386bac4285947683970648f4b5a7f73848c9df4aa02093f1",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run db:test",
+      "exitCode": 0,
+      "log": "/tmp/phase13-db-test.log",
+      "logSha256": "dce0d6e1935fd169c2135d17d45fbf352f29a102bc7888f8305cc0d6dbaad335",
+      "testsPassed": 29,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:supabase (pass 1)",
+      "exitCode": 0,
+      "log": "/tmp/phase13-supabase-1.log",
+      "logSha256": "686aa67e009937132c57f330c52329ddbc1dbf8d399e0e163d0fb4184af5c548",
+      "testsPassed": 26,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm run test:supabase (pass 2)",
+      "exitCode": 0,
+      "log": "/tmp/phase13-supabase-2.log",
+      "logSha256": "e4681540be93229ffccda700959c7f13ae6a96c3b1a8b22f3586735f81e62285",
+      "testsPassed": 26,
+      "testsSkipped": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "docker build -t designflow-api:phase13 .",
+      "exitCode": 0,
+      "log": "/tmp/phase13-docker.log",
+      "logSha256": "6d55faf9c4727cd4ba28e0860c1c7b774fb6b97a26b8b5fff739511ad9ec5401",
+      "status": "PASS"
+    },
+    {
+      "command": "node scripts/smoke-container.mjs designflow-api:phase13",
+      "exitCode": 0,
+      "log": "/tmp/phase13-smoke.log",
+      "logSha256": "f442a5559566e43c2d8c165adb5ea08efb8a0c4b00e1c2d13817d9aa93952f6d",
+      "status": "PASS"
+    }
+  ],
+  "resolvedFailures": [
+    "Initial sandboxed project tests could not bind localhost (EPERM); rerun with local socket access passed 23 tests.",
+    "New diagonal fixture supplied invalid empty spaceIds; removed the optional relationship field.",
+    "Future QA fixture needed report.qaVersion to match its metadata; corrected fixture.",
+    "Migration integrity test expected 16 foreign keys; updated to 18 with explicit takeoff foreign key assertions."
+  ],
+  "localResetSafety": {
+    "host": "127.0.0.1",
+    "apiPort": 54321,
+    "dbPort": 54322,
+    "countsBeforeReset": {
+      "authUsers": 0,
+      "plans": 0,
+      "estimates": 0,
+      "projects": 0,
+      "revisions": 0
+    }
+  },
+  "example": {
+    "projectId": "8507db45-0684-4acb-a078-866b367f97d3",
+    "projectRevisionId": "3c81bc6e-0da4-48f3-b987-c17b3da86cc6",
+    "takeoffId": "5c4f7b0d-5be9-44b0-91cf-1b314d8751ad",
+    "acceptanceQaStatus": "PASS",
+    "itemCount": 283,
+    "reportSha256": "3628dee761041a51ffeba4c8c2676b247490b2338b8806f6c752b433ece2b8ee",
+    "verification": {
+      "retrievedExactly": true,
+      "revisionAndQaUnchanged": true,
+      "pureReportMatches": true
+    }
+  },
+  "completionCommitCreated": false,
+  "completionTagCreated": false
+}

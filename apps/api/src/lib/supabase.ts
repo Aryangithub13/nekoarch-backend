@@ -1,3 +1,4 @@
+import { takeoffDatabaseError } from './takeoff-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -7,6 +8,11 @@ import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, typ
 
 export class SupabaseRepository implements Repository {
   constructor(private readonly client: SupabaseClient) {}
+  async takeoffRpc(name: 'takeoff_read' | 'takeoff_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) takeoffDatabaseError(error);
+    return data as unknown;
+  }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) projectDatabaseError(error);

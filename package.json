@@ -10,18 +10,19 @@
     "apps/api",
     "packages/shared",
     "packages/generator",
-    "packages/blueprint-qa"
+    "packages/blueprint-qa",
+    "packages/quantity-takeoff"
   ],
   "scripts": {
-    "build": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/api",
-    "typecheck": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator",
+    "build": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/api",
+    "typecheck": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator",
     "lint": "eslint .",
     "dev": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && tsx watch --env-file=.env apps/api/src/server.ts",
     "start": "node apps/api/dist/server.js",
-    "test": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run",
-    "test:unit": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts",
+    "test": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && vitest run",
+    "test:unit": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && vitest run packages/quantity-takeoff/tests packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts",
     "test:generator": "npm run build -w @designflow/shared && vitest run packages/generator/tests",
-    "test:integration": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts",
+    "test:integration": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts",
     "test:supabase": "npm run build && node scripts/test-local-supabase.mjs",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
@@ -29,8 +30,9 @@
     "sentry:smoke": "tsx --env-file=.env scripts/sentry-smoke.ts",
     "check": "npm run build && npm run typecheck && npm run lint && npm test",
     "test:blueprint": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts",
-    "test:blueprint-qa": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && vitest run packages/blueprint-qa/tests",
-    "test:projects": "npm run build && vitest run apps/api/tests/projects.integration.test.ts"
+    "test:blueprint-qa": "npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && vitest run packages/blueprint-qa/tests",
+    "test:projects": "npm run build && vitest run apps/api/tests/projects.integration.test.ts",
+    "test:takeoff": "npm run build && vitest run packages/quantity-takeoff/tests apps/api/tests/takeoffs.integration.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
