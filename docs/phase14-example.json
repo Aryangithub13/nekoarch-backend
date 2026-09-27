@@ -1,0 +1,4554 @@
+{
+  "description": "Pure-engine replay of the committed Phase 13 takeoff example. Recipe parameters are synthetic arithmetic examples, not construction recommendations. This report has not been persisted.",
+  "sourceFile": "docs/phase13-example.json",
+  "sourceTakeoffId": "5c4f7b0d-5be9-44b0-91cf-1b314d8751ad",
+  "specification": {
+    "id": "synthetic-example",
+    "version": "1",
+    "recipePack": {
+      "id": "construction-recipes",
+      "version": "1"
+    },
+    "assemblies": [
+      {
+        "id": "floor-concrete",
+        "kind": "concrete",
+        "wastagePercent": "5",
+        "mode": {
+          "type": "READY_MIX_VOLUME_ONLY"
+        }
+      },
+      {
+        "id": "plaster",
+        "kind": "plaster",
+        "wastagePercent": "5",
+        "thicknessMm": 10,
+        "sides": 2,
+        "mix": {
+          "dryVolumeFactor": "1.5",
+          "cementParts": "1",
+          "sandParts": "3",
+          "cementBulkDensityKgPerM3": "1000",
+          "bagMassKg": "50"
+        }
+      },
+      {
+        "id": "tiles",
+        "kind": "flooring",
+        "wastagePercent": "10",
+        "tileLengthMm": 500,
+        "tileWidthMm": 500
+      },
+      {
+        "id": "doors",
+        "kind": "component",
+        "wastagePercent": "0",
+        "materialCode": "DOOR_UNIT"
+      },
+      {
+        "id": "windows",
+        "kind": "component",
+        "wastagePercent": "0",
+        "materialCode": "WINDOW_UNIT"
+      }
+    ],
+    "assignments": [
+      {
+        "id": "concrete",
+        "basis": "FLOOR_PLATE_VOLUME",
+        "assemblyId": "floor-concrete",
+        "layerId": "structure",
+        "selector": {
+          "kind": "default"
+        }
+      },
+      {
+        "id": "plaster",
+        "basis": "WALL_SINGLE_FACE_NET_AREA",
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "selector": {
+          "kind": "default"
+        }
+      },
+      {
+        "id": "tiles",
+        "basis": "FLOOR_FINISH_BASE_AREA",
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "selector": {
+          "kind": "default"
+        }
+      },
+      {
+        "id": "doors",
+        "basis": "DOOR_COUNT",
+        "assemblyId": "doors",
+        "layerId": "component",
+        "selector": {
+          "kind": "default"
+        }
+      },
+      {
+        "id": "windows",
+        "basis": "WINDOW_COUNT",
+        "assemblyId": "windows",
+        "layerId": "component",
+        "selector": {
+          "kind": "default"
+        }
+      }
+    ]
+  },
+  "report": {
+    "engineVersion": "construction-calculation-v1",
+    "takeoffEngineVersion": "quantity-takeoff-v1",
+    "measurementPolicyVersion": "segment-prism-mm/1",
+    "recipePack": {
+      "id": "construction-recipes",
+      "version": "1"
+    },
+    "specification": {
+      "id": "synthetic-example",
+      "version": "1",
+      "recipePack": {
+        "id": "construction-recipes",
+        "version": "1"
+      },
+      "allowMultipleLayers": false,
+      "assemblies": [
+        {
+          "id": "doors",
+          "wastagePercent": "0",
+          "kind": "component",
+          "materialCode": "DOOR_UNIT"
+        },
+        {
+          "id": "floor-concrete",
+          "wastagePercent": "5",
+          "kind": "concrete",
+          "mode": {
+            "type": "READY_MIX_VOLUME_ONLY"
+          }
+        },
+        {
+          "id": "plaster",
+          "wastagePercent": "5",
+          "kind": "plaster",
+          "thicknessMm": 10,
+          "sides": 2,
+          "mix": {
+            "dryVolumeFactor": "1.5",
+            "cementParts": "1",
+            "sandParts": "3",
+            "cementBulkDensityKgPerM3": "1000",
+            "bagMassKg": "50"
+          }
+        },
+        {
+          "id": "tiles",
+          "wastagePercent": "10",
+          "kind": "flooring",
+          "tileLengthMm": 500,
+          "tileWidthMm": 500
+        },
+        {
+          "id": "windows",
+          "wastagePercent": "0",
+          "kind": "component",
+          "materialCode": "WINDOW_UNIT"
+        }
+      ],
+      "assignments": [
+        {
+          "id": "concrete",
+          "basis": "FLOOR_PLATE_VOLUME",
+          "assemblyId": "floor-concrete",
+          "layerId": "structure",
+          "selector": {
+            "kind": "default"
+          }
+        },
+        {
+          "id": "doors",
+          "basis": "DOOR_COUNT",
+          "assemblyId": "doors",
+          "layerId": "component",
+          "selector": {
+            "kind": "default"
+          }
+        },
+        {
+          "id": "plaster",
+          "basis": "WALL_SINGLE_FACE_NET_AREA",
+          "assemblyId": "plaster",
+          "layerId": "plaster",
+          "selector": {
+            "kind": "default"
+          }
+        },
+        {
+          "id": "tiles",
+          "basis": "FLOOR_FINISH_BASE_AREA",
+          "assemblyId": "tiles",
+          "layerId": "finish",
+          "selector": {
+            "kind": "default"
+          }
+        },
+        {
+          "id": "windows",
+          "basis": "WINDOW_COUNT",
+          "assemblyId": "windows",
+          "layerId": "component",
+          "selector": {
+            "kind": "default"
+          }
+        }
+      ]
+    },
+    "options": {
+      "quantityDecimalPlaces": 9
+    },
+    "summary": {
+      "calculationCount": 53,
+      "materialCount": 82,
+      "warningCount": 30,
+      "status": "PARTIAL",
+      "totals": [
+        {
+          "materialCode": "CEMENT",
+          "unit": "kg",
+          "theoretical": "3159.61875",
+          "wastage": "157.9809375",
+          "final": "3317.5996875",
+          "purchases": [
+            {
+              "unit": "bag",
+              "bagMassKg": "50",
+              "quantity": "82"
+            }
+          ]
+        },
+        {
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "8",
+          "wastage": "0",
+          "final": "8",
+          "purchases": [
+            {
+              "unit": "each",
+              "bagMassKg": null,
+              "quantity": "8"
+            }
+          ]
+        },
+        {
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "925.12",
+          "wastage": "92.512",
+          "final": "1017.632",
+          "purchases": [
+            {
+              "unit": "piece",
+              "bagMassKg": null,
+              "quantity": "1021"
+            }
+          ]
+        },
+        {
+          "materialCode": "READY_MIX_CONCRETE",
+          "unit": "m3",
+          "theoretical": "35.37",
+          "wastage": "1.7685",
+          "final": "37.1385",
+          "purchases": []
+        },
+        {
+          "materialCode": "SAND",
+          "unit": "m3",
+          "theoretical": "9.47885625",
+          "wastage": "0.47394282",
+          "final": "9.95279907",
+          "purchases": []
+        },
+        {
+          "materialCode": "WINDOW_UNIT",
+          "unit": "each",
+          "theoretical": "5",
+          "wastage": "0",
+          "final": "5",
+          "purchases": [
+            {
+              "unit": "each",
+              "bagMassKg": null,
+              "quantity": "5"
+            }
+          ]
+        }
+      ]
+    },
+    "items": [
+      {
+        "id": "calculation-1",
+        "takeoffItemId": "DOOR_COUNT:opening-0",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-0",
+          "wall-0-10"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-2",
+        "takeoffItemId": "DOOR_COUNT:opening-1",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-1",
+          "wall-0-11"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-3",
+        "takeoffItemId": "DOOR_COUNT:opening-2",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-2",
+          "wall-0-12"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-4",
+        "takeoffItemId": "DOOR_COUNT:opening-3",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-3",
+          "wall-1-25"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-5",
+        "takeoffItemId": "DOOR_COUNT:opening-4",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-4",
+          "wall-1-26"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-6",
+        "takeoffItemId": "DOOR_COUNT:opening-5",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-5",
+          "wall-0-1"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-7",
+        "takeoffItemId": "DOOR_COUNT:opening-6",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-6",
+          "wall-0-9"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-8",
+        "takeoffItemId": "DOOR_COUNT:opening-7",
+        "takeoffItemCode": "DOOR_COUNT",
+        "sourceEntityIds": [
+          "opening-7",
+          "wall-1-24"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "doors",
+        "layerId": "component",
+        "assignmentId": "doors",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-9",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bathroom-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-bathroom-1"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "29032500",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-10",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bedroom-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-bedroom-1"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "29032500",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-11",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bedroom-2",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-bedroom-2"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "43365000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-12",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-corridor-0",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-corridor-0"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "15340000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-13",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-corridor-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-corridor-1"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "15340000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-14",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-kitchen-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-kitchen-1"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "28665000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-15",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-living-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-living-1"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "43365000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-16",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-stairwell-0",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-stairwell-0"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "13570000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-17",
+        "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-stairwell-1",
+        "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+        "sourceEntityIds": [
+          "space-stairwell-1"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "tiles",
+        "layerId": "finish",
+        "assignmentId": "tiles",
+        "recipeId": "tile-area/1",
+        "status": "PARTIAL",
+        "basis": {
+          "value": "13570000",
+          "unit": "mm2"
+        },
+        "evidence": {},
+        "assumptions": [
+          "CENTERLINE_SPACE",
+          "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-18",
+        "takeoffItemId": "FLOOR_PLATE_VOLUME:slab-0",
+        "takeoffItemCode": "FLOOR_PLATE_VOLUME",
+        "sourceEntityIds": [
+          "slab-0"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "floor-concrete",
+        "layerId": "structure",
+        "assignmentId": "concrete",
+        "recipeId": "concrete-volume/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "18000000000",
+          "unit": "mm3"
+        },
+        "evidence": {},
+        "assumptions": [
+          "PLATE_MINUS_VOIDS",
+          "Architectural net volume only; no reinforcement, structural mix design or strength certification.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-19",
+        "takeoffItemId": "FLOOR_PLATE_VOLUME:slab-1",
+        "takeoffItemCode": "FLOOR_PLATE_VOLUME",
+        "sourceEntityIds": [
+          "slab-1"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "floor-concrete",
+        "layerId": "structure",
+        "assignmentId": "concrete",
+        "recipeId": "concrete-volume/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "17370000000",
+          "unit": "mm3"
+        },
+        "evidence": {},
+        "assumptions": [
+          "PLATE_MINUS_VOIDS",
+          "Architectural net volume only; no reinforcement, structural mix design or strength certification.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-20",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-0",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-0"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3277500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1311",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "3933",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-21",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-1",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-1"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1815000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "363",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "1089",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-22",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-10",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-10"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "9367500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3747",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "11241",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-23",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-11",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-11"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "9225000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "369",
+            "denominator": "2000"
+          },
+          "dryVolumeM3": {
+            "numerator": "1107",
+            "denominator": "4000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-24",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-12",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-12"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "9367500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3747",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "11241",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-25",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-13",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-13"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "11257500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "4503",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "13509",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-26",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-14",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-14"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "9675000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "387",
+            "denominator": "2000"
+          },
+          "dryVolumeM3": {
+            "numerator": "1161",
+            "denominator": "4000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-27",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-15",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-15"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "11257500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "4503",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "13509",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-28",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-2",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-2"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "19507500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "7803",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "23409",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-29",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-3",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-3"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "20947500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "8379",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "25137",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-30",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-4",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-4"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "20947500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "8379",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "25137",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-31",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-5",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-5"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3277500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1311",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "3933",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-32",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-6",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-6"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3705000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "741",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "2223",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-33",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-7",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-7"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "19507500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "7803",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "23409",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-34",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-8",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-8"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "33630000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3363",
+            "denominator": "5000"
+          },
+          "dryVolumeM3": {
+            "numerator": "10089",
+            "denominator": "10000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-35",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-9",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-0-9"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "31740000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1587",
+            "denominator": "2500"
+          },
+          "dryVolumeM3": {
+            "numerator": "4761",
+            "denominator": "5000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-36",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-16",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-16"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3277500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1311",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "3933",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-37",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-17",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-17"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3705000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "741",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "2223",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-38",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-18",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-18"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "19507500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "7803",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "23409",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-39",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-19",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-19"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "20947500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "8379",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "25137",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-40",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-20",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-20"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3277500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1311",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "3933",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-41",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-21",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-21"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "3705000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "741",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "2223",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-42",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-22",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-22"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "19507500",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "7803",
+            "denominator": "20000"
+          },
+          "dryVolumeM3": {
+            "numerator": "23409",
+            "denominator": "40000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-43",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-23",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-23"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "33630000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3363",
+            "denominator": "5000"
+          },
+          "dryVolumeM3": {
+            "numerator": "10089",
+            "denominator": "10000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-44",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-24",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-24"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "31740000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "1587",
+            "denominator": "2500"
+          },
+          "dryVolumeM3": {
+            "numerator": "4761",
+            "denominator": "5000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-45",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-25",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-25"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "14925000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "597",
+            "denominator": "2000"
+          },
+          "dryVolumeM3": {
+            "numerator": "1791",
+            "denominator": "4000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-46",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-26",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-26"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "14925000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "597",
+            "denominator": "2000"
+          },
+          "dryVolumeM3": {
+            "numerator": "1791",
+            "denominator": "4000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-47",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-27",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-27"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "16815000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3363",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "10089",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-48",
+        "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-1-28",
+        "takeoffItemCode": "WALL_SINGLE_FACE_NET_AREA",
+        "sourceEntityIds": [
+          "wall-1-28"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "plaster",
+        "layerId": "plaster",
+        "assignmentId": "plaster",
+        "recipeId": "plaster-mix/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "16815000",
+          "unit": "mm2"
+        },
+        "evidence": {
+          "wetVolumeM3": {
+            "numerator": "3363",
+            "denominator": "10000"
+          },
+          "dryVolumeM3": {
+            "numerator": "10089",
+            "denominator": "20000"
+          },
+          "totalMixParts": {
+            "numerator": "4",
+            "denominator": "1"
+          }
+        },
+        "assumptions": [
+          "SINGLE_LONGITUDINAL_FACE",
+          "Configured longitudinal faces only; no reveals or end faces.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-49",
+        "takeoffItemId": "WINDOW_COUNT:opening-10",
+        "takeoffItemCode": "WINDOW_COUNT",
+        "sourceEntityIds": [
+          "opening-10",
+          "wall-0-7"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "windows",
+        "layerId": "component",
+        "assignmentId": "windows",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-50",
+        "takeoffItemId": "WINDOW_COUNT:opening-11",
+        "takeoffItemCode": "WINDOW_COUNT",
+        "sourceEntityIds": [
+          "opening-11",
+          "wall-1-18"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "windows",
+        "layerId": "component",
+        "assignmentId": "windows",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-51",
+        "takeoffItemId": "WINDOW_COUNT:opening-12",
+        "takeoffItemCode": "WINDOW_COUNT",
+        "sourceEntityIds": [
+          "opening-12",
+          "wall-1-22"
+        ],
+        "levelId": "level-1",
+        "specificationId": null,
+        "assemblyId": "windows",
+        "layerId": "component",
+        "assignmentId": "windows",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-52",
+        "takeoffItemId": "WINDOW_COUNT:opening-8",
+        "takeoffItemCode": "WINDOW_COUNT",
+        "sourceEntityIds": [
+          "opening-8",
+          "wall-0-2"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "windows",
+        "layerId": "component",
+        "assignmentId": "windows",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      },
+      {
+        "id": "calculation-53",
+        "takeoffItemId": "WINDOW_COUNT:opening-9",
+        "takeoffItemCode": "WINDOW_COUNT",
+        "sourceEntityIds": [
+          "opening-9",
+          "wall-0-14"
+        ],
+        "levelId": "level-0",
+        "specificationId": null,
+        "assemblyId": "windows",
+        "layerId": "component",
+        "assignmentId": "windows",
+        "recipeId": "opening-component/1",
+        "status": "EVALUATED",
+        "basis": {
+          "value": "1",
+          "unit": "each"
+        },
+        "evidence": {},
+        "assumptions": [
+          "Configured complete component only; hardware/glazing BOM excluded.",
+          "Explicit default assignment applied."
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "id": "material-1",
+        "calculationItemId": "calculation-1",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-2",
+        "calculationItemId": "calculation-2",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-3",
+        "calculationItemId": "calculation-3",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-4",
+        "calculationItemId": "calculation-4",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-5",
+        "calculationItemId": "calculation-5",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-6",
+        "calculationItemId": "calculation-6",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-7",
+        "calculationItemId": "calculation-7",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-8",
+        "calculationItemId": "calculation-8",
+        "coatingId": null,
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-9",
+        "calculationItemId": "calculation-9",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "116.13",
+        "wastage": "11.613",
+        "final": "127.743",
+        "theoreticalExact": {
+          "numerator": "11613",
+          "denominator": "100"
+        },
+        "finalExact": {
+          "numerator": "127743",
+          "denominator": "1000"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "128",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "116.13",
+          "adjustedEquivalent": "127.743"
+        }
+      },
+      {
+        "id": "material-10",
+        "calculationItemId": "calculation-10",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "116.13",
+        "wastage": "11.613",
+        "final": "127.743",
+        "theoreticalExact": {
+          "numerator": "11613",
+          "denominator": "100"
+        },
+        "finalExact": {
+          "numerator": "127743",
+          "denominator": "1000"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "128",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "116.13",
+          "adjustedEquivalent": "127.743"
+        }
+      },
+      {
+        "id": "material-11",
+        "calculationItemId": "calculation-11",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "173.46",
+        "wastage": "17.346",
+        "final": "190.806",
+        "theoreticalExact": {
+          "numerator": "8673",
+          "denominator": "50"
+        },
+        "finalExact": {
+          "numerator": "95403",
+          "denominator": "500"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "191",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "173.46",
+          "adjustedEquivalent": "190.806"
+        }
+      },
+      {
+        "id": "material-12",
+        "calculationItemId": "calculation-12",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "61.36",
+        "wastage": "6.136",
+        "final": "67.496",
+        "theoreticalExact": {
+          "numerator": "1534",
+          "denominator": "25"
+        },
+        "finalExact": {
+          "numerator": "8437",
+          "denominator": "125"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "68",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "61.36",
+          "adjustedEquivalent": "67.496"
+        }
+      },
+      {
+        "id": "material-13",
+        "calculationItemId": "calculation-13",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "61.36",
+        "wastage": "6.136",
+        "final": "67.496",
+        "theoreticalExact": {
+          "numerator": "1534",
+          "denominator": "25"
+        },
+        "finalExact": {
+          "numerator": "8437",
+          "denominator": "125"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "68",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "61.36",
+          "adjustedEquivalent": "67.496"
+        }
+      },
+      {
+        "id": "material-14",
+        "calculationItemId": "calculation-14",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "114.66",
+        "wastage": "11.466",
+        "final": "126.126",
+        "theoreticalExact": {
+          "numerator": "5733",
+          "denominator": "50"
+        },
+        "finalExact": {
+          "numerator": "63063",
+          "denominator": "500"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "127",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "114.66",
+          "adjustedEquivalent": "126.126"
+        }
+      },
+      {
+        "id": "material-15",
+        "calculationItemId": "calculation-15",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "173.46",
+        "wastage": "17.346",
+        "final": "190.806",
+        "theoreticalExact": {
+          "numerator": "8673",
+          "denominator": "50"
+        },
+        "finalExact": {
+          "numerator": "95403",
+          "denominator": "500"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "191",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "173.46",
+          "adjustedEquivalent": "190.806"
+        }
+      },
+      {
+        "id": "material-16",
+        "calculationItemId": "calculation-16",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "54.28",
+        "wastage": "5.428",
+        "final": "59.708",
+        "theoreticalExact": {
+          "numerator": "1357",
+          "denominator": "25"
+        },
+        "finalExact": {
+          "numerator": "14927",
+          "denominator": "250"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "60",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "54.28",
+          "adjustedEquivalent": "59.708"
+        }
+      },
+      {
+        "id": "material-17",
+        "calculationItemId": "calculation-17",
+        "coatingId": null,
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "54.28",
+        "wastage": "5.428",
+        "final": "59.708",
+        "theoreticalExact": {
+          "numerator": "1357",
+          "denominator": "25"
+        },
+        "finalExact": {
+          "numerator": "14927",
+          "denominator": "250"
+        },
+        "purchase": {
+          "unit": "piece",
+          "quantity": "60",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "54.28",
+          "adjustedEquivalent": "59.708"
+        }
+      },
+      {
+        "id": "material-18",
+        "calculationItemId": "calculation-18",
+        "coatingId": null,
+        "materialCode": "READY_MIX_CONCRETE",
+        "unit": "m3",
+        "theoretical": "18",
+        "wastage": "0.9",
+        "final": "18.9",
+        "theoreticalExact": {
+          "numerator": "18",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "189",
+          "denominator": "10"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-19",
+        "calculationItemId": "calculation-19",
+        "coatingId": null,
+        "materialCode": "READY_MIX_CONCRETE",
+        "unit": "m3",
+        "theoretical": "17.37",
+        "wastage": "0.8685",
+        "final": "18.2385",
+        "theoreticalExact": {
+          "numerator": "1737",
+          "denominator": "100"
+        },
+        "finalExact": {
+          "numerator": "36477",
+          "denominator": "2000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-20",
+        "calculationItemId": "calculation-20",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "24.58125",
+        "wastage": "1.2290625",
+        "final": "25.8103125",
+        "theoreticalExact": {
+          "numerator": "3933",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "82593",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.491625",
+          "adjustedEquivalent": "0.51620625"
+        }
+      },
+      {
+        "id": "material-21",
+        "calculationItemId": "calculation-20",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.07374375",
+        "wastage": "0.003687188",
+        "final": "0.077430938",
+        "theoreticalExact": {
+          "numerator": "11799",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "247779",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-22",
+        "calculationItemId": "calculation-21",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "13.6125",
+        "wastage": "0.680625",
+        "final": "14.293125",
+        "theoreticalExact": {
+          "numerator": "1089",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "22869",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.27225",
+          "adjustedEquivalent": "0.2858625"
+        }
+      },
+      {
+        "id": "material-23",
+        "calculationItemId": "calculation-21",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.0408375",
+        "wastage": "0.002041875",
+        "final": "0.042879375",
+        "theoreticalExact": {
+          "numerator": "3267",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "68607",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-24",
+        "calculationItemId": "calculation-22",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "70.25625",
+        "wastage": "3.5128125",
+        "final": "73.7690625",
+        "theoreticalExact": {
+          "numerator": "11241",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "236061",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.405125",
+          "adjustedEquivalent": "1.47538125"
+        }
+      },
+      {
+        "id": "material-25",
+        "calculationItemId": "calculation-22",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.21076875",
+        "wastage": "0.010538438",
+        "final": "0.221307188",
+        "theoreticalExact": {
+          "numerator": "33723",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "708183",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-26",
+        "calculationItemId": "calculation-23",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "69.1875",
+        "wastage": "3.459375",
+        "final": "72.646875",
+        "theoreticalExact": {
+          "numerator": "1107",
+          "denominator": "16"
+        },
+        "finalExact": {
+          "numerator": "23247",
+          "denominator": "320"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.38375",
+          "adjustedEquivalent": "1.4529375"
+        }
+      },
+      {
+        "id": "material-27",
+        "calculationItemId": "calculation-23",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.2075625",
+        "wastage": "0.010378125",
+        "final": "0.217940625",
+        "theoreticalExact": {
+          "numerator": "3321",
+          "denominator": "16000"
+        },
+        "finalExact": {
+          "numerator": "69741",
+          "denominator": "320000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-28",
+        "calculationItemId": "calculation-24",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "70.25625",
+        "wastage": "3.5128125",
+        "final": "73.7690625",
+        "theoreticalExact": {
+          "numerator": "11241",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "236061",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.405125",
+          "adjustedEquivalent": "1.47538125"
+        }
+      },
+      {
+        "id": "material-29",
+        "calculationItemId": "calculation-24",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.21076875",
+        "wastage": "0.010538438",
+        "final": "0.221307188",
+        "theoreticalExact": {
+          "numerator": "33723",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "708183",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-30",
+        "calculationItemId": "calculation-25",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "84.43125",
+        "wastage": "4.2215625",
+        "final": "88.6528125",
+        "theoreticalExact": {
+          "numerator": "13509",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "283689",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.688625",
+          "adjustedEquivalent": "1.77305625"
+        }
+      },
+      {
+        "id": "material-31",
+        "calculationItemId": "calculation-25",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.25329375",
+        "wastage": "0.012664688",
+        "final": "0.265958438",
+        "theoreticalExact": {
+          "numerator": "40527",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "851067",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-32",
+        "calculationItemId": "calculation-26",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "72.5625",
+        "wastage": "3.628125",
+        "final": "76.190625",
+        "theoreticalExact": {
+          "numerator": "1161",
+          "denominator": "16"
+        },
+        "finalExact": {
+          "numerator": "24381",
+          "denominator": "320"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.45125",
+          "adjustedEquivalent": "1.5238125"
+        }
+      },
+      {
+        "id": "material-33",
+        "calculationItemId": "calculation-26",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.2176875",
+        "wastage": "0.010884375",
+        "final": "0.228571875",
+        "theoreticalExact": {
+          "numerator": "3483",
+          "denominator": "16000"
+        },
+        "finalExact": {
+          "numerator": "73143",
+          "denominator": "320000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-34",
+        "calculationItemId": "calculation-27",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "84.43125",
+        "wastage": "4.2215625",
+        "final": "88.6528125",
+        "theoreticalExact": {
+          "numerator": "13509",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "283689",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "2",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "1.688625",
+          "adjustedEquivalent": "1.77305625"
+        }
+      },
+      {
+        "id": "material-35",
+        "calculationItemId": "calculation-27",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.25329375",
+        "wastage": "0.012664688",
+        "final": "0.265958438",
+        "theoreticalExact": {
+          "numerator": "40527",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "851067",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-36",
+        "calculationItemId": "calculation-28",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "146.30625",
+        "wastage": "7.3153125",
+        "final": "153.6215625",
+        "theoreticalExact": {
+          "numerator": "23409",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "491589",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.926125",
+          "adjustedEquivalent": "3.07243125"
+        }
+      },
+      {
+        "id": "material-37",
+        "calculationItemId": "calculation-28",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.43891875",
+        "wastage": "0.021945938",
+        "final": "0.460864688",
+        "theoreticalExact": {
+          "numerator": "70227",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1474767",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-38",
+        "calculationItemId": "calculation-29",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "157.10625",
+        "wastage": "7.8553125",
+        "final": "164.9615625",
+        "theoreticalExact": {
+          "numerator": "25137",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "527877",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "3.142125",
+          "adjustedEquivalent": "3.29923125"
+        }
+      },
+      {
+        "id": "material-39",
+        "calculationItemId": "calculation-29",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.47131875",
+        "wastage": "0.023565938",
+        "final": "0.494884688",
+        "theoreticalExact": {
+          "numerator": "75411",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1583631",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-40",
+        "calculationItemId": "calculation-30",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "157.10625",
+        "wastage": "7.8553125",
+        "final": "164.9615625",
+        "theoreticalExact": {
+          "numerator": "25137",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "527877",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "3.142125",
+          "adjustedEquivalent": "3.29923125"
+        }
+      },
+      {
+        "id": "material-41",
+        "calculationItemId": "calculation-30",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.47131875",
+        "wastage": "0.023565938",
+        "final": "0.494884688",
+        "theoreticalExact": {
+          "numerator": "75411",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1583631",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-42",
+        "calculationItemId": "calculation-31",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "24.58125",
+        "wastage": "1.2290625",
+        "final": "25.8103125",
+        "theoreticalExact": {
+          "numerator": "3933",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "82593",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.491625",
+          "adjustedEquivalent": "0.51620625"
+        }
+      },
+      {
+        "id": "material-43",
+        "calculationItemId": "calculation-31",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.07374375",
+        "wastage": "0.003687188",
+        "final": "0.077430938",
+        "theoreticalExact": {
+          "numerator": "11799",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "247779",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-44",
+        "calculationItemId": "calculation-32",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "27.7875",
+        "wastage": "1.389375",
+        "final": "29.176875",
+        "theoreticalExact": {
+          "numerator": "2223",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "46683",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.55575",
+          "adjustedEquivalent": "0.5835375"
+        }
+      },
+      {
+        "id": "material-45",
+        "calculationItemId": "calculation-32",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.0833625",
+        "wastage": "0.004168125",
+        "final": "0.087530625",
+        "theoreticalExact": {
+          "numerator": "6669",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "140049",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-46",
+        "calculationItemId": "calculation-33",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "146.30625",
+        "wastage": "7.3153125",
+        "final": "153.6215625",
+        "theoreticalExact": {
+          "numerator": "23409",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "491589",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.926125",
+          "adjustedEquivalent": "3.07243125"
+        }
+      },
+      {
+        "id": "material-47",
+        "calculationItemId": "calculation-33",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.43891875",
+        "wastage": "0.021945938",
+        "final": "0.460864688",
+        "theoreticalExact": {
+          "numerator": "70227",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1474767",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-48",
+        "calculationItemId": "calculation-34",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "252.225",
+        "wastage": "12.61125",
+        "final": "264.83625",
+        "theoreticalExact": {
+          "numerator": "10089",
+          "denominator": "40"
+        },
+        "finalExact": {
+          "numerator": "211869",
+          "denominator": "800"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "6",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "5.0445",
+          "adjustedEquivalent": "5.296725"
+        }
+      },
+      {
+        "id": "material-49",
+        "calculationItemId": "calculation-34",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.756675",
+        "wastage": "0.03783375",
+        "final": "0.79450875",
+        "theoreticalExact": {
+          "numerator": "30267",
+          "denominator": "40000"
+        },
+        "finalExact": {
+          "numerator": "635607",
+          "denominator": "800000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-50",
+        "calculationItemId": "calculation-35",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "238.05",
+        "wastage": "11.9025",
+        "final": "249.9525",
+        "theoreticalExact": {
+          "numerator": "4761",
+          "denominator": "20"
+        },
+        "finalExact": {
+          "numerator": "99981",
+          "denominator": "400"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "5",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "4.761",
+          "adjustedEquivalent": "4.99905"
+        }
+      },
+      {
+        "id": "material-51",
+        "calculationItemId": "calculation-35",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.71415",
+        "wastage": "0.0357075",
+        "final": "0.7498575",
+        "theoreticalExact": {
+          "numerator": "14283",
+          "denominator": "20000"
+        },
+        "finalExact": {
+          "numerator": "299943",
+          "denominator": "400000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-52",
+        "calculationItemId": "calculation-36",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "24.58125",
+        "wastage": "1.2290625",
+        "final": "25.8103125",
+        "theoreticalExact": {
+          "numerator": "3933",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "82593",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.491625",
+          "adjustedEquivalent": "0.51620625"
+        }
+      },
+      {
+        "id": "material-53",
+        "calculationItemId": "calculation-36",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.07374375",
+        "wastage": "0.003687188",
+        "final": "0.077430938",
+        "theoreticalExact": {
+          "numerator": "11799",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "247779",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-54",
+        "calculationItemId": "calculation-37",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "27.7875",
+        "wastage": "1.389375",
+        "final": "29.176875",
+        "theoreticalExact": {
+          "numerator": "2223",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "46683",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.55575",
+          "adjustedEquivalent": "0.5835375"
+        }
+      },
+      {
+        "id": "material-55",
+        "calculationItemId": "calculation-37",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.0833625",
+        "wastage": "0.004168125",
+        "final": "0.087530625",
+        "theoreticalExact": {
+          "numerator": "6669",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "140049",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-56",
+        "calculationItemId": "calculation-38",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "146.30625",
+        "wastage": "7.3153125",
+        "final": "153.6215625",
+        "theoreticalExact": {
+          "numerator": "23409",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "491589",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.926125",
+          "adjustedEquivalent": "3.07243125"
+        }
+      },
+      {
+        "id": "material-57",
+        "calculationItemId": "calculation-38",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.43891875",
+        "wastage": "0.021945938",
+        "final": "0.460864688",
+        "theoreticalExact": {
+          "numerator": "70227",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1474767",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-58",
+        "calculationItemId": "calculation-39",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "157.10625",
+        "wastage": "7.8553125",
+        "final": "164.9615625",
+        "theoreticalExact": {
+          "numerator": "25137",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "527877",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "3.142125",
+          "adjustedEquivalent": "3.29923125"
+        }
+      },
+      {
+        "id": "material-59",
+        "calculationItemId": "calculation-39",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.47131875",
+        "wastage": "0.023565938",
+        "final": "0.494884688",
+        "theoreticalExact": {
+          "numerator": "75411",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1583631",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-60",
+        "calculationItemId": "calculation-40",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "24.58125",
+        "wastage": "1.2290625",
+        "final": "25.8103125",
+        "theoreticalExact": {
+          "numerator": "3933",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "82593",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.491625",
+          "adjustedEquivalent": "0.51620625"
+        }
+      },
+      {
+        "id": "material-61",
+        "calculationItemId": "calculation-40",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.07374375",
+        "wastage": "0.003687188",
+        "final": "0.077430938",
+        "theoreticalExact": {
+          "numerator": "11799",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "247779",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-62",
+        "calculationItemId": "calculation-41",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "27.7875",
+        "wastage": "1.389375",
+        "final": "29.176875",
+        "theoreticalExact": {
+          "numerator": "2223",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "46683",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "1",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "0.55575",
+          "adjustedEquivalent": "0.5835375"
+        }
+      },
+      {
+        "id": "material-63",
+        "calculationItemId": "calculation-41",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.0833625",
+        "wastage": "0.004168125",
+        "final": "0.087530625",
+        "theoreticalExact": {
+          "numerator": "6669",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "140049",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-64",
+        "calculationItemId": "calculation-42",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "146.30625",
+        "wastage": "7.3153125",
+        "final": "153.6215625",
+        "theoreticalExact": {
+          "numerator": "23409",
+          "denominator": "160"
+        },
+        "finalExact": {
+          "numerator": "491589",
+          "denominator": "3200"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "4",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.926125",
+          "adjustedEquivalent": "3.07243125"
+        }
+      },
+      {
+        "id": "material-65",
+        "calculationItemId": "calculation-42",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.43891875",
+        "wastage": "0.021945938",
+        "final": "0.460864688",
+        "theoreticalExact": {
+          "numerator": "70227",
+          "denominator": "160000"
+        },
+        "finalExact": {
+          "numerator": "1474767",
+          "denominator": "3200000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-66",
+        "calculationItemId": "calculation-43",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "252.225",
+        "wastage": "12.61125",
+        "final": "264.83625",
+        "theoreticalExact": {
+          "numerator": "10089",
+          "denominator": "40"
+        },
+        "finalExact": {
+          "numerator": "211869",
+          "denominator": "800"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "6",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "5.0445",
+          "adjustedEquivalent": "5.296725"
+        }
+      },
+      {
+        "id": "material-67",
+        "calculationItemId": "calculation-43",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.756675",
+        "wastage": "0.03783375",
+        "final": "0.79450875",
+        "theoreticalExact": {
+          "numerator": "30267",
+          "denominator": "40000"
+        },
+        "finalExact": {
+          "numerator": "635607",
+          "denominator": "800000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-68",
+        "calculationItemId": "calculation-44",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "238.05",
+        "wastage": "11.9025",
+        "final": "249.9525",
+        "theoreticalExact": {
+          "numerator": "4761",
+          "denominator": "20"
+        },
+        "finalExact": {
+          "numerator": "99981",
+          "denominator": "400"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "5",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "4.761",
+          "adjustedEquivalent": "4.99905"
+        }
+      },
+      {
+        "id": "material-69",
+        "calculationItemId": "calculation-44",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.71415",
+        "wastage": "0.0357075",
+        "final": "0.7498575",
+        "theoreticalExact": {
+          "numerator": "14283",
+          "denominator": "20000"
+        },
+        "finalExact": {
+          "numerator": "299943",
+          "denominator": "400000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-70",
+        "calculationItemId": "calculation-45",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "111.9375",
+        "wastage": "5.596875",
+        "final": "117.534375",
+        "theoreticalExact": {
+          "numerator": "1791",
+          "denominator": "16"
+        },
+        "finalExact": {
+          "numerator": "37611",
+          "denominator": "320"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "3",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.23875",
+          "adjustedEquivalent": "2.3506875"
+        }
+      },
+      {
+        "id": "material-71",
+        "calculationItemId": "calculation-45",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.3358125",
+        "wastage": "0.016790625",
+        "final": "0.352603125",
+        "theoreticalExact": {
+          "numerator": "5373",
+          "denominator": "16000"
+        },
+        "finalExact": {
+          "numerator": "112833",
+          "denominator": "320000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-72",
+        "calculationItemId": "calculation-46",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "111.9375",
+        "wastage": "5.596875",
+        "final": "117.534375",
+        "theoreticalExact": {
+          "numerator": "1791",
+          "denominator": "16"
+        },
+        "finalExact": {
+          "numerator": "37611",
+          "denominator": "320"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "3",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.23875",
+          "adjustedEquivalent": "2.3506875"
+        }
+      },
+      {
+        "id": "material-73",
+        "calculationItemId": "calculation-46",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.3358125",
+        "wastage": "0.016790625",
+        "final": "0.352603125",
+        "theoreticalExact": {
+          "numerator": "5373",
+          "denominator": "16000"
+        },
+        "finalExact": {
+          "numerator": "112833",
+          "denominator": "320000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-74",
+        "calculationItemId": "calculation-47",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "126.1125",
+        "wastage": "6.305625",
+        "final": "132.418125",
+        "theoreticalExact": {
+          "numerator": "10089",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "211869",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "3",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.52225",
+          "adjustedEquivalent": "2.6483625"
+        }
+      },
+      {
+        "id": "material-75",
+        "calculationItemId": "calculation-47",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.3783375",
+        "wastage": "0.018916875",
+        "final": "0.397254375",
+        "theoreticalExact": {
+          "numerator": "30267",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "635607",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-76",
+        "calculationItemId": "calculation-48",
+        "coatingId": null,
+        "materialCode": "CEMENT",
+        "unit": "kg",
+        "theoretical": "126.1125",
+        "wastage": "6.305625",
+        "final": "132.418125",
+        "theoreticalExact": {
+          "numerator": "10089",
+          "denominator": "80"
+        },
+        "finalExact": {
+          "numerator": "211869",
+          "denominator": "1600"
+        },
+        "purchase": {
+          "unit": "bag",
+          "quantity": "3",
+          "bagMassKg": "50",
+          "theoreticalEquivalent": "2.52225",
+          "adjustedEquivalent": "2.6483625"
+        }
+      },
+      {
+        "id": "material-77",
+        "calculationItemId": "calculation-48",
+        "coatingId": null,
+        "materialCode": "SAND",
+        "unit": "m3",
+        "theoretical": "0.3783375",
+        "wastage": "0.018916875",
+        "final": "0.397254375",
+        "theoreticalExact": {
+          "numerator": "30267",
+          "denominator": "80000"
+        },
+        "finalExact": {
+          "numerator": "635607",
+          "denominator": "1600000"
+        },
+        "purchase": null
+      },
+      {
+        "id": "material-78",
+        "calculationItemId": "calculation-49",
+        "coatingId": null,
+        "materialCode": "WINDOW_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-79",
+        "calculationItemId": "calculation-50",
+        "coatingId": null,
+        "materialCode": "WINDOW_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-80",
+        "calculationItemId": "calculation-51",
+        "coatingId": null,
+        "materialCode": "WINDOW_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-81",
+        "calculationItemId": "calculation-52",
+        "coatingId": null,
+        "materialCode": "WINDOW_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      },
+      {
+        "id": "material-82",
+        "calculationItemId": "calculation-53",
+        "coatingId": null,
+        "materialCode": "WINDOW_UNIT",
+        "unit": "each",
+        "theoretical": "1",
+        "wastage": "0",
+        "final": "1",
+        "theoreticalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "finalExact": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "purchase": {
+          "unit": "each",
+          "quantity": "1",
+          "bagMassKg": null,
+          "theoreticalEquivalent": "1",
+          "adjustedEquivalent": "1"
+        }
+      }
+    ],
+    "sections": [
+      {
+        "dimension": "level",
+        "key": "level-0",
+        "totals": [
+          {
+            "materialCode": "CEMENT",
+            "unit": "kg",
+            "theoretical": "1638.7875",
+            "wastage": "81.939375",
+            "final": "1720.726875",
+            "purchases": [
+              {
+                "unit": "bag",
+                "bagMassKg": "50",
+                "quantity": "43"
+              }
+            ]
+          },
+          {
+            "materialCode": "DOOR_UNIT",
+            "unit": "each",
+            "theoretical": "5",
+            "wastage": "0",
+            "final": "5",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "5"
+              }
+            ]
+          },
+          {
+            "materialCode": "FLOOR_TILE",
+            "unit": "piece",
+            "theoretical": "462.56",
+            "wastage": "46.256",
+            "final": "508.816",
+            "purchases": [
+              {
+                "unit": "piece",
+                "bagMassKg": null,
+                "quantity": "511"
+              }
+            ]
+          },
+          {
+            "materialCode": "READY_MIX_CONCRETE",
+            "unit": "m3",
+            "theoretical": "18",
+            "wastage": "0.9",
+            "final": "18.9",
+            "purchases": []
+          },
+          {
+            "materialCode": "SAND",
+            "unit": "m3",
+            "theoretical": "4.9163625",
+            "wastage": "0.24581813",
+            "final": "5.16218063",
+            "purchases": []
+          },
+          {
+            "materialCode": "WINDOW_UNIT",
+            "unit": "each",
+            "theoretical": "3",
+            "wastage": "0",
+            "final": "3",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "3"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dimension": "level",
+        "key": "level-1",
+        "totals": [
+          {
+            "materialCode": "CEMENT",
+            "unit": "kg",
+            "theoretical": "1520.83125",
+            "wastage": "76.0415625",
+            "final": "1596.8728125",
+            "purchases": [
+              {
+                "unit": "bag",
+                "bagMassKg": "50",
+                "quantity": "39"
+              }
+            ]
+          },
+          {
+            "materialCode": "DOOR_UNIT",
+            "unit": "each",
+            "theoretical": "3",
+            "wastage": "0",
+            "final": "3",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "3"
+              }
+            ]
+          },
+          {
+            "materialCode": "FLOOR_TILE",
+            "unit": "piece",
+            "theoretical": "462.56",
+            "wastage": "46.256",
+            "final": "508.816",
+            "purchases": [
+              {
+                "unit": "piece",
+                "bagMassKg": null,
+                "quantity": "510"
+              }
+            ]
+          },
+          {
+            "materialCode": "READY_MIX_CONCRETE",
+            "unit": "m3",
+            "theoretical": "17.37",
+            "wastage": "0.8685",
+            "final": "18.2385",
+            "purchases": []
+          },
+          {
+            "materialCode": "SAND",
+            "unit": "m3",
+            "theoretical": "4.56249375",
+            "wastage": "0.22812469",
+            "final": "4.79061844",
+            "purchases": []
+          },
+          {
+            "materialCode": "WINDOW_UNIT",
+            "unit": "each",
+            "theoretical": "2",
+            "wastage": "0",
+            "final": "2",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dimension": "assembly",
+        "key": "doors",
+        "totals": [
+          {
+            "materialCode": "DOOR_UNIT",
+            "unit": "each",
+            "theoretical": "8",
+            "wastage": "0",
+            "final": "8",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dimension": "assembly",
+        "key": "floor-concrete",
+        "totals": [
+          {
+            "materialCode": "READY_MIX_CONCRETE",
+            "unit": "m3",
+            "theoretical": "35.37",
+            "wastage": "1.7685",
+            "final": "37.1385",
+            "purchases": []
+          }
+        ]
+      },
+      {
+        "dimension": "assembly",
+        "key": "plaster",
+        "totals": [
+          {
+            "materialCode": "CEMENT",
+            "unit": "kg",
+            "theoretical": "3159.61875",
+            "wastage": "157.9809375",
+            "final": "3317.5996875",
+            "purchases": [
+              {
+                "unit": "bag",
+                "bagMassKg": "50",
+                "quantity": "82"
+              }
+            ]
+          },
+          {
+            "materialCode": "SAND",
+            "unit": "m3",
+            "theoretical": "9.47885625",
+            "wastage": "0.47394282",
+            "final": "9.95279907",
+            "purchases": []
+          }
+        ]
+      },
+      {
+        "dimension": "assembly",
+        "key": "tiles",
+        "totals": [
+          {
+            "materialCode": "FLOOR_TILE",
+            "unit": "piece",
+            "theoretical": "925.12",
+            "wastage": "92.512",
+            "final": "1017.632",
+            "purchases": [
+              {
+                "unit": "piece",
+                "bagMassKg": null,
+                "quantity": "1021"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dimension": "assembly",
+        "key": "windows",
+        "totals": [
+          {
+            "materialCode": "WINDOW_UNIT",
+            "unit": "each",
+            "theoretical": "5",
+            "wastage": "0",
+            "final": "5",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "5"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dimension": "specification",
+        "key": null,
+        "totals": [
+          {
+            "materialCode": "CEMENT",
+            "unit": "kg",
+            "theoretical": "3159.61875",
+            "wastage": "157.9809375",
+            "final": "3317.5996875",
+            "purchases": [
+              {
+                "unit": "bag",
+                "bagMassKg": "50",
+                "quantity": "82"
+              }
+            ]
+          },
+          {
+            "materialCode": "DOOR_UNIT",
+            "unit": "each",
+            "theoretical": "8",
+            "wastage": "0",
+            "final": "8",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "8"
+              }
+            ]
+          },
+          {
+            "materialCode": "FLOOR_TILE",
+            "unit": "piece",
+            "theoretical": "925.12",
+            "wastage": "92.512",
+            "final": "1017.632",
+            "purchases": [
+              {
+                "unit": "piece",
+                "bagMassKg": null,
+                "quantity": "1021"
+              }
+            ]
+          },
+          {
+            "materialCode": "READY_MIX_CONCRETE",
+            "unit": "m3",
+            "theoretical": "35.37",
+            "wastage": "1.7685",
+            "final": "37.1385",
+            "purchases": []
+          },
+          {
+            "materialCode": "SAND",
+            "unit": "m3",
+            "theoretical": "9.47885625",
+            "wastage": "0.47394282",
+            "final": "9.95279907",
+            "purchases": []
+          },
+          {
+            "materialCode": "WINDOW_UNIT",
+            "unit": "each",
+            "theoretical": "5",
+            "wastage": "0",
+            "final": "5",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "5"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "coverage": [
+      {
+        "category": "upstream:wall_centerline_and_segment_prism",
+        "status": "EVALUATED",
+        "reason": "Explicit wall segments; junction overlap policy applies",
+        "itemCount": 29
+      },
+      {
+        "category": "upstream:wall_union_solid",
+        "status": "PARTIAL",
+        "reason": "No boolean union; segment-prism basis only",
+        "itemCount": 29
+      },
+      {
+        "category": "upstream:single_wall_faces",
+        "status": "EVALUATED",
+        "reason": "One longitudinal face, no finish assignment",
+        "itemCount": 29
+      },
+      {
+        "category": "upstream:spaces",
+        "status": "EVALUATED",
+        "reason": "Centerline-space area and perimeter",
+        "itemCount": 9
+      },
+      {
+        "category": "upstream:floor_plates",
+        "status": "EVALUATED",
+        "reason": "Explicit net floor plates and geometric GFA",
+        "itemCount": 2
+      },
+      {
+        "category": "upstream:flat_roofs",
+        "status": "EVALUATED",
+        "reason": "Explicit flat-roof plates only",
+        "itemCount": 1
+      },
+      {
+        "category": "upstream:ceiling_plates",
+        "status": "NOT_EVALUATED",
+        "reason": "Explicit ceiling plates only",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:openings",
+        "status": "EVALUATED",
+        "reason": "Hosted door/window/generic entities counted and deducted once",
+        "itemCount": 13
+      },
+      {
+        "category": "upstream:stairs",
+        "status": "EVALUATED",
+        "reason": "Explicit straight flights and landings, no physical solids",
+        "itemCount": 1
+      },
+      {
+        "category": "upstream:columns",
+        "status": "NOT_EVALUATED",
+        "reason": "Architectural column geometry only",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:site",
+        "status": "EVALUATED",
+        "reason": "Explicit site boundary",
+        "itemCount": 1
+      },
+      {
+        "category": "upstream:buildable_area",
+        "status": "EVALUATED",
+        "reason": "Explicit buildable boundary only",
+        "itemCount": 1
+      },
+      {
+        "category": "upstream:level_envelopes",
+        "status": "EVALUATED",
+        "reason": "Plan envelopes, not physical plates",
+        "itemCount": 2
+      },
+      {
+        "category": "upstream:implicit_ceiling_finish",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:pitched_roofs",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:building_footprint_union",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:structural_engineering",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:mep",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:material_recipes",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "upstream:prices",
+        "status": "NOT_EVALUATED",
+        "reason": "Not represented/evaluated by this measurement policy",
+        "itemCount": 0
+      },
+      {
+        "category": "WALL_SEGMENT_NET_VOLUME",
+        "status": "NOT_EVALUATED",
+        "reason": "0 of 29 bases assigned and evaluated.",
+        "itemCount": 29
+      },
+      {
+        "category": "WALL_SINGLE_FACE_NET_AREA",
+        "status": "EVALUATED",
+        "reason": "29 of 29 bases assigned and evaluated.",
+        "itemCount": 29
+      },
+      {
+        "category": "FLOOR_FINISH_BASE_AREA",
+        "status": "PARTIAL",
+        "reason": "9 of 9 bases assigned and evaluated.",
+        "itemCount": 9
+      },
+      {
+        "category": "FLOOR_PLATE_VOLUME",
+        "status": "EVALUATED",
+        "reason": "2 of 2 bases assigned and evaluated.",
+        "itemCount": 2
+      },
+      {
+        "category": "ROOF_VOLUME",
+        "status": "NOT_EVALUATED",
+        "reason": "0 of 1 bases assigned and evaluated.",
+        "itemCount": 1
+      },
+      {
+        "category": "COLUMN_GEOMETRIC_VOLUME",
+        "status": "NOT_EVALUATED",
+        "reason": "No represented quantity basis.",
+        "itemCount": 0
+      },
+      {
+        "category": "DOOR_COUNT",
+        "status": "EVALUATED",
+        "reason": "8 of 8 bases assigned and evaluated.",
+        "itemCount": 8
+      },
+      {
+        "category": "WINDOW_COUNT",
+        "status": "EVALUATED",
+        "reason": "5 of 5 bases assigned and evaluated.",
+        "itemCount": 5
+      },
+      {
+        "category": "STRUCTURAL_REINFORCEMENT",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "FOUNDATIONS_EXCAVATION",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "MEP",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "STRUCTURAL_STAIRS",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "CEILINGS",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "WATERPROOFING",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "PITCHED_ROOFS",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "ADHESIVE_GROUT",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "HARDWARE_GLAZING",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      },
+      {
+        "category": "CUTTING_OPTIMIZATION",
+        "status": "NOT_EVALUATED",
+        "reason": "Outside supported construction recipes.",
+        "itemCount": 0
+      }
+    ],
+    "warnings": [
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "ROOF_VOLUME:roof"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-0"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-1"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-10"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-11"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-12"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-13"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-14"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-15"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-2"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-3"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-4"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-5"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-6"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-7"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-8"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-9"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-16"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-17"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-18"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-19"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-20"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-21"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-22"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-23"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-24"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-25"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-26"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-27"
+      },
+      {
+        "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+        "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-1-28"
+      }
+    ]
+  }
+}

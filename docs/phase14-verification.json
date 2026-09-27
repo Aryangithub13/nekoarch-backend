@@ -1,0 +1,134 @@
+{
+  "phase": 14,
+  "verifiedAtUtc": "2026-09-27T08:57:53.100440+00:00",
+  "baselineCommit": "cceb01d",
+  "baselineTag": "backend-v1-phase13-complete",
+  "scope": "Construction calculation engine, owner-only API and immutable signed persistence. Phase 15/frontend deferred.",
+  "results": [
+    {
+      "command": "npm run check",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-check.log",
+      "logSha256": "0938818ffacc2618284dbc5d61b26954c0c1a9c805dc59fafa21b44d9f45caca",
+      "testsPassed": 1505,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npm run test:integration (second full integration pass)",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-integration-full2.log",
+      "logSha256": "8492222c95450e194b84f10a23ffddeb6beee1ba9437c99f75396b9427066cc8",
+      "testsPassed": 93,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npm run test:integration (third full integration pass)",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-integration-full3.log",
+      "logSha256": "0215d2dfda35b0b69ff6fe7ebc50d29fd5e009eb74b8dfcf6fc0749b50e23d15",
+      "testsPassed": 93,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npx supabase migration up --local",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-supabase-migration.log",
+      "logSha256": "ee2ed4b9292670c74c80897bac53e912b7abcc1b34a3031fb1c6c934ff08795e"
+    },
+    {
+      "command": "npm run db:test",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-pgtap.log",
+      "logSha256": "aefbedbe8379c7d9dc4812fa1af22ecc733ecc1f80a73da16721d2ad976abd87",
+      "testsPassed": 34,
+      "testsSkipped": 0
+    },
+    {
+      "command": "node scripts/test-local-supabase.mjs (first unchanged rerun)",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-supabase2.log",
+      "logSha256": "f4a731e46f73746a342801caa93c803d6dea6c7958993de4890177caee85bcaf",
+      "testsPassed": 30,
+      "testsSkipped": 0
+    },
+    {
+      "command": "node scripts/test-local-supabase.mjs (second unchanged rerun)",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-supabase3.log",
+      "logSha256": "116a521fe8b59f3dd74d24c2aaea8fb92dfea10f5e357bbef1042486193e3621",
+      "testsPassed": 30,
+      "testsSkipped": 0
+    },
+    {
+      "command": "docker build -t designflow-api:phase14 .",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-docker.log",
+      "logSha256": "6019d51c5f2744470c313aaeecbf56537d1bce5f03502137b1ab1f9f2047a556"
+    },
+    {
+      "command": "node scripts/smoke-container.mjs designflow-api:phase14",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "/tmp/designflow-phase14-smoke.log",
+      "logSha256": "f442a5559566e43c2d8c165adb5ea08efb8a0c4b00e1c2d13817d9aa93952f6d"
+    }
+  ],
+  "testCoverage": {
+    "newPureEngineTests": 25,
+    "newPostgresIntegrationTests": 9,
+    "sharedSupabaseConstructionTests": 4,
+    "aggregateTests": 1505,
+    "aggregateFiles": 33,
+    "integrationPasses": 3,
+    "integrationPassNote": "First full integration pass is included in npm run check; two subsequent full integration commands passed."
+  },
+  "observedFailures": [
+    {
+      "stage": "Initial sandboxed integration run",
+      "detail": "Loopback listen EPERM prevented tests from running. Same integration suite passed with authorized local socket access."
+    },
+    {
+      "stage": "Initial lint",
+      "detail": "Unused Assembly type import removed; final lint passes."
+    },
+    {
+      "stage": "Initial local Supabase run",
+      "detail": "One existing concurrent durable-operation test returned 500 (29/30 passed). All new construction cases passed. Same symptom appears in Phase 9/10 documentation. Two consecutive unchanged full reruns passed 30/30. Root cause remains unestablished; no baseline code or assertions were changed to mask it."
+    }
+  ],
+  "localDatabase": {
+    "migration": "0008_construction_calculations.sql",
+    "strategy": "Additive local migration; existing records preserved. No reset of populated local stack.",
+    "countsBeforeMigration": {
+      "authUsers": 0,
+      "plans": 0,
+      "projects": 11,
+      "revisions": 13,
+      "takeoffs": 15
+    },
+    "freshMigrationReplay": "Verified by disposable PostgreSQL integration harness",
+    "pgtap": "34 rollback-only assertions passed"
+  },
+  "container": {
+    "tag": "designflow-api:phase14",
+    "imageId": "cf0fc6eb5bb9",
+    "smoke": "Non-root, live 200, unavailable-dependency ready 503, SIGTERM exit 0"
+  },
+  "example": {
+    "path": "docs/phase14-example.json",
+    "source": "Committed Phase 13 example takeoff",
+    "mode": "Pure engine replay, synthetic explicit material specification",
+    "persisted": false
+  },
+  "completionCommitCreated": false,
+  "completionTagCreated": false,
+  "productionDeployed": false
+}

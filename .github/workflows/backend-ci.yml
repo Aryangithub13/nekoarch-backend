@@ -29,6 +29,7 @@ jobs:
       - run: npm run test:blueprint-qa
       - run: npm run test:projects
       - run: npm run test:takeoff
+      - run: npm run test:construction
       - run: npm run test:integration
       - run: docker build -t designflow-api:ci .
       - run: node scripts/smoke-container.mjs designflow-api:ci

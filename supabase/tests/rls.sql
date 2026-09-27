@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(29);
+select plan(34);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 12, 'exactly twelve public tables including revision takeoffs');
+  where n.nspname = 'public' and c.relkind = 'r'), 13, 'exactly thirteen public tables including construction calculations');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -74,8 +74,13 @@ select throws_ok('insert into public.project_revision_takeoffs default values', 
 select throws_ok('update public.project_revision_takeoffs set report_json = ''{}''', '42501', null, 'clients cannot rewrite takeoff reports');
 select throws_ok('delete from public.project_revision_takeoffs', '42501', null, 'clients cannot delete takeoff history');
 select throws_ok($$select public.takeoff_write('{}')$$, '42501', null, 'unsigned takeoff RPC is forbidden');
+select throws_ok('insert into public.project_revision_construction_calculations default values', '42501', null, 'clients cannot forge construction reports');
+select throws_ok('update public.project_revision_construction_calculations set report_json = ''{}''', '42501', null, 'clients cannot rewrite construction reports');
+select throws_ok('delete from public.project_revision_construction_calculations', '42501', null, 'clients cannot delete construction history');
+select throws_ok($$select public.construction_write('{}')$$, '42501', null, 'unsigned construction RPC is forbidden');
 set local role anon;
 select throws_ok('select * from public.project_revision_takeoffs', '42501', null, 'takeoffs are never public');
+select throws_ok('select * from public.project_revision_construction_calculations', '42501', null, 'construction reports are never public');
 reset role;
 select * from finish();
 rollback;

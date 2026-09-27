@@ -1,3 +1,4 @@
+import { constructionAcceptance } from '../../../test-support/construction-acceptance.js';
 import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
 import { projectAcceptance } from '../../../test-support/project-acceptance.js';
 import { requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
@@ -277,6 +278,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     }
   }, 60_000);
   takeoffAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  constructionAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
