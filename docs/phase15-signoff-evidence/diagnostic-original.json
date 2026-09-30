@@ -1,0 +1,1018 @@
+{
+  "timestamp": "2026-09-30T09:32:58.567Z",
+  "userIds": [
+    "737eda7c-3e4f-426a-83d2-ec97998a0353"
+  ],
+  "tokenTimings": [
+    {
+      "round": 0,
+      "receivedAt": "2026-09-30T09:32:58.058Z",
+      "iat": 1790760778,
+      "exp": 1790764378
+    }
+  ],
+  "cleanupFailures": [],
+  "roundsRequested": 20,
+  "failures": 3,
+  "environment": {
+    "postgres_version": "PostgreSQL 17.6 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 15.2.0, 64-bit",
+    "default_isolation": "read committed",
+    "postgrest_connections": "5"
+  },
+  "artifactCounts": {
+    "plans": "2",
+    "estimates": "1",
+    "audits": "2"
+  },
+  "apiResponses": [
+    {
+      "sequence": "0:/api/plans:2",
+      "operation": "/api/plans",
+      "keyHash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "requestId": "1f51b4a1-3655-49fc-a713-b8b5603471f6",
+      "status": 500,
+      "atMs": 254.6,
+      "body": {
+        "error": {
+          "code": "DATABASE_ERROR",
+          "message": "The database operation could not be completed",
+          "requestId": "1f51b4a1-3655-49fc-a713-b8b5603471f6"
+        }
+      }
+    },
+    {
+      "sequence": "0:/api/plans:1",
+      "operation": "/api/plans",
+      "keyHash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "requestId": "e6b0fd3a-15c5-43b4-9f6a-4487afa73847",
+      "status": 500,
+      "atMs": 261.497,
+      "body": {
+        "error": {
+          "code": "DATABASE_ERROR",
+          "message": "The database operation could not be completed",
+          "requestId": "e6b0fd3a-15c5-43b4-9f6a-4487afa73847"
+        }
+      }
+    },
+    {
+      "sequence": "0:/api/plans:0",
+      "operation": "/api/plans",
+      "keyHash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "requestId": "69f0d911-9671-41c7-9d38-4994990066a8",
+      "status": 500,
+      "atMs": 262.664,
+      "body": {
+        "error": {
+          "code": "DATABASE_ERROR",
+          "message": "The database operation could not be completed",
+          "requestId": "69f0d911-9671-41c7-9d38-4994990066a8"
+        }
+      }
+    },
+    {
+      "sequence": "0:/api/plans:3",
+      "operation": "/api/plans",
+      "keyHash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "requestId": "f5f53b58-daa2-4087-b628-87a24dd19ef0",
+      "status": 201,
+      "atMs": 281.096
+    },
+    {
+      "sequence": "0:/api/plans/generate:3",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "requestId": "a8daec0b-b2bc-4aa9-bfe6-b834fc5a40cf",
+      "status": 201,
+      "atMs": 362.766
+    },
+    {
+      "sequence": "0:/api/plans/generate:0",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "requestId": "c2eead47-5381-4a5e-96c2-5d58532e3310",
+      "status": 201,
+      "atMs": 363.561
+    },
+    {
+      "sequence": "0:/api/plans/generate:1",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "requestId": "cf81629b-32ef-4f02-9ea2-9305ea2ed1f5",
+      "status": 201,
+      "atMs": 364.198
+    },
+    {
+      "sequence": "0:/api/plans/generate:2",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "requestId": "a32b8c79-a4be-4cac-8a94-fe85d82a9a87",
+      "status": 201,
+      "atMs": 367.285
+    },
+    {
+      "sequence": "0:/api/estimates:1",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "requestId": "64d87df0-df56-4725-a832-152de3d02c3c",
+      "status": 200,
+      "atMs": 442.882
+    },
+    {
+      "sequence": "0:/api/estimates:3",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "requestId": "9417a5ea-8e44-43ca-99c2-265f27207db0",
+      "status": 200,
+      "atMs": 443.722
+    },
+    {
+      "sequence": "0:/api/estimates:0",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "requestId": "0993f56b-2bf9-4d92-8312-57710347ef00",
+      "status": 200,
+      "atMs": 447.42
+    },
+    {
+      "sequence": "0:/api/estimates:2",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "requestId": "e9ebbfa1-e93e-486f-8a11-6aafcd315683",
+      "status": 200,
+      "atMs": 449.799
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "sequence": "0:/api/plans:0",
+      "atMs": 177.006,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 217.183,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "38"
+    },
+    {
+      "id": 2,
+      "sequence": "0:/api/plans:1",
+      "atMs": 178.429,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 221.689,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "34"
+    },
+    {
+      "id": 3,
+      "sequence": "0:/api/plans:2",
+      "atMs": 179.138,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 223.407,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "35"
+    },
+    {
+      "id": 4,
+      "sequence": "0:/api/plans:3",
+      "atMs": 179.73,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 225.807,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "36"
+    },
+    {
+      "id": 5,
+      "sequence": "0:/api/plans:0",
+      "atMs": 220.552,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 401,
+      "finishedMs": 261.99,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "31",
+      "errorBody": "{\"code\":\"PGRST303\",\"details\":null,\"hint\":null,\"message\":\"JWT issued at future\"}"
+    },
+    {
+      "id": 6,
+      "sequence": "0:/api/plans:1",
+      "atMs": 222.78,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 401,
+      "finishedMs": 260.162,
+      "requestId": null,
+      "proxyLatencyMs": "2",
+      "upstreamLatencyMs": "34",
+      "errorBody": "{\"code\":\"PGRST303\",\"details\":null,\"hint\":null,\"message\":\"JWT issued at future\"}"
+    },
+    {
+      "id": 7,
+      "sequence": "0:/api/plans:2",
+      "atMs": 224.503,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 401,
+      "finishedMs": 250.612,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "20",
+      "errorBody": "{\"code\":\"PGRST303\",\"details\":null,\"hint\":null,\"message\":\"JWT issued at future\"}"
+    },
+    {
+      "id": 8,
+      "sequence": "0:/api/plans:3",
+      "atMs": 227.884,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 266.388,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "34"
+    },
+    {
+      "kind": "api-error",
+      "requestId": "1f51b4a1-3655-49fc-a713-b8b5603471f6",
+      "code": "DATABASE_ERROR",
+      "error": "ApiError: The database operation could not be completed"
+    },
+    {
+      "kind": "api-error",
+      "requestId": "e6b0fd3a-15c5-43b4-9f6a-4487afa73847",
+      "code": "DATABASE_ERROR",
+      "error": "ApiError: The database operation could not be completed"
+    },
+    {
+      "kind": "api-error",
+      "requestId": "69f0d911-9671-41c7-9d38-4994990066a8",
+      "code": "DATABASE_ERROR",
+      "error": "ApiError: The database operation could not be completed"
+    },
+    {
+      "id": 9,
+      "sequence": "0:/api/plans:3",
+      "atMs": 267.773,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/plans",
+      "keyHash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "fingerprint": "5be965d12c2d2a07dde5927e10f3eb95808e193574896434a70cacf3177a47eb",
+      "status": 200,
+      "finishedMs": 280.17,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "11"
+    },
+    {
+      "id": 10,
+      "sequence": "0:/api/plans/generate:0",
+      "atMs": 283.235,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 333.341,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "46"
+    },
+    {
+      "id": 11,
+      "sequence": "0:/api/plans/generate:1",
+      "atMs": 283.689,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 335.06,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "46"
+    },
+    {
+      "id": 12,
+      "sequence": "0:/api/plans/generate:2",
+      "atMs": 283.984,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 336.313,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "46"
+    },
+    {
+      "id": 13,
+      "sequence": "0:/api/plans/generate:3",
+      "atMs": 284.386,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 330.883,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "45"
+    },
+    {
+      "id": 14,
+      "sequence": "0:/api/plans/generate:3",
+      "atMs": 332.815,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 337.41,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "2"
+    },
+    {
+      "id": 15,
+      "sequence": "0:/api/plans/generate:0",
+      "atMs": 334.566,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 347.361,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "1"
+    },
+    {
+      "id": 16,
+      "sequence": "0:/api/plans/generate:1",
+      "atMs": 335.91,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 352.125,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 17,
+      "sequence": "0:/api/plans/generate:2",
+      "atMs": 336.957,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 356.023,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "10"
+    },
+    {
+      "id": 18,
+      "sequence": "0:/api/plans/generate:3",
+      "atMs": 346.513,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "fingerprint": "f4e27ef68939ec6fe7a5c07f9babb2761f5922d0b5473fdae817e2947ec31ed4",
+      "status": 200,
+      "finishedMs": 361.981,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "6"
+    },
+    {
+      "id": 19,
+      "sequence": "0:/api/plans/generate:0",
+      "atMs": 351.035,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "fingerprint": "f4e27ef68939ec6fe7a5c07f9babb2761f5922d0b5473fdae817e2947ec31ed4",
+      "status": 200,
+      "finishedMs": 362.935,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 20,
+      "sequence": "0:/api/plans/generate:1",
+      "atMs": 355.013,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "fingerprint": "f4e27ef68939ec6fe7a5c07f9babb2761f5922d0b5473fdae817e2947ec31ed4",
+      "status": 200,
+      "finishedMs": 363.718,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 21,
+      "sequence": "0:/api/plans/generate:2",
+      "atMs": 360.693,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/plans/generate",
+      "keyHash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "fingerprint": "f4e27ef68939ec6fe7a5c07f9babb2761f5922d0b5473fdae817e2947ec31ed4",
+      "status": 200,
+      "finishedMs": 366.663,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "4"
+    },
+    {
+      "id": 22,
+      "sequence": "0:/api/estimates:0",
+      "atMs": 369.398,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 414.285,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "40"
+    },
+    {
+      "id": 23,
+      "sequence": "0:/api/estimates:1",
+      "atMs": 369.816,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 413.489,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "40"
+    },
+    {
+      "id": 24,
+      "sequence": "0:/api/estimates:2",
+      "atMs": 370.026,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 410.724,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "40"
+    },
+    {
+      "id": 25,
+      "sequence": "0:/api/estimates:3",
+      "atMs": 370.248,
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 412.509,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "39"
+    },
+    {
+      "id": 26,
+      "sequence": "0:/api/estimates:2",
+      "atMs": 411.96,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 416.686,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "2"
+    },
+    {
+      "id": 27,
+      "sequence": "0:/api/estimates:3",
+      "atMs": 413.133,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 415.251,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "1"
+    },
+    {
+      "id": 28,
+      "sequence": "0:/api/estimates:1",
+      "atMs": 413.952,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 417.421,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "2"
+    },
+    {
+      "id": 29,
+      "sequence": "0:/api/estimates:0",
+      "atMs": 414.738,
+      "path": "/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 418.088,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "2"
+    },
+    {
+      "id": 30,
+      "sequence": "0:/api/estimates:3",
+      "atMs": 416.245,
+      "path": "/rest/v1/rate_table_versions",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 421.56,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 31,
+      "sequence": "0:/api/estimates:2",
+      "atMs": 417.004,
+      "path": "/rest/v1/rate_table_versions",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 434.635,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "13"
+    },
+    {
+      "id": 32,
+      "sequence": "0:/api/estimates:1",
+      "atMs": 417.743,
+      "path": "/rest/v1/rate_table_versions",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 420.216,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "2"
+    },
+    {
+      "id": 33,
+      "sequence": "0:/api/estimates:0",
+      "atMs": 418.407,
+      "path": "/rest/v1/rate_table_versions",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 435.379,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "11"
+    },
+    {
+      "id": 34,
+      "sequence": "0:/api/estimates:1",
+      "atMs": 421.07,
+      "path": "/rest/v1/rate_table_entries",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 426.063,
+      "requestId": null,
+      "proxyLatencyMs": "1",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 35,
+      "sequence": "0:/api/estimates:3",
+      "atMs": 422.035,
+      "path": "/rest/v1/rate_table_entries",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 432.099,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "4"
+    },
+    {
+      "id": 36,
+      "sequence": "0:/api/estimates:1",
+      "atMs": 431.06,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "fingerprint": "deef0d2e4eaeb18745f4d5a764aa360e2fb9420567cb101fab55b8635e81f021",
+      "status": 200,
+      "finishedMs": 441.92,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "7"
+    },
+    {
+      "id": 37,
+      "sequence": "0:/api/estimates:3",
+      "atMs": 433.96,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "fingerprint": "deef0d2e4eaeb18745f4d5a764aa360e2fb9420567cb101fab55b8635e81f021",
+      "status": 200,
+      "finishedMs": 443.134,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "4"
+    },
+    {
+      "id": 38,
+      "sequence": "0:/api/estimates:2",
+      "atMs": 435.022,
+      "path": "/rest/v1/rate_table_entries",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 443.891,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "5"
+    },
+    {
+      "id": 39,
+      "sequence": "0:/api/estimates:0",
+      "atMs": 435.654,
+      "path": "/rest/v1/rate_table_entries",
+      "method": "GET",
+      "status": 200,
+      "finishedMs": 439.017,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    },
+    {
+      "id": 40,
+      "sequence": "0:/api/estimates:0",
+      "atMs": 440.816,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "fingerprint": "deef0d2e4eaeb18745f4d5a764aa360e2fb9420567cb101fab55b8635e81f021",
+      "status": 200,
+      "finishedMs": 446.907,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "5"
+    },
+    {
+      "id": 41,
+      "sequence": "0:/api/estimates:2",
+      "atMs": 445.532,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "method": "POST",
+      "operation": "/api/estimates",
+      "keyHash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "fingerprint": "deef0d2e4eaeb18745f4d5a764aa360e2fb9420567cb101fab55b8635e81f021",
+      "status": 200,
+      "finishedMs": 449.116,
+      "requestId": null,
+      "proxyLatencyMs": "0",
+      "upstreamLatencyMs": "3"
+    }
+  ],
+  "snapshots": [
+    {
+      "atMs": 180.995,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 202.58,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 230.764,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 256.005,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 277.482,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": "2026-09-30T09:32:58.328Z",
+          "query_start": "2026-09-30T09:32:58.330Z",
+          "state": "active",
+          "wait_event_type": null,
+          "wait_event": null,
+          "blocking_pids": [],
+          "advisory_locks": [
+            {
+              "mode": "ExclusiveLock",
+              "objid": "1004390505",
+              "classid": "275562814",
+              "granted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "atMs": 300.266,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.337Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 322.298,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.337Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 361.747,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": "2026-09-30T09:32:58.407Z",
+          "query_start": "2026-09-30T09:32:58.411Z",
+          "state": "active",
+          "wait_event_type": "IO",
+          "wait_event": "WalSync",
+          "blocking_pids": [],
+          "advisory_locks": [
+            {
+              "mode": "ExclusiveLock",
+              "objid": "1256464554",
+              "classid": "2961227524",
+              "granted": true
+            }
+          ]
+        },
+        {
+          "pid": 54834,
+          "backend_start": "2026-09-30T09:32:58.397Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.410Z",
+          "state": "idle",
+          "wait_event_type": null,
+          "wait_event": null,
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 382.8,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.417Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54834,
+          "backend_start": "2026-09-30T09:32:58.397Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.424Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 404.219,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.417Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54834,
+          "backend_start": "2026-09-30T09:32:58.397Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.424Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    },
+    {
+      "atMs": 431.878,
+      "connections": [
+        {
+          "pid": 66,
+          "backend_start": "2026-09-27T10:40:38.479Z",
+          "xact_start": null,
+          "query_start": "2026-09-27T10:40:38.490Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54793,
+          "backend_start": "2026-09-30T09:32:58.311Z",
+          "xact_start": null,
+          "query_start": "2026-09-30T09:32:58.483Z",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "blocking_pids": [],
+          "advisory_locks": []
+        },
+        {
+          "pid": 54834,
+          "backend_start": "2026-09-30T09:32:58.397Z",
+          "xact_start": "2026-09-30T09:32:58.482Z",
+          "query_start": "2026-09-30T09:32:58.483Z",
+          "state": "active",
+          "wait_event_type": null,
+          "wait_event": null,
+          "blocking_pids": [],
+          "advisory_locks": []
+        }
+      ]
+    }
+  ],
+  "stored": [
+    {
+      "operation": "/api/estimates",
+      "key_hash": "3f651e042aedb36b54ffb67d23867c290b5c126686a01c4fbda8581982cdcc3a",
+      "count": "1"
+    },
+    {
+      "operation": "/api/plans",
+      "key_hash": "99f4474415d1aaf2d3779ef8b085a247254259a64f4c4649a088f2d736b9d418",
+      "count": "1"
+    },
+    {
+      "operation": "/api/plans/generate",
+      "key_hash": "44f4078da9bc8cde9477452e6692999fb447edf5eb4ea4f50ab6147dfef2e048",
+      "count": "1"
+    }
+  ]
+}

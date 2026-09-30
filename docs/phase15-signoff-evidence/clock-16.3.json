@@ -1,0 +1,211 @@
+{
+  "version": "16.3",
+  "concurrency": 4,
+  "capabilities": "image-default",
+  "trace": [
+    {
+      "kind": "clock-primed",
+      "at": "2026-09-30T09:35:15.102Z",
+      "version": "16.3"
+    },
+    {
+      "kind": "replica-paused",
+      "at": "2026-09-30T09:35:15.125Z"
+    },
+    {
+      "kind": "fresh-token",
+      "at": "2026-09-30T09:35:55.182Z",
+      "iat": 1790760955,
+      "exp": 1790764555
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:35:55.315Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 41.07879300000059,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:35:55.316Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 47.77896200000396,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 2,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:35:55.317Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 49.08204999999725,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 3,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:35:55.317Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 44.005835999996634,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:35:55.360Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb",
+      "status": 200,
+      "durationMs": 74.5776840000035,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 3,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:35:55.363Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb",
+      "status": 200,
+      "durationMs": 70.0250789999991,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:35:55.365Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb",
+      "status": 200,
+      "durationMs": 64.95040100000188,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 2,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:35:55.367Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb",
+      "status": 200,
+      "durationMs": 69.0353879999966,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "requests-queued",
+      "count": 4,
+      "at": "2026-09-30T09:35:55.371Z"
+    },
+    {
+      "kind": "replica-resumed",
+      "at": "2026-09-30T09:35:55.392Z"
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:35:55.432Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 12.491214000001492,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 3,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:35:55.433Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 7.340996999999334,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:35:55.435Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 9.786111000001256,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 2,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:35:55.436Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 8.965370999998413,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "stored-counts",
+      "plans": "1",
+      "receipts": "1"
+    }
+  ],
+  "apiResponses": [
+    {
+      "sequence": 3,
+      "status": 201,
+      "requestId": "71d5a4a7-12b3-4423-8393-514492b4d652",
+      "operation": "/api/plans",
+      "keyHash": "306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb"
+    },
+    {
+      "sequence": 1,
+      "status": 201,
+      "requestId": "65afefdf-8745-480d-8231-b7372dac0f0c",
+      "operation": "/api/plans",
+      "keyHash": "306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb"
+    },
+    {
+      "sequence": 0,
+      "status": 201,
+      "requestId": "301a56ee-f528-4401-9e21-4b8a29d21ff3",
+      "operation": "/api/plans",
+      "keyHash": "306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb"
+    },
+    {
+      "sequence": 2,
+      "status": 201,
+      "requestId": "7b786bd0-1ab1-4544-9cf2-f6ab2e33393b",
+      "operation": "/api/plans",
+      "keyHash": "306bff514c3adb5b4a24d35eb8ad3d4aaa219aae141296875e92d2bcf50ad8cb"
+    }
+  ],
+  "cleanupFailures": []
+}

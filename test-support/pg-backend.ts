@@ -1,3 +1,4 @@
+import { costDatabaseError } from '../apps/api/src/lib/cost-repository.js';
 import { constructionDatabaseError } from '../apps/api/src/lib/construction-repository.js';
 import { takeoffDatabaseError } from '../apps/api/src/lib/takeoff-repository.js';
 import type { Pool } from 'pg';
@@ -24,6 +25,19 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
         catch (error) { databaseError(typeof error === 'object' && error !== null && 'code' in error ? { code: String(error.code) } : {}); }
       };
       return {
+        async costRpc(name, args) {
+          const keys = name === 'cost_write' ? ['p_input','p_context','p_envelope','p_signature']
+            : ['p_project_id','p_revision_id','p_cost_id','p_limit','p_cursor'];
+          const values = keys.map(key => args[key] ?? (key === 'p_limit' ? 20 : null));
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}(${values.map((_, i) => `$${i + 1}`).join(',')}) response`,
+              values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            costDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
         async constructionRpc(name, args) {
           const keys = name === 'construction_write' ? ['p_input','p_context','p_envelope','p_signature']
             : ['p_project_id','p_revision_id','p_takeoff_id','p_calculation_id','p_limit','p_cursor'];

@@ -1,0 +1,1184 @@
+COMMAND: npm run build
+STARTED: 2026-09-30T09:38:59.268473+00:00
+EXIT: 0
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+
+COMMAND: npm run typecheck
+STARTED: 2026-09-30T09:39:10.010751+00:00
+EXIT: 0
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/shared@0.1.0 typecheck:browser
+> tsc -p tsconfig.browser.json --noEmit
+
+
+> @designflow/generator@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit && tsc -p tsconfig.browser.json --noEmit
+
+
+
+COMMAND: npm run lint
+STARTED: 2026-09-30T09:39:27.162051+00:00
+EXIT: 0
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+
+COMMAND: npm run test:unit
+STARTED: 2026-09-30T09:39:29.714371+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:unit
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run packages/boq-cost/tests packages/construction-calculations/tests packages/quantity-takeoff/tests packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3183ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2211ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  705ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 2129ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  1701ms
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 1561ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 563ms
+ ✓ packages/blueprint-qa/tests/geometry-coverage.test.ts (17 tests) 345ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 335ms
+ ✓ apps/api/tests/generation.test.ts (36 tests) 309ms
+ ✓ packages/shared/tests/building-v2-model.test.ts (82 tests) 302ms
+ ✓ apps/api/tests/foundation.test.ts (30 tests) 270ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 257ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 270ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 226ms
+ ✓ apps/api/tests/hardening.test.ts (29 tests) 234ms
+ ✓ packages/blueprint-qa/tests/audit.test.ts (57 tests) 225ms
+ ✓ apps/api/tests/supabase-adapter.test.ts (36 tests) 168ms
+ ✓ packages/blueprint-qa/tests/rules.test.ts (15 tests) 115ms
+ ✓ packages/blueprint-qa/tests/boundary.test.ts (1 test) 107ms
+ ✓ packages/shared/tests/contracts.test.ts (411 tests) 58ms
+ ✓ apps/api/tests/estimate-service.test.ts (29 tests) 59ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 43ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 36ms
+ ✓ packages/shared/tests/building-v2-adapter.test.ts (16 tests) 29ms
+ ✓ packages/shared/tests/building-v2-precision.test.ts (65 tests) 21ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 20ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 6ms
+
+ Test Files  26 passed (26)
+      Tests  1436 passed (1436)
+   Start at  15:09:37
+   Duration  21.10s (transform 770ms, setup 0ms, collect 4.19s, tests 13.08s, environment 4ms, prepare 1.19s)
+
+
+
+COMMAND: npm run test:generator
+STARTED: 2026-09-30T09:39:59.201136+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:generator
+> npm run build -w @designflow/shared && vitest run packages/generator/tests
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3263ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2250ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  723ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 269ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 239ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 43ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 36ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 21ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 5ms
+
+ Test Files  8 passed (8)
+      Tests  461 passed (461)
+   Start at  15:10:01
+   Duration  7.93s (transform 232ms, setup 0ms, collect 632ms, tests 6.13s, environment 1ms, prepare 363ms)
+
+
+
+COMMAND: npm run test:blueprint
+STARTED: 2026-09-30T09:40:09.343798+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:blueprint
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3198ms
+
+ Test Files  1 passed (1)
+      Tests  137 passed (137)
+   Start at  15:10:12
+   Duration  3.60s (transform 168ms, setup 0ms, collect 239ms, tests 3.20s, environment 0ms, prepare 44ms)
+
+
+
+COMMAND: npm run test:blueprint-qa
+STARTED: 2026-09-30T09:40:16.570198+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:blueprint-qa
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run packages/blueprint-qa/tests
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 1549ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 563ms
+ ✓ packages/blueprint-qa/tests/geometry-coverage.test.ts (17 tests) 351ms
+ ✓ packages/blueprint-qa/tests/audit.test.ts (57 tests) 255ms
+ ✓ packages/blueprint-qa/tests/rules.test.ts (15 tests) 113ms
+ ✓ packages/blueprint-qa/tests/boundary.test.ts (1 test) 103ms
+
+ Test Files  6 passed (6)
+      Tests  177 passed (177)
+   Start at  15:10:24
+   Duration  4.81s (transform 228ms, setup 0ms, collect 982ms, tests 2.93s, environment 1ms, prepare 274ms)
+
+
+
+COMMAND: npm run test:projects
+STARTED: 2026-09-30T09:40:29.768666+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:projects
+> npm run build && vitest run apps/api/tests/projects.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2211ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  15:10:41
+   Duration  3.25s (transform 349ms, setup 0ms, collect 866ms, tests 2.21s, environment 0ms, prepare 45ms)
+
+
+
+COMMAND: npm run test:takeoff
+STARTED: 2026-09-30T09:40:44.549050+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:takeoff
+> npm run build && vitest run packages/quantity-takeoff/tests apps/api/tests/takeoffs.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2442ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  356ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  495ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  560ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 2220ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  1770ms
+
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+   Start at  15:10:56
+   Duration  6.00s (transform 394ms, setup 0ms, collect 1.00s, tests 4.66s, environment 0ms, prepare 95ms)
+
+
+
+COMMAND: npm run test:construction
+STARTED: 2026-09-30T09:41:02.155452+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:construction
+> npm run build && vitest run packages/construction-calculations/tests apps/api/tests/construction.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2628ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  481ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 267ms
+
+ Test Files  2 passed (2)
+      Tests  34 passed (34)
+   Start at  15:11:13
+   Duration  4.20s (transform 383ms, setup 0ms, collect 977ms, tests 2.90s, environment 0ms, prepare 94ms)
+
+
+
+COMMAND: npm run test:cost
+STARTED: 2026-09-30T09:41:17.871106+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:cost
+> npm run build && vitest run packages/boq-cost/tests apps/api/tests/costs.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4839ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  375ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  357ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  352ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  445ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  469ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  417ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  401ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 316ms
+
+ Test Files  2 passed (2)
+      Tests  39 passed (39)
+   Start at  15:11:29
+   Duration  6.47s (transform 392ms, setup 0ms, collect 997ms, tests 5.16s, environment 0ms, prepare 92ms)
+
+
+
+COMMAND: npm run test:integration
+STARTED: 2026-09-30T09:41:35.998209+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:integration
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts apps/api/tests/construction.integration.test.ts apps/api/tests/costs.integration.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4786ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  347ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  338ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  353ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  441ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  467ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  420ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  402ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2660ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  485ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > rejects deterministic report drift and permits distinct engine identities  301ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2364ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  365ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  496ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  475ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2192ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1089ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 859ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 826ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 829ms
+
+ Test Files  8 passed (8)
+      Tests  106 passed (106)
+   Start at  15:11:44
+   Duration  20.60s (transform 442ms, setup 0ms, collect 3.75s, tests 15.60s, environment 1ms, prepare 365ms)
+
+
+
+COMMAND: npm run test:integration
+STARTED: 2026-09-30T09:42:05.237520+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:integration
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts apps/api/tests/construction.integration.test.ts apps/api/tests/costs.integration.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4779ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  345ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  336ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  353ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  432ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  477ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  413ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  399ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2677ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  487ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2370ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  362ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  493ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  476ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2171ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1098ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 860ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 841ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 837ms
+
+ Test Files  8 passed (8)
+      Tests  106 passed (106)
+   Start at  15:12:13
+   Duration  20.68s (transform 429ms, setup 0ms, collect 3.77s, tests 15.63s, environment 1ms, prepare 377ms)
+
+
+
+COMMAND: npm run test:integration
+STARTED: 2026-09-30T09:42:34.386655+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:integration
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts apps/api/tests/construction.integration.test.ts apps/api/tests/costs.integration.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4834ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  357ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  343ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  355ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  437ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  470ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  412ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  418ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2715ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  490ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > rejects deterministic report drift and permits distinct engine identities  306ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2392ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  377ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  500ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  482ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2148ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1118ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 849ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 840ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 838ms
+
+ Test Files  8 passed (8)
+      Tests  106 passed (106)
+   Start at  15:12:42
+   Duration  20.86s (transform 478ms, setup 0ms, collect 3.86s, tests 15.74s, environment 1ms, prepare 368ms)
+
+
+
+COMMAND: npm run db:test
+STARTED: 2026-09-30T09:43:03.797615+00:00
+EXIT: 0
+
+> designflow@0.1.0 db:test
+> supabase test db
+
+Connecting to local database...
+psql:/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/supabase/tests/rls.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/supabase/tests/rls.sql .. ok
+All tests successful.
+Files=1, Tests=39,  0 wallclock secs ( 0.02 usr +  0.01 sys =  0.03 CPU)
+Result: PASS
+A new version of Supabase CLI is available: v2.118.0 (currently installed v2.117.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
+
+
+COMMAND: npm run check
+STARTED: 2026-09-30T09:43:06.121770+00:00
+EXIT: 0
+
+> designflow@0.1.0 check
+> npm run build && npm run typecheck && npm run lint && npm test
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/shared@0.1.0 typecheck:browser
+> tsc -p tsconfig.browser.json --noEmit
+
+
+> @designflow/generator@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit && tsc -p tsconfig.browser.json --noEmit
+
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+> designflow@0.1.0 test
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4847ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  356ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  339ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  363ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  445ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  474ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  412ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  401ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3292ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2679ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  513ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2391ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  366ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  502ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  480ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2321ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  750ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 2202ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  1764ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2170ms
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 1602ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1097ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 858ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 843ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 817ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 596ms
+ ✓ packages/blueprint-qa/tests/geometry-coverage.test.ts (17 tests) 420ms
+   ✓ general V2 geometry and honest coverage > bounds a dense adversarial duplicate-wall report and declares truncation  353ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 329ms
+ ✓ apps/api/tests/generation.test.ts (36 tests) 321ms
+ ✓ packages/shared/tests/building-v2-model.test.ts (82 tests) 304ms
+ ✓ apps/api/tests/foundation.test.ts (30 tests) 283ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 268ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 280ms
+ ✓ packages/blueprint-qa/tests/audit.test.ts (57 tests) 237ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 238ms
+ ✓ apps/api/tests/hardening.test.ts (29 tests) 240ms
+ ✓ apps/api/tests/supabase-adapter.test.ts (36 tests) 167ms
+ ✓ packages/blueprint-qa/tests/rules.test.ts (15 tests) 116ms
+ ✓ packages/blueprint-qa/tests/boundary.test.ts (1 test) 105ms
+ ✓ apps/api/tests/estimate-service.test.ts (29 tests) 56ms
+ ✓ packages/shared/tests/contracts.test.ts (411 tests) 61ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 41ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 39ms
+ ✓ packages/shared/tests/building-v2-adapter.test.ts (16 tests) 28ms
+ ✓ packages/shared/tests/building-v2-precision.test.ts (65 tests) 23ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 21ms
+ ✓ apps/api/tests/postgres-harness.test.ts (2 tests) 5ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 5ms
+
+ Test Files  35 passed (35)
+      Tests  1544 passed (1544)
+   Start at  15:13:46
+   Duration  42.28s (transform 898ms, setup 0ms, collect 7.68s, tests 29.30s, environment 7ms, prepare 1.64s)
+
+
+
+COMMAND: docker build -t designflow-api:phase15-final .
+STARTED: 2026-09-30T09:44:29.353476+00:00
+EXIT: 0
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  781.8kB
+
+Step 1/46 : FROM node:22-bookworm-slim AS build
+ ---> 43ac6c60b8f8
+Step 2/46 : WORKDIR /app
+ ---> Using cache
+ ---> 091af58af5a5
+Step 3/46 : COPY package.json package-lock.json .npmrc ./
+ ---> a4c22b59cdf4
+Step 4/46 : COPY apps/api/package.json apps/api/package.json
+ ---> 8987c6a46d3e
+Step 5/46 : COPY packages/shared/package.json packages/shared/package.json
+ ---> ea43708348ea
+Step 6/46 : COPY packages/generator/package.json packages/generator/package.json
+ ---> 0e56fd4b0502
+Step 7/46 : COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
+ ---> 890e75868bfc
+Step 8/46 : COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
+ ---> ac8cb5ef804b
+Step 9/46 : COPY packages/construction-calculations/package.json packages/construction-calculations/package.json
+ ---> 56c23a0063b2
+Step 10/46 : COPY packages/boq-cost/package.json packages/boq-cost/package.json
+ ---> c5bcaa7da301
+Step 11/46 : RUN npm ci
+ ---> Running in 61cd70b097c1
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+added 280 packages in 8m
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.1.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0
+npm notice To update run: npm install -g npm@12.1.0
+npm notice
+ ---> Removed intermediate container 61cd70b097c1
+ ---> 5f118275f3b8
+Step 12/46 : COPY tsconfig.base.json ./
+ ---> e0c98e9a7b90
+Step 13/46 : COPY apps/api/tsconfig.build.json apps/api/tsconfig.build.json
+ ---> 2708ef68b200
+Step 14/46 : COPY apps/api/src apps/api/src
+ ---> ce0d29eb2dc1
+Step 15/46 : COPY packages/shared packages/shared
+ ---> a0726078c9e8
+Step 16/46 : COPY packages/generator packages/generator
+ ---> 94014a099862
+Step 17/46 : COPY packages/blueprint-qa packages/blueprint-qa
+ ---> cea2550c3afc
+Step 18/46 : COPY packages/quantity-takeoff packages/quantity-takeoff
+ ---> a2d1187a2649
+Step 19/46 : COPY packages/construction-calculations packages/construction-calculations
+ ---> 5b07114ab722
+Step 20/46 : COPY packages/boq-cost packages/boq-cost
+ ---> 0a49bfa1fa9f
+Step 21/46 : RUN npm run build
+ ---> Running in 534637f1b408
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+ ---> Removed intermediate container 534637f1b408
+ ---> e92f71d4a503
+Step 22/46 : RUN npm prune --omit=dev
+ ---> Running in 4678782f3151
+
+up to date in 791ms
+ ---> Removed intermediate container 4678782f3151
+ ---> cf46b2060514
+Step 23/46 : FROM node:22-bookworm-slim AS runtime
+ ---> 43ac6c60b8f8
+Step 24/46 : ENV NODE_ENV=production HOST=0.0.0.0 PORT=3001
+ ---> Using cache
+ ---> a14db7b17b83
+Step 25/46 : WORKDIR /app
+ ---> Using cache
+ ---> 869d0d5ab835
+Step 26/46 : COPY --from=build --chown=node:node /app/node_modules ./node_modules
+ ---> Using cache
+ ---> 481a06824605
+Step 27/46 : COPY --from=build --chown=node:node /app/package.json ./package.json
+ ---> 6041f90ae37d
+Step 28/46 : COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
+ ---> 30fe7ddb09f2
+Step 29/46 : COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
+ ---> 65f4bafb30b6
+Step 30/46 : COPY --from=build --chown=node:node /app/packages/shared/package.json ./packages/shared/package.json
+ ---> 7f822b3c9c27
+Step 31/46 : COPY --from=build --chown=node:node /app/packages/shared/dist ./packages/shared/dist
+ ---> 7ce866eec3a3
+Step 32/46 : COPY --from=build --chown=node:node /app/packages/generator/package.json ./packages/generator/package.json
+ ---> b51f82729f49
+Step 33/46 : COPY --from=build --chown=node:node /app/packages/generator/dist ./packages/generator/dist
+ ---> 02c657c4efb1
+Step 34/46 : COPY --from=build --chown=node:node /app/packages/blueprint-qa/package.json ./packages/blueprint-qa/package.json
+ ---> 5926139266ed
+Step 35/46 : COPY --from=build --chown=node:node /app/packages/blueprint-qa/dist ./packages/blueprint-qa/dist
+ ---> b4a6445f0125
+Step 36/46 : COPY --from=build --chown=node:node /app/packages/quantity-takeoff/package.json ./packages/quantity-takeoff/package.json
+ ---> eec52162eb74
+Step 37/46 : COPY --from=build --chown=node:node /app/packages/construction-calculations/package.json ./packages/construction-calculations/package.json
+ ---> f83711b8bc9f
+Step 38/46 : COPY --from=build --chown=node:node /app/packages/boq-cost/package.json ./packages/boq-cost/package.json
+ ---> 3a489717ebed
+Step 39/46 : COPY --from=build --chown=node:node /app/packages/quantity-takeoff/dist ./packages/quantity-takeoff/dist
+ ---> 4a93759377bc
+Step 40/46 : COPY --from=build --chown=node:node /app/packages/construction-calculations/dist ./packages/construction-calculations/dist
+ ---> fbc5740172cd
+Step 41/46 : COPY --from=build --chown=node:node /app/packages/boq-cost/dist ./packages/boq-cost/dist
+ ---> 7cc907befa55
+Step 42/46 : USER node
+ ---> Running in 0b4a62f0ce0c
+ ---> Removed intermediate container 0b4a62f0ce0c
+ ---> dedbe67eb70a
+Step 43/46 : EXPOSE 3001
+ ---> Running in c94ffd65f59e
+ ---> Removed intermediate container c94ffd65f59e
+ ---> 5789d6bb49f0
+Step 44/46 : STOPSIGNAL SIGTERM
+ ---> Running in 4a0a7929e248
+ ---> Removed intermediate container 4a0a7929e248
+ ---> 5befe0d6653f
+Step 45/46 : HEALTHCHECK --interval=30s --timeout=3s --start-period=10s CMD ["node", "--input-type=module", "-e", "const r=await fetch('http://127.0.0.1:'+process.env.PORT+'/health/live',{signal:AbortSignal.timeout(2000)});process.exitCode=r.ok?0:1"]
+ ---> Running in 065fa7465795
+ ---> Removed intermediate container 065fa7465795
+ ---> 5976249e1160
+Step 46/46 : CMD ["node", "apps/api/dist/server.js"]
+ ---> Running in 9f930f6aa0ce
+ ---> Removed intermediate container 9f930f6aa0ce
+ ---> 4e98eb9178fd
+Successfully built 4e98eb9178fd
+Successfully tagged designflow-api:phase15-final
+
+
+COMMAND: node scripts/smoke-container.mjs designflow-api:phase15-final
+STARTED: 2026-09-30T09:53:42.870199+00:00
+EXIT: 0
+Production container: non-root, liveness 200, failed-dependency readiness 503, SIGTERM exit 0.
+
+
+COMMAND: git diff --check
+STARTED: 2026-09-30T09:53:43.982838+00:00
+EXIT: 0
+
+
+COMMAND: npm run test:supabase
+STARTED: 2026-09-30T09:54:06.948886+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:supabase
+> npm run build && node scripts/test-local-supabase.mjs
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/supabase.live.test.ts (36 tests) 18851ms
+   ✓ local Supabase anonymous ownership and full persistence flow > atomically replays concurrent durable operations through actual PostgREST and JWTs  537ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: client-save  470ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: structured-generation  464ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: prompt-generation  453ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  759ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent creates with same, different and absent keys on one artifact  932ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps options and revisions distinct, paginates summaries and replays after architecture advances  1068ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged request metadata, invalid options, bad pagination and missing resources  402ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists an exact BOQ with hashes and all ancestors unchanged  730ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless costs and replays after later rate/policy versions  785ms
+   ✓ local Supabase anonymous ownership and full persistence flow > lists only summaries with bounded stable pagination  915ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps costs owner-private even for public projects and isolates identical keys across users  1145ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects client quantities/reports/totals/owner injection and missing artifacts  651ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable costs through direct SDK and PostgREST without service-role bypass  506ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists and retrieves exact calculations without changing source artifacts or leaking through public projects  599ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless creates and rejects reuse with changed specifications  505ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps specification versions, options and takeoffs distinct with stable pagination  1104ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged report data, invalid recipes, malformed pagination and missing resources  512ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable takeoffs through direct SDK and PostgREST calls  315ms
+   ✓ local Supabase anonymous ownership and full persistence flow > round-trips generated geometry and complete QA, appends R2 and leaves R1 immutable  341ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects stale and missing bases without creating R3  411ms
+   ✓ local Supabase anonymous ownership and full persistence flow > serializes simultaneous saves from both empty and populated bases  306ms
+   ✓ local Supabase anonymous ownership and full persistence flow > preserves an existing current revision after QA rejection and accepts two-storey generated geometry  315ms
+   ✓ local Supabase anonymous ownership and full persistence flow > isolates private owner data and exposes only public current architecture  587ms
+   ✓ local Supabase anonymous ownership and full persistence flow > archives without losing history, forbids writes and allows explicit unarchive  396ms
+   ✓ local Supabase anonymous ownership and full persistence flow > deduplicates generated revisions and replays after the current pointer advances or archives  532ms
+   ✓ local Supabase anonymous ownership and full persistence flow > paginates projects and revisions deterministically without model bodies  1121ms
+   ✓ local Supabase anonymous ownership and full persistence flow > enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC  339ms
+
+ Test Files  1 passed (1)
+      Tests  36 passed (36)
+   Start at  15:24:19
+   Duration  20.02s (transform 374ms, setup 0ms, collect 885ms, tests 18.85s, environment 0ms, prepare 58ms)
+
+
+
+COMMAND: npm run test:supabase
+STARTED: 2026-09-30T09:54:40.049425+00:00
+EXIT: 0
+
+> designflow@0.1.0 test:supabase
+> npm run build && node scripts/test-local-supabase.mjs
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/supabase.live.test.ts (36 tests) 18687ms
+   ✓ local Supabase anonymous ownership and full persistence flow > atomically replays concurrent durable operations through actual PostgREST and JWTs  507ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: client-save  471ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: structured-generation  467ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: prompt-generation  461ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  736ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent creates with same, different and absent keys on one artifact  921ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps options and revisions distinct, paginates summaries and replays after architecture advances  1040ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged request metadata, invalid options, bad pagination and missing resources  399ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists an exact BOQ with hashes and all ancestors unchanged  730ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless costs and replays after later rate/policy versions  792ms
+   ✓ local Supabase anonymous ownership and full persistence flow > lists only summaries with bounded stable pagination  903ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps costs owner-private even for public projects and isolates identical keys across users  1091ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects client quantities/reports/totals/owner injection and missing artifacts  658ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable costs through direct SDK and PostgREST without service-role bypass  511ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists and retrieves exact calculations without changing source artifacts or leaking through public projects  608ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless creates and rejects reuse with changed specifications  504ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps specification versions, options and takeoffs distinct with stable pagination  1114ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged report data, invalid recipes, malformed pagination and missing resources  485ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable takeoffs through direct SDK and PostgREST calls  309ms
+   ✓ local Supabase anonymous ownership and full persistence flow > round-trips generated geometry and complete QA, appends R2 and leaves R1 immutable  337ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects stale and missing bases without creating R3  408ms
+   ✓ local Supabase anonymous ownership and full persistence flow > serializes simultaneous saves from both empty and populated bases  312ms
+   ✓ local Supabase anonymous ownership and full persistence flow > preserves an existing current revision after QA rejection and accepts two-storey generated geometry  314ms
+   ✓ local Supabase anonymous ownership and full persistence flow > isolates private owner data and exposes only public current architecture  585ms
+   ✓ local Supabase anonymous ownership and full persistence flow > archives without losing history, forbids writes and allows explicit unarchive  388ms
+   ✓ local Supabase anonymous ownership and full persistence flow > deduplicates generated revisions and replays after the current pointer advances or archives  520ms
+   ✓ local Supabase anonymous ownership and full persistence flow > paginates projects and revisions deterministically without model bodies  1101ms
+   ✓ local Supabase anonymous ownership and full persistence flow > enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC  344ms
+
+ Test Files  1 passed (1)
+      Tests  36 passed (36)
+   Start at  15:24:53
+   Duration  19.88s (transform 385ms, setup 0ms, collect 889ms, tests 18.69s, environment 0ms, prepare 79ms)

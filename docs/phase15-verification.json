@@ -1,0 +1,639 @@
+{
+  "baseline": "ca0cbc2 / backend-v1-phase14-complete",
+  "results": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:13:12.376Z",
+      "durationMs": 10939,
+      "summary": [],
+      "log": "/tmp/phase15-verification/build.log"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:13:23.315Z",
+      "durationMs": 16961,
+      "summary": [],
+      "log": "/tmp/phase15-verification/typecheck.log"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:13:40.277Z",
+      "durationMs": 2739,
+      "summary": [],
+      "log": "/tmp/phase15-verification/lint.log"
+    },
+    {
+      "name": "unit",
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:13:43.017Z",
+      "durationMs": 28966,
+      "summary": [
+        "Test Files  26 passed (26)",
+        "Tests  1436 passed (1436)",
+        "Duration  20.84s (transform 740ms, setup 0ms, collect 4.18s, tests 12.92s, environment 4ms, prepare 1.15s)"
+      ],
+      "log": "/tmp/phase15-verification/unit.log"
+    },
+    {
+      "name": "generator",
+      "command": "npm run test:generator",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:14:11.983Z",
+      "durationMs": 10084,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  461 passed (461)",
+        "Duration  7.87s (transform 233ms, setup 0ms, collect 615ms, tests 6.10s, environment 1ms, prepare 354ms)"
+      ],
+      "log": "/tmp/phase15-verification/generator.log"
+    },
+    {
+      "name": "blueprint",
+      "command": "npm run test:blueprint",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:14:22.068Z",
+      "durationMs": 7018,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  137 passed (137)",
+        "Duration  3.56s (transform 165ms, setup 0ms, collect 236ms, tests 3.16s, environment 0ms, prepare 45ms)"
+      ],
+      "log": "/tmp/phase15-verification/blueprint.log"
+    },
+    {
+      "name": "blueprint-qa",
+      "command": "npm run test:blueprint-qa",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:14:29.086Z",
+      "durationMs": 13312,
+      "summary": [
+        "Test Files  6 passed (6)",
+        "Tests  177 passed (177)",
+        "Duration  4.95s (transform 242ms, setup 0ms, collect 1.00s, tests 3.04s, environment 1ms, prepare 283ms)"
+      ],
+      "log": "/tmp/phase15-verification/blueprint-qa.log"
+    },
+    {
+      "name": "projects",
+      "command": "npm run test:projects",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:14:42.398Z",
+      "durationMs": 14989,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)",
+        "Duration  3.24s (transform 357ms, setup 0ms, collect 892ms, tests 2.18s, environment 0ms, prepare 47ms)"
+      ],
+      "log": "/tmp/phase15-verification/projects.log"
+    },
+    {
+      "name": "takeoff",
+      "command": "npm run test:takeoff",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:14:57.387Z",
+      "durationMs": 17529,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  23 passed (23)",
+        "Duration  5.89s (transform 384ms, setup 0ms, collect 990ms, tests 4.57s, environment 0ms, prepare 97ms)"
+      ],
+      "log": "/tmp/phase15-verification/takeoff.log"
+    },
+    {
+      "name": "construction",
+      "command": "npm run test:construction",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:15:14.917Z",
+      "durationMs": 15904,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  34 passed (34)",
+        "Duration  4.21s (transform 374ms, setup 0ms, collect 972ms, tests 2.92s, environment 0ms, prepare 94ms)"
+      ],
+      "log": "/tmp/phase15-verification/construction.log"
+    },
+    {
+      "name": "cost",
+      "command": "npm run test:cost",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:15:30.821Z",
+      "durationMs": 18106,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  39 passed (39)",
+        "Duration  6.37s (transform 379ms, setup 0ms, collect 992ms, tests 5.06s, environment 0ms, prepare 92ms)"
+      ],
+      "log": "/tmp/phase15-verification/cost.log"
+    },
+    {
+      "name": "integration-1",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:15:48.928Z",
+      "durationMs": 29003,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  106 passed (106)",
+        "Duration  20.51s (transform 441ms, setup 0ms, collect 3.77s, tests 15.47s, environment 1ms, prepare 377ms)"
+      ],
+      "log": "/tmp/phase15-verification/integration-1.log"
+    },
+    {
+      "name": "integration-2",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:16:17.932Z",
+      "durationMs": 29380,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  106 passed (106)",
+        "Duration  20.62s (transform 424ms, setup 0ms, collect 3.73s, tests 15.64s, environment 1ms, prepare 374ms)"
+      ],
+      "log": "/tmp/phase15-verification/integration-2.log"
+    },
+    {
+      "name": "integration-3",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:16:47.313Z",
+      "durationMs": 29166,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  106 passed (106)",
+        "Duration  20.57s (transform 439ms, setup 0ms, collect 3.78s, tests 15.54s, environment 1ms, prepare 378ms)"
+      ],
+      "log": "/tmp/phase15-verification/integration-3.log"
+    },
+    {
+      "name": "supabase-1",
+      "command": "npm run test:supabase",
+      "exitCode": 1,
+      "startedAt": "2026-09-29T12:17:16.480Z",
+      "durationMs": 34145,
+      "summary": [
+        "Test Files  1 failed (1)",
+        "Tests  1 failed | 35 passed (36)",
+        "Duration  19.93s (transform 366ms, setup 0ms, collect 868ms, tests 18.77s, environment 0ms, prepare 57ms)"
+      ],
+      "log": "/tmp/phase15-verification/supabase-1.log"
+    },
+    {
+      "name": "check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:19:08.059Z",
+      "durationMs": 81923,
+      "summary": [
+        "Test Files  35 passed (35)",
+        "Tests  1544 passed (1544)",
+        "Duration  41.89s (transform 948ms, setup 0ms, collect 7.65s, tests 28.97s, environment 6ms, prepare 1.63s)"
+      ],
+      "log": "/tmp/phase15-verification/check.log"
+    },
+    {
+      "name": "docker",
+      "command": "docker build -t designflow-api:phase15 .",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:20:29.983Z",
+      "durationMs": 140164,
+      "summary": [],
+      "log": "/tmp/phase15-verification/docker.log"
+    },
+    {
+      "name": "smoke",
+      "command": "node scripts/smoke-container.mjs designflow-api:phase15",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:22:50.148Z",
+      "durationMs": 1199,
+      "summary": [],
+      "log": "/tmp/phase15-verification/smoke.log"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "startedAt": "2026-09-29T12:22:51.347Z",
+      "durationMs": 6,
+      "summary": [],
+      "log": "/tmp/phase15-verification/diff-check.log"
+    },
+    {
+      "name": "db-rls",
+      "command": "npm run db:test",
+      "exitCode": 0,
+      "summary": [
+        "All tests successful.",
+        "Files=1, Tests=39",
+        "Result: PASS"
+      ],
+      "log": "/tmp/phase15-final-db-rls.log"
+    }
+  ],
+  "status": "SIGNED_OFF",
+  "notes": [
+    "Final Supabase run failed the existing concurrent durable-operation test; all 35 other tests passed, including all Phase 15 cases. Failure retained without blind retries.",
+    "Migration 0009 applied additively to local Supabase; no reset.",
+    "Earlier Docker dependency installation failed ECONNRESET during an interrupted run; registry reachability was verified before this successful final Docker build."
+  ],
+  "persistedExample": {
+    "reproducedWithFinalEngine": true,
+    "reportHash": "221e1c1f2778afa9a7450eff86557c5ec9da80fc83a01be39d7835e61a9582ec",
+    "artifact": "docs/phase15-example.json"
+  },
+  "historicalStatus": "BLOCKED_BY_PREEXISTING_SUPABASE_DURABLE_OPERATION_FAILURE",
+  "finalSignoff": {
+    "date": "2026-09-30",
+    "implementationComplete": true,
+    "verificationComplete": true,
+    "historicalResultsPreserved": true,
+    "diagnosticBeforeFix": {
+      "requests": 12,
+      "failures": 3,
+      "body": "PGRST303: JWT issued at future"
+    },
+    "rootCauseProvenForCurrentIncident": true,
+    "fix": "Local PostgREST 16.2 -> 16.3; no application behavior or JWT configuration change",
+    "diagnosticAfterFix": {
+      "requests": 240,
+      "failures": 0
+    },
+    "clockRegression": {
+      "requests": 4,
+      "failures": 0
+    },
+    "results": [
+      {
+        "name": "build",
+        "command": "npm run build",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:38:59.268473+00:00",
+        "durationMs": 10742,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/build.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "typecheck",
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:39:10.010751+00:00",
+        "durationMs": 17151,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/typecheck.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "lint",
+        "command": "npm run lint",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:39:27.162051+00:00",
+        "durationMs": 2552,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/lint.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "unit",
+        "command": "npm run test:unit",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:39:29.714371+00:00",
+        "durationMs": 29487,
+        "summary": [
+          "Test Files  26 passed (26)",
+          "Tests  1436 passed (1436)",
+          "Duration  21.10s (transform 770ms, setup 0ms, collect 4.19s, tests 13.08s, environment 4ms, prepare 1.19s)"
+        ],
+        "log": "/tmp/phase15-final-gates/unit.log",
+        "testFiles": 26,
+        "testsPassed": 1436,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "generator",
+        "command": "npm run test:generator",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:39:59.201136+00:00",
+        "durationMs": 10143,
+        "summary": [
+          "Test Files  8 passed (8)",
+          "Tests  461 passed (461)",
+          "Duration  7.93s (transform 232ms, setup 0ms, collect 632ms, tests 6.13s, environment 1ms, prepare 363ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/generator.log",
+        "testFiles": 8,
+        "testsPassed": 461,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "blueprint",
+        "command": "npm run test:blueprint",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:40:09.343798+00:00",
+        "durationMs": 7226,
+        "summary": [
+          "Test Files  1 passed (1)",
+          "Tests  137 passed (137)",
+          "Duration  3.60s (transform 168ms, setup 0ms, collect 239ms, tests 3.20s, environment 0ms, prepare 44ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/blueprint.log",
+        "testFiles": 1,
+        "testsPassed": 137,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "blueprint-qa",
+        "command": "npm run test:blueprint-qa",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:40:16.570198+00:00",
+        "durationMs": 13198,
+        "summary": [
+          "Test Files  6 passed (6)",
+          "Tests  177 passed (177)",
+          "Duration  4.81s (transform 228ms, setup 0ms, collect 982ms, tests 2.93s, environment 1ms, prepare 274ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/blueprint-qa.log",
+        "testFiles": 6,
+        "testsPassed": 177,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "projects",
+        "command": "npm run test:projects",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:40:29.768666+00:00",
+        "durationMs": 14780,
+        "summary": [
+          "Test Files  1 passed (1)",
+          "Tests  23 passed (23)",
+          "Duration  3.25s (transform 349ms, setup 0ms, collect 866ms, tests 2.21s, environment 0ms, prepare 45ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/projects.log",
+        "testFiles": 1,
+        "testsPassed": 23,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "takeoff",
+        "command": "npm run test:takeoff",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:40:44.549050+00:00",
+        "durationMs": 17606,
+        "summary": [
+          "Test Files  2 passed (2)",
+          "Tests  23 passed (23)",
+          "Duration  6.00s (transform 394ms, setup 0ms, collect 1.00s, tests 4.66s, environment 0ms, prepare 95ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/takeoff.log",
+        "testFiles": 2,
+        "testsPassed": 23,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "construction",
+        "command": "npm run test:construction",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:41:02.155452+00:00",
+        "durationMs": 15715,
+        "summary": [
+          "Test Files  2 passed (2)",
+          "Tests  34 passed (34)",
+          "Duration  4.20s (transform 383ms, setup 0ms, collect 977ms, tests 2.90s, environment 0ms, prepare 94ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/construction.log",
+        "testFiles": 2,
+        "testsPassed": 34,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "cost",
+        "command": "npm run test:cost",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:41:17.871106+00:00",
+        "durationMs": 18127,
+        "summary": [
+          "Test Files  2 passed (2)",
+          "Tests  39 passed (39)",
+          "Duration  6.47s (transform 392ms, setup 0ms, collect 997ms, tests 5.16s, environment 0ms, prepare 92ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/cost.log",
+        "testFiles": 2,
+        "testsPassed": 39,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "integration-1",
+        "command": "npm run test:integration",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:41:35.998209+00:00",
+        "durationMs": 29239,
+        "summary": [
+          "Test Files  8 passed (8)",
+          "Tests  106 passed (106)",
+          "Duration  20.60s (transform 442ms, setup 0ms, collect 3.75s, tests 15.60s, environment 1ms, prepare 365ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/integration-1.log",
+        "testFiles": 8,
+        "testsPassed": 106,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "integration-2",
+        "command": "npm run test:integration",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:42:05.237520+00:00",
+        "durationMs": 29149,
+        "summary": [
+          "Test Files  8 passed (8)",
+          "Tests  106 passed (106)",
+          "Duration  20.68s (transform 429ms, setup 0ms, collect 3.77s, tests 15.63s, environment 1ms, prepare 377ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/integration-2.log",
+        "testFiles": 8,
+        "testsPassed": 106,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "integration-3",
+        "command": "npm run test:integration",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:42:34.386655+00:00",
+        "durationMs": 29411,
+        "summary": [
+          "Test Files  8 passed (8)",
+          "Tests  106 passed (106)",
+          "Duration  20.86s (transform 478ms, setup 0ms, collect 3.86s, tests 15.74s, environment 1ms, prepare 368ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/integration-3.log",
+        "testFiles": 8,
+        "testsPassed": 106,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "db-rls",
+        "command": "npm run db:test",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:43:03.797615+00:00",
+        "durationMs": 2324,
+        "summary": [
+          "All tests successful.",
+          "Files=1, Tests=39,  0 wallclock secs ( 0.02 usr +  0.01 sys =  0.03 CPU)",
+          "Result: PASS"
+        ],
+        "log": "/tmp/phase15-final-gates/db-rls.log",
+        "testFiles": 1,
+        "testsPassed": 39,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "check",
+        "command": "npm run check",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:43:06.121770+00:00",
+        "durationMs": 83232,
+        "summary": [
+          "Test Files  35 passed (35)",
+          "Tests  1544 passed (1544)",
+          "Duration  42.28s (transform 898ms, setup 0ms, collect 7.68s, tests 29.30s, environment 7ms, prepare 1.64s)"
+        ],
+        "log": "/tmp/phase15-final-gates/check.log",
+        "testFiles": 35,
+        "testsPassed": 1544,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "docker",
+        "command": "docker build -t designflow-api:phase15-final .",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:44:29.353476+00:00",
+        "durationMs": 553517,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/docker.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "smoke",
+        "command": "node scripts/smoke-container.mjs designflow-api:phase15-final",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:53:42.870199+00:00",
+        "durationMs": 1112,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/smoke.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:53:43.982838+00:00",
+        "durationMs": 5,
+        "summary": [],
+        "log": "/tmp/phase15-final-gates/diff-check.log",
+        "testFiles": null,
+        "testsPassed": null,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "supabase-1",
+        "command": "npm run test:supabase",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:54:06.948886+00:00",
+        "durationMs": 33100,
+        "summary": [
+          "Test Files  1 passed (1)",
+          "Tests  36 passed (36)",
+          "Duration  20.02s (transform 374ms, setup 0ms, collect 885ms, tests 18.85s, environment 0ms, prepare 58ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/supabase-1.log",
+        "testFiles": 1,
+        "testsPassed": 36,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      },
+      {
+        "name": "supabase-2",
+        "command": "npm run test:supabase",
+        "exitCode": 0,
+        "startedAt": "2026-09-30T09:54:40.049425+00:00",
+        "durationMs": 33289,
+        "summary": [
+          "Test Files  1 passed (1)",
+          "Tests  36 passed (36)",
+          "Duration  19.88s (transform 385ms, setup 0ms, collect 889ms, tests 18.69s, environment 0ms, prepare 79ms)"
+        ],
+        "log": "/tmp/phase15-final-gates/supabase-2.log",
+        "testFiles": 1,
+        "testsPassed": 36,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "retainedOutput": "docs/phase15-signoff-evidence/verification-output.txt"
+      }
+    ],
+    "decision": "SIGNED_OFF",
+    "completedAt": "2026-09-30T09:55:29.461716+00:00",
+    "noDeliberatelySkippedTests": true,
+    "noTestWeakening": true,
+    "noApplicationRetryWorkaround": true,
+    "noDatabaseReset": true,
+    "phase16Started": false,
+    "checkpointTag": "backend-v1-phase15-complete",
+    "historicalEvidenceLimitation": "Earlier incident bodies were not retained; root cause is established for the September 30 reproduction."
+  },
+  "resultsScope": "Historical September 29 verification; retained unchanged",
+  "notesScope": "Historical September 29 observations; see finalSignoff for current results"
+}

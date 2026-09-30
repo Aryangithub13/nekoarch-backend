@@ -22,6 +22,7 @@
     "zod": "3.25.76",
     "@designflow/blueprint-qa": "0.1.0",
     "@designflow/quantity-takeoff": "0.1.0",
-    "@designflow/construction-calculations": "0.1.0"
+    "@designflow/construction-calculations": "0.1.0",
+    "@designflow/boq-cost": "0.1.0"
   }
 }

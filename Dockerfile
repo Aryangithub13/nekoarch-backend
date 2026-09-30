@@ -7,6 +7,7 @@ COPY packages/generator/package.json packages/generator/package.json
 COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
 COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
 COPY packages/construction-calculations/package.json packages/construction-calculations/package.json
+COPY packages/boq-cost/package.json packages/boq-cost/package.json
 RUN npm ci
 COPY tsconfig.base.json ./
 COPY apps/api/tsconfig.build.json apps/api/tsconfig.build.json
@@ -16,6 +17,7 @@ COPY packages/generator packages/generator
 COPY packages/blueprint-qa packages/blueprint-qa
 COPY packages/quantity-takeoff packages/quantity-takeoff
 COPY packages/construction-calculations packages/construction-calculations
+COPY packages/boq-cost packages/boq-cost
 RUN npm run build
 RUN npm prune --omit=dev
 
@@ -34,8 +36,10 @@ COPY --from=build --chown=node:node /app/packages/blueprint-qa/package.json ./pa
 COPY --from=build --chown=node:node /app/packages/blueprint-qa/dist ./packages/blueprint-qa/dist
 COPY --from=build --chown=node:node /app/packages/quantity-takeoff/package.json ./packages/quantity-takeoff/package.json
 COPY --from=build --chown=node:node /app/packages/construction-calculations/package.json ./packages/construction-calculations/package.json
+COPY --from=build --chown=node:node /app/packages/boq-cost/package.json ./packages/boq-cost/package.json
 COPY --from=build --chown=node:node /app/packages/quantity-takeoff/dist ./packages/quantity-takeoff/dist
 COPY --from=build --chown=node:node /app/packages/construction-calculations/dist ./packages/construction-calculations/dist
+COPY --from=build --chown=node:node /app/packages/boq-cost/dist ./packages/boq-cost/dist
 USER node
 EXPOSE 3001
 STOPSIGNAL SIGTERM

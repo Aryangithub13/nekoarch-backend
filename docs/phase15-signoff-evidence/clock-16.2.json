@@ -1,0 +1,213 @@
+{
+  "version": "16.2",
+  "concurrency": 4,
+  "capabilities": "image-default",
+  "trace": [
+    {
+      "kind": "clock-primed",
+      "at": "2026-09-30T09:33:41.408Z",
+      "version": "16.2"
+    },
+    {
+      "kind": "replica-paused",
+      "at": "2026-09-30T09:33:41.431Z"
+    },
+    {
+      "kind": "fresh-token",
+      "at": "2026-09-30T09:34:21.460Z",
+      "iat": 1790760861,
+      "exp": 1790764461
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:34:21.584Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 39.533046000004106,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:34:21.585Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 44.248186999997415,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 2,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:34:21.585Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 47.60289100000227,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 3,
+      "path": "/auth/v1/user",
+      "startedAt": "2026-09-30T09:34:21.586Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 45.24029399999563,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:34:21.628Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "status": 200,
+      "durationMs": 61.778055000002496,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:34:21.630Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "status": 200,
+      "durationMs": 62.12258099999599,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 3,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:34:21.632Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "status": 401,
+      "durationMs": 51.303515999999945,
+      "requestId": null,
+      "proxyStatus": "PostgREST; error=PGRST303",
+      "body": "{\"code\":\"PGRST303\",\"details\":null,\"hint\":null,\"message\":\"JWT issued at future\"}"
+    },
+    {
+      "kind": "request",
+      "sequence": 2,
+      "path": "/rest/v1/idempotency_records",
+      "startedAt": "2026-09-30T09:34:21.634Z",
+      "operation": "eq./api/plans",
+      "keyHash": "eq.c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "status": 401,
+      "durationMs": 45.14325500000268,
+      "requestId": null,
+      "proxyStatus": "PostgREST; error=PGRST303",
+      "body": "{\"code\":\"PGRST303\",\"details\":null,\"hint\":null,\"message\":\"JWT issued at future\"}"
+    },
+    {
+      "kind": "requests-queued",
+      "count": 4,
+      "at": "2026-09-30T09:34:21.634Z"
+    },
+    {
+      "kind": "replica-resumed",
+      "at": "2026-09-30T09:34:21.656Z"
+    },
+    {
+      "kind": "api-error",
+      "requestId": "f0ec3b0c-dbec-4d92-91db-d1dc62b67208",
+      "code": "DATABASE_ERROR"
+    },
+    {
+      "kind": "api-error",
+      "requestId": "e4307ea1-764f-4360-ad8a-f4b478929e4a",
+      "code": "DATABASE_ERROR"
+    },
+    {
+      "kind": "request",
+      "sequence": 0,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:34:21.691Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 6.759043999998539,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "request",
+      "sequence": 1,
+      "path": "/rest/v1/rpc/commit_idempotent_creation",
+      "startedAt": "2026-09-30T09:34:21.693Z",
+      "operation": null,
+      "keyHash": null,
+      "status": 200,
+      "durationMs": 6.1879770000014105,
+      "requestId": null,
+      "proxyStatus": null
+    },
+    {
+      "kind": "stored-counts",
+      "plans": "1",
+      "receipts": "1"
+    }
+  ],
+  "apiResponses": [
+    {
+      "sequence": 2,
+      "status": 500,
+      "requestId": "f0ec3b0c-dbec-4d92-91db-d1dc62b67208",
+      "operation": "/api/plans",
+      "keyHash": "c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "body": {
+        "error": {
+          "code": "DATABASE_ERROR",
+          "message": "The database operation could not be completed",
+          "requestId": "f0ec3b0c-dbec-4d92-91db-d1dc62b67208"
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "status": 500,
+      "requestId": "e4307ea1-764f-4360-ad8a-f4b478929e4a",
+      "operation": "/api/plans",
+      "keyHash": "c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2",
+      "body": {
+        "error": {
+          "code": "DATABASE_ERROR",
+          "message": "The database operation could not be completed",
+          "requestId": "e4307ea1-764f-4360-ad8a-f4b478929e4a"
+        }
+      }
+    },
+    {
+      "sequence": 0,
+      "status": 201,
+      "requestId": "0431115a-0030-487a-afb0-bd413d3a11cf",
+      "operation": "/api/plans",
+      "keyHash": "c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2"
+    },
+    {
+      "sequence": 1,
+      "status": 201,
+      "requestId": "5ce1f22d-4f99-45d7-9af4-3879a0d137e4",
+      "operation": "/api/plans",
+      "keyHash": "c717a2045b0f1d052d55abbbc058cf7479092db09ea87c42ec722db3206047c2"
+    }
+  ],
+  "cleanupFailures": []
+}

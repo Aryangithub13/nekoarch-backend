@@ -1,0 +1,56 @@
+{
+  "endpoint": "http://127.0.0.1:54321",
+  "checkedAt": "2026-09-30T09:34:37.567Z",
+  "clock": [
+    {
+      "server_time": "2026-09-30T09:34:37.568Z"
+    }
+  ],
+  "migrations": [
+    {
+      "version": "0001",
+      "name": "core_tables"
+    },
+    {
+      "version": "0002",
+      "name": "rate_tables"
+    },
+    {
+      "version": "0003",
+      "name": "estimates_and_logs"
+    },
+    {
+      "version": "0004",
+      "name": "rls_policies"
+    },
+    {
+      "version": "0005",
+      "name": "idempotency"
+    },
+    {
+      "version": "0006",
+      "name": "projects"
+    },
+    {
+      "version": "0007",
+      "name": "quantity_takeoffs"
+    },
+    {
+      "version": "0008",
+      "name": "construction_calculations"
+    },
+    {
+      "version": "0009",
+      "name": "boq_costs"
+    }
+  ],
+  "counts": [
+    {
+      "projects": "93",
+      "revisions": "101",
+      "takeoffs": "109",
+      "calculations": "58",
+      "costs": "31"
+    }
+  ]
+}

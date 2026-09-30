@@ -1,0 +1,3435 @@
+{
+  "label": "SYNTHETIC / DEMONSTRATION RATES — NOT A REAL MARKET ESTIMATE",
+  "environment": "Repository local Supabase, real Auth/JWT/PostgREST/RLS",
+  "projectId": "d93cce73-8828-455f-b6ab-00f74c9ba808",
+  "revisionId": "41e3c775-8f95-4391-afa0-6beb8bb1c653",
+  "takeoffId": "533038c1-d2b8-4c2d-b53f-980390c8da25",
+  "constructionCalculationId": "5d102ab0-a5c3-4fcc-a555-045d6beee911",
+  "sourceCalculation": {
+    "id": "5d102ab0-a5c3-4fcc-a555-045d6beee911",
+    "projectRevisionId": "41e3c775-8f95-4391-afa0-6beb8bb1c653",
+    "takeoffId": "533038c1-d2b8-4c2d-b53f-980390c8da25",
+    "acceptanceQaId": "ab3b89ab-dfd7-4b1e-b7c6-8e975de1c0ac",
+    "engineVersion": "construction-calculation-v1",
+    "recipePack": {
+      "id": "construction-recipes",
+      "version": "1"
+    },
+    "inputFingerprint": "362a7660f9ff0f69de602875265d4ff9ab1c164c1be54ae0cdf5bf2ff568b7dd",
+    "status": "PARTIAL",
+    "createdAt": "2026-09-27T15:42:31.891184+00:00",
+    "summary": {
+      "calculationCount": 13,
+      "materialCount": 13,
+      "warningCount": 44,
+      "status": "PARTIAL",
+      "totals": [
+        {
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "6",
+          "wastage": "0",
+          "final": "6",
+          "purchases": [
+            {
+              "unit": "each",
+              "bagMassKg": null,
+              "quantity": "6"
+            }
+          ]
+        },
+        {
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "462.56",
+          "wastage": "46.256",
+          "final": "508.816",
+          "purchases": [
+            {
+              "unit": "piece",
+              "bagMassKg": null,
+              "quantity": "511"
+            }
+          ]
+        },
+        {
+          "materialCode": "READY_MIX_CONCRETE",
+          "unit": "m3",
+          "theoretical": "18",
+          "wastage": "0.9",
+          "final": "18.9",
+          "purchases": []
+        }
+      ]
+    },
+    "report": {
+      "engineVersion": "construction-calculation-v1",
+      "takeoffEngineVersion": "quantity-takeoff-v1",
+      "measurementPolicyVersion": "segment-prism-mm/1",
+      "recipePack": {
+        "id": "construction-recipes",
+        "version": "1"
+      },
+      "specification": {
+        "id": "test-spec",
+        "version": "1",
+        "recipePack": {
+          "id": "construction-recipes",
+          "version": "1"
+        },
+        "allowMultipleLayers": false,
+        "assemblies": [
+          {
+            "id": "concrete",
+            "wastagePercent": "5",
+            "kind": "concrete",
+            "mode": {
+              "type": "READY_MIX_VOLUME_ONLY"
+            }
+          },
+          {
+            "id": "door",
+            "wastagePercent": "0",
+            "kind": "component",
+            "materialCode": "DOOR_UNIT"
+          },
+          {
+            "id": "tile",
+            "wastagePercent": "10",
+            "kind": "flooring",
+            "tileLengthMm": 500,
+            "tileWidthMm": 500
+          }
+        ],
+        "assignments": [
+          {
+            "id": "doors",
+            "basis": "DOOR_COUNT",
+            "assemblyId": "door",
+            "layerId": "component",
+            "selector": {
+              "kind": "default"
+            }
+          },
+          {
+            "id": "floor",
+            "basis": "FLOOR_FINISH_BASE_AREA",
+            "assemblyId": "tile",
+            "layerId": "finish",
+            "selector": {
+              "kind": "default"
+            }
+          },
+          {
+            "id": "slab",
+            "basis": "FLOOR_PLATE_VOLUME",
+            "assemblyId": "concrete",
+            "layerId": "structure",
+            "selector": {
+              "kind": "default"
+            }
+          }
+        ]
+      },
+      "options": {
+        "quantityDecimalPlaces": 9
+      },
+      "summary": {
+        "calculationCount": 13,
+        "materialCount": 13,
+        "warningCount": 44,
+        "status": "PARTIAL",
+        "totals": [
+          {
+            "materialCode": "DOOR_UNIT",
+            "unit": "each",
+            "theoretical": "6",
+            "wastage": "0",
+            "final": "6",
+            "purchases": [
+              {
+                "unit": "each",
+                "bagMassKg": null,
+                "quantity": "6"
+              }
+            ]
+          },
+          {
+            "materialCode": "FLOOR_TILE",
+            "unit": "piece",
+            "theoretical": "462.56",
+            "wastage": "46.256",
+            "final": "508.816",
+            "purchases": [
+              {
+                "unit": "piece",
+                "bagMassKg": null,
+                "quantity": "511"
+              }
+            ]
+          },
+          {
+            "materialCode": "READY_MIX_CONCRETE",
+            "unit": "m3",
+            "theoretical": "18",
+            "wastage": "0.9",
+            "final": "18.9",
+            "purchases": []
+          }
+        ]
+      },
+      "items": [
+        {
+          "id": "calculation-1",
+          "takeoffItemId": "DOOR_COUNT:opening-0",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-0",
+            "wall-0-11"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-2",
+          "takeoffItemId": "DOOR_COUNT:opening-1",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-1",
+            "wall-0-12"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-3",
+          "takeoffItemId": "DOOR_COUNT:opening-2",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-2",
+            "wall-0-13"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-4",
+          "takeoffItemId": "DOOR_COUNT:opening-3",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-3",
+            "wall-0-14"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-5",
+          "takeoffItemId": "DOOR_COUNT:opening-4",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-4",
+            "wall-0-15"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-6",
+          "takeoffItemId": "DOOR_COUNT:opening-5",
+          "takeoffItemCode": "DOOR_COUNT",
+          "sourceEntityIds": [
+            "opening-5",
+            "wall-0-1"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "door",
+          "layerId": "component",
+          "assignmentId": "doors",
+          "recipeId": "opening-component/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "1",
+            "unit": "each"
+          },
+          "evidence": {},
+          "assumptions": [
+            "Configured complete component only; hardware/glazing BOM excluded.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-7",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bathroom-1",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-bathroom-1"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "16787500",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-8",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bedroom-1",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-bedroom-1"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "16787500",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-9",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-bedroom-2",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-bedroom-2"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "16575000",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-10",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-corridor-0",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-corridor-0"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "15340000",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-11",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-kitchen-1",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-kitchen-1"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "25075000",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-12",
+          "takeoffItemId": "FLOOR_FINISH_BASE_AREA:space-living-1",
+          "takeoffItemCode": "FLOOR_FINISH_BASE_AREA",
+          "sourceEntityIds": [
+            "space-living-1"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "tile",
+          "layerId": "finish",
+          "assignmentId": "floor",
+          "recipeId": "tile-area/1",
+          "status": "PARTIAL",
+          "basis": {
+            "value": "25075000",
+            "unit": "mm2"
+          },
+          "evidence": {},
+          "assumptions": [
+            "CENTERLINE_SPACE",
+            "Centerline space area; area-based count without cutting/layout optimization, adhesive or grout.",
+            "Explicit default assignment applied."
+          ]
+        },
+        {
+          "id": "calculation-13",
+          "takeoffItemId": "FLOOR_PLATE_VOLUME:slab-0",
+          "takeoffItemCode": "FLOOR_PLATE_VOLUME",
+          "sourceEntityIds": [
+            "slab-0"
+          ],
+          "levelId": "level-0",
+          "specificationId": null,
+          "assemblyId": "concrete",
+          "layerId": "structure",
+          "assignmentId": "slab",
+          "recipeId": "concrete-volume/1",
+          "status": "EVALUATED",
+          "basis": {
+            "value": "18000000000",
+            "unit": "mm3"
+          },
+          "evidence": {},
+          "assumptions": [
+            "PLATE_MINUS_VOIDS",
+            "Architectural net volume only; no reinforcement, structural mix design or strength certification.",
+            "Explicit default assignment applied."
+          ]
+        }
+      ],
+      "materials": [
+        {
+          "id": "material-1",
+          "calculationItemId": "calculation-1",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-2",
+          "calculationItemId": "calculation-2",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-3",
+          "calculationItemId": "calculation-3",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-4",
+          "calculationItemId": "calculation-4",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-5",
+          "calculationItemId": "calculation-5",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-6",
+          "calculationItemId": "calculation-6",
+          "coatingId": null,
+          "materialCode": "DOOR_UNIT",
+          "unit": "each",
+          "theoretical": "1",
+          "wastage": "0",
+          "final": "1",
+          "theoreticalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "purchase": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "1",
+            "adjustedEquivalent": "1"
+          }
+        },
+        {
+          "id": "material-7",
+          "calculationItemId": "calculation-7",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "67.15",
+          "wastage": "6.715",
+          "final": "73.865",
+          "theoreticalExact": {
+            "numerator": "1343",
+            "denominator": "20"
+          },
+          "finalExact": {
+            "numerator": "14773",
+            "denominator": "200"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "74",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "67.15",
+            "adjustedEquivalent": "73.865"
+          }
+        },
+        {
+          "id": "material-8",
+          "calculationItemId": "calculation-8",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "67.15",
+          "wastage": "6.715",
+          "final": "73.865",
+          "theoreticalExact": {
+            "numerator": "1343",
+            "denominator": "20"
+          },
+          "finalExact": {
+            "numerator": "14773",
+            "denominator": "200"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "74",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "67.15",
+            "adjustedEquivalent": "73.865"
+          }
+        },
+        {
+          "id": "material-9",
+          "calculationItemId": "calculation-9",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "66.3",
+          "wastage": "6.63",
+          "final": "72.93",
+          "theoreticalExact": {
+            "numerator": "663",
+            "denominator": "10"
+          },
+          "finalExact": {
+            "numerator": "7293",
+            "denominator": "100"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "73",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "66.3",
+            "adjustedEquivalent": "72.93"
+          }
+        },
+        {
+          "id": "material-10",
+          "calculationItemId": "calculation-10",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "61.36",
+          "wastage": "6.136",
+          "final": "67.496",
+          "theoreticalExact": {
+            "numerator": "1534",
+            "denominator": "25"
+          },
+          "finalExact": {
+            "numerator": "8437",
+            "denominator": "125"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "68",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "61.36",
+            "adjustedEquivalent": "67.496"
+          }
+        },
+        {
+          "id": "material-11",
+          "calculationItemId": "calculation-11",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "100.3",
+          "wastage": "10.03",
+          "final": "110.33",
+          "theoreticalExact": {
+            "numerator": "1003",
+            "denominator": "10"
+          },
+          "finalExact": {
+            "numerator": "11033",
+            "denominator": "100"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "111",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "100.3",
+            "adjustedEquivalent": "110.33"
+          }
+        },
+        {
+          "id": "material-12",
+          "calculationItemId": "calculation-12",
+          "coatingId": null,
+          "materialCode": "FLOOR_TILE",
+          "unit": "piece",
+          "theoretical": "100.3",
+          "wastage": "10.03",
+          "final": "110.33",
+          "theoreticalExact": {
+            "numerator": "1003",
+            "denominator": "10"
+          },
+          "finalExact": {
+            "numerator": "11033",
+            "denominator": "100"
+          },
+          "purchase": {
+            "unit": "piece",
+            "quantity": "111",
+            "bagMassKg": null,
+            "theoreticalEquivalent": "100.3",
+            "adjustedEquivalent": "110.33"
+          }
+        },
+        {
+          "id": "material-13",
+          "calculationItemId": "calculation-13",
+          "coatingId": null,
+          "materialCode": "READY_MIX_CONCRETE",
+          "unit": "m3",
+          "theoretical": "18",
+          "wastage": "0.9",
+          "final": "18.9",
+          "theoreticalExact": {
+            "numerator": "18",
+            "denominator": "1"
+          },
+          "finalExact": {
+            "numerator": "189",
+            "denominator": "10"
+          },
+          "purchase": null
+        }
+      ],
+      "sections": [
+        {
+          "dimension": "level",
+          "key": "level-0",
+          "totals": [
+            {
+              "materialCode": "DOOR_UNIT",
+              "unit": "each",
+              "theoretical": "6",
+              "wastage": "0",
+              "final": "6",
+              "purchases": [
+                {
+                  "unit": "each",
+                  "bagMassKg": null,
+                  "quantity": "6"
+                }
+              ]
+            },
+            {
+              "materialCode": "FLOOR_TILE",
+              "unit": "piece",
+              "theoretical": "462.56",
+              "wastage": "46.256",
+              "final": "508.816",
+              "purchases": [
+                {
+                  "unit": "piece",
+                  "bagMassKg": null,
+                  "quantity": "511"
+                }
+              ]
+            },
+            {
+              "materialCode": "READY_MIX_CONCRETE",
+              "unit": "m3",
+              "theoretical": "18",
+              "wastage": "0.9",
+              "final": "18.9",
+              "purchases": []
+            }
+          ]
+        },
+        {
+          "dimension": "assembly",
+          "key": "concrete",
+          "totals": [
+            {
+              "materialCode": "READY_MIX_CONCRETE",
+              "unit": "m3",
+              "theoretical": "18",
+              "wastage": "0.9",
+              "final": "18.9",
+              "purchases": []
+            }
+          ]
+        },
+        {
+          "dimension": "assembly",
+          "key": "door",
+          "totals": [
+            {
+              "materialCode": "DOOR_UNIT",
+              "unit": "each",
+              "theoretical": "6",
+              "wastage": "0",
+              "final": "6",
+              "purchases": [
+                {
+                  "unit": "each",
+                  "bagMassKg": null,
+                  "quantity": "6"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "dimension": "assembly",
+          "key": "tile",
+          "totals": [
+            {
+              "materialCode": "FLOOR_TILE",
+              "unit": "piece",
+              "theoretical": "462.56",
+              "wastage": "46.256",
+              "final": "508.816",
+              "purchases": [
+                {
+                  "unit": "piece",
+                  "bagMassKg": null,
+                  "quantity": "511"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "dimension": "specification",
+          "key": null,
+          "totals": [
+            {
+              "materialCode": "DOOR_UNIT",
+              "unit": "each",
+              "theoretical": "6",
+              "wastage": "0",
+              "final": "6",
+              "purchases": [
+                {
+                  "unit": "each",
+                  "bagMassKg": null,
+                  "quantity": "6"
+                }
+              ]
+            },
+            {
+              "materialCode": "FLOOR_TILE",
+              "unit": "piece",
+              "theoretical": "462.56",
+              "wastage": "46.256",
+              "final": "508.816",
+              "purchases": [
+                {
+                  "unit": "piece",
+                  "bagMassKg": null,
+                  "quantity": "511"
+                }
+              ]
+            },
+            {
+              "materialCode": "READY_MIX_CONCRETE",
+              "unit": "m3",
+              "theoretical": "18",
+              "wastage": "0.9",
+              "final": "18.9",
+              "purchases": []
+            }
+          ]
+        }
+      ],
+      "coverage": [
+        {
+          "category": "upstream:wall_centerline_and_segment_prism",
+          "status": "EVALUATED",
+          "reason": "Explicit wall segments; junction overlap policy applies",
+          "itemCount": 19
+        },
+        {
+          "category": "upstream:wall_union_solid",
+          "status": "PARTIAL",
+          "reason": "No boolean union; segment-prism basis only",
+          "itemCount": 19
+        },
+        {
+          "category": "upstream:single_wall_faces",
+          "status": "EVALUATED",
+          "reason": "One longitudinal face, no finish assignment",
+          "itemCount": 19
+        },
+        {
+          "category": "upstream:spaces",
+          "status": "EVALUATED",
+          "reason": "Centerline-space area and perimeter",
+          "itemCount": 6
+        },
+        {
+          "category": "upstream:floor_plates",
+          "status": "EVALUATED",
+          "reason": "Explicit net floor plates and geometric GFA",
+          "itemCount": 1
+        },
+        {
+          "category": "upstream:flat_roofs",
+          "status": "EVALUATED",
+          "reason": "Explicit flat-roof plates only",
+          "itemCount": 1
+        },
+        {
+          "category": "upstream:ceiling_plates",
+          "status": "NOT_EVALUATED",
+          "reason": "Explicit ceiling plates only",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:openings",
+          "status": "EVALUATED",
+          "reason": "Hosted door/window/generic entities counted and deducted once",
+          "itemCount": 11
+        },
+        {
+          "category": "upstream:stairs",
+          "status": "NOT_EVALUATED",
+          "reason": "Explicit straight flights and landings, no physical solids",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:columns",
+          "status": "NOT_EVALUATED",
+          "reason": "Architectural column geometry only",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:site",
+          "status": "EVALUATED",
+          "reason": "Explicit site boundary",
+          "itemCount": 1
+        },
+        {
+          "category": "upstream:buildable_area",
+          "status": "EVALUATED",
+          "reason": "Explicit buildable boundary only",
+          "itemCount": 1
+        },
+        {
+          "category": "upstream:level_envelopes",
+          "status": "EVALUATED",
+          "reason": "Plan envelopes, not physical plates",
+          "itemCount": 1
+        },
+        {
+          "category": "upstream:implicit_ceiling_finish",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:pitched_roofs",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:building_footprint_union",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:structural_engineering",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:mep",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:material_recipes",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "upstream:prices",
+          "status": "NOT_EVALUATED",
+          "reason": "Not represented/evaluated by this measurement policy",
+          "itemCount": 0
+        },
+        {
+          "category": "WALL_SEGMENT_NET_VOLUME",
+          "status": "NOT_EVALUATED",
+          "reason": "0 of 19 bases assigned and evaluated.",
+          "itemCount": 19
+        },
+        {
+          "category": "WALL_SINGLE_FACE_NET_AREA",
+          "status": "NOT_EVALUATED",
+          "reason": "0 of 19 bases assigned and evaluated.",
+          "itemCount": 19
+        },
+        {
+          "category": "FLOOR_FINISH_BASE_AREA",
+          "status": "PARTIAL",
+          "reason": "6 of 6 bases assigned and evaluated.",
+          "itemCount": 6
+        },
+        {
+          "category": "FLOOR_PLATE_VOLUME",
+          "status": "EVALUATED",
+          "reason": "1 of 1 bases assigned and evaluated.",
+          "itemCount": 1
+        },
+        {
+          "category": "ROOF_VOLUME",
+          "status": "NOT_EVALUATED",
+          "reason": "0 of 1 bases assigned and evaluated.",
+          "itemCount": 1
+        },
+        {
+          "category": "COLUMN_GEOMETRIC_VOLUME",
+          "status": "NOT_EVALUATED",
+          "reason": "No represented quantity basis.",
+          "itemCount": 0
+        },
+        {
+          "category": "DOOR_COUNT",
+          "status": "EVALUATED",
+          "reason": "6 of 6 bases assigned and evaluated.",
+          "itemCount": 6
+        },
+        {
+          "category": "WINDOW_COUNT",
+          "status": "NOT_EVALUATED",
+          "reason": "0 of 5 bases assigned and evaluated.",
+          "itemCount": 5
+        },
+        {
+          "category": "STRUCTURAL_REINFORCEMENT",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "FOUNDATIONS_EXCAVATION",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "MEP",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "STRUCTURAL_STAIRS",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "CEILINGS",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "WATERPROOFING",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "PITCHED_ROOFS",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "ADHESIVE_GROUT",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "HARDWARE_GLAZING",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        },
+        {
+          "category": "CUTTING_OPTIMIZATION",
+          "status": "NOT_EVALUATED",
+          "reason": "Outside supported construction recipes.",
+          "itemCount": 0
+        }
+      ],
+      "warnings": [
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "ROOF_VOLUME:roof"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-0"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-1"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-10"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-11"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-12"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-13"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-14"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-15"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-16"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-17"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-18"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-2"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-3"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-4"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-5"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-6"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-7"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-8"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SEGMENT_NET_VOLUME:wall-0-9"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-0"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-1"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-10"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-11"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-12"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-13"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-14"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-15"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-16"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-17"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-18"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-2"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-3"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-4"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-5"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-6"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-7"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-8"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WALL_SINGLE_FACE_NET_AREA:wall-0-9"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WINDOW_COUNT:opening-10"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WINDOW_COUNT:opening-6"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WINDOW_COUNT:opening-7"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WINDOW_COUNT:opening-8"
+        },
+        {
+          "code": "UNASSIGNED_OR_UNSUPPORTED_BASIS",
+          "takeoffItemId": "WINDOW_COUNT:opening-9"
+        }
+      ]
+    }
+  },
+  "costEstimate": {
+    "id": "2ce29234-eeac-4af5-8290-ad684cdf30c3",
+    "projectRevisionId": "41e3c775-8f95-4391-afa0-6beb8bb1c653",
+    "takeoffId": "533038c1-d2b8-4c2d-b53f-980390c8da25",
+    "constructionCalculationId": "5d102ab0-a5c3-4fcc-a555-045d6beee911",
+    "acceptanceQaId": "ab3b89ab-dfd7-4b1e-b7c6-8e975de1c0ac",
+    "engineVersion": "boq-cost-v1",
+    "inputFingerprint": "69d0c409976065920ad0062afa27d0bb6b854b6c55f7c4c017179d1ff62af99f",
+    "reportHash": "221e1c1f2778afa9a7450eff86557c5ec9da80fc83a01be39d7835e61a9582ec",
+    "constructionReportHash": "2687055dc3ccb4c7c0d09d4ec403a08f9e51a81d3c1f6c8c5dfb6a053a436935",
+    "rateBookId": "sample-inr-v1",
+    "rateBookVersion": "1",
+    "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+    "costingPolicyHash": "36d83eb259813ce5835d9aa5f3061c83f8961fb51d3334faf5b1f17304002d77",
+    "currency": "INR",
+    "region": {
+      "country": "IN",
+      "regionCode": "SYNTHETIC"
+    },
+    "coverage": "PARTIALLY_PRICED",
+    "finalTotals": {
+      "pricedSubtotal": "184764.00",
+      "adjustmentsOnPricedSubtotal": "28638.42",
+      "pricedGrandTotal": "213402.42",
+      "completeTotalAvailable": false,
+      "completeRepresentedScopeTotal": null
+    },
+    "createdAt": "2026-09-27T15:42:32.04905+00:00",
+    "report": {
+      "engineVersion": "boq-cost-v1",
+      "source": {
+        "constructionEngineVersion": "construction-calculation-v1",
+        "takeoffEngineVersion": "quantity-takeoff-v1",
+        "measurementPolicyVersion": "segment-prism-mm/1",
+        "recipePack": {
+          "id": "construction-recipes",
+          "version": "1"
+        },
+        "upstreamStatus": "PARTIAL"
+      },
+      "rateBook": {
+        "id": "sample-inr-v1",
+        "version": "1",
+        "region": {
+          "country": "IN",
+          "regionCode": "SYNTHETIC"
+        },
+        "currency": "INR",
+        "minorUnits": 2,
+        "source": {
+          "kind": "SYNTHETIC",
+          "description": "SAMPLE / SYNTHETIC — NOT CURRENT MARKET DATA"
+        },
+        "entries": [
+          {
+            "code": "AAC_BLOCK",
+            "materialCode": "AAC_BLOCK",
+            "mode": "PURCHASE",
+            "unit": "piece",
+            "bagMassKg": null,
+            "rate": "50",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "CEMENT_BAG_50",
+            "materialCode": "CEMENT",
+            "mode": "PURCHASE",
+            "unit": "bag",
+            "bagMassKg": "50",
+            "rate": "400",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "COARSE_AGGREGATE",
+            "materialCode": "COARSE_AGGREGATE",
+            "mode": "PHYSICAL",
+            "unit": "m3",
+            "bagMassKg": null,
+            "rate": "1200",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "CONCRETE_BLOCK",
+            "materialCode": "CONCRETE_BLOCK",
+            "mode": "PURCHASE",
+            "unit": "piece",
+            "bagMassKg": null,
+            "rate": "40",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "DOOR_UNIT",
+            "materialCode": "DOOR_UNIT",
+            "mode": "PURCHASE",
+            "unit": "each",
+            "bagMassKg": null,
+            "rate": "3000",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "FIRED_CLAY_BRICK",
+            "materialCode": "FIRED_CLAY_BRICK",
+            "mode": "PURCHASE",
+            "unit": "piece",
+            "bagMassKg": null,
+            "rate": "10",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "FLOOR_TILE",
+            "materialCode": "FLOOR_TILE",
+            "mode": "PURCHASE",
+            "unit": "piece",
+            "bagMassKg": null,
+            "rate": "100",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "PAINT",
+            "materialCode": "PAINT",
+            "mode": "PHYSICAL",
+            "unit": "l",
+            "bagMassKg": null,
+            "rate": "200",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "PRIMER",
+            "materialCode": "PRIMER",
+            "mode": "PHYSICAL",
+            "unit": "l",
+            "bagMassKg": null,
+            "rate": "100",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "PUTTY",
+            "materialCode": "PUTTY",
+            "mode": "PHYSICAL",
+            "unit": "kg",
+            "bagMassKg": null,
+            "rate": "20",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "READY_MIX_CONCRETE",
+            "materialCode": "READY_MIX_CONCRETE",
+            "mode": "PHYSICAL",
+            "unit": "m3",
+            "bagMassKg": null,
+            "rate": "5000",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "SAND",
+            "materialCode": "SAND",
+            "mode": "PHYSICAL",
+            "unit": "m3",
+            "bagMassKg": null,
+            "rate": "1000",
+            "provenance": "Synthetic demonstration"
+          },
+          {
+            "code": "WINDOW_UNIT",
+            "materialCode": "WINDOW_UNIT",
+            "mode": "PURCHASE",
+            "unit": "each",
+            "bagMassKg": null,
+            "rate": "2000",
+            "provenance": "Synthetic demonstration"
+          }
+        ]
+      },
+      "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+      "costingPolicy": {
+        "id": "sample-policy",
+        "version": "1",
+        "currency": "INR",
+        "rounding": "HALF_UP_LINE_MINOR_UNITS",
+        "physicalQuantity": "FINAL_EXACT",
+        "laborRules": [
+          {
+            "id": "concrete-labor",
+            "assemblyId": "concrete",
+            "layerId": "structure",
+            "tradeCode": "GENERAL_LABOR",
+            "basisUnit": "m3",
+            "provenance": "SYNTHETIC demonstration",
+            "mode": "DIRECT",
+            "unitRate": "500"
+          },
+          {
+            "id": "door-install",
+            "assemblyId": "door",
+            "layerId": "component",
+            "tradeCode": "GENERAL_LABOR",
+            "basisUnit": "each",
+            "provenance": "SYNTHETIC demonstration",
+            "mode": "DIRECT",
+            "unitRate": "100"
+          },
+          {
+            "id": "tile-install",
+            "assemblyId": "tile",
+            "layerId": "finish",
+            "tradeCode": "TILE_INSTALLER",
+            "basisUnit": "m2",
+            "provenance": "SYNTHETIC demonstration; not a labor standard",
+            "mode": "PRODUCTIVITY",
+            "hoursPerUnit": "0.5",
+            "hourlyRate": "200"
+          }
+        ],
+        "adjustments": [
+          {
+            "code": "OVERHEAD",
+            "label": "Synthetic overhead",
+            "category": "OVERHEAD",
+            "order": 10,
+            "basis": "DIRECT",
+            "kind": "PERCENT",
+            "value": "10"
+          },
+          {
+            "code": "CONTINGENCY",
+            "label": "Synthetic contingency",
+            "category": "CONTINGENCY",
+            "order": 20,
+            "basis": "RUNNING",
+            "kind": "PERCENT",
+            "value": "5"
+          }
+        ]
+      },
+      "costingPolicyHash": "36d83eb259813ce5835d9aa5f3061c83f8961fb51d3334faf5b1f17304002d77",
+      "currency": "INR",
+      "region": {
+        "country": "IN",
+        "regionCode": "SYNTHETIC"
+      },
+      "options": {
+        "quantityDecimalPlaces": 9
+      },
+      "boqLines": [
+        {
+          "id": "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-9"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bedroom-2"
+          ],
+          "architecturalEntityIds": [
+            "space-bedroom-2"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "16.575",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "663",
+            "denominator": "40"
+          },
+          "pricingQuantity": "8.2875",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "663",
+            "denominator": "80"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "1657.50",
+          "baseAmountExact": {
+            "numerator": "3315",
+            "denominator": "2"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-4"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-3"
+          ],
+          "architecturalEntityIds": [
+            "opening-3",
+            "wall-0-14"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-10"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-corridor-0"
+          ],
+          "architecturalEntityIds": [
+            "space-corridor-0"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "15.34",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "767",
+            "denominator": "50"
+          },
+          "pricingQuantity": "7.67",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "767",
+            "denominator": "100"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "1534.00",
+          "baseAmountExact": {
+            "numerator": "1534",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-2"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-1"
+          ],
+          "architecturalEntityIds": [
+            "opening-1",
+            "wall-0-12"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-13"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_PLATE_VOLUME:slab-0"
+          ],
+          "architecturalEntityIds": [
+            "slab-0"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "concrete",
+          "specificationId": null,
+          "layerId": "structure",
+          "quantity": "18",
+          "quantityUnit": "m3",
+          "quantityExact": {
+            "numerator": "18",
+            "denominator": "1"
+          },
+          "pricingQuantity": "18",
+          "pricingUnit": "m3",
+          "pricingQuantityExact": {
+            "numerator": "18",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "500",
+          "currency": "INR",
+          "baseAmount": "9000.00",
+          "baseAmountExact": {
+            "numerator": "9000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "concrete-labor"
+        },
+        {
+          "id": "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-7"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bathroom-1"
+          ],
+          "architecturalEntityIds": [
+            "space-bathroom-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "16.7875",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "1343",
+            "denominator": "80"
+          },
+          "pricingQuantity": "8.39375",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "1343",
+            "denominator": "160"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "1678.75",
+          "baseAmountExact": {
+            "numerator": "6715",
+            "denominator": "4"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-3"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-2"
+          ],
+          "architecturalEntityIds": [
+            "opening-2",
+            "wall-0-13"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-6"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-5"
+          ],
+          "architecturalEntityIds": [
+            "opening-5",
+            "wall-0-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-5"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-4"
+          ],
+          "architecturalEntityIds": [
+            "opening-4",
+            "wall-0-15"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+          "lineCode": "LABOR.GENERAL_LABOR",
+          "category": "LABOR",
+          "description": "GENERAL_LABOR",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "GENERAL_LABOR",
+          "sourceCalculationItemIds": [
+            "calculation-1"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-0"
+          ],
+          "architecturalEntityIds": [
+            "opening-0",
+            "wall-0-11"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": null,
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "100.00",
+          "baseAmountExact": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": null,
+          "laborRuleId": "door-install"
+        },
+        {
+          "id": "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-12"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-living-1"
+          ],
+          "architecturalEntityIds": [
+            "space-living-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "25.075",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "1003",
+            "denominator": "40"
+          },
+          "pricingQuantity": "12.5375",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "1003",
+            "denominator": "80"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "2507.50",
+          "baseAmountExact": {
+            "numerator": "5015",
+            "denominator": "2"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-8"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bedroom-1"
+          ],
+          "architecturalEntityIds": [
+            "space-bedroom-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "16.7875",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "1343",
+            "denominator": "80"
+          },
+          "pricingQuantity": "8.39375",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "1343",
+            "denominator": "160"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "1678.75",
+          "baseAmountExact": {
+            "numerator": "6715",
+            "denominator": "4"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3",
+          "lineCode": "LABOR.TILE_INSTALLER",
+          "category": "LABOR",
+          "description": "TILE_INSTALLER",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": null,
+          "tradeCode": "TILE_INSTALLER",
+          "sourceCalculationItemIds": [
+            "calculation-11"
+          ],
+          "sourceMaterialLineIds": [],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-kitchen-1"
+          ],
+          "architecturalEntityIds": [
+            "space-kitchen-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "25.075",
+          "quantityUnit": "m2",
+          "quantityExact": {
+            "numerator": "1003",
+            "denominator": "40"
+          },
+          "pricingQuantity": "12.5375",
+          "pricingUnit": "hour",
+          "pricingQuantityExact": {
+            "numerator": "1003",
+            "denominator": "80"
+          },
+          "procurement": null,
+          "unitRate": "200",
+          "currency": "INR",
+          "baseAmount": "2507.50",
+          "baseAmountExact": {
+            "numerator": "5015",
+            "denominator": "2"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": null,
+          "laborRuleId": "tile-install"
+        },
+        {
+          "id": "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-11"
+          ],
+          "sourceMaterialLineIds": [
+            "material-11"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-kitchen-1"
+          ],
+          "architecturalEntityIds": [
+            "space-kitchen-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "110.33",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "11033",
+            "denominator": "100"
+          },
+          "pricingQuantity": "111",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "111",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "111",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "11100.00",
+          "baseAmountExact": {
+            "numerator": "11100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-2"
+          ],
+          "sourceMaterialLineIds": [
+            "material-2"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-1"
+          ],
+          "architecturalEntityIds": [
+            "opening-1",
+            "wall-0-12"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-8"
+          ],
+          "sourceMaterialLineIds": [
+            "material-8"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bedroom-1"
+          ],
+          "architecturalEntityIds": [
+            "space-bedroom-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "73.865",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "14773",
+            "denominator": "200"
+          },
+          "pricingQuantity": "74",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "74",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "74",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "7400.00",
+          "baseAmountExact": {
+            "numerator": "7400",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-5"
+          ],
+          "sourceMaterialLineIds": [
+            "material-5"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-4"
+          ],
+          "architecturalEntityIds": [
+            "opening-4",
+            "wall-0-15"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-10"
+          ],
+          "sourceMaterialLineIds": [
+            "material-10"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-corridor-0"
+          ],
+          "architecturalEntityIds": [
+            "space-corridor-0"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "67.496",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "8437",
+            "denominator": "125"
+          },
+          "pricingQuantity": "68",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "68",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "68",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "6800.00",
+          "baseAmountExact": {
+            "numerator": "6800",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-1"
+          ],
+          "sourceMaterialLineIds": [
+            "material-1"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-0"
+          ],
+          "architecturalEntityIds": [
+            "opening-0",
+            "wall-0-11"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-6"
+          ],
+          "sourceMaterialLineIds": [
+            "material-6"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-5"
+          ],
+          "architecturalEntityIds": [
+            "opening-5",
+            "wall-0-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61",
+          "lineCode": "MATERIAL.READY_MIX_CONCRETE",
+          "category": "MATERIAL",
+          "description": "READY_MIX_CONCRETE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "READY_MIX_CONCRETE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-13"
+          ],
+          "sourceMaterialLineIds": [
+            "material-13"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_PLATE_VOLUME:slab-0"
+          ],
+          "architecturalEntityIds": [
+            "slab-0"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "concrete",
+          "specificationId": null,
+          "layerId": "structure",
+          "quantity": "18.9",
+          "quantityUnit": "m3",
+          "quantityExact": {
+            "numerator": "189",
+            "denominator": "10"
+          },
+          "pricingQuantity": "18.9",
+          "pricingUnit": "m3",
+          "pricingQuantityExact": {
+            "numerator": "189",
+            "denominator": "10"
+          },
+          "procurement": null,
+          "unitRate": "5000",
+          "currency": "INR",
+          "baseAmount": "94500.00",
+          "baseAmountExact": {
+            "numerator": "94500",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "READY_MIX_CONCRETE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-4"
+          ],
+          "sourceMaterialLineIds": [
+            "material-4"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-3"
+          ],
+          "architecturalEntityIds": [
+            "opening-3",
+            "wall-0-14"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-9"
+          ],
+          "sourceMaterialLineIds": [
+            "material-9"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bedroom-2"
+          ],
+          "architecturalEntityIds": [
+            "space-bedroom-2"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "72.93",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "7293",
+            "denominator": "100"
+          },
+          "pricingQuantity": "73",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "73",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "73",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "7300.00",
+          "baseAmountExact": {
+            "numerator": "7300",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2",
+          "lineCode": "MATERIAL.DOOR_UNIT",
+          "category": "MATERIAL",
+          "description": "DOOR_UNIT",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "DOOR_UNIT",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-3"
+          ],
+          "sourceMaterialLineIds": [
+            "material-3"
+          ],
+          "sourceTakeoffItemIds": [
+            "DOOR_COUNT:opening-2"
+          ],
+          "architecturalEntityIds": [
+            "opening-2",
+            "wall-0-13"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "door",
+          "specificationId": null,
+          "layerId": "component",
+          "quantity": "1",
+          "quantityUnit": "each",
+          "quantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "pricingQuantity": "1",
+          "pricingUnit": "each",
+          "pricingQuantityExact": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "each",
+            "quantity": "1",
+            "bagMassKg": null
+          },
+          "unitRate": "3000",
+          "currency": "INR",
+          "baseAmount": "3000.00",
+          "baseAmountExact": {
+            "numerator": "3000",
+            "denominator": "1"
+          },
+          "upstreamStatus": "EVALUATED",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "DOOR_UNIT"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-7"
+          ],
+          "sourceMaterialLineIds": [
+            "material-7"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-bathroom-1"
+          ],
+          "architecturalEntityIds": [
+            "space-bathroom-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "73.865",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "14773",
+            "denominator": "200"
+          },
+          "pricingQuantity": "74",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "74",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "74",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "7400.00",
+          "baseAmountExact": {
+            "numerator": "7400",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        },
+        {
+          "id": "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f",
+          "lineCode": "MATERIAL.FLOOR_TILE",
+          "category": "MATERIAL",
+          "description": "FLOOR_TILE",
+          "status": "PRICED",
+          "reason": null,
+          "materialCode": "FLOOR_TILE",
+          "tradeCode": null,
+          "sourceCalculationItemIds": [
+            "calculation-12"
+          ],
+          "sourceMaterialLineIds": [
+            "material-12"
+          ],
+          "sourceTakeoffItemIds": [
+            "FLOOR_FINISH_BASE_AREA:space-living-1"
+          ],
+          "architecturalEntityIds": [
+            "space-living-1"
+          ],
+          "levelId": "level-0",
+          "assemblyId": "tile",
+          "specificationId": null,
+          "layerId": "finish",
+          "quantity": "110.33",
+          "quantityUnit": "piece",
+          "quantityExact": {
+            "numerator": "11033",
+            "denominator": "100"
+          },
+          "pricingQuantity": "111",
+          "pricingUnit": "piece",
+          "pricingQuantityExact": {
+            "numerator": "111",
+            "denominator": "1"
+          },
+          "procurement": {
+            "unit": "piece",
+            "quantity": "111",
+            "bagMassKg": null
+          },
+          "unitRate": "100",
+          "currency": "INR",
+          "baseAmount": "11100.00",
+          "baseAmountExact": {
+            "numerator": "11100",
+            "denominator": "1"
+          },
+          "upstreamStatus": "PARTIAL",
+          "rateProvenance": {
+            "rateBookId": "sample-inr-v1",
+            "rateBookVersion": "1",
+            "rateBookHash": "0cd71944759b0ee7b734c740cb2823fc4ab125ff64201cce955d47764803ee87",
+            "rateEntryCode": "FLOOR_TILE"
+          },
+          "laborRuleId": null
+        }
+      ],
+      "unpricedLineIds": [],
+      "subtotals": {
+        "material": "163600.00",
+        "labor": "21164.00",
+        "direct": "184764.00"
+      },
+      "adjustments": [
+        {
+          "id": "adjustment:OVERHEAD",
+          "category": "ADJUSTMENT",
+          "rule": {
+            "code": "OVERHEAD",
+            "label": "Synthetic overhead",
+            "category": "OVERHEAD",
+            "order": 10,
+            "basis": "DIRECT",
+            "kind": "PERCENT",
+            "value": "10"
+          },
+          "basisAmount": "184764.00",
+          "amount": "18476.40",
+          "amountExact": {
+            "numerator": "92382",
+            "denominator": "5"
+          }
+        },
+        {
+          "id": "adjustment:CONTINGENCY",
+          "category": "ADJUSTMENT",
+          "rule": {
+            "code": "CONTINGENCY",
+            "label": "Synthetic contingency",
+            "category": "CONTINGENCY",
+            "order": 20,
+            "basis": "RUNNING",
+            "kind": "PERCENT",
+            "value": "5"
+          },
+          "basisAmount": "203240.40",
+          "amount": "10162.02",
+          "amountExact": {
+            "numerator": "508101",
+            "denominator": "50"
+          }
+        }
+      ],
+      "finalTotals": {
+        "pricedSubtotal": "184764.00",
+        "adjustmentsOnPricedSubtotal": "28638.42",
+        "pricedGrandTotal": "213402.42",
+        "completeTotalAvailable": false,
+        "completeRepresentedScopeTotal": null
+      },
+      "coverage": "PARTIALLY_PRICED",
+      "groups": [
+        {
+          "dimension": "assembly",
+          "key": "concrete",
+          "lineIds": [
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61"
+          ],
+          "pricedAmount": "103500.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "assembly",
+          "key": "door",
+          "lineIds": [
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2"
+          ],
+          "pricedAmount": "18600.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "assembly",
+          "key": "tile",
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3",
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "62664.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "category",
+          "key": "LABOR",
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3"
+          ],
+          "pricedAmount": "21164.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "category",
+          "key": "MATERIAL",
+          "lineIds": [
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "163600.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "level",
+          "key": "level-0",
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3",
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "184764.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "material",
+          "key": "DOOR_UNIT",
+          "lineIds": [
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2"
+          ],
+          "pricedAmount": "18000.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "material",
+          "key": "FLOOR_TILE",
+          "lineIds": [
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "51100.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "material",
+          "key": "READY_MIX_CONCRETE",
+          "lineIds": [
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61"
+          ],
+          "pricedAmount": "94500.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "material",
+          "key": null,
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3"
+          ],
+          "pricedAmount": "21164.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "specification",
+          "key": null,
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3",
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "184764.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "trade",
+          "key": "GENERAL_LABOR",
+          "lineIds": [
+            "labor:40bc03a99ad0119e53b08a9ac41a37f0ca51d800ddc8dfe1ee684295be2040b6",
+            "labor:5a69cb77379ea2c1216b0af6ec7707e1994e70888ed08c53c35222f9f410de8c",
+            "labor:6d10361fe8ee9303af12e5d507fbed5d8cad2111c3be7a839709ef1a5d4be25f",
+            "labor:892a68ee537a34691cd2132c2e3025b924a341c058e70755158bc9d002f31e8c",
+            "labor:8c08c9028dbbf4862f45fb62a69ad486adcae728ffa74f53dcea1c7490b67974",
+            "labor:ada967c5975ef5d2e2181b178ca5b507c74e67178b5b55232ce1a5e313eaa5af",
+            "labor:ce9ac88666d963c2afd5a3f0e0fdf3583a25c0e84d541e99bb630cc62ac06fea"
+          ],
+          "pricedAmount": "9600.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "trade",
+          "key": "TILE_INSTALLER",
+          "lineIds": [
+            "labor:3886cce0c1e3c50e6ca3e52318bcb59718057de2c0e50e734f0c0236fe3c9682",
+            "labor:448fd62b768dd001cfed125102171d8f3f88741ea8e6da7e57353944523be45a",
+            "labor:8171af8e4109dbe551a6956df7c32ab7091dbefb3beb7d1da107b6343429112b",
+            "labor:d4ade67b50a9e7fba9992568d0562e04767af1eef03fca8bbb8b45c454c17fae",
+            "labor:dd244dddd0a18047553c9be82f4ef5549b1c0354f283ee918a1a8f9fda625248",
+            "labor:f93202a781c9b5619cb4c55285bba5ba4d374d898db59fd167c03ac9aecb35a3"
+          ],
+          "pricedAmount": "11564.00",
+          "unpricedCount": 0
+        },
+        {
+          "dimension": "trade",
+          "key": null,
+          "lineIds": [
+            "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352",
+            "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c",
+            "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb",
+            "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8",
+            "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f",
+            "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389",
+            "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8",
+            "material:820021874f4d17d2e05e2b970041ac040072986d66563935569f43de2ba5df61",
+            "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e",
+            "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600",
+            "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2",
+            "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e",
+            "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+          ],
+          "pricedAmount": "163600.00",
+          "unpricedCount": 0
+        }
+      ],
+      "warnings": [
+        {
+          "code": "COST_ADJUSTMENT_APPLIED",
+          "lineId": "adjustment:CONTINGENCY"
+        },
+        {
+          "code": "COST_ADJUSTMENT_APPLIED",
+          "lineId": "adjustment:OVERHEAD"
+        },
+        {
+          "code": "COST_EQUIPMENT_NOT_EVALUATED",
+          "lineId": null
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": null
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352"
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb"
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f"
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600"
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e"
+        },
+        {
+          "code": "COST_PARTIAL_UPSTREAM_QUANTITY",
+          "lineId": "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:032614040df23846bd7346fc324073473c183fc6d0d013575fbb2ce5c8841352"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:1570cebde35f3c888498de7e4e5e8fe01bf28874cdf4e97a942937d8d19d2b8c"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:19f46f749929fa591061a0625b17a74bbe38aa3ba2e0f7e5db40c3716d350ebb"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:1b3dc547d82815f01e870bbf1eaa456d7ca75a54f28b4a7874a13e3e4e87c4f8"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:4138f7b638a5e8c47d0987d7b9c7bd43ca7cc22a58f74c674e79644f4030f12f"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:4a86c6f8e4130826bd14ee08c40deff90bd51019e9c97987fa0a337784881389"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:4c5f0e79baefd7d13f3bdfef320014bec38e49dd4c57adcad956cb3ad71176d8"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:8b6c5423150db3364547e9a7e33317b210bda707baa8ce25c0939c2dba19568e"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:91e792c108dd65665390bfb364459e0401752f9903f49268e973e0fe6fc34600"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:a8751fb750678a0abf22e46f5f36ee22d99e2e85abc8499ee1b50d822d6330b2"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:b54a01e5c3bda660a8c6533a1474bdf98a39ba7e58ad0bc59eb76481e668848e"
+        },
+        {
+          "code": "COST_PROCUREMENT_ROUNDING_USED",
+          "lineId": "material:dd794296a1836eed15e6e14bb554fab64278235cc2ea7e73cc1544772dc04d7f"
+        },
+        {
+          "code": "COST_SAMPLE_RATE_BOOK",
+          "lineId": null
+        },
+        {
+          "code": "COST_TRANSPORT_NOT_EVALUATED",
+          "lineId": null
+        }
+      ],
+      "assumptions": [
+        "Physical pricing uses final exact upstream quantities; purchase pricing uses upstream purchase counts.",
+        "Money rounds half-up per line to two minor digits; subtotals sum emitted rounded lines.",
+        "Labor consumes the stated upstream basis once per calculation layer; no geometry is remeasured.",
+        "Totals cover represented priced work only; excluded scopes are not a complete project estimate."
+      ],
+      "excludedScopes": [
+        "EQUIPMENT",
+        "TRANSPORT",
+        "UNREPRESENTED_STRUCTURAL_WORK",
+        "REINFORCEMENT",
+        "FOUNDATIONS",
+        "MEP"
+      ]
+    }
+  }
+}

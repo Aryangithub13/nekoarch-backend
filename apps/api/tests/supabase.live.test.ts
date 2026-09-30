@@ -1,3 +1,4 @@
+import { costAcceptance,costSetup } from '../../../test-support/cost-acceptance.js';
 import { constructionAcceptance } from '../../../test-support/construction-acceptance.js';
 import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
 import { projectAcceptance } from '../../../test-support/project-acceptance.js';
@@ -281,6 +282,31 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     if (!app || !owner || !other) throw new Error('Local setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
+  costAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local cost setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+
+  it('protects immutable costs through direct SDK and PostgREST without service-role bypass', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local cost setup incomplete');
+    const f = await costSetup({ app, owner: owner.headers, other: other.headers });
+    const created = await app.inject({ method: 'POST', url: f.url, headers: owner.headers, payload: f.payload });
+    expect(created.statusCode, created.body).toBe(201); const dto = created.json();
+    const own = await owner.client.from('project_revision_cost_estimates').select('report_json').eq('id',dto.id).single();
+    expect(own.error).toBeNull(); expect(own.data?.report_json).toEqual(dto.report);
+    const hidden = await other.client.from('project_revision_cost_estimates').select('id').eq('id',dto.id);
+    expect(hidden.error).toBeNull(); expect(hidden.data).toEqual([]);
+    expect((await publicClient.from('project_revision_cost_estimates').select('id')).error?.code).toBe('42501');
+    expect((await owner.client.from('project_revision_cost_estimates').insert({report_json:dto.report})).error?.code).toBe('42501');
+    expect((await owner.client.from('project_revision_cost_estimates').update({report_json:{}}).eq('id',dto.id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_revision_cost_estimates').delete().eq('id',dto.id)).error?.code).toBe('42501');
+    for (const client of [owner.client,other.client]) {
+      expect((await client.rpc('cost_write',{p_input:{projectId:f.projectId,report:dto.report}})).error?.code).toBe('42501');
+      expect((await client.rpc('cost_write',{p_input:{projectId:f.projectId,report:{...dto.report,rateBookHash:'0'.repeat(64)}},p_envelope:'{}',p_signature:'a'.repeat(64)})).error?.code).toBe('42501');
+    }
+    expect((await other.client.rpc('cost_read',{p_project_id:f.projectId,p_revision_id:f.revision.id,p_cost_id:dto.id})).error?.code).toBe('P1201');
+  });
+
   constructionAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
