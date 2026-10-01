@@ -1,0 +1,990 @@
+{
+  "note": "Actual disposable PostgreSQL acceptance output; IDs are test artifacts.",
+  "completeBuilding": {
+    "id": "88a8f1bc-45a0-494d-8d8e-1281326653e0",
+    "projectId": "2b7aa932-8dd6-42c5-b24a-f482bcdb27ac",
+    "sourceRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+    "workflowVersion": "workflow-v1",
+    "mode": "COMPLETE_BUILDING",
+    "status": "COMPLETED",
+    "inputFingerprint": "3dbacc76a1a256e3dc9b08090fcb1027f057d5c3d1ceb00add16c19d4d21953a",
+    "request": {
+      "mode": "COMPLETE_BUILDING",
+      "source": {
+        "kind": "GENERATE",
+        "baseRevisionId": null,
+        "requirements": {
+          "site": {
+            "boundary": [
+              {
+                "x": 0,
+                "z": 0
+              },
+              {
+                "x": 10000,
+                "z": 0
+              },
+              {
+                "x": 10000,
+                "z": 12000
+              },
+              {
+                "x": 0,
+                "z": 12000
+              }
+            ],
+            "northMilliDegrees": 0,
+            "setbacks": []
+          },
+          "floors": 1,
+          "rooms": [
+            {
+              "type": "bedroom",
+              "count": 2,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "bathroom",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "living",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "kitchen",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            }
+          ],
+          "relationships": [],
+          "circulationWidthMm": 1200,
+          "floorToFloorHeightMm": 3000,
+          "exteriorWallThicknessMm": 200,
+          "interiorWallThicknessMm": 100,
+          "slabThicknessMm": 150,
+          "door": {
+            "widthMm": 900,
+            "heightMm": 2100,
+            "jambMm": 100
+          },
+          "windows": {
+            "enabled": true,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900
+          },
+          "seed": "qa",
+          "solver": {
+            "maxCandidates": 32,
+            "maxIterations": 20000
+          }
+        }
+      },
+      "requiredOutputs": [],
+      "optionalOutputs": [],
+      "takeoff": {
+        "options": {
+          "displayDecimalPlaces": 6
+        }
+      },
+      "construction": {
+        "specification": {
+          "id": "test-spec",
+          "version": "1",
+          "recipePack": {
+            "id": "construction-recipes",
+            "version": "1"
+          },
+          "allowMultipleLayers": false,
+          "assemblies": [
+            {
+              "id": "concrete",
+              "wastagePercent": "5",
+              "kind": "concrete",
+              "mode": {
+                "type": "READY_MIX_VOLUME_ONLY"
+              }
+            },
+            {
+              "id": "door",
+              "wastagePercent": "0",
+              "kind": "component",
+              "materialCode": "DOOR_UNIT"
+            },
+            {
+              "id": "tile",
+              "wastagePercent": "10",
+              "kind": "flooring",
+              "tileLengthMm": 500,
+              "tileWidthMm": 500
+            }
+          ],
+          "assignments": [
+            {
+              "id": "doors",
+              "basis": "DOOR_COUNT",
+              "assemblyId": "door",
+              "layerId": "component",
+              "selector": {
+                "kind": "default"
+              }
+            },
+            {
+              "id": "floor",
+              "basis": "FLOOR_FINISH_BASE_AREA",
+              "assemblyId": "tile",
+              "layerId": "finish",
+              "selector": {
+                "kind": "default"
+              }
+            },
+            {
+              "id": "slab",
+              "basis": "FLOOR_PLATE_VOLUME",
+              "assemblyId": "concrete",
+              "layerId": "structure",
+              "selector": {
+                "kind": "default"
+              }
+            }
+          ]
+        },
+        "options": {
+          "quantityDecimalPlaces": 9
+        }
+      },
+      "cost": {
+        "rateBookId": "sample-inr-v1",
+        "costingPolicy": {
+          "id": "sample-policy",
+          "version": "1",
+          "currency": "INR",
+          "rounding": "HALF_UP_LINE_MINOR_UNITS",
+          "physicalQuantity": "FINAL_EXACT",
+          "laborRules": [
+            {
+              "id": "concrete-labor",
+              "assemblyId": "concrete",
+              "layerId": "structure",
+              "tradeCode": "GENERAL_LABOR",
+              "basisUnit": "m3",
+              "provenance": "SYNTHETIC demonstration",
+              "mode": "DIRECT",
+              "unitRate": "500"
+            },
+            {
+              "id": "door-install",
+              "assemblyId": "door",
+              "layerId": "component",
+              "tradeCode": "GENERAL_LABOR",
+              "basisUnit": "each",
+              "provenance": "SYNTHETIC demonstration",
+              "mode": "DIRECT",
+              "unitRate": "100"
+            },
+            {
+              "id": "tile-install",
+              "assemblyId": "tile",
+              "layerId": "finish",
+              "tradeCode": "TILE_INSTALLER",
+              "basisUnit": "m2",
+              "provenance": "SYNTHETIC demonstration; not a labor standard",
+              "mode": "PRODUCTIVITY",
+              "hoursPerUnit": "0.5",
+              "hourlyRate": "200"
+            }
+          ],
+          "adjustments": [
+            {
+              "code": "OVERHEAD",
+              "label": "Synthetic overhead",
+              "category": "OVERHEAD",
+              "order": 10,
+              "basis": "DIRECT",
+              "kind": "PERCENT",
+              "value": "10"
+            },
+            {
+              "code": "CONTINGENCY",
+              "label": "Synthetic contingency",
+              "category": "CONTINGENCY",
+              "order": 20,
+              "basis": "RUNNING",
+              "kind": "PERCENT",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {
+          "quantityDecimalPlaces": 9
+        }
+      }
+    },
+    "plan": {
+      "workflowVersion": "workflow-v1",
+      "mode": "COMPLETE_BUILDING",
+      "status": "PLANNED",
+      "requiredCapabilities": [
+        "BLUEPRINT_GENERATION",
+        "BLUEPRINT_QA",
+        "REVISION_PERSISTENCE",
+        "QUANTITY_TAKEOFF",
+        "CONSTRUCTION_CALCULATION",
+        "BOQ_COST"
+      ],
+      "optionalCapabilities": [
+        "PROFESSIONAL_2D",
+        "INTERIOR_DESIGN",
+        "EXTERIOR_DESIGN",
+        "SCENE_3D",
+        "ENGINEERING_ANALYSIS"
+      ],
+      "steps": [
+        {
+          "capability": "BLUEPRINT_GENERATION",
+          "version": "precision-blueprint-v1",
+          "artifactType": "BUILDING_MODEL",
+          "dependencies": [],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "BLUEPRINT_QA",
+          "version": "blueprint-qa-v1",
+          "artifactType": "BLUEPRINT_QA",
+          "dependencies": [
+            "BLUEPRINT_GENERATION"
+          ],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "REVISION_PERSISTENCE",
+          "version": "project-revision-v1",
+          "artifactType": "PROJECT_REVISION",
+          "dependencies": [
+            "BLUEPRINT_QA"
+          ],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "QUANTITY_TAKEOFF",
+          "version": "quantity-takeoff-v1",
+          "artifactType": "QUANTITY_TAKEOFF",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "CONSTRUCTION_CALCULATION",
+          "version": "construction-calculation-v1",
+          "artifactType": "CONSTRUCTION_CALCULATION",
+          "dependencies": [
+            "QUANTITY_TAKEOFF"
+          ],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "BOQ_COST",
+          "version": "boq-cost-v1",
+          "artifactType": "BOQ_COST",
+          "dependencies": [
+            "CONSTRUCTION_CALCULATION"
+          ],
+          "action": "EXECUTE",
+          "required": true
+        },
+        {
+          "capability": "PROFESSIONAL_2D",
+          "version": "contract-v1",
+          "artifactType": "DRAWING_2D",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "INTERIOR_DESIGN",
+          "version": "contract-v1",
+          "artifactType": "INTERIOR_DESIGN",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "EXTERIOR_DESIGN",
+          "version": "contract-v1",
+          "artifactType": "EXTERIOR_DESIGN",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "SCENE_3D",
+          "version": "contract-v1",
+          "artifactType": "SCENE_3D",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "ENGINEERING_ANALYSIS",
+          "version": "contract-v1",
+          "artifactType": "ENGINEERING_ANALYSIS",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        }
+      ],
+      "unavailableCapabilities": [
+        {
+          "capability": "PROFESSIONAL_2D",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "INTERIOR_DESIGN",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "EXTERIOR_DESIGN",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "SCENE_3D",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "ENGINEERING_ANALYSIS",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        }
+      ],
+      "executableCapabilities": [
+        "BLUEPRINT_GENERATION",
+        "BLUEPRINT_QA",
+        "REVISION_PERSISTENCE",
+        "QUANTITY_TAKEOFF",
+        "CONSTRUCTION_CALCULATION",
+        "BOQ_COST"
+      ],
+      "expectedArtifacts": [
+        "BUILDING_MODEL",
+        "BLUEPRINT_QA",
+        "PROJECT_REVISION",
+        "QUANTITY_TAKEOFF",
+        "CONSTRUCTION_CALCULATION",
+        "BOQ_COST",
+        "DRAWING_2D",
+        "INTERIOR_DESIGN",
+        "EXTERIOR_DESIGN",
+        "SCENE_3D",
+        "ENGINEERING_ANALYSIS"
+      ],
+      "reusedOutputs": []
+    },
+    "outputs": [
+      {
+        "capability": "BLUEPRINT_GENERATION",
+        "artifactType": "BUILDING_MODEL",
+        "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "precision-blueprint-v1",
+        "coverage": null,
+        "sourceArtifactIds": []
+      },
+      {
+        "capability": "BLUEPRINT_QA",
+        "artifactType": "BLUEPRINT_QA",
+        "artifactId": "8a859d33-f8ff-420e-bc10-fd6b19c15c58",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "blueprint-qa-v1",
+        "coverage": "PASS",
+        "sourceArtifactIds": [
+          "aa3c56ae-92aa-4fc5-b259-ab25f4007476"
+        ]
+      },
+      {
+        "capability": "REVISION_PERSISTENCE",
+        "artifactType": "PROJECT_REVISION",
+        "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "project-revision-v1",
+        "coverage": null,
+        "sourceArtifactIds": [
+          "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+        ]
+      },
+      {
+        "capability": "QUANTITY_TAKEOFF",
+        "artifactType": "QUANTITY_TAKEOFF",
+        "artifactId": "983280f8-1431-45fe-b682-93ab9ffd47fc",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "quantity-takeoff-v1",
+        "coverage": "PARTIAL",
+        "sourceArtifactIds": [
+          "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+        ]
+      },
+      {
+        "capability": "CONSTRUCTION_CALCULATION",
+        "artifactType": "CONSTRUCTION_CALCULATION",
+        "artifactId": "cd5d5360-230d-4848-a240-7c4a6c940b5c",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "construction-calculation-v1",
+        "coverage": "PARTIAL",
+        "sourceArtifactIds": [
+          "983280f8-1431-45fe-b682-93ab9ffd47fc"
+        ]
+      },
+      {
+        "capability": "BOQ_COST",
+        "artifactType": "BOQ_COST",
+        "artifactId": "63c45cb8-7f2c-42d3-bd3d-66a788a972f3",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "CREATED",
+        "version": "boq-cost-v1",
+        "coverage": "PARTIALLY_PRICED",
+        "sourceArtifactIds": [
+          "983280f8-1431-45fe-b682-93ab9ffd47fc",
+          "cd5d5360-230d-4848-a240-7c4a6c940b5c"
+        ]
+      }
+    ],
+    "completedCapabilities": [
+      "BLUEPRINT_GENERATION",
+      "BLUEPRINT_QA",
+      "REVISION_PERSISTENCE",
+      "QUANTITY_TAKEOFF",
+      "CONSTRUCTION_CALCULATION",
+      "BOQ_COST"
+    ],
+    "errors": [],
+    "createdAt": "2026-09-30T17:51:24.986417+05:30",
+    "updatedAt": "2026-09-30T17:51:25.407785+05:30"
+  },
+  "reusedWorkflow": {
+    "id": "71a2f141-ef04-40fb-ad31-4668afe4f09d",
+    "projectId": "2b7aa932-8dd6-42c5-b24a-f482bcdb27ac",
+    "sourceRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+    "workflowVersion": "workflow-v1",
+    "mode": "COMPLETE_BUILDING",
+    "status": "COMPLETED",
+    "inputFingerprint": "7f2f3261b69413d29acf38d99c3816827fd64f7ff56e29240a6dcdfb231b6c98",
+    "request": {
+      "mode": "COMPLETE_BUILDING",
+      "source": {
+        "kind": "REVISION",
+        "sourceRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476"
+      },
+      "requiredOutputs": [],
+      "optionalOutputs": [],
+      "takeoff": {
+        "options": {
+          "displayDecimalPlaces": 6
+        }
+      },
+      "construction": {
+        "specification": {
+          "id": "test-spec",
+          "version": "1",
+          "recipePack": {
+            "id": "construction-recipes",
+            "version": "1"
+          },
+          "allowMultipleLayers": false,
+          "assemblies": [
+            {
+              "id": "concrete",
+              "wastagePercent": "5",
+              "kind": "concrete",
+              "mode": {
+                "type": "READY_MIX_VOLUME_ONLY"
+              }
+            },
+            {
+              "id": "door",
+              "wastagePercent": "0",
+              "kind": "component",
+              "materialCode": "DOOR_UNIT"
+            },
+            {
+              "id": "tile",
+              "wastagePercent": "10",
+              "kind": "flooring",
+              "tileLengthMm": 500,
+              "tileWidthMm": 500
+            }
+          ],
+          "assignments": [
+            {
+              "id": "doors",
+              "basis": "DOOR_COUNT",
+              "assemblyId": "door",
+              "layerId": "component",
+              "selector": {
+                "kind": "default"
+              }
+            },
+            {
+              "id": "floor",
+              "basis": "FLOOR_FINISH_BASE_AREA",
+              "assemblyId": "tile",
+              "layerId": "finish",
+              "selector": {
+                "kind": "default"
+              }
+            },
+            {
+              "id": "slab",
+              "basis": "FLOOR_PLATE_VOLUME",
+              "assemblyId": "concrete",
+              "layerId": "structure",
+              "selector": {
+                "kind": "default"
+              }
+            }
+          ]
+        },
+        "options": {
+          "quantityDecimalPlaces": 9
+        }
+      },
+      "cost": {
+        "rateBookId": "sample-inr-v1",
+        "costingPolicy": {
+          "id": "sample-policy",
+          "version": "1",
+          "currency": "INR",
+          "rounding": "HALF_UP_LINE_MINOR_UNITS",
+          "physicalQuantity": "FINAL_EXACT",
+          "laborRules": [
+            {
+              "id": "concrete-labor",
+              "assemblyId": "concrete",
+              "layerId": "structure",
+              "tradeCode": "GENERAL_LABOR",
+              "basisUnit": "m3",
+              "provenance": "SYNTHETIC demonstration",
+              "mode": "DIRECT",
+              "unitRate": "500"
+            },
+            {
+              "id": "door-install",
+              "assemblyId": "door",
+              "layerId": "component",
+              "tradeCode": "GENERAL_LABOR",
+              "basisUnit": "each",
+              "provenance": "SYNTHETIC demonstration",
+              "mode": "DIRECT",
+              "unitRate": "100"
+            },
+            {
+              "id": "tile-install",
+              "assemblyId": "tile",
+              "layerId": "finish",
+              "tradeCode": "TILE_INSTALLER",
+              "basisUnit": "m2",
+              "provenance": "SYNTHETIC demonstration; not a labor standard",
+              "mode": "PRODUCTIVITY",
+              "hoursPerUnit": "0.5",
+              "hourlyRate": "200"
+            }
+          ],
+          "adjustments": [
+            {
+              "code": "OVERHEAD",
+              "label": "Synthetic overhead",
+              "category": "OVERHEAD",
+              "order": 10,
+              "basis": "DIRECT",
+              "kind": "PERCENT",
+              "value": "10"
+            },
+            {
+              "code": "CONTINGENCY",
+              "label": "Synthetic contingency",
+              "category": "CONTINGENCY",
+              "order": 20,
+              "basis": "RUNNING",
+              "kind": "PERCENT",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {
+          "quantityDecimalPlaces": 9
+        }
+      }
+    },
+    "plan": {
+      "workflowVersion": "workflow-v1",
+      "mode": "COMPLETE_BUILDING",
+      "status": "PLANNED",
+      "requiredCapabilities": [
+        "BLUEPRINT_GENERATION",
+        "BLUEPRINT_QA",
+        "REVISION_PERSISTENCE",
+        "QUANTITY_TAKEOFF",
+        "CONSTRUCTION_CALCULATION",
+        "BOQ_COST"
+      ],
+      "optionalCapabilities": [
+        "PROFESSIONAL_2D",
+        "INTERIOR_DESIGN",
+        "EXTERIOR_DESIGN",
+        "SCENE_3D",
+        "ENGINEERING_ANALYSIS"
+      ],
+      "steps": [
+        {
+          "capability": "BLUEPRINT_GENERATION",
+          "version": "precision-blueprint-v1",
+          "artifactType": "BUILDING_MODEL",
+          "dependencies": [],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "BLUEPRINT_QA",
+          "version": "blueprint-qa-v1",
+          "artifactType": "BLUEPRINT_QA",
+          "dependencies": [
+            "BLUEPRINT_GENERATION"
+          ],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "REVISION_PERSISTENCE",
+          "version": "project-revision-v1",
+          "artifactType": "PROJECT_REVISION",
+          "dependencies": [
+            "BLUEPRINT_QA"
+          ],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "QUANTITY_TAKEOFF",
+          "version": "quantity-takeoff-v1",
+          "artifactType": "QUANTITY_TAKEOFF",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "CONSTRUCTION_CALCULATION",
+          "version": "construction-calculation-v1",
+          "artifactType": "CONSTRUCTION_CALCULATION",
+          "dependencies": [
+            "QUANTITY_TAKEOFF"
+          ],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "BOQ_COST",
+          "version": "boq-cost-v1",
+          "artifactType": "BOQ_COST",
+          "dependencies": [
+            "CONSTRUCTION_CALCULATION"
+          ],
+          "action": "REUSE",
+          "required": true
+        },
+        {
+          "capability": "PROFESSIONAL_2D",
+          "version": "contract-v1",
+          "artifactType": "DRAWING_2D",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "INTERIOR_DESIGN",
+          "version": "contract-v1",
+          "artifactType": "INTERIOR_DESIGN",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "EXTERIOR_DESIGN",
+          "version": "contract-v1",
+          "artifactType": "EXTERIOR_DESIGN",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "SCENE_3D",
+          "version": "contract-v1",
+          "artifactType": "SCENE_3D",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        },
+        {
+          "capability": "ENGINEERING_ANALYSIS",
+          "version": "contract-v1",
+          "artifactType": "ENGINEERING_ANALYSIS",
+          "dependencies": [
+            "REVISION_PERSISTENCE"
+          ],
+          "action": "UNAVAILABLE",
+          "required": false
+        }
+      ],
+      "unavailableCapabilities": [
+        {
+          "capability": "PROFESSIONAL_2D",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "INTERIOR_DESIGN",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "EXTERIOR_DESIGN",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "SCENE_3D",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        },
+        {
+          "capability": "ENGINEERING_ANALYSIS",
+          "implementationStatus": "PLANNED",
+          "reason": "CAPABILITY_NOT_IMPLEMENTED",
+          "required": false
+        }
+      ],
+      "executableCapabilities": [],
+      "expectedArtifacts": [
+        "BUILDING_MODEL",
+        "BLUEPRINT_QA",
+        "PROJECT_REVISION",
+        "QUANTITY_TAKEOFF",
+        "CONSTRUCTION_CALCULATION",
+        "BOQ_COST",
+        "DRAWING_2D",
+        "INTERIOR_DESIGN",
+        "EXTERIOR_DESIGN",
+        "SCENE_3D",
+        "ENGINEERING_ANALYSIS"
+      ],
+      "reusedOutputs": [
+        {
+          "capability": "BLUEPRINT_GENERATION",
+          "artifactType": "BUILDING_MODEL",
+          "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "precision-blueprint-v1",
+          "coverage": null,
+          "sourceArtifactIds": []
+        },
+        {
+          "capability": "BLUEPRINT_QA",
+          "artifactType": "BLUEPRINT_QA",
+          "artifactId": "8a859d33-f8ff-420e-bc10-fd6b19c15c58",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "blueprint-qa-v1",
+          "coverage": "PASS",
+          "sourceArtifactIds": [
+            "aa3c56ae-92aa-4fc5-b259-ab25f4007476"
+          ]
+        },
+        {
+          "capability": "REVISION_PERSISTENCE",
+          "artifactType": "PROJECT_REVISION",
+          "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "project-revision-v1",
+          "coverage": null,
+          "sourceArtifactIds": [
+            "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+          ]
+        },
+        {
+          "capability": "QUANTITY_TAKEOFF",
+          "artifactType": "QUANTITY_TAKEOFF",
+          "artifactId": "983280f8-1431-45fe-b682-93ab9ffd47fc",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "quantity-takeoff-v1",
+          "coverage": "PARTIAL",
+          "sourceArtifactIds": [
+            "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+            "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+          ]
+        },
+        {
+          "capability": "CONSTRUCTION_CALCULATION",
+          "artifactType": "CONSTRUCTION_CALCULATION",
+          "artifactId": "cd5d5360-230d-4848-a240-7c4a6c940b5c",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "construction-calculation-v1",
+          "coverage": "PARTIAL",
+          "sourceArtifactIds": [
+            "983280f8-1431-45fe-b682-93ab9ffd47fc"
+          ]
+        },
+        {
+          "capability": "BOQ_COST",
+          "artifactType": "BOQ_COST",
+          "artifactId": "63c45cb8-7f2c-42d3-bd3d-66a788a972f3",
+          "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "status": "REUSED",
+          "version": "boq-cost-v1",
+          "coverage": "PARTIALLY_PRICED",
+          "sourceArtifactIds": [
+            "983280f8-1431-45fe-b682-93ab9ffd47fc",
+            "cd5d5360-230d-4848-a240-7c4a6c940b5c"
+          ]
+        }
+      ]
+    },
+    "outputs": [
+      {
+        "capability": "BLUEPRINT_GENERATION",
+        "artifactType": "BUILDING_MODEL",
+        "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "precision-blueprint-v1",
+        "coverage": null,
+        "sourceArtifactIds": []
+      },
+      {
+        "capability": "BLUEPRINT_QA",
+        "artifactType": "BLUEPRINT_QA",
+        "artifactId": "8a859d33-f8ff-420e-bc10-fd6b19c15c58",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "blueprint-qa-v1",
+        "coverage": "PASS",
+        "sourceArtifactIds": [
+          "aa3c56ae-92aa-4fc5-b259-ab25f4007476"
+        ]
+      },
+      {
+        "capability": "REVISION_PERSISTENCE",
+        "artifactType": "PROJECT_REVISION",
+        "artifactId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "project-revision-v1",
+        "coverage": null,
+        "sourceArtifactIds": [
+          "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+        ]
+      },
+      {
+        "capability": "QUANTITY_TAKEOFF",
+        "artifactType": "QUANTITY_TAKEOFF",
+        "artifactId": "983280f8-1431-45fe-b682-93ab9ffd47fc",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "quantity-takeoff-v1",
+        "coverage": "PARTIAL",
+        "sourceArtifactIds": [
+          "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+          "8a859d33-f8ff-420e-bc10-fd6b19c15c58"
+        ]
+      },
+      {
+        "capability": "CONSTRUCTION_CALCULATION",
+        "artifactType": "CONSTRUCTION_CALCULATION",
+        "artifactId": "cd5d5360-230d-4848-a240-7c4a6c940b5c",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "construction-calculation-v1",
+        "coverage": "PARTIAL",
+        "sourceArtifactIds": [
+          "983280f8-1431-45fe-b682-93ab9ffd47fc"
+        ]
+      },
+      {
+        "capability": "BOQ_COST",
+        "artifactType": "BOQ_COST",
+        "artifactId": "63c45cb8-7f2c-42d3-bd3d-66a788a972f3",
+        "projectRevisionId": "aa3c56ae-92aa-4fc5-b259-ab25f4007476",
+        "status": "REUSED",
+        "version": "boq-cost-v1",
+        "coverage": "PARTIALLY_PRICED",
+        "sourceArtifactIds": [
+          "983280f8-1431-45fe-b682-93ab9ffd47fc",
+          "cd5d5360-230d-4848-a240-7c4a6c940b5c"
+        ]
+      }
+    ],
+    "completedCapabilities": [
+      "BLUEPRINT_GENERATION",
+      "BLUEPRINT_QA",
+      "REVISION_PERSISTENCE",
+      "QUANTITY_TAKEOFF",
+      "CONSTRUCTION_CALCULATION",
+      "BOQ_COST"
+    ],
+    "errors": [],
+    "createdAt": "2026-09-30T17:51:25.452903+05:30",
+    "updatedAt": "2026-09-30T17:51:25.457612+05:30"
+  }
+}

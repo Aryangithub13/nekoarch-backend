@@ -1,0 +1,266 @@
+{
+  "baseline": "1de93400a8ed768b438b2d5a35a197524c546374 / backend-v1-phase15-complete",
+  "results": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:15:57.367Z",
+      "durationMs": 11477,
+      "summary": [],
+      "log": "docs/phase16-evidence/build.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:16:08.845Z",
+      "durationMs": 18077,
+      "summary": [],
+      "log": "docs/phase16-evidence/typecheck.txt"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:16:26.922Z",
+      "durationMs": 2775,
+      "summary": [],
+      "log": "docs/phase16-evidence/lint.txt"
+    },
+    {
+      "name": "unit",
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:19:00.706Z",
+      "durationMs": 29390,
+      "summary": [
+        "Test Files  27 passed (27)",
+        "Tests  1468 passed (1468)",
+        "Duration  21.21s (transform 763ms, setup 0ms, collect 4.28s, tests 13.04s, environment 4ms, prepare 1.21s)"
+      ],
+      "log": "docs/phase16-evidence/unit.txt"
+    },
+    {
+      "name": "generator",
+      "command": "npm run test:generator",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:19:30.098Z",
+      "durationMs": 9953,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  461 passed (461)",
+        "Duration  7.75s (transform 230ms, setup 0ms, collect 599ms, tests 5.99s, environment 1ms, prepare 361ms)"
+      ],
+      "log": "docs/phase16-evidence/generator.txt"
+    },
+    {
+      "name": "blueprint",
+      "command": "npm run test:blueprint",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:19:40.051Z",
+      "durationMs": 7182,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  137 passed (137)",
+        "Duration  3.64s (transform 169ms, setup 0ms, collect 240ms, tests 3.23s, environment 0ms, prepare 46ms)"
+      ],
+      "log": "docs/phase16-evidence/blueprint.txt"
+    },
+    {
+      "name": "blueprint-qa",
+      "command": "npm run test:blueprint-qa",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:19:47.234Z",
+      "durationMs": 13297,
+      "summary": [
+        "Test Files  6 passed (6)",
+        "Tests  177 passed (177)",
+        "Duration  4.86s (transform 224ms, setup 0ms, collect 976ms, tests 2.99s, environment 1ms, prepare 276ms)"
+      ],
+      "log": "docs/phase16-evidence/blueprint-qa.txt"
+    },
+    {
+      "name": "projects",
+      "command": "npm run test:projects",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:20:00.531Z",
+      "durationMs": 15353,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)",
+        "Duration  3.23s (transform 382ms, setup 0ms, collect 919ms, tests 2.13s, environment 0ms, prepare 49ms)"
+      ],
+      "log": "docs/phase16-evidence/projects.txt"
+    },
+    {
+      "name": "takeoff",
+      "command": "npm run test:takeoff",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:20:15.884Z",
+      "durationMs": 18087,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  23 passed (23)",
+        "Duration  5.94s (transform 404ms, setup 0ms, collect 1.01s, tests 4.59s, environment 0ms, prepare 97ms)"
+      ],
+      "log": "docs/phase16-evidence/takeoff.txt"
+    },
+    {
+      "name": "construction",
+      "command": "npm run test:construction",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:20:33.972Z",
+      "durationMs": 16361,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  34 passed (34)",
+        "Duration  4.14s (transform 399ms, setup 0ms, collect 996ms, tests 2.82s, environment 0ms, prepare 93ms)"
+      ],
+      "log": "docs/phase16-evidence/construction.txt"
+    },
+    {
+      "name": "cost",
+      "command": "npm run test:cost",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:20:50.333Z",
+      "durationMs": 18463,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  39 passed (39)",
+        "Duration  6.33s (transform 412ms, setup 0ms, collect 1.04s, tests 4.96s, environment 0ms, prepare 97ms)"
+      ],
+      "log": "docs/phase16-evidence/cost.txt"
+    },
+    {
+      "name": "workflows",
+      "command": "npm run test:workflows",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:21:08.797Z",
+      "durationMs": 17315,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  50 passed (50)",
+        "Duration  5.17s (transform 377ms, setup 0ms, collect 1.02s, tests 3.83s, environment 0ms, prepare 94ms)"
+      ],
+      "log": "docs/phase16-evidence/workflows.txt"
+    },
+    {
+      "name": "integration-1",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:21:26.113Z",
+      "durationMs": 33287,
+      "summary": [
+        "Test Files  9 passed (9)",
+        "Tests  124 passed (124)",
+        "Duration  24.78s (transform 470ms, setup 0ms, collect 4.26s, tests 19.11s, environment 1ms, prepare 416ms)"
+      ],
+      "log": "docs/phase16-evidence/integration-1.txt"
+    },
+    {
+      "name": "integration-2",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:21:59.401Z",
+      "durationMs": 33281,
+      "summary": [
+        "Test Files  9 passed (9)",
+        "Tests  124 passed (124)",
+        "Duration  24.71s (transform 446ms, setup 0ms, collect 4.25s, tests 19.07s, environment 2ms, prepare 412ms)"
+      ],
+      "log": "docs/phase16-evidence/integration-2.txt"
+    },
+    {
+      "name": "integration-3",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:22:32.682Z",
+      "durationMs": 33075,
+      "summary": [
+        "Test Files  9 passed (9)",
+        "Tests  124 passed (124)",
+        "Duration  24.57s (transform 450ms, setup 0ms, collect 4.24s, tests 18.95s, environment 1ms, prepare 412ms)"
+      ],
+      "log": "docs/phase16-evidence/integration-3.txt"
+    },
+    {
+      "name": "supabase-1",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:23:05.758Z",
+      "durationMs": 39634,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  46 passed (46)",
+        "Duration  25.41s (transform 401ms, setup 0ms, collect 925ms, tests 24.20s, environment 0ms, prepare 55ms)"
+      ],
+      "log": "docs/phase16-evidence/supabase-1.txt"
+    },
+    {
+      "name": "supabase-2",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:23:45.393Z",
+      "durationMs": 38990,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  46 passed (46)",
+        "Duration  25.19s (transform 400ms, setup 0ms, collect 936ms, tests 23.98s, environment 0ms, prepare 63ms)"
+      ],
+      "log": "docs/phase16-evidence/supabase-2.txt"
+    },
+    {
+      "name": "check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:24:24.383Z",
+      "durationMs": 90152,
+      "summary": [
+        "Test Files  37 passed (37)",
+        "Tests  1594 passed (1594)",
+        "Duration  46.76s (transform 943ms, setup 0ms, collect 8.28s, tests 32.91s, environment 7ms, prepare 1.72s)"
+      ],
+      "log": "docs/phase16-evidence/check.txt"
+    },
+    {
+      "name": "db-rls",
+      "command": "npm run db:test",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:25:54.535Z",
+      "durationMs": 1950,
+      "summary": [
+        "All tests successful.",
+        "Result: PASS"
+      ],
+      "log": "docs/phase16-evidence/db-rls.txt"
+    },
+    {
+      "name": "docker",
+      "command": "docker build -t designflow-api:phase16 .",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:25:56.486Z",
+      "durationMs": 125880,
+      "summary": [],
+      "log": "docs/phase16-evidence/docker.txt"
+    },
+    {
+      "name": "smoke",
+      "command": "node scripts/smoke-container.mjs designflow-api:phase16",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:28:02.366Z",
+      "durationMs": 1136,
+      "summary": [],
+      "log": "docs/phase16-evidence/smoke.txt"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "startedAt": "2026-09-30T12:28:03.503Z",
+      "durationMs": 4,
+      "summary": [],
+      "log": "docs/phase16-evidence/diff-check.txt"
+    }
+  ]
+}

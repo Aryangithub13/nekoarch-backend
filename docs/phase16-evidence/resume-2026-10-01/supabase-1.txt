@@ -1,0 +1,80 @@
+
+> designflow@0.1.0 test:supabase
+> npm run build && node scripts/test-local-supabase.mjs
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/supabase.live.test.ts (47 tests) 23425ms
+   ✓ local Supabase anonymous ownership and full persistence flow > atomically replays concurrent durable operations through actual PostgREST and JWTs  543ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: client-save  457ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: structured-generation  440ms
+   ✓ local Supabase anonymous ownership and full persistence flow > saves, audits, retrieves, shares, estimates and revokes using real anonymous sessions: prompt-generation  420ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  720ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent creates with same, different and absent keys on one artifact  869ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps options and revisions distinct, paginates summaries and replays after architecture advances  968ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged request metadata, invalid options, bad pagination and missing resources  363ms
+   ✓ local Supabase anonymous ownership and full persistence flow > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  937ms
+   ✓ local Supabase anonymous ownership and full persistence flow > reuses revision, QA, takeoff and construction and executes only missing cost  1121ms
+   ✓ local Supabase anonymous ownership and full persistence flow > replays identical keys after newer revisions and conflicts on changed mode, revision and outputs  494ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists honest blocked future contracts and validates attached space references  466ms
+   ✓ local Supabase anonymous ownership and full persistence flow > preserves upstream artifacts and reports a downstream domain failure precisely  527ms
+   ✓ local Supabase anonymous ownership and full persistence flow > retains required outputs when optional cost fails and optional 3D is unavailable  600ms
+   ✓ local Supabase anonymous ownership and full persistence flow > isolates private workflows on public projects and rejects cross-project revisions and client output injection  531ms
+   ✓ local Supabase anonymous ownership and full persistence flow > paginates summaries and exposes only safe capability metadata  346ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists an exact BOQ with hashes and all ancestors unchanged  670ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless costs and replays after later rate/policy versions  738ms
+   ✓ local Supabase anonymous ownership and full persistence flow > lists only summaries with bounded stable pagination  851ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps costs owner-private even for public projects and isolates identical keys across users  1022ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects client quantities/reports/totals/owner injection and missing artifacts  600ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable costs through direct SDK and PostgREST without service-role bypass  479ms
+   ✓ local Supabase anonymous ownership and full persistence flow > persists and retrieves exact calculations without changing source artifacts or leaking through public projects  562ms
+   ✓ local Supabase anonymous ownership and full persistence flow > converges concurrent keyed/keyless creates and rejects reuse with changed specifications  476ms
+   ✓ local Supabase anonymous ownership and full persistence flow > keeps specification versions, options and takeoffs distinct with stable pagination  1078ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects forged report data, invalid recipes, malformed pagination and missing resources  454ms
+   ✓ local Supabase anonymous ownership and full persistence flow > protects immutable takeoffs through direct SDK and PostgREST calls  317ms
+   ✓ local Supabase anonymous ownership and full persistence flow > round-trips generated geometry and complete QA, appends R2 and leaves R1 immutable  319ms
+   ✓ local Supabase anonymous ownership and full persistence flow > rejects stale and missing bases without creating R3  382ms
+   ✓ local Supabase anonymous ownership and full persistence flow > isolates private owner data and exposes only public current architecture  545ms
+   ✓ local Supabase anonymous ownership and full persistence flow > archives without losing history, forbids writes and allows explicit unarchive  385ms
+   ✓ local Supabase anonymous ownership and full persistence flow > deduplicates generated revisions and replays after the current pointer advances or archives  482ms
+   ✓ local Supabase anonymous ownership and full persistence flow > paginates projects and revisions deterministically without model bodies  1185ms
+   ✓ local Supabase anonymous ownership and full persistence flow > enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC  307ms
+
+ Test Files  1 passed (1)
+      Tests  47 passed (47)
+   Start at  10:13:32
+   Duration  24.58s (transform 400ms, setup 0ms, collect 907ms, tests 23.43s, environment 0ms, prepare 58ms)
+

@@ -1,0 +1,61 @@
+{
+  "postgrestImage": "public.ecr.aws/supabase/postgrest:v16.3",
+  "runs": [
+    {
+      "file": "docs/phase16-evidence/supabase-2026-09-30T12-14-37.866Z.json",
+      "startedAt": "2026-09-30T12:14:37.866Z",
+      "observedRequests": 1356,
+      "upstream5xx": 0,
+      "jwtTimingErrors": 0,
+      "api5xx": 0,
+      "transportErrors": 0,
+      "expectedPermissionDenials": 12,
+      "unexpectedFailures": 0
+    },
+    {
+      "file": "docs/phase16-evidence/supabase-2026-09-30T12-23-21.071Z.json",
+      "startedAt": "2026-09-30T12:23:21.071Z",
+      "observedRequests": 1356,
+      "upstream5xx": 0,
+      "jwtTimingErrors": 0,
+      "api5xx": 0,
+      "transportErrors": 0,
+      "expectedPermissionDenials": 12,
+      "unexpectedFailures": 0
+    },
+    {
+      "file": "docs/phase16-evidence/supabase-2026-09-30T12-24-00.271Z.json",
+      "startedAt": "2026-09-30T12:24:00.271Z",
+      "observedRequests": 1354,
+      "upstream5xx": 0,
+      "jwtTimingErrors": 0,
+      "api5xx": 0,
+      "transportErrors": 0,
+      "expectedPermissionDenials": 12,
+      "unexpectedFailures": 0
+    },
+    {
+      "file": "docs/phase16-evidence/supabase-2026-10-01T04-43-33.718Z.json",
+      "startedAt": "2026-10-01T04:43:33.718Z",
+      "observedRequests": 1380,
+      "upstream5xx": 0,
+      "jwtTimingErrors": 0,
+      "api5xx": 0,
+      "transportErrors": 0,
+      "expectedPermissionDenials": 12,
+      "unexpectedFailures": 0
+    },
+    {
+      "file": "docs/phase16-evidence/supabase-2026-10-01T04-44-11.940Z.json",
+      "startedAt": "2026-10-01T04:44:11.940Z",
+      "observedRequests": 1380,
+      "upstream5xx": 0,
+      "jwtTimingErrors": 0,
+      "api5xx": 0,
+      "transportErrors": 0,
+      "expectedPermissionDenials": 12,
+      "unexpectedFailures": 0
+    }
+  ],
+  "phase16InfrastructureFixRequired": false
+}

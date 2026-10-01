@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(39);
+select plan(44);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 14, 'exactly fourteen public tables including cost estimates');
+  where n.nspname = 'public' and c.relkind = 'r'), 15, 'exactly fifteen public tables including workflows');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -82,7 +82,12 @@ select throws_ok('insert into public.project_revision_cost_estimates default val
 select throws_ok('update public.project_revision_cost_estimates set report_json = ''{}''', '42501', null, 'clients cannot rewrite BOQ costs');
 select throws_ok('delete from public.project_revision_cost_estimates', '42501', null, 'clients cannot delete BOQ costs');
 select throws_ok($$select public.cost_write('{}')$$, '42501', null, 'unsigned cost RPC is forbidden');
+select throws_ok('insert into public.project_workflow_runs default values', '42501', null, 'clients cannot forge workflows');
+select throws_ok('update public.project_workflow_runs set status = ''COMPLETED''', '42501', null, 'clients cannot rewrite workflows');
+select throws_ok('delete from public.project_workflow_runs', '42501', null, 'clients cannot delete workflows');
+select throws_ok($$select public.workflow_write('{}')$$, '42501', null, 'unsigned workflow RPC is forbidden');
 set local role anon;
+select throws_ok('select * from public.project_workflow_runs', '42501', null, 'workflows are never public');
 select throws_ok('select * from public.project_revision_takeoffs', '42501', null, 'takeoffs are never public');
 select throws_ok('select * from public.project_revision_cost_estimates', '42501', null, 'cost reports are never public');
 select throws_ok('select * from public.project_revision_construction_calculations', '42501', null, 'construction reports are never public');

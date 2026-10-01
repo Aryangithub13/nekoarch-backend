@@ -1,0 +1,27 @@
+{
+  "repository": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+  "head": "1de93400a8ed768b438b2d5a35a197524c546374",
+  "tag": "backend-v1-phase15-complete",
+  "tagCommit": "1de93400a8ed768b438b2d5a35a197524c546374",
+  "workingTreeBeforeChanges": "clean",
+  "tagToHeadDiffBeforeChanges": "empty",
+  "localBeforeAdditiveMigration": {
+    "versions": [
+      "0001",
+      "0002",
+      "0003",
+      "0004",
+      "0005",
+      "0006",
+      "0007",
+      "0008",
+      "0009"
+    ],
+    "projects": 127,
+    "revisions": 137,
+    "costs": 51,
+    "postgrestImage": "public.ecr.aws/supabase/postgrest:v16.3"
+  },
+  "migrationCommand": "npx supabase migration up --local",
+  "resetPerformed": false
+}

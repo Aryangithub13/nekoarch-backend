@@ -1,0 +1,20 @@
+{
+  "repository": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+  "head": "1de93400a8ed768b438b2d5a35a197524c546374",
+  "tag": "backend-v1-phase15-complete",
+  "tagCommit": "1de93400a8ed768b438b2d5a35a197524c546374",
+  "tagToHeadDiff": "empty",
+  "workingTreeAtResumption": "Existing uncommitted Phase 16 implementation; 9 modified tracked files and untracked Phase 16 files.",
+  "baselineAction": "Stopped at dirty-tree gate; user then explicitly authorized continuation.",
+  "localBeforeAcceptance": {
+    "versions": ["0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008", "0009", "0010"],
+    "projects": 211,
+    "revisions": 224,
+    "costs": 87,
+    "workflows": 60,
+    "postgrestImage": "public.ecr.aws/supabase/postgrest:v16.3"
+  },
+  "productionChangesDuringResumedReview": [],
+  "resetPerformed": false,
+  "migrationReapplied": false
+}

@@ -23,6 +23,7 @@ export interface IdempotencyRecord { fingerprint: string; response: unknown }
 
 /** Each instance operates under one caller's database role/JWT. */
 export interface Repository {
+  workflowRpc?(name: 'workflow_read' | 'workflow_write', args: Record<string, unknown>): Promise<unknown>;
   costRpc?(name: 'cost_read' | 'cost_write', args: Record<string, unknown>): Promise<unknown>;
   constructionRpc?(name: 'construction_read' | 'construction_write', args: Record<string, unknown>): Promise<unknown>;
   takeoffRpc?(name: 'takeoff_read' | 'takeoff_write', args: Record<string, unknown>): Promise<unknown>;

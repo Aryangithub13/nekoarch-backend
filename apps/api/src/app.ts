@@ -1,3 +1,4 @@
+import { workflowsRoutes } from './routes/workflows.js';
 import { costsRoutes } from './routes/costs.js';
 import { constructionRoutes } from './routes/construction.js';
 import { takeoffsRoutes } from './routes/takeoffs.js';
@@ -80,6 +81,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     takeoffsRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
+    workflowsRoutes(scope, backend, options.env);
     estimatesRoutes(scope, backend);
     regionsRoutes(scope, backend);
   });

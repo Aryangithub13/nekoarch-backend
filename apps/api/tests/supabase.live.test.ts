@@ -1,3 +1,5 @@
+import { workflowAcceptance,workflowSetup,workflowPayload } from '../../../test-support/workflow-acceptance.js';
+import { watchSupabaseFailures } from '../../../test-support/supabase-failure-evidence.js';
 import { costAcceptance,costSetup } from '../../../test-support/cost-acceptance.js';
 import { constructionAcceptance } from '../../../test-support/construction-acceptance.js';
 import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
@@ -71,6 +73,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   let other: Principal | undefined;
   let publicClient: SupabaseClient | undefined;
   const createdUserIds: string[] = [];
+  let failureWatch: ReturnType<typeof watchSupabaseFailures> | undefined;
 
   async function anonymousPrincipal(env: Env): Promise<Principal> {
     const client = localClient(env);
@@ -87,12 +90,13 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
 
   beforeAll(async () => {
     const env = localEnvironment();
+    failureWatch = watchSupabaseFailures();
     admin = localClient(env, true);
     publicClient = localClient(env);
     owner = await anonymousPrincipal(env);
     other = await anonymousPrincipal(env);
     expect(owner.id).not.toBe(other.id);
-    app = buildApp({ env, captureError: () => undefined });
+    app = buildApp({ env, captureError: (_error,requestId,code,metadata) => failureWatch?.apiError(requestId,code,metadata) });
     await app.ready();
   });
 
@@ -106,10 +110,13 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       // only those test projects; local db reset purges the disposable test stack.
       const protectedRows = await admin.from('project_revision_takeoffs').select('project_revisions!inner(project_id)');
       if (protectedRows.error) failures.push('read protected takeoff projects');
+      const workflowRows = await admin.from('project_workflow_runs').select('project_id');
+      if (workflowRows.error) failures.push('read protected workflow projects');
       const protectedIds = new Set((protectedRows.data ?? []).flatMap(row => {
         const revisions = row.project_revisions;
         return (Array.isArray(revisions) ? revisions : [revisions]).map(r => r.project_id);
       }));
+      for (const row of workflowRows.data ?? []) protectedIds.add(row.project_id);
       const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
       if (owned.error) failures.push('read test projects');
       const deletable = (owned.data ?? []).map(p => p.id).filter(id => !protectedIds.has(id));
@@ -130,6 +137,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
         } catch { failures.push(`delete test identity ${id}`); }
       }
     }
+    await failureWatch?.close();
     if (failures.length > 0) throw new Error(`Local Supabase acceptance cleanup failed: ${failures.join('; ')}`);
   });
 
@@ -281,6 +289,24 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   takeoffAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
+  });
+  workflowAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local workflow setup incomplete');
+    return {app,owner:owner.headers,other:other.headers};
+  });
+  it('protects workflow rows and signed RPCs through actual JWT and PostgREST',async()=>{
+    if(!app || !owner || !other || !publicClient)throw new Error('Local workflow setup incomplete');
+    const f=await workflowSetup({app,owner:owner.headers,other:other.headers});
+    const r=await app.inject({method:'POST',url:f.url,headers:owner.headers,payload:workflowPayload('BLUEPRINT_ONLY')});expect(r.statusCode,r.body).toBe(201);
+    const own=await owner.client.from('project_workflow_runs').select('id').eq('id',r.json().id);expect(own.error).toBeNull();expect(own.data).toHaveLength(1);
+    const hidden=await other.client.from('project_workflow_runs').select('id').eq('id',r.json().id);expect(hidden.error).toBeNull();expect(hidden.data).toEqual([]);
+    expect((await publicClient.from('project_workflow_runs').select('id')).error?.code).toBe('42501');
+    expect((await owner.client.from('project_workflow_runs').insert({project_id:f.projectId})).error?.code).toBe('42501');
+    expect((await owner.client.from('project_workflow_runs').update({status:'COMPLETED'}).eq('id',r.json().id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_workflow_runs').delete().eq('id',r.json().id)).error?.code).toBe('42501');
+    expect((await owner.client.rpc('workflow_write',{p_input:{action:'begin',projectId:f.projectId}})).error?.code).toBe('42501');
+    expect((await owner.client.rpc('workflow_write',{p_input:{action:'finish',projectId:f.projectId,outputs:[]},p_envelope:'{}',p_signature:'a'.repeat(64)})).error?.code).toBe('42501');
+    expect((await other.client.rpc('workflow_read',{p_action:'get',p_input:{projectId:f.projectId,runId:r.json().id}})).error?.code).toBe('P1201');
   });
   costAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local cost setup incomplete');
