@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { expect, it } from 'vitest';
+import { afterAll, expect, it } from 'vitest';
 import { writeFile } from 'node:fs/promises';
 import { generateBlueprint, normalizeBlueprintRequirements, type BlueprintRequirements } from '@designflow/generator';
 import { requirements, rect } from '../packages/blueprint-qa/tests/fixtures.js';
@@ -16,6 +16,14 @@ export function freshnessRequirements(bedrooms = 3, width = 9144, depth = 15240,
 
 /** Identical HTTP assertions run over disposable PostgreSQL and live Auth/PostgREST/RLS. */
 export function freshnessAcceptance(context: () => ProjectTestContext, evidenceFile?: string) {
+  const exampleEvidence: Record<string, unknown> = {
+    source: 'Real HTTP acceptance on disposable PostgreSQL',
+    baseline: '7a335acae6e2fe098d43172cb18a5366ce58ec5c',
+    frontend: 'External; current identity verified via owner GET, no UI exists in this repository',
+  };
+  afterAll(async () => {
+    if (evidenceFile) await writeFile(evidenceFile, JSON.stringify(exampleEvidence, null, 2) + '\n');
+  });
   const get = async (projectId: string) => {
     const c = context(), response = await c.app.inject({ url: `/api/projects/${projectId}?includeFreshness=true`, headers: c.owner });
     expect(response.statusCode, response.body).toBe(200); expect(response.headers['cache-control']).toBe('no-store');
@@ -63,7 +71,22 @@ export function freshnessAcceptance(context: () => ProjectTestContext, evidenceF
     expect(evidence[1]!.siteBoundary).not.toEqual(evidence[2]!.siteBoundary);
     expect(evidence[0]!.requirementsHash).toBe(evidence[3]!.requirementsHash); expect(evidence[0]!.modelHash).toBe(evidence[3]!.modelHash);
     expect(new Set(evidence.map(e => e.generationId)).size).toBe(5); expect(new Set(evidence.map(e => e.revisionId)).size).toBe(5);
-    if (evidenceFile) await writeFile(evidenceFile, JSON.stringify({ source: 'Real HTTP acceptance on disposable PostgreSQL', baseline: '7a335acae6e2fe098d43172cb18a5366ce58ec5c', sequence: evidence, frontend: 'External; current identity verified via owner GET, no UI exists in this repository' }, null, 2) + '\n');
+    const { seed: aSeed, site: aSite, ...aOptions } = evidence[0]!.normalizedRequirements!;
+    const { seed: dSeed, site: dSite, ...dOptions } = evidence[4]!.normalizedRequirements!;
+    expect(dOptions).toEqual(aOptions);
+    expect({ ...dSite, boundary: aSite.boundary }).toEqual(aSite);
+    expect(dSite.boundary).not.toEqual(aSite.boundary);
+    expect(evidence[4]!.requirementsHash).not.toBe(evidence[0]!.requirementsHash);
+    exampleEvidence.sequence = evidence;
+    exampleEvidence.sequenceComparison = {
+      from: 'A / R1', to: 'D / R5', seedOnly: false,
+      changedNormalizedFields: {
+        seed: { from: aSeed, to: dSeed },
+        'site.boundary': { from: aSite.boundary, to: dSite.boundary },
+      },
+      allOtherNormalizedFieldsEqual: true,
+      explanation: 'D changes the site from 9144 × 15240 mm to 12192 × 18288 mm as well as seed. The site change causes the different requirementsHash. See seedOnlyComparison for an isolated seed change.',
+    };
   });
 
   it('replays the exact durable attempt but rejects changed requirements, seed, base and solver options', async () => {
@@ -82,13 +105,44 @@ export function freshnessAcceptance(context: () => ProjectTestContext, evidenceF
     expect((await post(projectId, reordered, null, key)).json()).toEqual(a);
   });
 
-  it('explicit alternative seed retains requirements identity and honestly reports canonical model equality', async () => {
-    const projectId = await create(), a = await accepted(projectId, freshnessRequirements(), null);
-    const b = await accepted(projectId, freshnessRequirements(3, 9144, 15240, 'S2'), a.revision.id);
+  it('changing only seed preserves every normalized non-seed field and requirementsHash, creates a new execution, and conflicts on a reused key', async () => {
+    const projectId = await create(), key = randomUUID();
+    const inputA = normalizeBlueprintRequirements(freshnessRequirements());
+    const inputB = { ...structuredClone(inputA), seed: 'S2' };
+    const a = await accepted(projectId, inputA, null, key);
+    // Same project, base and retry key: seed is the only changed request field.
+    const conflict = await post(projectId, inputB, null, key);
+    expect(conflict.statusCode, conflict.body).toBe(409);
+    expect(conflict.json().error.code).toBe('IDEMPOTENCY_CONFLICT');
+    expect((await post(projectId, inputA, null, key)).json()).toEqual(a);
+    // A new accepted attempt needs a fresh key and the committed base under CAS.
+    const b = await accepted(projectId, inputB, a.revision.id);
+    const { seed: seedA, ...architectureA } = a.revision.normalizedRequirements!;
+    const { seed: seedB, ...architectureB } = b.revision.normalizedRequirements!;
+    expect(architectureB).toEqual(architectureA);
+    expect([seedA, seedB]).toEqual(['S1', 'S2']);
+    expect(a.revision.generatorVersion).toBe(b.revision.generatorVersion);
     expect(b.revision.identity!.requirementsHash).toBe(a.revision.identity!.requirementsHash);
-    expect(b.revision.identity!.seed).not.toBe(a.revision.identity!.seed);
+    expect([a.revision.identity!.seed, b.revision.identity!.seed]).toEqual([seedA, seedB]);
+    expect(a.revision.identity!.generationId).toEqual(expect.any(String));
+    expect(b.revision.identity!.generationId).toEqual(expect.any(String));
     expect(b.revision.identity!.generationId).not.toBe(a.revision.identity!.generationId);
+    expect(b.revision.id).not.toBe(a.revision.id);
     expect(b.revision.identity!.modelHash === a.revision.identity!.modelHash).toBe(JSON.stringify(canonicalBuilding(a.revision.model)) === JSON.stringify(canonicalBuilding(b.revision.model)));
+    const current = await get(projectId);
+    expect(current.currentRevisionId).toBe(b.revision.id);
+    exampleEvidence.seedOnlyComparison = {
+      note: 'Only normalizedRequirements.seed changes. The new accepted attempt uses a fresh key and current baseRevisionId; neither enters requirementsHash.',
+      changedNormalizedFields: ['seed'], allOtherNormalizedFieldsEqual: true,
+      generatorVersionEqual: true, requirementsHashEqual: true, generationIdDifferent: true,
+      modelHashEqual: a.revision.identity!.modelHash === b.revision.identity!.modelHash,
+      reusedKeyWithOnlySeedChanged: { statusCode: conflict.statusCode, code: conflict.json().error.code },
+      currentRevisionId: current.currentRevisionId,
+      attempts: [a, b].map(({ revision }) => ({ projectId, revisionId: revision.id,
+        baseRevisionId: revision.parentRevisionId, revisionNumber: revision.revisionNumber,
+        generatorVersion: revision.generatorVersion, ...revision.identity!,
+        normalizedRequirements: revision.normalizedRequirements })),
+    };
   });
 
   it('workflow changed-input sequences execute and same-key changed request conflicts without stale reuse', async () => {

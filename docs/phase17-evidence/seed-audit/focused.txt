@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/freshness.integration.test.ts (13 tests) 4203ms
+   ✓ generation freshness on real PostgreSQL > A/B/C/A/D changes real rooms/site/current identity and preserves deterministic return to A  738ms
+   ✓ generation freshness on real PostgreSQL > workflow changed-input sequences execute and same-key changed request conflicts without stale reuse  479ms
+   ✓ generation freshness on real PostgreSQL > keeps R1 takeoff/construction/cost historical and returns explicit R2 absence  677ms
+   ✓ generation freshness on real PostgreSQL > independently verifies signed input/output hashes, seed and execution identity in the database  304ms
+ ✓ apps/api/tests/freshness.test.ts (7 tests) 125ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  10:59:58
+   Duration  5.61s (transform 387ms, setup 0ms, collect 979ms, tests 4.33s, environment 0ms, prepare 86ms)
+

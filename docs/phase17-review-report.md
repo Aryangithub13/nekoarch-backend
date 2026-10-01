@@ -148,16 +148,83 @@ shared and generator typechecks are included in the existing gates.
 
 The five-step real example changes 3 to 4 bedrooms, then changes the site from
 9144 × 15240 mm to 12192 × 18288 mm (30 × 50 ft to 40 × 60 ft), returns to A,
-and performs another explicit-seed request. Every current pointer equals its
+and requests D with both the larger site and seed S2. D is not a seed-only
+alternative to A. Every current pointer equals its
 accepted revision; the return to A restores A's input/model hashes while retaining
 a distinct execution and revision. Full UUIDs and hashes are in the example JSON.
 
-| Step | Bedrooms | Seed | Requirements hash prefix | Model hash prefix |
-| --- | --- | --- | --- | --- |
-| A / R1 | 3 | S1 | `6baad624d395` | `9da74bd8be76` |
-| B / R2 | 4 | S1 | `4d9916435b0e` | `81393654946d` |
-| C / R3 | 4 | S1 | `b6909c0a38aa` | `aed7fc27b284` |
-| A / R4 | 3 | S1 | `6baad624d395` | `9da74bd8be76` |
-| D / R5 | 3 | S2 | `ac2497b2b621` | `72dfbd7cef99` |
+| Step | Bedrooms | Site (mm) | Seed | Requirements hash prefix | Model hash prefix |
+| --- | --- | --- | --- | --- | --- |
+| A / R1 | 3 | 9144 × 15240 | S1 | `6baad624d395` | `9da74bd8be76` |
+| B / R2 | 4 | 9144 × 15240 | S1 | `4d9916435b0e` | `81393654946d` |
+| C / R3 | 4 | 12192 × 18288 | S1 | `b6909c0a38aa` | `aed7fc27b284` |
+| A / R4 | 3 | 9144 × 15240 | S1 | `6baad624d395` | `9da74bd8be76` |
+| D / R5 | 3 | 12192 × 18288 | S2 | `ac2497b2b621` | `72dfbd7cef99` |
 
-Phase 17 backend work is ready for manual review. No commit or Phase 17 Git tag was created.
+The original Phase 17 implementation was left for manual review without an agent-created commit or tag. This follow-up began from clean existing checkpoint `bf3fa6b5d7d027932f9851f9c522655d39f64247` (`backend-v1-phase17-complete`); the seed-evidence corrections remain uncommitted and do not move that tag.
+
+
+## Seed evidence investigation
+
+The apparent inconsistency came from an incomplete comparison in the report:
+the table omitted plot dimensions. Comparing every field of the complete stored
+`normalizedRequirements` for A/R1 and D/R5 finds exactly these leaf differences:
+
+| Field | A/R1 | D/R5 |
+| --- | --- | --- |
+| `seed` | S1 | S2 |
+| `site.boundary[1].x` | 9144 | 12192 |
+| `site.boundary[2].x` | 9144 | 12192 |
+| `site.boundary[2].z` | 15240 | 18288 |
+| `site.boundary[3].z` | 15240 | 18288 |
+
+All other fields match: room counts and dimensions/preferences, floors,
+relationships, setbacks, north, circulation, wall/floor/slab dimensions, doors,
+windows and all solver options. Both use `maxCandidates: 32`,
+`maxIterations: 20000`, generator version `precision-blueprint-v1`, and identity
+version `generation-freshness-v1`. There are no other generation options outside
+the normalized requirements for this endpoint; base revision and retry identity
+belong to command/concurrency semantics, not the architectural hash.
+
+`apps/api/src/lib/generation-identity.ts::requirementsHash` normalizes inputs and
+removes the top-level seed before passing the remaining requirements plus generator
+and identity versions to the existing recursively sorted SHA-256 hash. Migration
+0011 independently uses `requirements - 'seed'` for the same database check.
+The changed plot explains the different A/D hashes. No production hashing,
+generator, idempotency, or database change is needed.
+
+The strengthened shared HTTP test clones A's complete normalized input and changes
+only `seed`. It proves full equality after omitting seed from both persisted
+inputs, identical requirements hashes and versions, distinct seeds/execution IDs,
+and independently checks model hashes without requiring a geometry difference.
+It also retries with the original key and original base while changing only seed:
+this must return 409 `IDEMPOTENCY_CONFLICT`. An identical retry still exactly
+replays A. A successful new attempt then uses a fresh key and A's committed base.
+
+The regenerated example retains A/B/C/A/D, adds an explicit `sequenceComparison`
+explaining the plot difference, and includes a separate real `seedOnlyComparison`
+with full normalized inputs, generation/revision IDs and hash/conflict evidence.
+The isolated S1 and S2 runs both produce requirements hash
+`6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61`.
+Their generation IDs differ. In this fixture their model hashes differ
+(`9da74bd8be76…` versus `24cca0eed37f…`); the assertion permits either result and
+compares hashes against actual canonical models. Full IDs/hashes and both complete
+normalized inputs are included in `seedOnlyComparison`.
+
+The original-input field diff and recomputed A/D/seed-only hashes are saved in
+`phase17-evidence/seed-audit/input-comparison.json`. Follow-up verification is
+recorded separately in `phase17-verification.json` under `seedEvidenceFollowUp`;
+the earlier full Phase 17 gate history is retained.
+
+
+Seed-evidence follow-up validation:
+
+| Gate | Result |
+| --- | --- |
+| Focused freshness unit + PostgreSQL tests | 20 passed ([log](phase17-evidence/seed-audit/focused.txt)) |
+| `npm run check` | 1,615 passed; build, typecheck and lint passed ([log](phase17-evidence/seed-audit/check.txt)) |
+| `git diff --check` | PASS ([log](phase17-evidence/seed-audit/diff-check.txt)) |
+
+Only tests and documentation/evidence changed in this follow-up. Production
+hashing, durable idempotency, generators and migrations are unchanged. No commit
+or tag was created or moved.

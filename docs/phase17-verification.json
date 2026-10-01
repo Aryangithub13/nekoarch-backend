@@ -278,5 +278,57 @@
     "frontendContract": "docs/phase17-frontend-integration.md",
     "example": "docs/phase17-example.json",
     "supabaseObservationSummary": "docs/phase17-evidence/supabase-observation-summary.json"
+  },
+  "seedEvidenceFollowUp": {
+    "startingCommit": "bf3fa6b5d7d027932f9851f9c522655d39f64247",
+    "startingTag": "backend-v1-phase17-complete",
+    "startingTreeClean": true,
+    "startedAt": "2026-10-01T05:29:57.876Z",
+    "complete": true,
+    "productionCodeChanged": false,
+    "databaseChanged": false,
+    "results": [
+      {
+        "name": "focused",
+        "command": "npx vitest run apps/api/tests/freshness.test.ts apps/api/tests/freshness.integration.test.ts",
+        "exitCode": 0,
+        "startedAt": "2026-10-01T05:29:57.876Z",
+        "durationMs": 6135,
+        "summary": [
+          "Test Files  2 passed (2)",
+          "Tests  20 passed (20)"
+        ],
+        "log": "docs/phase17-evidence/seed-audit/focused.txt"
+      },
+      {
+        "name": "check",
+        "command": "npm run check",
+        "exitCode": 0,
+        "startedAt": "2026-10-01T05:30:04.012Z",
+        "durationMs": 92952,
+        "summary": [
+          "Test Files  39 passed (39)",
+          "Tests  1615 passed (1615)"
+        ],
+        "log": "docs/phase17-evidence/seed-audit/check.txt"
+      },
+      {
+        "name": "diff-check",
+        "command": "git diff --check",
+        "exitCode": 0,
+        "startedAt": "2026-10-01T05:31:36.965Z",
+        "durationMs": 3,
+        "summary": [],
+        "log": "docs/phase17-evidence/seed-audit/diff-check.txt"
+      }
+    ],
+    "finishedAt": "2026-10-01T05:31:36.969Z",
+    "inputComparison": "docs/phase17-evidence/seed-audit/input-comparison.json",
+    "isolatedRequirementsHash": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+    "isolatedModelHashesEqual": false,
+    "reusedKeyWithOnlySeedChanged": {
+      "statusCode": 409,
+      "code": "IDEMPOTENCY_CONFLICT"
+    }
   }
 }

@@ -1,0 +1,65 @@
+{
+  "startingCommit": "bf3fa6b5d7d027932f9851f9c522655d39f64247",
+  "startingTag": "backend-v1-phase17-complete",
+  "startingTreeClean": true,
+  "comparison": {
+    "from": {
+      "label": "A/R1",
+      "revisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9"
+    },
+    "to": {
+      "label": "D/R5",
+      "revisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5"
+    },
+    "differences": [
+      {
+        "path": "normalizedRequirements.site.boundary[1].x",
+        "from": 9144,
+        "to": 12192
+      },
+      {
+        "path": "normalizedRequirements.site.boundary[2].x",
+        "from": 9144,
+        "to": 12192
+      },
+      {
+        "path": "normalizedRequirements.site.boundary[2].z",
+        "from": 15240,
+        "to": 18288
+      },
+      {
+        "path": "normalizedRequirements.site.boundary[3].z",
+        "from": 15240,
+        "to": 18288
+      },
+      {
+        "path": "normalizedRequirements.seed",
+        "from": "S1",
+        "to": "S2"
+      }
+    ],
+    "allOtherNormalizedFieldsEqual": true,
+    "solverA": {
+      "maxCandidates": 32,
+      "maxIterations": 20000
+    },
+    "solverD": {
+      "maxCandidates": 32,
+      "maxIterations": 20000
+    },
+    "generatorVersionA": "precision-blueprint-v1",
+    "generatorVersionD": "precision-blueprint-v1",
+    "identityVersionA": "generation-freshness-v1",
+    "identityVersionD": "generation-freshness-v1"
+  },
+  "hashes": {
+    "storedA": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+    "recomputedA": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+    "storedD": "ac2497b2b621f9d564183c9935980281c071032e2601c6291b316e27ae4d0bef",
+    "recomputedD": "ac2497b2b621f9d564183c9935980281c071032e2601c6291b316e27ae4d0bef",
+    "aWithOnlySeedChanged": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+    "aWithOnlySiteChanged": "ac2497b2b621f9d564183c9935980281c071032e2601c6291b316e27ae4d0bef",
+    "dWithOnlySeedChanged": "ac2497b2b621f9d564183c9935980281c071032e2601c6291b316e27ae4d0bef"
+  },
+  "conclusion": "D also changes site boundary dimensions; seed is excluded from architectural identity and retained in the durable request fingerprint."
+}

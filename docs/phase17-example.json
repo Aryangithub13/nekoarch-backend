@@ -1,19 +1,20 @@
 {
   "source": "Real HTTP acceptance on disposable PostgreSQL",
   "baseline": "7a335acae6e2fe098d43172cb18a5366ce58ec5c",
+  "frontend": "External; current identity verified via owner GET, no UI exists in this repository",
   "sequence": [
     {
       "label": "A",
-      "projectId": "92205c8d-5304-47e8-8047-06bd9a30d23c",
+      "projectId": "c51f4c51-45c8-4fe3-9247-42ca3ca15d0d",
       "baseRevisionId": null,
-      "revisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9",
-      "currentRevisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9",
+      "revisionId": "7569a486-d758-4709-bf1d-0f59ac846583",
+      "currentRevisionId": "7569a486-d758-4709-bf1d-0f59ac846583",
       "revisionNumber": 1,
       "generatorVersion": "precision-blueprint-v1",
-      "qaRunId": "d0687182-73c5-404a-b06b-b68e4d33a67a",
+      "qaRunId": "806c36b2-e76b-49b1-8d90-eaa902fedfeb",
       "qaStatus": "PASS",
       "identityVersion": "generation-freshness-v1",
-      "generationId": "46adf6b6-e31c-4c73-91a1-eefca7f0d173",
+      "generationId": "62bbe81e-1128-4973-89c4-ba5f6f6d3fd4",
       "requirementsHash": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
       "modelHash": "9da74bd8be76e96db88a7467aa3467a242425fc9632fd2c67ec7e74401bdb969",
       "seed": "S1",
@@ -112,30 +113,30 @@
       "currentArtifacts": {
         "takeoff": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9"
+          "sourceRevisionId": "7569a486-d758-4709-bf1d-0f59ac846583"
         },
         "construction": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9"
+          "sourceRevisionId": "7569a486-d758-4709-bf1d-0f59ac846583"
         },
         "cost": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9"
+          "sourceRevisionId": "7569a486-d758-4709-bf1d-0f59ac846583"
         }
       }
     },
     {
       "label": "B",
-      "projectId": "92205c8d-5304-47e8-8047-06bd9a30d23c",
-      "baseRevisionId": "53d6f906-30f8-4baf-a3b4-1350ef9963e9",
-      "revisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6",
-      "currentRevisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6",
+      "projectId": "c51f4c51-45c8-4fe3-9247-42ca3ca15d0d",
+      "baseRevisionId": "7569a486-d758-4709-bf1d-0f59ac846583",
+      "revisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1",
+      "currentRevisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1",
       "revisionNumber": 2,
       "generatorVersion": "precision-blueprint-v1",
-      "qaRunId": "062a2472-332e-4283-996e-83f9dd332eaa",
+      "qaRunId": "e637d001-9de9-4f21-9dca-b2c51699fcbd",
       "qaStatus": "PASS",
       "identityVersion": "generation-freshness-v1",
-      "generationId": "6ac3da82-c2bb-421c-a125-a5a7247e2290",
+      "generationId": "9359960b-78e9-4a78-a1ff-13f1ec883a87",
       "requirementsHash": "4d9916435b0eb162640959882830f0ebd8bfe981e947aece1d75ea6f69d42340",
       "modelHash": "81393654946d8d3ae8d9488397caab604d3a491b3e381e1f9213f29f60c80009",
       "seed": "S1",
@@ -234,30 +235,30 @@
       "currentArtifacts": {
         "takeoff": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6"
+          "sourceRevisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1"
         },
         "construction": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6"
+          "sourceRevisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1"
         },
         "cost": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6"
+          "sourceRevisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1"
         }
       }
     },
     {
       "label": "C",
-      "projectId": "92205c8d-5304-47e8-8047-06bd9a30d23c",
-      "baseRevisionId": "c08b14ca-344a-4e82-b53b-8c1ec2060ca6",
-      "revisionId": "f3d43179-ab13-4785-b554-d61787622b42",
-      "currentRevisionId": "f3d43179-ab13-4785-b554-d61787622b42",
+      "projectId": "c51f4c51-45c8-4fe3-9247-42ca3ca15d0d",
+      "baseRevisionId": "a46ab2e4-437c-4044-a7d7-0569543a0cd1",
+      "revisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9",
+      "currentRevisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9",
       "revisionNumber": 3,
       "generatorVersion": "precision-blueprint-v1",
-      "qaRunId": "f0bc575e-1e4f-4a10-a64d-a62f6386461b",
+      "qaRunId": "ee6db33a-ad9e-4c66-95fb-4971f52dc2b2",
       "qaStatus": "PASS",
       "identityVersion": "generation-freshness-v1",
-      "generationId": "059d878a-647b-4069-905c-0acd552bd994",
+      "generationId": "2a74ac50-548f-4cb5-9506-8f9cdab7d4f3",
       "requirementsHash": "b6909c0a38aa3288b83020c372a0aa40b2f5683d25e53233d5143d9a7b219dac",
       "modelHash": "aed7fc27b2848dbc5d5d3edc93ffd165d06629fcf07295f98a6b51e06bed4359",
       "seed": "S1",
@@ -356,30 +357,30 @@
       "currentArtifacts": {
         "takeoff": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "f3d43179-ab13-4785-b554-d61787622b42"
+          "sourceRevisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9"
         },
         "construction": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "f3d43179-ab13-4785-b554-d61787622b42"
+          "sourceRevisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9"
         },
         "cost": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "f3d43179-ab13-4785-b554-d61787622b42"
+          "sourceRevisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9"
         }
       }
     },
     {
       "label": "A",
-      "projectId": "92205c8d-5304-47e8-8047-06bd9a30d23c",
-      "baseRevisionId": "f3d43179-ab13-4785-b554-d61787622b42",
-      "revisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077",
-      "currentRevisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077",
+      "projectId": "c51f4c51-45c8-4fe3-9247-42ca3ca15d0d",
+      "baseRevisionId": "4441d34a-9225-4d27-8385-ebbba5550bb9",
+      "revisionId": "0e520365-ed62-4189-9c68-b02cddb9a004",
+      "currentRevisionId": "0e520365-ed62-4189-9c68-b02cddb9a004",
       "revisionNumber": 4,
       "generatorVersion": "precision-blueprint-v1",
-      "qaRunId": "070426dd-19ad-4c8c-8e9d-e21e1f144b92",
+      "qaRunId": "e2a37def-6480-47a2-b3fb-0270c3da1e2a",
       "qaStatus": "PASS",
       "identityVersion": "generation-freshness-v1",
-      "generationId": "d98dbf00-b2b9-4735-a582-e341d8fed11e",
+      "generationId": "1f2256e7-2551-40e5-a446-8908bf0def7d",
       "requirementsHash": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
       "modelHash": "9da74bd8be76e96db88a7467aa3467a242425fc9632fd2c67ec7e74401bdb969",
       "seed": "S1",
@@ -478,30 +479,30 @@
       "currentArtifacts": {
         "takeoff": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077"
+          "sourceRevisionId": "0e520365-ed62-4189-9c68-b02cddb9a004"
         },
         "construction": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077"
+          "sourceRevisionId": "0e520365-ed62-4189-9c68-b02cddb9a004"
         },
         "cost": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077"
+          "sourceRevisionId": "0e520365-ed62-4189-9c68-b02cddb9a004"
         }
       }
     },
     {
       "label": "D",
-      "projectId": "92205c8d-5304-47e8-8047-06bd9a30d23c",
-      "baseRevisionId": "c5faddc6-7f3d-4602-a806-10edfdd0a077",
-      "revisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5",
-      "currentRevisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5",
+      "projectId": "c51f4c51-45c8-4fe3-9247-42ca3ca15d0d",
+      "baseRevisionId": "0e520365-ed62-4189-9c68-b02cddb9a004",
+      "revisionId": "42787554-4fa1-4a00-9169-e40d204d2dd3",
+      "currentRevisionId": "42787554-4fa1-4a00-9169-e40d204d2dd3",
       "revisionNumber": 5,
       "generatorVersion": "precision-blueprint-v1",
-      "qaRunId": "093048ee-6a96-498c-ac25-79e9fee0599e",
+      "qaRunId": "18c5b86d-1d96-4f35-a134-fabaeb772040",
       "qaStatus": "PASS",
       "identityVersion": "generation-freshness-v1",
-      "generationId": "7ecf48db-d415-46ee-bed7-2baef532d677",
+      "generationId": "fbb76f02-219a-4a36-9263-24a5280ac1dd",
       "requirementsHash": "ac2497b2b621f9d564183c9935980281c071032e2601c6291b316e27ae4d0bef",
       "modelHash": "72dfbd7cef99a7836cd973d7591f58880ff3431d38ac746593f1d8d0ca9a8fc9",
       "seed": "S2",
@@ -600,18 +601,256 @@
       "currentArtifacts": {
         "takeoff": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5"
+          "sourceRevisionId": "42787554-4fa1-4a00-9169-e40d204d2dd3"
         },
         "construction": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5"
+          "sourceRevisionId": "42787554-4fa1-4a00-9169-e40d204d2dd3"
         },
         "cost": {
           "status": "NOT_GENERATED_FOR_CURRENT_REVISION",
-          "sourceRevisionId": "78919489-9cfa-4c10-9457-a4d40962e8b5"
+          "sourceRevisionId": "42787554-4fa1-4a00-9169-e40d204d2dd3"
         }
       }
     }
   ],
-  "frontend": "External; current identity verified via owner GET, no UI exists in this repository"
+  "sequenceComparison": {
+    "from": "A / R1",
+    "to": "D / R5",
+    "seedOnly": false,
+    "changedNormalizedFields": {
+      "seed": {
+        "from": "S1",
+        "to": "S2"
+      },
+      "site.boundary": {
+        "from": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 15240
+          },
+          {
+            "x": 0,
+            "z": 15240
+          }
+        ],
+        "to": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 12192,
+            "z": 0
+          },
+          {
+            "x": 12192,
+            "z": 18288
+          },
+          {
+            "x": 0,
+            "z": 18288
+          }
+        ]
+      }
+    },
+    "allOtherNormalizedFieldsEqual": true,
+    "explanation": "D changes the site from 9144 × 15240 mm to 12192 × 18288 mm as well as seed. The site change causes the different requirementsHash. See seedOnlyComparison for an isolated seed change."
+  },
+  "seedOnlyComparison": {
+    "note": "Only normalizedRequirements.seed changes. The new accepted attempt uses a fresh key and current baseRevisionId; neither enters requirementsHash.",
+    "changedNormalizedFields": [
+      "seed"
+    ],
+    "allOtherNormalizedFieldsEqual": true,
+    "generatorVersionEqual": true,
+    "requirementsHashEqual": true,
+    "generationIdDifferent": true,
+    "modelHashEqual": false,
+    "reusedKeyWithOnlySeedChanged": {
+      "statusCode": 409,
+      "code": "IDEMPOTENCY_CONFLICT"
+    },
+    "currentRevisionId": "234f2135-c8d6-4ebb-8107-d4012298e233",
+    "attempts": [
+      {
+        "projectId": "41620112-92ff-45bc-9259-076d46e6fc1b",
+        "revisionId": "b8975184-9a3b-46b9-9d66-a9ae2681d9dc",
+        "baseRevisionId": null,
+        "revisionNumber": 1,
+        "generatorVersion": "precision-blueprint-v1",
+        "identityVersion": "generation-freshness-v1",
+        "generationId": "2e0a5509-9cd5-4aec-9b84-c28a908d2f3e",
+        "requirementsHash": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+        "modelHash": "9da74bd8be76e96db88a7467aa3467a242425fc9632fd2c67ec7e74401bdb969",
+        "seed": "S1",
+        "normalizedRequirements": {
+          "site": {
+            "boundary": [
+              {
+                "x": 0,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 15240
+              },
+              {
+                "x": 0,
+                "z": 15240
+              }
+            ],
+            "northMilliDegrees": 0,
+            "setbacks": []
+          },
+          "floors": 1,
+          "rooms": [
+            {
+              "type": "bedroom",
+              "count": 3,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "bathroom",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "living",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "kitchen",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            }
+          ],
+          "relationships": [],
+          "circulationWidthMm": 1200,
+          "floorToFloorHeightMm": 3000,
+          "exteriorWallThicknessMm": 200,
+          "interiorWallThicknessMm": 100,
+          "slabThicknessMm": 150,
+          "door": {
+            "widthMm": 900,
+            "heightMm": 2100,
+            "jambMm": 100
+          },
+          "windows": {
+            "enabled": true,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900
+          },
+          "seed": "S1",
+          "solver": {
+            "maxCandidates": 32,
+            "maxIterations": 20000
+          }
+        }
+      },
+      {
+        "projectId": "41620112-92ff-45bc-9259-076d46e6fc1b",
+        "revisionId": "234f2135-c8d6-4ebb-8107-d4012298e233",
+        "baseRevisionId": "b8975184-9a3b-46b9-9d66-a9ae2681d9dc",
+        "revisionNumber": 2,
+        "generatorVersion": "precision-blueprint-v1",
+        "identityVersion": "generation-freshness-v1",
+        "generationId": "49e6a4a9-822d-4964-8ef8-ab5f4bc09994",
+        "requirementsHash": "6baad624d395ee5a9e27abc1a6d461cdc77adbcfed287dd8ed931195f3d08d61",
+        "modelHash": "24cca0eed37f3d8b7df493506b47f01062715ddbad070e35527960f8f5ba9fd0",
+        "seed": "S2",
+        "normalizedRequirements": {
+          "site": {
+            "boundary": [
+              {
+                "x": 0,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 15240
+              },
+              {
+                "x": 0,
+                "z": 15240
+              }
+            ],
+            "northMilliDegrees": 0,
+            "setbacks": []
+          },
+          "floors": 1,
+          "rooms": [
+            {
+              "type": "bedroom",
+              "count": 3,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "bathroom",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "living",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            },
+            {
+              "type": "kitchen",
+              "count": 1,
+              "minWidthMm": 1800,
+              "minDepthMm": 1800
+            }
+          ],
+          "relationships": [],
+          "circulationWidthMm": 1200,
+          "floorToFloorHeightMm": 3000,
+          "exteriorWallThicknessMm": 200,
+          "interiorWallThicknessMm": 100,
+          "slabThicknessMm": 150,
+          "door": {
+            "widthMm": 900,
+            "heightMm": 2100,
+            "jambMm": 100
+          },
+          "windows": {
+            "enabled": true,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900
+          },
+          "seed": "S2",
+          "solver": {
+            "maxCandidates": 32,
+            "maxIterations": 20000
+          }
+        }
+      }
+    ]
+  }
 }
