@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { FastifyBaseLogger } from 'fastify';
 import type { Repository, IdempotencyContext } from '../lib/repository.js';
 import { WorkflowRepository, WORKFLOW_OPERATION } from '../lib/workflow-repository.js';
 import { WorkflowRunSchema, WORKFLOW_VERSION, type WorkflowRequest, type CapabilityId } from '../contracts/workflows.js';
@@ -14,7 +15,7 @@ export function workflowFingerprint(projectId: string, request: WorkflowRequest)
   return takeoffFingerprint({workflowVersion:WORKFLOW_VERSION,projectId,request});
 }
 export async function executeWorkflow(repository: Repository, userId: string, projectId: string, request: WorkflowRequest,
-  secret?: string, context?: IdempotencyContext) {
+  secret?: string, context?: IdempotencyContext, logger?: FastifyBaseLogger) {
   if(!secret)throw new ApiError(503,'WORKFLOW_UNAVAILABLE','Workflow persistence is not configured');
   const fingerprint=workflowFingerprint(projectId,request);
   context ??= {operation:WORKFLOW_OPERATION,keyHash:takeoffFingerprint({keylessWorkflow:fingerprint}),fingerprint};
@@ -41,7 +42,7 @@ export async function executeWorkflow(repository: Repository, userId: string, pr
       switch(capability) {
         case 'BLUEPRINT_GENERATION':
           if(request.source.kind!=='GENERATE')throw new Error('Missing geometry source');
-          await saveProjectRevision(new ProjectRepository(staged),userId,projectId,'generated',request.source,secret); break;
+          await saveProjectRevision(new ProjectRepository(staged),userId,projectId,'generated',request.source,secret,undefined,logger); break;
         case 'BLUEPRINT_QA': case 'REVISION_PERSISTENCE': throw new Error('Revision commit did not include QA');
         case 'QUANTITY_TAKEOFF':
           if(!revisionId || !('takeoff' in request))throw new Error('Missing takeoff source');

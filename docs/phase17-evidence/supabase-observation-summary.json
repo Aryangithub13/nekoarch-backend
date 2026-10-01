@@ -1,0 +1,19 @@
+{
+  "runs": [
+    {
+      "file": "docs/phase17-evidence/supabase-2026-10-01T05-17-21.918Z.json",
+      "observedRequests": 1657,
+      "expectedAnonymousPermissionDenials": 12,
+      "unexpectedFailures": 0,
+      "apiErrors": 0
+    },
+    {
+      "file": "docs/phase17-evidence/supabase-2026-10-01T05-18-10.401Z.json",
+      "observedRequests": 1657,
+      "expectedAnonymousPermissionDenials": 12,
+      "unexpectedFailures": 0,
+      "apiErrors": 0
+    }
+  ],
+  "note": "401/42501 events are expected negative permission assertions, not JWT failures. No retries or auth changes were applied."
+}

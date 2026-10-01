@@ -6,6 +6,7 @@ import { parseRequest } from '../lib/errors.js';
 import { durableCommand } from '../lib/idempotency.js';
 import { ProjectRepository } from '../lib/project-repository.js';
 import { saveProjectRevision } from '../services/project-service.js';
+import { ProjectReadQuerySchema } from '../contracts/freshness.js';
 import { CreateProjectRequestSchema, UpdateProjectRequestSchema, SaveRevisionRequestSchema, GenerateRevisionRequestSchema,
   ProjectDetailSchema, ProjectRevisionDetailSchema, PublicProjectSchema, ProjectParamsSchema, RevisionParamsSchema,
   PageQuerySchema, RevisionCommitResponseSchema } from '../contracts/projects.js';
@@ -29,7 +30,10 @@ export function projectsRoutes(app: FastifyInstance, backend: Backend, env: Env)
   app.get('/api/projects/:projectId', async request => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId } = parseRequest(ProjectParamsSchema, request.params);
-    return ProjectDetailSchema.parse(await new ProjectRepository(repository).read('get', projectId));
+    const query = parseRequest(ProjectReadQuerySchema, request.query);
+    const result = ProjectDetailSchema.parse(await new ProjectRepository(repository).read(query.includeFreshness === 'true' ? 'get-freshness' : 'get', projectId));
+    request.log.info({ projectId, currentRevisionId: result.currentRevisionId, identity: result.currentRevision?.identity }, 'project current revision read');
+    return result;
   });
   app.patch('/api/projects/:projectId', { bodyLimit: env.SMALL_BODY_LIMIT_BYTES }, async request => {
     const { repository } = await requestContext(request, backend, true);
@@ -45,7 +49,9 @@ export function projectsRoutes(app: FastifyInstance, backend: Backend, env: Env)
   app.get('/api/projects/:projectId/revisions/:revisionId', async request => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
-    return ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
+    const result = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
+    request.log.info({ projectId, revisionId, identity: result.identity }, 'project revision read');
+    return result;
   });
   for (const source of ['generated', 'supplied'] as const) {
     const url = `/api/projects/:projectId/revisions${source === 'generated' ? '/generate' : ''}`;
@@ -54,9 +60,10 @@ export function projectsRoutes(app: FastifyInstance, backend: Backend, env: Env)
       const { projectId } = parseRequest(ProjectParamsSchema, request.params);
       const input = source === 'generated' ? parseRequest(GenerateRevisionRequestSchema, request.body) : parseRequest(SaveRevisionRequestSchema, request.body);
       const result = RevisionCommitResponseSchema.parse(await durableCommand(request, repository, { projectId, ...input }, context =>
-        saveProjectRevision(new ProjectRepository(repository), userId!, projectId, source, input, env.PROJECT_COMMIT_SECRET, context)));
+        saveProjectRevision(new ProjectRepository(repository), userId!, projectId, source, input, env.PROJECT_COMMIT_SECRET, context, request.log)));
       request.log.info({ projectId, revisionId: result.revision.id, revisionNumber: result.revision.revisionNumber,
-        qaStatus: result.revision.qa.status, sourceMode: source }, 'project revision accepted');
+        qaStatus: result.revision.qa.status, sourceMode: source, identity: result.revision.identity,
+        committedCurrentRevisionId: result.project.currentRevisionId }, 'project revision result');
       return reply.code(201).send(result);
     });
   }

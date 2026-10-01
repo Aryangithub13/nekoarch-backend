@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-01T05:11:16.237Z",
+  "counts": {
+    "cost_estimates": 0,
+    "generation_logs": 0,
+    "idempotency_records": 0,
+    "plans": 0,
+    "profiles": 0,
+    "project_audit_events": 611,
+    "project_revision_construction_calculations": 166,
+    "project_revision_cost_estimates": 111,
+    "project_revision_qa_runs": 284,
+    "project_revision_takeoffs": 259,
+    "project_revisions": 284,
+    "project_workflow_runs": 102,
+    "projects": 269,
+    "rate_table_entries": 9,
+    "rate_table_versions": 1
+  },
+  "modelsDigest": "d6e582efe1033a074205f08608c59829",
+  "migrations": [
+    "0001",
+    "0002",
+    "0003",
+    "0004",
+    "0005",
+    "0006",
+    "0007",
+    "0008",
+    "0009",
+    "0010",
+    "0011"
+  ],
+  "existingCountsAndModelsPreserved": true
+}

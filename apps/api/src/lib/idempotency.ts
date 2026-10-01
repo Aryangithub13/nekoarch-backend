@@ -24,6 +24,7 @@ export async function durablePost<T>(request: FastifyRequest, repository: Reposi
   const cached = await repository.lookupIdempotency(context);
   if (cached) {
     if (cached.fingerprint !== context.fingerprint) throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+    request.log.info({ operation: context.operation, requestFingerprint: context.fingerprint }, 'durable result replayed');
     return cached.response as T;
   }
   let write: DurableWrite | undefined;
@@ -58,6 +59,7 @@ export async function durableCommand<T>(request: FastifyRequest, repository: Rep
   const cached = await repository.lookupIdempotency(context);
   if (cached) {
     if (cached.fingerprint !== context.fingerprint) throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+    request.log.info({ operation: context.operation, requestFingerprint: context.fingerprint }, 'durable result replayed');
     return cached.response as T;
   }
   return run(context);

@@ -1,0 +1,24 @@
+--- 0006/public.project_write
++++ 0011/public.project_write
+@@ -62,8 +62,8 @@
+      if (report->>'status' in ('PASS','PASS_WITH_WARNINGS') and report->>'inputStatus' = 'SCHEMA_VALID'
+        and report->'summary'->>'errors' = '0') is not true then raise exception using errcode = 'P1204', message = 'QA rejected'; end if;
+      revision_id := gen_random_uuid(); qa_id := gen_random_uuid();
+-     insert into public.project_revisions(id,project_id,revision_number,parent_revision_id,model_json,source_mode,generator_version,created_by,acceptance_qa_id)
+-       values(revision_id,p.id,p.revision_count+1,p.current_revision_id,p_input->'model',p_input->>'sourceMode',p_input->>'generatorVersion',uid,qa_id) returning * into r;
++     insert into public.project_revisions(id,project_id,revision_number,parent_revision_id,model_json,source_mode,generator_version,created_by,acceptance_qa_id,generation_identity,normalized_requirements)
++       values(revision_id,p.id,p.revision_count+1,p.current_revision_id,p_input->'model',p_input->>'sourceMode',p_input->>'generatorVersion',uid,qa_id,nullif(p_input->'identity','null'::jsonb),nullif(p_input->'normalizedRequirements','null'::jsonb)) returning * into r;
+      insert into public.project_revision_qa_runs(id,revision_id,qa_version,model_schema_version,rule_packs,status,report_json)
+        values(qa_id,r.id,report->>'qaVersion',(report->>'modelSchemaVersion')::integer,report->'rulePacks',report->>'status',report);
+      update public.projects set current_revision_id = r.id, revision_count = r.revision_number, updated_at = clock_timestamp() where id = p.id returning * into p;
+--- 0006/public.project_read
++++ 0011/public.project_read
+@@ -25,6 +25,8 @@
+  select * into p from public.projects where id = p_project_id and owner_id = auth.uid();
+  if not found then raise exception using errcode = 'P1201', message = 'Project not found'; end if;
+  if p_action = 'get' then return project_private.project_detail(p); end if;
++ if p_action = 'get-freshness' then return project_private.project_detail(p) ||
++   jsonb_build_object('currentArtifacts',project_private.current_artifacts(p.current_revision_id)); end if;
+  if p_action = 'revision' then
+    select * into detail_revision from public.project_revisions where id = p_revision_id and project_id = p.id;
+    if not found then raise exception using errcode = 'P1205', message = 'Revision not found'; end if;

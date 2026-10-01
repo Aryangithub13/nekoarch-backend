@@ -1,0 +1,54 @@
+
+> designflow@0.1.0 test:cost
+> npm run build && vitest run packages/boq-cost/tests apps/api/tests/costs.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4661ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  347ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  325ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  347ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  425ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  460ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  408ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  395ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 321ms
+
+ Test Files  2 passed (2)
+      Tests  39 passed (39)
+   Start at  10:44:40
+   Duration  6.31s (transform 396ms, setup 0ms, collect 999ms, tests 4.98s, environment 0ms, prepare 93ms)
+

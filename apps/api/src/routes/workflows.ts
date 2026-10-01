@@ -26,7 +26,9 @@ export function workflowsRoutes(app: FastifyInstance, backend: Backend, env: Env
     const input=parseRequest(WorkflowRequestSchema,request.body);
     await new ProjectRepository(repository).read('get',projectId);
     const result=WorkflowRunSchema.parse(await durableCommand(request,repository,{workflowVersion:WORKFLOW_VERSION,projectId,request:input},context=>
-      executeWorkflow(repository,userId!,projectId,input,env.PROJECT_COMMIT_SECRET,context)));
+      executeWorkflow(repository,userId!,projectId,input,env.PROJECT_COMMIT_SECRET,context,request.log)));
+    request.log.info({projectId,workflowRunId:result.id,sourceRevisionId:result.sourceRevisionId,status:result.status,
+      outputs:result.outputs.map(o=>({capability:o.capability,artifactId:o.artifactId,projectRevisionId:o.projectRevisionId,status:o.status}))},'workflow result');
     return reply.code(201).send(result);
   });
   app.get(WORKFLOW_OPERATION,async request=>{

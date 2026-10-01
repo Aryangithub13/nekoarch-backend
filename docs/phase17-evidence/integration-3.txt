@@ -1,0 +1,69 @@
+
+> designflow@0.1.0 test:integration
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts apps/api/tests/construction.integration.test.ts apps/api/tests/costs.integration.test.ts apps/api/tests/workflows.integration.test.ts apps/api/tests/freshness.integration.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/workflows.integration.test.ts (19 tests) 5049ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  645ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > reuses revision, QA, takeoff and construction and executes only missing cost  696ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > replays identical keys after newer revisions and conflicts on changed mode, revision and outputs  301ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > preserves upstream artifacts and reports a downstream domain failure precisely  374ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > retains required outputs when optional cost fails and optional 3D is unavailable  374ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest  517ms
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 4619ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  345ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  323ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  342ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  424ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  452ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  410ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  389ms
+ ✓ apps/api/tests/freshness.integration.test.ts (13 tests) 4337ms
+   ✓ generation freshness on real PostgreSQL > A/B/C/A/D changes real rooms/site/current identity and preserves deterministic return to A  760ms
+   ✓ generation freshness on real PostgreSQL > workflow changed-input sequences execute and same-key changed request conflicts without stale reuse  491ms
+   ✓ generation freshness on real PostgreSQL > keeps R1 takeoff/construction/cost historical and returns explicit R2 absence  703ms
+   ✓ generation freshness on real PostgreSQL > serializes competing generations and rejects a stale base without moving current  311ms
+   ✓ generation freshness on real PostgreSQL > independently verifies signed input/output hashes, seed and execution identity in the database  320ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 2825ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2848ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  414ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  673ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  607ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2713ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  491ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1109ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 848ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 909ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 802ms
+
+ Test Files  10 passed (10)
+      Tests  138 passed (138)
+   Start at  10:46:34
+   Duration  32.42s (transform 535ms, setup 0ms, collect 4.80s, tests 26.06s, environment 2ms, prepare 461ms)
+

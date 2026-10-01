@@ -25,7 +25,7 @@ export class ProjectRepository {
     if (!this.repository.projectRpc) throw new ApiError(503, 'PROJECTS_UNAVAILABLE', 'Project persistence is unavailable');
     return this.repository.projectRpc(name, args);
   }
-  read(action: 'get' | 'revision' | 'public', projectId: string, revisionId?: string) {
+  read(action: 'get' | 'get-freshness' | 'revision' | 'public', projectId: string, revisionId?: string) {
     return this.rpc('project_read', { p_action: action, p_project_id: projectId, p_revision_id: revisionId ?? null });
   }
   async list(action: 'list' | 'history', query: { limit: number; cursor?: string | undefined }, projectId?: string) {

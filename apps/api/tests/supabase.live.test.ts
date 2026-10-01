@@ -1,3 +1,4 @@
+import { freshnessAcceptance } from '../../../test-support/freshness-acceptance.js';
 import { workflowAcceptance,workflowSetup,workflowPayload } from '../../../test-support/workflow-acceptance.js';
 import { watchSupabaseFailures } from '../../../test-support/supabase-failure-evidence.js';
 import { costAcceptance,costSetup } from '../../../test-support/cost-acceptance.js';
@@ -90,7 +91,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
 
   beforeAll(async () => {
     const env = localEnvironment();
-    failureWatch = watchSupabaseFailures();
+    failureWatch = watchSupabaseFailures(process.env.SUPABASE_EVIDENCE_DIRECTORY);
     admin = localClient(env, true);
     publicClient = localClient(env);
     owner = await anonymousPrincipal(env);
@@ -359,6 +360,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect((await other.client.rpc('takeoff_read',{p_project_id:p.json().id,p_revision_id:revision.id,p_takeoff_id:dto.id})).error).not.toBeNull();
   });
 
+  freshnessAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local project setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
   projectAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local project setup incomplete');
     return { app, owner: owner.headers, other: other.headers };

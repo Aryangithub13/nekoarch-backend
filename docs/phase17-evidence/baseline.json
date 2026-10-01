@@ -1,0 +1,13 @@
+{
+  "commit": "7a335acae6e2fe098d43172cb18a5366ce58ec5c",
+  "requiredTag": "backend-v1-phase16-complete",
+  "gitStatusShort": "",
+  "tagsAtHead": ["backend-v1-phase16-complete"],
+  "matchingTags": ["backend-v1-phase16-complete"],
+  "recentCommits": ["7a335ac Backend V1 Phase 16 complete", "1de9340 Backend V1 Phase 15 complete", "ca0cbc2 Backend V1 Phase 14 complete", "cceb01d Backend V1 Phase 13 complete", "46f0117 Backend V1 Phase 12 complete", "f202a44 Backend V1 Phase 11 complete", "875bc45 Backend V1 Phase 10 complete", "4d95cf9 Backend V1 Phase 9 complete", "908b64d Backend V1 Phase 8 complete", "b88902d Backend V1 Phase 7 complete"],
+  "controlledBaselineGenerator": [
+    {"bedrooms": 3, "seed": "qa", "candidateAttempts": 32, "modelId": "blueprint", "fullModelDiagnosticDigest": "42823b413decce6330bc70deb816494c847b8bc4708f313b4dcc50aa54528478"},
+    {"bedrooms": 4, "seed": "qa", "candidateAttempts": 32, "modelId": "blueprint", "fullModelDiagnosticDigest": "427ff990fb1c477603560e19517325f9fdeb9e9a0bec0e0d0d1ed183f56521af"}
+  ],
+  "note": "Recorded before production modifications. Baseline diagnostic digests include provenance and are not the new Phase 17 modelHash. No frontend is implemented in this repository."
+}

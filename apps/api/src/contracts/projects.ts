@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ArchitecturalBuildingModelV2Schema } from '@designflow/shared';
 import { BlueprintRequirementsSchema, normalizeBlueprintRequirements } from '@designflow/generator';
 import { BlueprintQaReportSchema } from '@designflow/blueprint-qa';
+import { GenerationIdentitySchema, CurrentArtifactsSchema } from './freshness.js';
 
 const id = z.string().uuid();
 const timestamp = z.string().datetime({ offset: true });
@@ -19,9 +20,11 @@ export const ProjectSummarySchema = z.object({ id, title, status, visibility, cu
   createdAt: timestamp, updatedAt: timestamp, archivedAt: timestamp.nullable() }).strict();
 export const ProjectRevisionSummarySchema = z.object({ id, projectId: id, revisionNumber: z.number().int().positive(),
   parentRevisionId: id.nullable(), schemaVersion: z.literal(2), completeness: z.literal('architectural'),
-  sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), createdAt: timestamp, qa: QaSummarySchema }).strict();
-export const ProjectRevisionDetailSchema = ProjectRevisionSummarySchema.extend({ model: ArchitecturalBuildingModelV2Schema, qaRuns: z.array(QaRunSchema).min(1) });
-export const ProjectDetailSchema = ProjectSummarySchema.extend({ currentRevision: ProjectRevisionDetailSchema.nullable() });
+  sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), createdAt: timestamp, qa: QaSummarySchema,
+  identity: GenerationIdentitySchema.nullable().optional() }).strict();
+export const ProjectRevisionDetailSchema = ProjectRevisionSummarySchema.extend({ model: ArchitecturalBuildingModelV2Schema, qaRuns: z.array(QaRunSchema).min(1),
+  normalizedRequirements: BlueprintRequirementsSchema.nullable().optional() });
+export const ProjectDetailSchema = ProjectSummarySchema.extend({ currentRevision: ProjectRevisionDetailSchema.nullable(), currentArtifacts: CurrentArtifactsSchema.optional() });
 export const RevisionCommitResponseSchema = z.object({ project: ProjectSummarySchema, revision: ProjectRevisionDetailSchema }).strict();
 export const PublicProjectSchema = z.object({ id, title, updatedAt: timestamp, currentRevision: z.object({ id,
   revisionNumber: z.number().int().positive(), createdAt: timestamp, model: ArchitecturalBuildingModelV2Schema, qa: QaSummarySchema }).strict().nullable() }).strict();

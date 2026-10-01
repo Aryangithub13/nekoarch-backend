@@ -1,0 +1,282 @@
+{
+  "baseline": {
+    "commit": "7a335acae6e2fe098d43172cb18a5366ce58ec5c",
+    "tag": "backend-v1-phase16-complete",
+    "cleanTree": true
+  },
+  "startedAt": "2026-10-01T05:12:07.004Z",
+  "results": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:12:07.005Z",
+      "durationMs": 11265,
+      "summary": [],
+      "log": "docs/phase17-evidence/build.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:12:18.270Z",
+      "durationMs": 17355,
+      "summary": [],
+      "log": "docs/phase17-evidence/typecheck.txt"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:12:35.625Z",
+      "durationMs": 2720,
+      "summary": [],
+      "log": "docs/phase17-evidence/lint.txt"
+    },
+    {
+      "name": "unit",
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:12:38.345Z",
+      "durationMs": 30085,
+      "summary": [
+        "Test Files  28 passed (28)",
+        "Tests  1475 passed (1475)"
+      ],
+      "log": "docs/phase17-evidence/unit.txt"
+    },
+    {
+      "name": "generator",
+      "command": "npm run test:generator",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:13:08.430Z",
+      "durationMs": 9941,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  461 passed (461)"
+      ],
+      "log": "docs/phase17-evidence/generator.txt"
+    },
+    {
+      "name": "blueprint",
+      "command": "npm run test:blueprint",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:13:18.372Z",
+      "durationMs": 7055,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  137 passed (137)"
+      ],
+      "log": "docs/phase17-evidence/blueprint.txt"
+    },
+    {
+      "name": "blueprint-qa",
+      "command": "npm run test:blueprint-qa",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:13:25.427Z",
+      "durationMs": 13174,
+      "summary": [
+        "Test Files  6 passed (6)",
+        "Tests  177 passed (177)"
+      ],
+      "log": "docs/phase17-evidence/blueprint-qa.txt"
+    },
+    {
+      "name": "projects",
+      "command": "npm run test:projects",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:13:38.601Z",
+      "durationMs": 16005,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)"
+      ],
+      "log": "docs/phase17-evidence/projects.txt"
+    },
+    {
+      "name": "takeoff",
+      "command": "npm run test:takeoff",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:13:54.606Z",
+      "durationMs": 18098,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  23 passed (23)"
+      ],
+      "log": "docs/phase17-evidence/takeoff.txt"
+    },
+    {
+      "name": "construction",
+      "command": "npm run test:construction",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:14:12.704Z",
+      "durationMs": 16100,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  34 passed (34)"
+      ],
+      "log": "docs/phase17-evidence/construction.txt"
+    },
+    {
+      "name": "cost",
+      "command": "npm run test:cost",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:14:28.805Z",
+      "durationMs": 18413,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  39 passed (39)"
+      ],
+      "log": "docs/phase17-evidence/cost.txt"
+    },
+    {
+      "name": "workflows",
+      "command": "npm run test:workflows",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:14:47.219Z",
+      "durationMs": 18417,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  51 passed (51)"
+      ],
+      "log": "docs/phase17-evidence/workflows.txt"
+    },
+    {
+      "name": "integration-1",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:15:05.636Z",
+      "durationMs": 40499,
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  138 passed (138)"
+      ],
+      "log": "docs/phase17-evidence/integration-1.txt"
+    },
+    {
+      "name": "integration-2",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:15:46.136Z",
+      "durationMs": 40017,
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  138 passed (138)"
+      ],
+      "log": "docs/phase17-evidence/integration-2.txt"
+    },
+    {
+      "name": "integration-3",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:16:26.154Z",
+      "durationMs": 40940,
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  138 passed (138)"
+      ],
+      "log": "docs/phase17-evidence/integration-3.txt"
+    },
+    {
+      "name": "supabase-1",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:17:07.095Z",
+      "durationMs": 48855,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  55 passed (55)"
+      ],
+      "log": "docs/phase17-evidence/supabase-1.txt"
+    },
+    {
+      "name": "supabase-2",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:17:55.951Z",
+      "durationMs": 48605,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  55 passed (55)"
+      ],
+      "log": "docs/phase17-evidence/supabase-2.txt"
+    },
+    {
+      "name": "check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:18:44.557Z",
+      "durationMs": 95145,
+      "summary": [
+        "Test Files  39 passed (39)",
+        "Tests  1615 passed (1615)"
+      ],
+      "log": "docs/phase17-evidence/check.txt"
+    },
+    {
+      "name": "db-rls",
+      "command": "npm run db:test",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:20:19.702Z",
+      "durationMs": 2085,
+      "summary": [
+        "All tests successful.",
+        "Files=1, Tests=48,  0 wallclock secs ( 0.03 usr +  0.00 sys =  0.03 CPU)"
+      ],
+      "log": "docs/phase17-evidence/db-rls.txt"
+    },
+    {
+      "name": "docker",
+      "command": "docker build -t designflow-api:phase17 .",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:20:21.788Z",
+      "durationMs": 86505,
+      "summary": [],
+      "log": "docs/phase17-evidence/docker.txt"
+    },
+    {
+      "name": "smoke",
+      "command": "node scripts/smoke-container.mjs designflow-api:phase17",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:21:48.293Z",
+      "durationMs": 1480,
+      "summary": [
+        "Production container: non-root, liveness 200, failed-dependency readiness 503, SIGTERM exit 0."
+      ],
+      "log": "docs/phase17-evidence/smoke.txt"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T05:21:49.773Z",
+      "durationMs": 5,
+      "summary": [],
+      "log": "docs/phase17-evidence/diff-check.txt"
+    }
+  ],
+  "complete": true,
+  "frontend": "No frontend implementation exists; HTTP identity contract tested on PostgreSQL and live Supabase.",
+  "migration": "0011_generation_freshness.sql; additive; counts and model digest unchanged",
+  "databaseReset": false,
+  "completedAt": "2026-10-01T05:23:07.253401+00:00",
+  "finalReview": {
+    "headUnchanged": "7a335acae6e2fe098d43172cb18a5366ce58ec5c",
+    "tagsAtHead": [
+      "backend-v1-phase16-complete"
+    ],
+    "frozenEnginesAndMigrationsDiffExitCode": 0,
+    "finalDiffCheckExitCode": 0,
+    "newVitestTests": 20,
+    "newSharedLiveAcceptanceCases": 8,
+    "newPgTapAssertions": 4,
+    "requiredTestsSkipped": 0,
+    "frontendImplementationPresent": false,
+    "gitCommitCreated": false,
+    "gitTagCreated": false,
+    "reviewReport": "docs/phase17-review-report.md",
+    "frontendContract": "docs/phase17-frontend-integration.md",
+    "example": "docs/phase17-example.json",
+    "supabaseObservationSummary": "docs/phase17-evidence/supabase-observation-summary.json"
+  }
+}

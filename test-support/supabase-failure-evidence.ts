@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 /** Acceptance-only observation. Never retries, changes JWTs, or logs credentials/request bodies. */
-export function watchSupabaseFailures() {
+export function watchSupabaseFailures(evidenceDirectory = 'docs/phase16-evidence') {
   const original=globalThis.fetch, failures: Record<string,unknown>[]=[],apiErrors:Record<string,unknown>[]=[];
   const startedAt=new Date().toISOString(); let observedRequests=0;
   const clean=(text:string)=>text.replace(/eyJ[A-Za-z0-9._-]+/g,'[REDACTED_JWT]')
@@ -25,7 +25,7 @@ export function watchSupabaseFailures() {
   return {apiError(requestId:string,code:string,metadata:unknown){apiErrors.push({at:new Date().toISOString(),requestId,code,metadata});},
     async close(){globalThis.fetch=original;let postgrestLogs:string|null=null;
       if(failures.length||apiErrors.length){const logs=spawnSync('docker',['logs','--since',startedAt,'supabase_rest_designflow'],{encoding:'utf8',maxBuffer:8_000_000});postgrestLogs=clean(logs.stdout+logs.stderr);}
-      await mkdir('docs/phase16-evidence',{recursive:true});
-      await writeFile(`docs/phase16-evidence/supabase-${startedAt.replaceAll(':','-')}.json`,JSON.stringify({startedAt,finishedAt:new Date().toISOString(),observedRequests,failures,apiErrors,postgrestLogs},null,2)+'\n');
+      await mkdir(evidenceDirectory,{recursive:true});
+      await writeFile(`${evidenceDirectory}/supabase-${startedAt.replaceAll(':','-')}.json`,JSON.stringify({startedAt,finishedAt:new Date().toISOString(),observedRequests,failures,apiErrors,postgrestLogs},null,2)+'\n');
     }};
 }
