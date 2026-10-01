@@ -1,0 +1,161 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  869.9kB
+Step 1/46 : FROM node:22-bookworm-slim AS build
+ ---> 43ac6c60b8f8
+Step 2/46 : WORKDIR /app
+ ---> Using cache
+ ---> 091af58af5a5
+Step 3/46 : COPY package.json package-lock.json .npmrc ./
+ ---> a1fe48ed66b4
+Step 4/46 : COPY apps/api/package.json apps/api/package.json
+ ---> 267f2d600d1e
+Step 5/46 : COPY packages/shared/package.json packages/shared/package.json
+ ---> 6a6265604a8e
+Step 6/46 : COPY packages/generator/package.json packages/generator/package.json
+ ---> 2f17e4e54c97
+Step 7/46 : COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
+ ---> e94919414b10
+Step 8/46 : COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
+ ---> 63d628613035
+Step 9/46 : COPY packages/construction-calculations/package.json packages/construction-calculations/package.json
+ ---> 298c9b6ec896
+Step 10/46 : COPY packages/boq-cost/package.json packages/boq-cost/package.json
+ ---> 95c9ee462beb
+Step 11/46 : RUN npm ci
+ ---> Running in 034b5eecc248
+[91mnpm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[0m
+added 280 packages in 48s
+[91mnpm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+[0m ---> Removed intermediate container 034b5eecc248
+ ---> f15ba9c32ab8
+Step 12/46 : COPY tsconfig.base.json ./
+ ---> a7965b4ccc40
+Step 13/46 : COPY apps/api/tsconfig.build.json apps/api/tsconfig.build.json
+ ---> 08978c740459
+Step 14/46 : COPY apps/api/src apps/api/src
+ ---> 36d27349137e
+Step 15/46 : COPY packages/shared packages/shared
+ ---> f7f4f581cb24
+Step 16/46 : COPY packages/generator packages/generator
+ ---> 1076a8494ef3
+Step 17/46 : COPY packages/blueprint-qa packages/blueprint-qa
+ ---> 365fe6b73c68
+Step 18/46 : COPY packages/quantity-takeoff packages/quantity-takeoff
+ ---> e7d975428c38
+Step 19/46 : COPY packages/construction-calculations packages/construction-calculations
+ ---> b7909b0437a1
+Step 20/46 : COPY packages/boq-cost packages/boq-cost
+ ---> 7b10768bbb09
+Step 21/46 : RUN npm run build
+ ---> Running in 30fbed349187
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+ ---> Removed intermediate container 30fbed349187
+ ---> 530cfc322686
+Step 22/46 : RUN npm prune --omit=dev
+ ---> Running in 506411a41af1
+
+up to date in 870ms
+ ---> Removed intermediate container 506411a41af1
+ ---> c8b5be3c8fb8
+Step 23/46 : FROM node:22-bookworm-slim AS runtime
+ ---> 43ac6c60b8f8
+Step 24/46 : ENV NODE_ENV=production HOST=0.0.0.0 PORT=3001
+ ---> Using cache
+ ---> a14db7b17b83
+Step 25/46 : WORKDIR /app
+ ---> Using cache
+ ---> 869d0d5ab835
+Step 26/46 : COPY --from=build --chown=node:node /app/node_modules ./node_modules
+ ---> Using cache
+ ---> 481a06824605
+Step 27/46 : COPY --from=build --chown=node:node /app/package.json ./package.json
+ ---> 864066dc8f87
+Step 28/46 : COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
+ ---> 5d545629abf4
+Step 29/46 : COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
+ ---> a24eac9757e8
+Step 30/46 : COPY --from=build --chown=node:node /app/packages/shared/package.json ./packages/shared/package.json
+ ---> 4d9dccbf7443
+Step 31/46 : COPY --from=build --chown=node:node /app/packages/shared/dist ./packages/shared/dist
+ ---> ca6598176e95
+Step 32/46 : COPY --from=build --chown=node:node /app/packages/generator/package.json ./packages/generator/package.json
+ ---> a3c62d166de3
+Step 33/46 : COPY --from=build --chown=node:node /app/packages/generator/dist ./packages/generator/dist
+ ---> ac131d4b8eac
+Step 34/46 : COPY --from=build --chown=node:node /app/packages/blueprint-qa/package.json ./packages/blueprint-qa/package.json
+ ---> 52397318e575
+Step 35/46 : COPY --from=build --chown=node:node /app/packages/blueprint-qa/dist ./packages/blueprint-qa/dist
+ ---> 9e59dfadcc99
+Step 36/46 : COPY --from=build --chown=node:node /app/packages/quantity-takeoff/package.json ./packages/quantity-takeoff/package.json
+ ---> ab23c3fa97fe
+Step 37/46 : COPY --from=build --chown=node:node /app/packages/construction-calculations/package.json ./packages/construction-calculations/package.json
+ ---> 297d8b02f6e6
+Step 38/46 : COPY --from=build --chown=node:node /app/packages/boq-cost/package.json ./packages/boq-cost/package.json
+ ---> ec1139d65d15
+Step 39/46 : COPY --from=build --chown=node:node /app/packages/quantity-takeoff/dist ./packages/quantity-takeoff/dist
+ ---> f5c83242960e
+Step 40/46 : COPY --from=build --chown=node:node /app/packages/construction-calculations/dist ./packages/construction-calculations/dist
+ ---> 32dddc2eea34
+Step 41/46 : COPY --from=build --chown=node:node /app/packages/boq-cost/dist ./packages/boq-cost/dist
+ ---> a00dd5afafcf
+Step 42/46 : USER node
+ ---> Running in c404faf03831
+ ---> Removed intermediate container c404faf03831
+ ---> e0e9cef7a6cf
+Step 43/46 : EXPOSE 3001
+ ---> Running in 90c5ae4ba893
+ ---> Removed intermediate container 90c5ae4ba893
+ ---> e5b653dfe707
+Step 44/46 : STOPSIGNAL SIGTERM
+ ---> Running in 482490329bb8
+ ---> Removed intermediate container 482490329bb8
+ ---> 09ceb8fa5019
+Step 45/46 : HEALTHCHECK --interval=30s --timeout=3s --start-period=10s CMD ["node", "--input-type=module", "-e", "const r=await fetch('http://127.0.0.1:'+process.env.PORT+'/health/live',{signal:AbortSignal.timeout(2000)});process.exitCode=r.ok?0:1"]
+ ---> Running in 32a7f104985b
+ ---> Removed intermediate container 32a7f104985b
+ ---> 8fb647a72929
+Step 46/46 : CMD ["node", "apps/api/dist/server.js"]
+ ---> Running in db3ac3a811d6
+ ---> Removed intermediate container db3ac3a811d6
+ ---> c407e49686ed
+Successfully built c407e49686ed
+Successfully tagged designflow-api:phase18

@@ -1,0 +1,10 @@
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/api/src/contracts/requirement-interpretation.ts
+  37:163  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+
+✖ 1 problem (1 error, 0 warnings)
+

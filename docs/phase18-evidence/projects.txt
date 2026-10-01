@@ -1,0 +1,48 @@
+
+> designflow@0.1.0 test:projects
+> npm run build && vitest run apps/api/tests/projects.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 3326ms
+   ✓ native V2 projects on actual PostgreSQL transactions and RLS > round-trips generated geometry and complete QA, appends R2 and leaves R1 immutable  330ms
+   ✓ native V2 projects on actual PostgreSQL transactions and RLS > deduplicates generated revisions and replays after the current pointer advances or archives  314ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  16:12:02
+   Duration  4.66s (transform 467ms, setup 0ms, collect 1.12s, tests 3.33s, environment 0ms, prepare 58ms)
+

@@ -1,0 +1,25 @@
+{
+  "migrationApplied": false,
+  "databaseReset": false,
+  "beforeSupabaseRuns": {
+    "observedAt": "2026-10-01T10:41:08.016161+00:00",
+    "projects": 331,
+    "revisions": 354,
+    "plans": 0,
+    "users": 0
+  },
+  "note": "No migration was needed. Existing live acceptance tests retain immutable historical artifacts; row counts may increase from test-owned fixtures. Existing data is not reset.",
+  "afterSupabaseRuns": {
+    "observedAt": "2026-10-01T10:50:09.903893+00:00",
+    "projects": 393,
+    "revisions": 424,
+    "plans": 0,
+    "users": 0
+  },
+  "delta": {
+    "projects": 62,
+    "revisions": 70,
+    "plans": 0,
+    "users": 0
+  }
+}

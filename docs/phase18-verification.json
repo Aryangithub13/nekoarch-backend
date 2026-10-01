@@ -1,0 +1,350 @@
+{
+  "baseline": {
+    "startingSha": "1c60e0ed4f49f6422d20df5d8cef134a9e0c82af",
+    "checkpointTag": "backend-v1-phase17-complete",
+    "checkpointSha": "bf3fa6b5d7d027932f9851f9c522655d39f64247",
+    "seedEvidenceFollowUpPreserved": true,
+    "previousTreeCleanClaim": true,
+    "treeClean": false,
+    "observedAt": "2026-10-01T10:34:26.822597+00:00",
+    "resumeAuthorization": "User: fix the dirty working tree and give me a complete report. Existing Phase 18 work is preserved and completed; no automatic commit or tag.",
+    "initialWorkSnapshot": "/tmp/designflow-phase18-before-repair.tar.gz",
+    "observedStatus": [
+      " M .env.example",
+      " M apps/api/src/app.ts",
+      " M apps/api/src/config/env.ts",
+      " M apps/api/src/lib/http-protection.ts",
+      " M apps/api/tests/foundation.test.ts",
+      " M apps/api/tests/supabase.live.test.ts",
+      " M package.json",
+      "?? apps/api/src/ai/",
+      "?? apps/api/src/contracts/requirement-interpretation.ts",
+      "?? apps/api/src/routes/requirement-interpretation.ts",
+      "?? apps/api/tests/interpretation.integration.test.ts",
+      "?? apps/api/tests/interpretation.test.ts",
+      "?? docs/phase18-design.md",
+      "?? docs/phase18-evidence/",
+      "?? docs/phase18-example.json",
+      "?? test-support/interpretation-acceptance.ts",
+      "?? test-support/interpretation-corpus.ts"
+    ],
+    "baselineNote": "Existing uncommitted Phase 18 implementation found at the Phase 17 evidence-correction HEAD; the original clean-start assertion cannot be independently confirmed."
+  },
+  "startedAt": "2026-10-01T10:39:56.621852+00:00",
+  "results": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:39:56.622047+00:00",
+      "durationMs": 14227,
+      "summary": [],
+      "log": "docs/phase18-evidence/build.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:40:10.849860+00:00",
+      "durationMs": 21802,
+      "summary": [],
+      "log": "docs/phase18-evidence/typecheck.txt"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:40:32.652353+00:00",
+      "durationMs": 3336,
+      "summary": [],
+      "log": "docs/phase18-evidence/lint.txt"
+    },
+    {
+      "name": "unit",
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:40:35.988673+00:00",
+      "durationMs": 36283,
+      "summary": [
+        "Test Files  29 passed (29)",
+        "Tests  1595 passed (1595)"
+      ],
+      "log": "docs/phase18-evidence/unit.txt"
+    },
+    {
+      "name": "generator",
+      "command": "npm run test:generator",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:41:12.272308+00:00",
+      "durationMs": 11838,
+      "summary": [
+        "Test Files  8 passed (8)",
+        "Tests  461 passed (461)"
+      ],
+      "log": "docs/phase18-evidence/generator.txt"
+    },
+    {
+      "name": "blueprint",
+      "command": "npm run test:blueprint",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:41:24.110834+00:00",
+      "durationMs": 8372,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  137 passed (137)"
+      ],
+      "log": "docs/phase18-evidence/blueprint.txt"
+    },
+    {
+      "name": "blueprint-qa",
+      "command": "npm run test:blueprint-qa",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:41:32.483417+00:00",
+      "durationMs": 15484,
+      "summary": [
+        "Test Files  6 passed (6)",
+        "Tests  177 passed (177)"
+      ],
+      "log": "docs/phase18-evidence/blueprint-qa.txt"
+    },
+    {
+      "name": "projects",
+      "command": "npm run test:projects",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:41:47.967232+00:00",
+      "durationMs": 19281,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  23 passed (23)"
+      ],
+      "log": "docs/phase18-evidence/projects.txt"
+    },
+    {
+      "name": "takeoff",
+      "command": "npm run test:takeoff",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:42:07.248052+00:00",
+      "durationMs": 21831,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  23 passed (23)"
+      ],
+      "log": "docs/phase18-evidence/takeoff.txt"
+    },
+    {
+      "name": "construction",
+      "command": "npm run test:construction",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:42:29.079035+00:00",
+      "durationMs": 19555,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  34 passed (34)"
+      ],
+      "log": "docs/phase18-evidence/construction.txt"
+    },
+    {
+      "name": "cost",
+      "command": "npm run test:cost",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:42:48.634751+00:00",
+      "durationMs": 21790,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  39 passed (39)"
+      ],
+      "log": "docs/phase18-evidence/cost.txt"
+    },
+    {
+      "name": "workflows",
+      "command": "npm run test:workflows",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:43:10.425131+00:00",
+      "durationMs": 21697,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  51 passed (51)"
+      ],
+      "log": "docs/phase18-evidence/workflows.txt"
+    },
+    {
+      "name": "interpretation",
+      "command": "npm run test:interpretation",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:43:32.122290+00:00",
+      "durationMs": 18790,
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  133 passed (133)"
+      ],
+      "log": "docs/phase18-evidence/interpretation.txt"
+    },
+    {
+      "name": "integration-1",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:43:50.912658+00:00",
+      "durationMs": 49886,
+      "summary": [
+        "Test Files  11 passed (11)",
+        "Tests  151 passed (151)"
+      ],
+      "log": "docs/phase18-evidence/integration-1.txt"
+    },
+    {
+      "name": "integration-2",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:44:40.799485+00:00",
+      "durationMs": 49988,
+      "summary": [
+        "Test Files  11 passed (11)",
+        "Tests  151 passed (151)"
+      ],
+      "log": "docs/phase18-evidence/integration-2.txt"
+    },
+    {
+      "name": "integration-3",
+      "command": "npm run test:integration",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:45:30.787847+00:00",
+      "durationMs": 49975,
+      "summary": [
+        "Test Files  11 passed (11)",
+        "Tests  151 passed (151)"
+      ],
+      "log": "docs/phase18-evidence/integration-3.txt"
+    },
+    {
+      "name": "supabase-1",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:46:20.763607+00:00",
+      "durationMs": 59261,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  64 passed (64)"
+      ],
+      "log": "docs/phase18-evidence/supabase-1.txt"
+    },
+    {
+      "name": "supabase-2",
+      "command": "npm run test:supabase",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:47:20.025052+00:00",
+      "durationMs": 57957,
+      "summary": [
+        "Test Files  1 passed (1)",
+        "Tests  64 passed (64)"
+      ],
+      "log": "docs/phase18-evidence/supabase-2.txt"
+    },
+    {
+      "name": "check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:48:17.982835+00:00",
+      "durationMs": 133266,
+      "summary": [
+        "Test Files  41 passed (41)",
+        "Tests  1748 passed (1748)",
+        "Test Files  2 passed (2)",
+        "Tests  133 passed (133)"
+      ],
+      "log": "docs/phase18-evidence/check.txt"
+    },
+    {
+      "name": "db-rls",
+      "command": "npm run db:test",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:50:31.248797+00:00",
+      "durationMs": 2263,
+      "summary": [
+        "All tests successful.",
+        "Files=1, Tests=48,  0 wallclock secs ( 0.02 usr +  0.00 sys =  0.02 CPU)"
+      ],
+      "log": "docs/phase18-evidence/db-rls.txt"
+    },
+    {
+      "name": "docker",
+      "command": "docker build -t designflow-api:phase18 .",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:50:33.512644+00:00",
+      "durationMs": 124909,
+      "summary": [],
+      "log": "docs/phase18-evidence/docker.txt"
+    },
+    {
+      "name": "smoke",
+      "command": "node scripts/smoke-container.mjs designflow-api:phase18",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:52:38.422127+00:00",
+      "durationMs": 1389,
+      "summary": [
+        "Production container: non-root, liveness 200, failed-dependency readiness 503, SIGTERM exit 0."
+      ],
+      "log": "docs/phase18-evidence/smoke.txt"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:52:39.811326+00:00",
+      "durationMs": 5,
+      "summary": [],
+      "log": "docs/phase18-evidence/diff-check.txt"
+    }
+  ],
+  "complete": true,
+  "databaseReset": false,
+  "migration": null,
+  "mandatoryPaidDependencies": 0,
+  "externalProviderCalls": 0,
+  "gpuRequired": false,
+  "completedAt": "2026-10-01T10:52:39.817053+00:00",
+  "finalReview": {
+    "reviewedAt": "2026-10-01T10:54:00.804506+00:00",
+    "headUnchanged": "1c60e0ed4f49f6422d20df5d8cef134a9e0c82af",
+    "tagsAtHead": [],
+    "phase18TagCreated": false,
+    "gitCommitCreated": false,
+    "gitChangesStaged": false,
+    "gitTreeClean": false,
+    "gitPolicy": "Completed changes intentionally uncommitted for manual review; initial dirty-tree work preserved after explicit user authorization.",
+    "sourceHashManifest": "docs/phase18-evidence/tested-source-sha256.json",
+    "testedSourceUnchanged": true,
+    "engineAndMigrationDiffExitCode": 0,
+    "unchangedHistoricalMigrations": 11,
+    "requiredTestsSkipped": 0,
+    "normalSuiteTests": 1748,
+    "interpretationUnitTests": 120,
+    "interpretationIntegrationTests": 13,
+    "sharedSupabaseInterpretationCases": 9,
+    "integrationRepeatCounts": [
+      151,
+      151,
+      151
+    ],
+    "supabaseRepeatCounts": [
+      64,
+      64
+    ],
+    "pgTapAssertions": 48,
+    "mandatoryPaidDependencies": 0,
+    "externalProviderCallsInRequiredTests": 0,
+    "gpuRequired": false,
+    "reviewReport": "docs/phase18-review-report.md",
+    "design": "docs/phase18-design.md",
+    "example": "docs/phase18-example.json",
+    "supabaseObservationSummary": "docs/phase18-evidence/supabase-observation-summary.json",
+    "databaseObservation": "docs/phase18-evidence/database-observation.json",
+    "limitations": [
+      "Finite English/Hinglish fallback; no real external adapter",
+      "Parking, daylight and ventilation are deferred metadata",
+      "Native rectangular-site and one/two-floor limits remain",
+      "Modifications preserve requirements, not geometry; kitchen minima require explicit dimensions",
+      "Stateless clarification context must be resubmitted",
+      "READY validates input, not solver feasibility or regulatory compliance"
+    ]
+  }
+}

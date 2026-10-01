@@ -324,7 +324,7 @@ it('allows only the public generator integration boundary and keeps Three.js out
     const imports = [...readFileSync(file, 'utf8').matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g)];
     for (const match of imports) {
       if (match[1] === '@designflow/generator') {
-        expect(['contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'contracts/workflows.ts', 'workflows/registry.ts', 'lib/generation-identity.ts'].map(path => join(sourceRoot, path))).toContain(file);
+        expect(['contracts/requirement-interpretation.ts', 'ai/architectural-interpreter.ts', 'contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'contracts/workflows.ts', 'workflows/registry.ts', 'lib/generation-identity.ts'].map(path => join(sourceRoot, path))).toContain(file);
       } else {
         expect(match[1], file).not.toMatch(/(?:generator|generation\/|^three(?:\/|$))/);
       }

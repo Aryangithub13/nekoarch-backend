@@ -1,0 +1,18 @@
+{
+  ".env.example": "ea01600620e4c134dd1bb3276159b9bf108dc93dd49b7a503c951c8769305855",
+  "apps/api/src/ai/architectural-interpreter.ts": "ee00c1732463f3ed5848b4abf4b9c6b91ce7755e3e9d79dbd152d38dfc0f02bd",
+  "apps/api/src/ai/fallback-parser.ts": "519ad6cfd64b0060bbafbd1bb5e29d40752e15c8760b49da098ef521b1ae60a1",
+  "apps/api/src/ai/interpreter-provider.ts": "58e07709f7d980effe3059f4bce06e8f39bd5b776553a296d0a4246a2cfe2630",
+  "apps/api/src/app.ts": "d5c4065662970ef5b5fa926f85475f1b56183efb60ad4047ca9f6bad09ff98ae",
+  "apps/api/src/config/env.ts": "70e139a7d984bf903f3399937bbc428740dd72a587ade8b2bb6fb304c701fa2a",
+  "apps/api/src/contracts/requirement-interpretation.ts": "51efc31494ed171c2e6cd0930dedf2eed0097217e3dcdb74a0b7d91b842e768f",
+  "apps/api/src/lib/http-protection.ts": "cfdd472c507a5d22b952cc4ea4bdb7173e2bc8cf5495ef4e7ea940e01ca0eb0c",
+  "apps/api/src/routes/requirement-interpretation.ts": "6bc3385680b2e8b027dde56445842e19702ed242cbc4457882e1f396fe837737",
+  "apps/api/tests/foundation.test.ts": "0b1728a425d25ffd8a7df7d8fd6d04a060d7d1b5fec700e7a55ea3f8d77311fa",
+  "apps/api/tests/interpretation.integration.test.ts": "77703ccef798f502baf1bd5237f86574555199f26da66c1172eb78f66fb12ee5",
+  "apps/api/tests/interpretation.test.ts": "5a9359ef4c5727b9476bcc1c05f965241761c48e2365f8425beb0631ff90edcf",
+  "apps/api/tests/supabase.live.test.ts": "fdfce053e9f3ac28fb5286ec2c8c886e062b22d0545a00416c2e41136ceb67de",
+  "package.json": "625a6125744f6c6e3d327fa13b879459e19408bbc093d60616f224f42a3913e1",
+  "test-support/interpretation-acceptance.ts": "e2f679dda892d05d87433f9c53caaad2a8419f10a1d3113f82944fbd90ddd015",
+  "test-support/interpretation-corpus.ts": "2a692e2ec1e0627aef445676e08129b8e0b6359eb4648d95195eba660278832d"
+}

@@ -1,0 +1,69 @@
+{
+  "baseline": {
+    "startingSha": "1c60e0ed4f49f6422d20df5d8cef134a9e0c82af",
+    "checkpointTag": "backend-v1-phase17-complete",
+    "checkpointSha": "bf3fa6b5d7d027932f9851f9c522655d39f64247",
+    "seedEvidenceFollowUpPreserved": true,
+    "previousTreeCleanClaim": true,
+    "treeClean": false,
+    "observedAt": "2026-10-01T10:34:26.822597+00:00",
+    "resumeAuthorization": "User: fix the dirty working tree and give me a complete report. Existing Phase 18 work is preserved and completed; no automatic commit or tag.",
+    "initialWorkSnapshot": "/tmp/designflow-phase18-before-repair.tar.gz",
+    "observedStatus": [
+      " M .env.example",
+      " M apps/api/src/app.ts",
+      " M apps/api/src/config/env.ts",
+      " M apps/api/src/lib/http-protection.ts",
+      " M apps/api/tests/foundation.test.ts",
+      " M apps/api/tests/supabase.live.test.ts",
+      " M package.json",
+      "?? apps/api/src/ai/",
+      "?? apps/api/src/contracts/requirement-interpretation.ts",
+      "?? apps/api/src/routes/requirement-interpretation.ts",
+      "?? apps/api/tests/interpretation.integration.test.ts",
+      "?? apps/api/tests/interpretation.test.ts",
+      "?? docs/phase18-design.md",
+      "?? docs/phase18-evidence/",
+      "?? docs/phase18-example.json",
+      "?? test-support/interpretation-acceptance.ts",
+      "?? test-support/interpretation-corpus.ts"
+    ],
+    "baselineNote": "Existing uncommitted Phase 18 implementation found at the Phase 17 evidence-correction HEAD; the original clean-start assertion cannot be independently confirmed."
+  },
+  "startedAt": "2026-10-01T10:38:47.993096+00:00",
+  "results": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:38:47.993273+00:00",
+      "durationMs": 14123,
+      "summary": [],
+      "log": "docs/phase18-evidence/build.txt"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T10:39:02.116759+00:00",
+      "durationMs": 21626,
+      "summary": [],
+      "log": "docs/phase18-evidence/typecheck.txt"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exitCode": 1,
+      "startedAt": "2026-10-01T10:39:23.742796+00:00",
+      "durationMs": 3745,
+      "summary": [],
+      "log": "docs/phase18-evidence/lint.txt"
+    }
+  ],
+  "complete": false,
+  "databaseReset": false,
+  "migration": null,
+  "mandatoryPaidDependencies": 0,
+  "externalProviderCalls": 0,
+  "gpuRequired": false
+}

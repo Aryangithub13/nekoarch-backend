@@ -1,0 +1,355 @@
+{
+  "source": "Actual HTTP acceptance against disposable PostgreSQL; no paid provider",
+  "input": {
+    "text": "I have a 30 by 50 foot plot and want a two-storey 3BHK house with one bedroom on the ground floor and parking.",
+    "locale": "en-IN"
+  },
+  "interpretation": {
+    "interpretationId": "4795b7b0-bcce-4015-996a-717f716686ad",
+    "interpreterVersion": "architectural-interpreter-v1",
+    "provider": "fallback",
+    "providerModel": "bounded-parser-v1",
+    "inputLanguage": "en",
+    "status": "READY",
+    "baseRevisionId": null,
+    "candidate": {
+      "site": {
+        "width": "30",
+        "depth": "50",
+        "unit": "ft"
+      },
+      "floors": 2,
+      "bedrooms": 3,
+      "groundFloorBedrooms": 1,
+      "parking": 1,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": [
+        "parking"
+      ]
+    },
+    "structuredRequirements": {
+      "site": {
+        "boundary": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 15240
+          },
+          {
+            "x": 0,
+            "z": 15240
+          }
+        ],
+        "northMilliDegrees": null,
+        "setbacks": []
+      },
+      "floors": 2,
+      "rooms": [
+        {
+          "type": "bedroom",
+          "count": 1,
+          "level": 0,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "bedroom",
+          "count": 2,
+          "level": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "bathroom",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "living",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "kitchen",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        }
+      ],
+      "relationships": [],
+      "circulationWidthMm": 1200,
+      "floorToFloorHeightMm": 3000,
+      "exteriorWallThicknessMm": 200,
+      "interiorWallThicknessMm": 100,
+      "slabThicknessMm": 150,
+      "door": {
+        "widthMm": 900,
+        "heightMm": 2100,
+        "jambMm": 100
+      },
+      "windows": {
+        "enabled": true,
+        "widthMm": 1200,
+        "heightMm": 1200,
+        "sillMm": 900
+      },
+      "stair": {
+        "widthMm": 1000,
+        "riserCount": 16,
+        "treadDepthMm": 280,
+        "landingDepthMm": 1200
+      },
+      "seed": "blueprint-default",
+      "solver": {
+        "maxCandidates": 32,
+        "maxIterations": 20000
+      }
+    },
+    "assumptions": [
+      {
+        "field": "rooms.bathrooms",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+      },
+      {
+        "field": "rooms.living",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+      },
+      {
+        "field": "rooms.kitchen",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+      },
+      {
+        "field": "rooms.bedroom.level",
+        "source": "USER_INFERRED",
+        "reason": "The remaining bedrooms are assigned to the other requested floor."
+      },
+      {
+        "field": "site.setbacks",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "rooms.minimumDimensions",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "circulationWidthMm",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "floorToFloorHeightMm",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "exteriorWallThicknessMm",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "interiorWallThicknessMm",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "slabThicknessMm",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "door",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "windows",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "solver",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "seed",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      },
+      {
+        "field": "stair",
+        "source": "PRODUCT_DEFAULT",
+        "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+      }
+    ],
+    "unresolvedQuestions": [],
+    "warnings": [
+      "Deferred requests are metadata only and are not included in generated geometry. Review them before generating."
+    ],
+    "unsupportedRequirements": [
+      {
+        "code": "UNSUPPORTED_REQUIREMENT",
+        "feature": "parking",
+        "priority": "HARD_CONSTRAINT",
+        "disposition": "DEFERRED",
+        "appliedToGeometry": false
+      }
+    ],
+    "error": null,
+    "provenance": {
+      "schemaVersion": "architectural-interpreter-v1",
+      "normalizationVersion": "architectural-interpreter-v1",
+      "createdAt": "2026-10-01T10:43:48.975Z",
+      "fields": [
+        {
+          "field": "intent.site",
+          "source": "USER_EXPLICIT",
+          "reason": "Extracted from the brief or an explicit clarification answer."
+        },
+        {
+          "field": "intent.floors",
+          "source": "USER_EXPLICIT",
+          "reason": "Extracted from the brief or an explicit clarification answer."
+        },
+        {
+          "field": "intent.bedrooms",
+          "source": "USER_EXPLICIT",
+          "reason": "Extracted from the brief or an explicit clarification answer."
+        },
+        {
+          "field": "intent.groundFloorBedrooms",
+          "source": "USER_EXPLICIT",
+          "reason": "Extracted from the brief or an explicit clarification answer."
+        },
+        {
+          "field": "intent.parking",
+          "source": "USER_EXPLICIT",
+          "reason": "Extracted from the brief or an explicit clarification answer."
+        },
+        {
+          "field": "rooms.bathrooms",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+        },
+        {
+          "field": "rooms.living",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+        },
+        {
+          "field": "rooms.kitchen",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Residential interpretation includes one bathroom, one living room and one kitchen unless explicitly specified."
+        },
+        {
+          "field": "rooms.bedroom.level",
+          "source": "USER_INFERRED",
+          "reason": "The remaining bedrooms are assigned to the other requested floor."
+        },
+        {
+          "field": "site.setbacks",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "rooms.minimumDimensions",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "circulationWidthMm",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "floorToFloorHeightMm",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "exteriorWallThicknessMm",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "interiorWallThicknessMm",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "slabThicknessMm",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "door",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "windows",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "solver",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "seed",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "stair",
+          "source": "PRODUCT_DEFAULT",
+          "reason": "Uses the unchanged native blueprint input default; not a user request or building-code claim."
+        },
+        {
+          "field": "site.northMilliDegrees",
+          "source": "UNRESOLVED",
+          "reason": "Orientation is unknown and represented as null; no directional performance is claimed."
+        }
+      ],
+      "previousInterpretationId": null,
+      "validation": "PASSED",
+      "path": "fallback"
+    }
+  },
+  "handoff": {
+    "revisionId": "a441992c-f20b-4427-8507-de0fd09c8bc5",
+    "identityVersion": "generation-freshness-v1",
+    "generationId": "895fcf3e-31c2-46cd-825d-84dfd2df378a",
+    "requirementsHash": "ce89d633fe67bf502b10ab99af2df23a3fecabd7c9212619d3cd5822aef359bc",
+    "modelHash": "5f63cac1224468aed96a8e0f0e82f660aad3d42f7062a70a5d28d8b4bd85ab3e",
+    "seed": "blueprint-default",
+    "qaResult": "PASS",
+    "qaVersion": "blueprint-qa-v1",
+    "qaSummary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 0,
+      "rulePass": 10,
+      "ruleFail": 0,
+      "ruleNotApplicable": 0,
+      "ruleNotEvaluated": 0
+    },
+    "generatorVersion": "precision-blueprint-v1"
+  }
+}

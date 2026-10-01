@@ -1,3 +1,5 @@
+import { requirementInterpretationRoutes } from './routes/requirement-interpretation.js';
+import type { InterpreterOptions } from './ai/architectural-interpreter.js';
 import { workflowsRoutes } from './routes/workflows.js';
 import { costsRoutes } from './routes/costs.js';
 import { constructionRoutes } from './routes/construction.js';
@@ -20,7 +22,7 @@ import { plansRoutes } from './routes/plans.js';
 import { estimatesRoutes } from './routes/estimates.js';
 import { regionsRoutes } from './routes/regions.js';
 
-export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError }) {
+export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions }) {
   const backend = options.backend ?? createSupabaseBackend(options.env);
   const capture = options.captureError ?? reportError;
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger(options.env);
@@ -78,6 +80,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     });
     plansRoutes(scope, backend);
     projectsRoutes(scope, backend, options.env);
+    requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
     takeoffsRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);

@@ -1,0 +1,20 @@
+[
+  {
+    "log": "docs/phase18-evidence/supabase-2026-10-01T10-46-39.085Z.json",
+    "observedRequests": 1763,
+    "httpFailureStatuses": {
+      "401": 12
+    },
+    "http5xx": 0,
+    "apiErrors": []
+  },
+  {
+    "log": "docs/phase18-evidence/supabase-2026-10-01T10-47-37.455Z.json",
+    "observedRequests": 1761,
+    "httpFailureStatuses": {
+      "401": 12
+    },
+    "http5xx": 0,
+    "apiErrors": []
+  }
+]
