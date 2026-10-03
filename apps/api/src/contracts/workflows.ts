@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BlueprintRequirementsSchema, normalizeBlueprintRequirements } from '@designflow/generator';
+import { SelectedBlueprintRequirementsSchema } from '@designflow/generator';
 import { TakeoffRequestSchema } from './takeoffs.js';
 import { ConstructionRequestSchema } from './construction.js';
 import { CostRequestSchema } from './costs.js';
@@ -15,7 +15,7 @@ const outputs = z.array(CapabilityIdSchema).max(13).default([]).transform(a => [
 const intent = { requiredOutputs: outputs, optionalOutputs: outputs };
 const existing = z.object({ kind: z.literal('REVISION'), sourceRevisionId: id }).strict();
 const source = z.discriminatedUnion('kind', [existing, z.object({ kind: z.literal('GENERATE'),
-  baseRevisionId: id.nullable(), requirements: BlueprintRequirementsSchema.transform(normalizeBlueprintRequirements) }).strict()]);
+  baseRevisionId: id.nullable(), requirements: SelectedBlueprintRequirementsSchema }).strict()]);
 const engines = { takeoff: TakeoffRequestSchema.default({}), construction: ConstructionRequestSchema.optional(), cost: CostRequestSchema.optional() };
 const design = z.object({ brief: z.string().trim().min(1).max(2000), style: z.string().trim().min(1).max(100).optional(),
   materials: z.array(z.string().trim().min(1).max(100)).max(32).default([]) }).strict();

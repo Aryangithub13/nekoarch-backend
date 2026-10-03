@@ -1,0 +1,56 @@
+{
+  "request": {
+    "requirements": {
+      "site": {
+        "boundary": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 2500,
+            "z": 0
+          },
+          {
+            "x": 2500,
+            "z": 2500
+          },
+          {
+            "x": 0,
+            "z": 2500
+          }
+        ],
+        "northMilliDegrees": null
+      },
+      "rooms": [
+        {
+          "type": "bedroom",
+          "count": 2
+        },
+        {
+          "type": "living",
+          "count": 1
+        },
+        {
+          "type": "kitchen",
+          "count": 1
+        },
+        {
+          "type": "bathroom",
+          "count": 1
+        }
+      ],
+      "seed": "phase19-acceptance",
+      "layoutV2": {}
+    }
+  },
+  "statusCode": 422,
+  "response": {
+    "error": {
+      "code": "PROGRAM_DOES_NOT_FIT",
+      "message": "Requested clear minimum areas exceed total permitted floor area",
+      "requestId": "14997042-e674-4cae-b7bc-2b426ea7e23b",
+      "fieldErrors": {}
+    }
+  }
+}

@@ -26,6 +26,8 @@ jobs:
       - run: npm run test:unit
       - run: npm run test:generator
       - run: npm run test:blueprint
+      - run: npm run test:conversations
+      - run: npm run test:solver-v2
       - run: npm run test:blueprint-qa
       - run: npm run test:projects
       - run: npm run test:takeoff

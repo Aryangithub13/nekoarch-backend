@@ -1,0 +1,14 @@
+{
+  "label": "docker",
+  "command": [
+    "docker",
+    "build",
+    "-t",
+    "designflow-api:phase19",
+    "."
+  ],
+  "startedAt": "2026-10-02T15:48:36.796698+00:00",
+  "durationSeconds": 242.634,
+  "exitCode": 137,
+  "log": "phase19-evidence/completion/docker.txt"
+}

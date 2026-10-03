@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/conversations.integration.test.ts (9 tests) 2792ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  469ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  484ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  804ms
+ ✓ apps/api/tests/conversations.test.ts (31 tests) 191ms
+
+ Test Files  2 passed (2)
+      Tests  40 passed (40)
+   Start at  10:51:29
+   Duration  4.95s (transform 690ms, setup 0ms, collect 1.60s, tests 2.98s, environment 1ms, prepare 109ms)
+

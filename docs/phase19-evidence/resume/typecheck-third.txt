@@ -1,0 +1,22 @@
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+src/solver-v2/generate.ts(32,47): error TS2304: Cannot find name 'AbortSignal'.
+src/solver-v2/generate.ts(35,19): error TS2304: Cannot find name 'performance'.
+src/solver-v2/generate.ts(38,46): error TS2304: Cannot find name 'performance'.
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/packages/generator
+npm error workspace @designflow/generator@0.1.0
+npm error location /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/packages/generator
+npm error command failed
+npm error command sh -c tsc -p tsconfig.json

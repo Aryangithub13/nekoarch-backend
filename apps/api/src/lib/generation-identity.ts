@@ -1,12 +1,12 @@
 import { costHash } from '@designflow/boq-cost';
-import { BLUEPRINT_VERSION, normalizeBlueprintRequirements } from '@designflow/generator';
+import { blueprintVersionForRequirements, normalizeBlueprintForVersion, BLUEPRINT_V2_VERSION, BLUEPRINT_VERSION } from '@designflow/generator';
 import type { BuildingModelV2 } from '@designflow/shared';
 
 export const GENERATION_IDENTITY_VERSION = 'generation-freshness-v1';
 
 /** Seed is execution selection, separate from architectural input identity. */
-export function requirementsHash(input: unknown, generatorVersion = BLUEPRINT_VERSION): string {
-  const { seed: _seed, ...requirements } = normalizeBlueprintRequirements(input);
+export function requirementsHash(input: unknown, generatorVersion: string = blueprintVersionForRequirements(input)): string {
+  const { seed: _seed, ...requirements } = normalizeBlueprintForVersion(input, generatorVersion === BLUEPRINT_V2_VERSION ? BLUEPRINT_V2_VERSION : BLUEPRINT_VERSION);
   return costHash({ identityVersion: GENERATION_IDENTITY_VERSION, generatorVersion, requirements });
 }
 

@@ -1,3 +1,5 @@
+import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
+import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
 import { interpretationAcceptance } from '../../../test-support/interpretation-acceptance.js';
 import { freshnessAcceptance } from '../../../test-support/freshness-acceptance.js';
 import { workflowAcceptance,workflowSetup,workflowPayload } from '../../../test-support/workflow-acceptance.js';
@@ -361,6 +363,21 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect((await other.client.rpc('takeoff_read',{p_project_id:p.json().id,p_revision_id:revision.id,p_takeoff_id:dto.id})).error).not.toBeNull();
   });
 
+  solverV2Acceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local Phase 19 setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  }, process.env.PHASE19_SUPABASE_EVIDENCE_DIR);
+  it('Phase 20 actual JWT clients cannot write conversation state or forge approval RPCs', async () => {
+    const unauthenticated = await publicClient!.from('architectural_conversations').select('id');
+    expect(unauthenticated.error).not.toBeNull();
+    const direct = await owner!.client.from('architectural_conversations').update({ state: { status: 'SUBMITTED' } }).eq('owner_id', owner!.id);
+    expect(direct.error).not.toBeNull();
+    const forged = await owner!.client.rpc('conversation_write', { p_action: 'submit', p_input: {}, p_envelope: null, p_signature: null });
+    expect(forged.error).not.toBeNull();
+    const foreign = await other!.client.from('architectural_conversations').select('id').eq('owner_id', owner!.id);
+    expect(foreign.error).toBeNull(); expect(foreign.data).toEqual([]);
+  });
+  conversationAcceptance(() => ({ app: app!, owner: owner!.headers, other: other!.headers }), process.env.PHASE20_SUPABASE_EXAMPLE_PATH);
   interpretationAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Acceptance setup incomplete');
     return { app, owner: owner.headers, other: other.headers };

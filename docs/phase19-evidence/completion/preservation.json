@@ -1,0 +1,82 @@
+{
+  "head": "094e6856a61abfeee78881dbc98fe34ef10eb970",
+  "headUnchanged": true,
+  "incomingFilesChangedDuringCompletion": [
+    "apps/api/tests/supabase.live.test.ts",
+    "apps/web/src/api/client.ts",
+    "apps/web/src/components/ai-generator/AiRequirementInput.tsx",
+    "apps/web/src/components/cad-2d/FloorPlanViewer.tsx",
+    "apps/web/src/components/cad-3d/Bim3dViewer.tsx",
+    "apps/web/src/components/construction/ConstructionCalcPanel.tsx",
+    "apps/web/src/components/cost/CostDashboard.tsx",
+    "apps/web/src/components/history/RevisionTimeline.tsx",
+    "apps/web/src/components/qa-audit/QaReportPanel.tsx",
+    "apps/web/src/components/takeoff/QuantityTakeoffTable.tsx",
+    "apps/web/src/components/workflows/WorkflowPipeline.tsx",
+    "docs/phase19-design.md",
+    "scripts/benchmark-solver-v2.ts"
+  ],
+  "historicalMigrations": [
+    {
+      "path": "supabase/migrations/0001_core_tables.sql",
+      "unchangedFromHead": true,
+      "sha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929"
+    },
+    {
+      "path": "supabase/migrations/0002_rate_tables.sql",
+      "unchangedFromHead": true,
+      "sha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca"
+    },
+    {
+      "path": "supabase/migrations/0003_estimates_and_logs.sql",
+      "unchangedFromHead": true,
+      "sha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107"
+    },
+    {
+      "path": "supabase/migrations/0004_rls_policies.sql",
+      "unchangedFromHead": true,
+      "sha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447"
+    },
+    {
+      "path": "supabase/migrations/0005_idempotency.sql",
+      "unchangedFromHead": true,
+      "sha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1"
+    },
+    {
+      "path": "supabase/migrations/0006_projects.sql",
+      "unchangedFromHead": true,
+      "sha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979"
+    },
+    {
+      "path": "supabase/migrations/0007_quantity_takeoffs.sql",
+      "unchangedFromHead": true,
+      "sha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0"
+    },
+    {
+      "path": "supabase/migrations/0008_construction_calculations.sql",
+      "unchangedFromHead": true,
+      "sha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8"
+    },
+    {
+      "path": "supabase/migrations/0009_boq_costs.sql",
+      "unchangedFromHead": true,
+      "sha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a"
+    },
+    {
+      "path": "supabase/migrations/0010_workflows.sql",
+      "unchangedFromHead": true,
+      "sha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325"
+    },
+    {
+      "path": "supabase/migrations/0011_generation_freshness.sql",
+      "unchangedFromHead": true,
+      "sha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957"
+    }
+  ],
+  "lockfileUnchangedDuringCompletion": true,
+  "v1FixtureUnchangedDuringCompletion": true,
+  "trackedFilesNewlyChangedDuringCompletion": [
+    ".dockerignore",
+    "Dockerfile"
+  ]
+}

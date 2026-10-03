@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/solver-v2.test.ts (27 tests) 4204ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  396ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  490ms
+ ❯ apps/api/tests/solver-v2.integration.test.ts (10 tests | 10 skipped) 8ms
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > A: retains default V1 HTTP geometry and identity
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > B-L-site: accepts V2 orthogonal sites through immutable revisions
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > B-U-site: accepts V2 orthogonal sites through immutable revisions
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > C: independently verifies hard direct and passage connections in accepted revisions
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > D: persists coordinated two-storey stairs and actual entrance reachability
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > E: records a measured privacy comparison over the same candidate schedule
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > F: preserves actual window and facade evidence without physical simulation claims
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > G: returns typed infeasibility with no revision write
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > H: generates, audits, persists and costs V2 with honest parking coverage and matching workflow versions
+   ↓ Phase 19 HTTP acceptance on real PostgreSQL > protects ownership, strict input, changed-command identity, freshness and interpreter boundaries for V2
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/solver-v2.integration.test.ts > Phase 19 HTTP acceptance on real PostgreSQL
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  27 passed | 10 skipped (37)
+   Start at  16:05:38
+   Duration  6.28s (transform 721ms, setup 0ms, collect 1.67s, tests 4.21s, environment 0ms, prepare 123ms)
+

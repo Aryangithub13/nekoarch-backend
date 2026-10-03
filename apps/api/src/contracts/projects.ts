@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ArchitecturalBuildingModelV2Schema } from '@designflow/shared';
-import { BlueprintRequirementsSchema, normalizeBlueprintRequirements } from '@designflow/generator';
+import { SelectedBlueprintRequirementsSchema } from '@designflow/generator';
 import { BlueprintQaReportSchema } from '@designflow/blueprint-qa';
 import { GenerationIdentitySchema, CurrentArtifactsSchema } from './freshness.js';
 
@@ -23,7 +23,7 @@ export const ProjectRevisionSummarySchema = z.object({ id, projectId: id, revisi
   sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), createdAt: timestamp, qa: QaSummarySchema,
   identity: GenerationIdentitySchema.nullable().optional() }).strict();
 export const ProjectRevisionDetailSchema = ProjectRevisionSummarySchema.extend({ model: ArchitecturalBuildingModelV2Schema, qaRuns: z.array(QaRunSchema).min(1),
-  normalizedRequirements: BlueprintRequirementsSchema.nullable().optional() });
+  normalizedRequirements: SelectedBlueprintRequirementsSchema.nullable().optional() });
 export const ProjectDetailSchema = ProjectSummarySchema.extend({ currentRevision: ProjectRevisionDetailSchema.nullable(), currentArtifacts: CurrentArtifactsSchema.optional() });
 export const RevisionCommitResponseSchema = z.object({ project: ProjectSummarySchema, revision: ProjectRevisionDetailSchema }).strict();
 export const PublicProjectSchema = z.object({ id, title, updatedAt: timestamp, currentRevision: z.object({ id,
@@ -32,7 +32,7 @@ export const CreateProjectRequestSchema = z.object({ title }).strict();
 export const UpdateProjectRequestSchema = z.object({ title: title.optional(), status: status.optional(), visibility: visibility.optional() }).strict()
   .refine(value => Object.keys(value).length > 0, 'Provide at least one metadata field');
 export const SaveRevisionRequestSchema = z.object({ model: ArchitecturalBuildingModelV2Schema, baseRevisionId: id.nullable().default(null) }).strict();
-export const GenerateRevisionRequestSchema = z.object({ requirements: BlueprintRequirementsSchema.transform(normalizeBlueprintRequirements), baseRevisionId: id.nullable().default(null) }).strict();
+export const GenerateRevisionRequestSchema = z.object({ requirements: SelectedBlueprintRequirementsSchema, baseRevisionId: id.nullable().default(null) }).strict();
 export const ProjectParamsSchema = z.object({ projectId: id }).strict();
 export const RevisionParamsSchema = z.object({ projectId: id, revisionId: id }).strict();
 export const ProjectCursorSchema = z.object({ updatedAt: timestamp, id }).strict();

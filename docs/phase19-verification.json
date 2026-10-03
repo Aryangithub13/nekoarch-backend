@@ -1,0 +1,236 @@
+{
+  "phase": 19,
+  "status": "COMPLETE",
+  "verifiedAt": "2026-10-02T16:06:28.473589+00:00",
+  "head": "094e6856a61abfeee78881dbc98fe34ef10eb970",
+  "node": "v22.22.2",
+  "completionDefinition": "Implementation and local verification complete; manual review/commit/tag/deployment are separate.",
+  "gates": [
+    {
+      "label": "check",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedAt": "2026-10-02T15:48:11.371688+00:00",
+      "durationSeconds": 153.865,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/check.txt",
+      "testSummaries": [
+        "Test Files  43 passed (43)",
+        "Tests  1788 passed (1788)",
+        "Test Files  2 passed (2)",
+        "Tests  133 passed (133)"
+      ]
+    },
+    {
+      "label": "unit-final",
+      "command": [
+        "npm",
+        "run",
+        "test:unit"
+      ],
+      "startedAt": "2026-10-02T16:02:57.665475+00:00",
+      "durationSeconds": 41.097,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/unit-final.txt",
+      "testSummaries": [
+        "Test Files  30 passed (30)",
+        "Tests  1625 passed (1625)"
+      ]
+    },
+    {
+      "label": "solver-v2",
+      "command": [
+        "npm",
+        "run",
+        "test:solver-v2"
+      ],
+      "startedAt": "2026-10-02T15:51:20.349271+00:00",
+      "durationSeconds": 28.319,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/solver-v2.txt",
+      "testSummaries": [
+        "Test Files  2 passed (2)",
+        "Tests  40 passed (40)"
+      ]
+    },
+    {
+      "label": "supabase",
+      "command": [
+        "npm",
+        "run",
+        "test:supabase"
+      ],
+      "startedAt": "2026-10-02T15:52:50.886047+00:00",
+      "durationSeconds": 80.317,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/supabase.txt",
+      "testSummaries": [
+        "Test Files  1 passed (1)",
+        "Tests  74 passed (74)"
+      ]
+    },
+    {
+      "label": "db-test",
+      "command": [
+        "npm",
+        "run",
+        "db:test"
+      ],
+      "startedAt": "2026-10-02T16:00:45.526977+00:00",
+      "durationSeconds": 3.271,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/db-test.txt",
+      "testSummaries": [
+        "Files=1, Tests=48,  0 wallclock secs ( 0.02 usr +  0.01 sys =  0.03 CPU)",
+        "Result: PASS"
+      ]
+    },
+    {
+      "label": "typecheck-final",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-10-02T16:01:35.555678+00:00",
+      "durationSeconds": 23.26,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/typecheck-final.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "lint-final",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "startedAt": "2026-10-02T16:00:07.558450+00:00",
+      "durationSeconds": 3.571,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/lint-final.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "web-build",
+      "command": [
+        "npm",
+        "run",
+        "web:build"
+      ],
+      "startedAt": "2026-10-02T15:50:47.577144+00:00",
+      "durationSeconds": 6.326,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/web-build.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "docker-final",
+      "command": [
+        "docker",
+        "build",
+        "-t",
+        "designflow-api:phase19",
+        "."
+      ],
+      "startedAt": "2026-10-02T15:52:45.126758+00:00",
+      "durationSeconds": 368.349,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/docker-final.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "smoke",
+      "command": [
+        "node",
+        "scripts/smoke-container.mjs",
+        "designflow-api:phase19"
+      ],
+      "startedAt": "2026-10-02T16:01:07.302973+00:00",
+      "durationSeconds": 1.267,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/smoke.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "container-solver",
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "designflow-api:phase19",
+        "node",
+        "--input-type=module",
+        "-e",
+        "import { generateBlueprintV2 } from \"@designflow/generator\"; import { auditBlueprint } from \"@designflow/blueprint-qa\"; import { calculateQuantityTakeoff } from \"@designflow/quantity-takeoff\"; const result=generateBlueprintV2({site:{boundary:[{x:0,z:0},{x:12000,z:0},{x:12000,z:16000},{x:0,z:16000}],northMilliDegrees:0},rooms:[{type:\"bedroom\",count:2},{type:\"living\",count:1},{type:\"kitchen\",count:1},{type:\"bathroom\",count:1}],seed:\"phase19-container\",layoutV2:{accessSide:\"min-z\",parking:{count:1}}}); const qa=auditBlueprint(result.model,{requireReachability:true}); const coverage=calculateQuantityTakeoff(result.model).coverage.find(c=>c.category===\"parking_construction\"); if(result.metadata.solverVersion!==\"precision-blueprint-v2\"||qa.status===\"FAIL\"||coverage?.status!==\"NOT_EVALUATED\") throw new Error(\"Container V2 acceptance failed\"); console.log(JSON.stringify({generator:result.metadata.solverVersion,qa:qa.status,parkingCoverage:coverage.status,unreachable:qa.circulation.unreachableSpaceIds}));"
+      ],
+      "startedAt": "2026-10-02T16:02:32.509898+00:00",
+      "durationSeconds": 0.715,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/container-solver.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "benchmark-final",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "scripts/benchmark-solver-v2.ts"
+      ],
+      "startedAt": "2026-10-02T16:00:17.323923+00:00",
+      "durationSeconds": 12.991,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/benchmark-final.txt",
+      "testSummaries": []
+    },
+    {
+      "label": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startedAt": "2026-10-02T16:05:58.253524+00:00",
+      "durationSeconds": 0.016,
+      "exitCode": 0,
+      "log": "phase19-evidence/completion/diff-check.txt",
+      "testSummaries": []
+    }
+  ],
+  "evidenceEnvironment": {
+    "PHASE19_EVIDENCE_DIR": "docs/phase19-evidence/completion/acceptance-postgres",
+    "PHASE19_SUPABASE_EVIDENCE_DIR": "docs/phase19-evidence/completion/acceptance-supabase",
+    "SUPABASE_EVIDENCE_DIRECTORY": "docs/phase19-evidence/completion/supabase-observations",
+    "PHASE19_PERFORMANCE_PATH": "docs/phase19-evidence/completion/performance.json"
+  },
+  "historicalGateRecords": "phase19-evidence/resume/verification.json",
+  "diagnosticAttempts": [
+    {
+      "log": "phase19-evidence/completion/solver-initial.txt",
+      "reason": "Socket-restricted sandbox prevented PostgreSQL startup; superseded by successful solver-v2 gate with local-socket access."
+    },
+    {
+      "log": "phase19-evidence/completion/docker.txt",
+      "reason": "Stopped the stalled optional-binary installation; superseded by docker-final, smoke and container-solver."
+    },
+    {
+      "log": "phase19-evidence/completion/benchmark.txt",
+      "reason": "tsx CLI IPC socket denied; superseded by node --import tsx benchmark-final."
+    }
+  ],
+  "performance": {
+    "groups": 19,
+    "runs": 57,
+    "allDeterministic": true,
+    "evidence": "phase19-evidence/completion/performance.json"
+  },
+  "databasePreservation": "phase19-evidence/completion/database-preservation.json",
+  "sourcePreservation": "phase19-evidence/completion/preservation.json",
+  "remainingRequiredWork": []
+}

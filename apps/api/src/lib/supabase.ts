@@ -1,3 +1,4 @@
+import { conversationDatabaseError } from './conversation-repository.js';
 import { workflowDatabaseError } from './workflow-repository.js';
 import { costDatabaseError } from './cost-repository.js';
 import { constructionDatabaseError } from './construction-repository.js';
@@ -11,6 +12,11 @@ import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, typ
 
 export class SupabaseRepository implements Repository {
   constructor(private readonly client: SupabaseClient) {}
+  async conversationRpc(name: 'conversation_read' | 'conversation_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) conversationDatabaseError(error);
+    return data as unknown;
+  }
   async workflowRpc(name: 'workflow_read' | 'workflow_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) workflowDatabaseError(error);

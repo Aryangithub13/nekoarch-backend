@@ -1,0 +1,55 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ packages/generator/tests/solver-v2.test.ts (27 tests | 1 failed) 4043ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  369ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real non-square site output 235ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real L site output 262ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real U site output 216ms
+   × Precision Solver V2 geometry and independent evidence > preserves the incoming historical V1 model and metadata fixtures exactly 7ms
+     → Invalid blueprint requirements
+   ✓ Precision Solver V2 geometry and independent evidence > keeps the version helper default and unmarked input on V1 41ms
+   ✓ Precision Solver V2 geometry and independent evidence > canonicalizes both permitted winding directions, cyclic origins, room order and relationship direction without mutating input 184ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects duplicate closing vertex without invented output 1ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects zero edge without invented output 1ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects self intersection without invented output 0ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects zero area without invented output 0ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects diagonal site without invented output 0ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects oversized rings before polygon work and explicit unsupported nonrectangular setbacks 1ms
+   ✓ Precision Solver V2 geometry and independent evidence > reconciles explicit buildable regions with rectangular setbacks and preserves translated survey origin 237ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects infeasible setbacks, outside buildable boundaries and impossible area 2ms
+   ✓ Precision Solver V2 geometry and independent evidence > constructs and independently checks connected versus passage relationships 102ms
+   ✓ Precision Solver V2 geometry and independent evidence > rejects mandatory relationships across explicitly different floors 1ms
+   ✓ Precision Solver V2 geometry and independent evidence > coordinates exact stair rise, landings, upper slab void and actual upper access 195ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-z 277ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-z 249ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-x 250ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-x 242ms
+   ✓ Precision Solver V2 geometry and independent evidence > models conceptual parking and explicitly excludes construction quantities 283ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  497ms
+   ✓ Precision Solver V2 geometry and independent evidence > applies exact north conversions without assuming climate or unsupported angles 247ms
+   ✓ Precision Solver V2 geometry and independent evidence > bounds candidate/operation search and reports exhaustion without claiming infeasibility 24ms
+   ✓ Precision Solver V2 geometry and independent evidence > repeats deterministically across independent concurrent calls and hashes version/seed correctly 116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/generator/tests/solver-v2.test.ts > Precision Solver V2 geometry and independent evidence > preserves the incoming historical V1 model and metadata fixtures exactly
+BlueprintError: Invalid blueprint requirements
+ ❯ normalizeBlueprintRequirements packages/generator/src/blueprint/input.ts:69:30
+     67|     throw new BlueprintError('INVALID_REQUIREMENTS', 'Requirements mus…
+     68|   }
+     69|   if (!parsed.success) throw new BlueprintError('INVALID_REQUIREMENTS'…
+       |                              ^
+     70|     fields: parsed.error.issues.slice(0, 24).map(i => i.path.join('.')…
+     71|   });
+ ❯ generateBlueprint packages/generator/src/blueprint/generate.ts:12:13
+ ❯ packages/generator/tests/solver-v2.test.ts:31:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 26 passed (27)
+   Start at  16:02:34
+   Duration  4.84s (transform 409ms, setup 0ms, collect 607ms, tests 4.04s, environment 0ms, prepare 53ms)
+

@@ -1,0 +1,12 @@
+{
+  "label": "check",
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "startedAt": "2026-10-02T15:48:11.371688+00:00",
+  "durationSeconds": 153.865,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/check.txt"
+}

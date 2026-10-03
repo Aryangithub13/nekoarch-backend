@@ -20,7 +20,7 @@ export function* candidateSchedule(r: NormalizedBlueprintRequirements, c: Constr
     }
   }
 }
-export function allocateCandidate(r: NormalizedBlueprintRequirements, c: Constraints, ordered: RoomIntent[], axis: 'x' | 'z', split: number, index: number, budget: SearchBudget): Candidate {
+export function allocateCandidate(r: NormalizedBlueprintRequirements, c: Constraints, ordered: RoomIntent[], axis: 'x' | 'z', split: number, index: number, budget: SearchBudget, leftSharePermille = 500): Candidate {
   const envelope = axis === 'z' ? c.center : transpose(c.center);
   const e = r.exteriorWallThicknessMm, p = r.interiorWallThicknessMm;
   const spaces: SolvedSpace[] = [];
@@ -41,7 +41,7 @@ export function allocateCandidate(r: NormalizedBlueprintRequirements, c: Constra
     const rightMin = right.length ? Math.max(...right.map(crossMin)) + (e + p) / 2 : 0;
     const spare = envelope.w - corridorWidth - leftMin - rightMin;
     if (spare < 0) throw new BlueprintError(r.floors === 2 ? 'STAIR_PLACEMENT_FAILED' : 'IMPOSSIBLE_LAYOUT', 'Insufficient width for clear room, corridor and wall dimensions');
-    const leftWidth = leftMin + (r.floors === 1 && hasLeft ? (hasRight ? Math.floor(spare / 2) : spare) : 0);
+    const leftWidth = leftMin + (r.floors === 1 && hasLeft ? (hasRight ? Math.floor(spare * leftSharePermille / 1000) : spare) : 0);
     const rightWidth = hasRight ? envelope.w - corridorWidth - leftWidth : 0;
     const corridorActualWidth = hasRight || (hasLeft && r.floors === 1) ? corridorWidth : envelope.w - leftWidth;
     add(`corridor-${level}`, level, 'circulation', 'circulation', { x: envelope.x + leftWidth, z: envelope.z, w: corridorActualWidth, d: envelope.d }, hasLeft ? p : e, hasRight ? p : e, e, e);

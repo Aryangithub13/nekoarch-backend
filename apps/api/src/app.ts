@@ -1,3 +1,5 @@
+import { conversationsRoutes } from './routes/conversations.js';
+import type { ConversationProvider } from './ai/conversation-provider.js';
 import { requirementInterpretationRoutes } from './routes/requirement-interpretation.js';
 import type { InterpreterOptions } from './ai/architectural-interpreter.js';
 import { workflowsRoutes } from './routes/workflows.js';
@@ -22,7 +24,7 @@ import { plansRoutes } from './routes/plans.js';
 import { estimatesRoutes } from './routes/estimates.js';
 import { regionsRoutes } from './routes/regions.js';
 
-export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions }) {
+export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider }) {
   const backend = options.backend ?? createSupabaseBackend(options.env);
   const capture = options.captureError ?? reportError;
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger(options.env);
@@ -33,7 +35,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     trustProxy: options.env.TRUST_PROXY ? options.env.TRUST_PROXY.split(',').map(value => value.trim()) : false,
     exposeHeadRoutes: false });
   app.register(cors, { origin: options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
-    methods: ['GET', 'POST', 'PATCH'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'], exposedHeaders: ['x-request-id'] });
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'], exposedHeaders: ['x-request-id'] });
   app.register(helmet, { contentSecurityPolicy: false, crossOriginEmbedderPolicy: false,
     strictTransportSecurity: options.env.NODE_ENV === 'production' && options.env.HSTS_ENABLED ? { maxAge: 31_536_000 } : false,
     referrerPolicy: { policy: 'no-referrer' } });
@@ -81,6 +83,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     plansRoutes(scope, backend);
     projectsRoutes(scope, backend, options.env);
     requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
+    conversationsRoutes(scope, backend, options.env, options.conversationProvider);
     takeoffsRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);

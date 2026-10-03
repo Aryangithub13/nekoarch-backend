@@ -1,0 +1,22 @@
+
+> designflow@0.1.0 web:build
+> npm run build -w @designflow/web
+
+
+> @designflow/web@0.1.0 build
+> tsc -b && vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 1592 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.91 kB │ gzip:   0.53 kB
+dist/assets/index-B96jSzZW.css   29.87 kB │ gzip:   5.91 kB
+dist/assets/index-C6dQmdKA.js   805.42 kB │ gzip: 211.10 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.96s

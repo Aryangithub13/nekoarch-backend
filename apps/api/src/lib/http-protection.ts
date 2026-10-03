@@ -15,8 +15,8 @@ export async function installLimits(app: FastifyInstance, env: Env) {
   const salt = randomBytes(32);
   const digest = (value: string) => createHmac('sha256', salt).update(value).digest('hex');
   const identities = new WeakMap<FastifyRequest, string>();
-  const group = (request: FastifyRequest) => ['/api/projects/:projectId/requirements/interpret', '/api/plans/generate', '/api/projects/:projectId/revisions/generate', '/api/projects/:projectId/revisions'].includes(request.routeOptions.url ?? '') ? 'generate'
-    : ['POST', 'PATCH'].includes(request.method) ? 'write' : 'read';
+  const group = (request: FastifyRequest) => ['/api/projects/:projectId/conversations/:conversationId/messages', '/api/projects/:projectId/conversations/:conversationId/proposals/approve', '/api/projects/:projectId/requirements/interpret', '/api/plans/generate', '/api/projects/:projectId/revisions/generate', '/api/projects/:projectId/revisions'].includes(request.routeOptions.url ?? '') ? 'generate'
+    : ['POST', 'PATCH', 'DELETE'].includes(request.method) ? 'write' : 'read';
   const perimeter = app.createRateLimit({ max: env.RATE_LIMIT_IP, keyGenerator: req => digest(`ip:${req.ip}`) });
   const operation = app.createRateLimit({
     max: req => ({ generate: env.RATE_LIMIT_GENERATE, write: env.RATE_LIMIT_WRITE, read: env.RATE_LIMIT_READ })[group(req)],

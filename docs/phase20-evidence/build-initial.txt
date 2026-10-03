@@ -1,0 +1,42 @@
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+src/ai/conversation-planner.ts(84,23): error TS18046: 'r.layoutV2' is of type 'unknown'.
+src/ai/conversation-planner.ts(85,34): error TS18046: 'r.layoutV2' is of type 'unknown'.
+src/ai/conversation-planner.ts(86,171): error TS18046: 'r.layoutV2' is of type 'unknown'.
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/api
+npm error workspace @designflow/api@0.1.0
+npm error location /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/api
+npm error command failed
+npm error command sh -c tsc -p tsconfig.build.json

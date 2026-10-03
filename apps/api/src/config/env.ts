@@ -17,6 +17,10 @@ export const EnvSchema = z.object({
   LOG_LEVEL: optionalDefault(z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info')),
   CORS_ORIGINS: optionalDefault(z.string().default('')),
   TRUST_PROXY: optionalDefault(z.string().default('')),
+  AI_CONVERSATION_MODE: optionalDefault(z.enum(['fallback', 'local', 'disabled']).default('fallback')),
+  AI_CONVERSATION_ENDPOINT: optionalDefault(z.string().optional()),
+  AI_CONVERSATION_MODEL: optionalDefault(z.string().regex(/^[A-Za-z0-9._:/-]{1,100}$/).optional()),
+  AI_CONVERSATION_API_KEY: optionalDefault(z.string().max(512).optional()),
   AI_INTERPRETER_MODE: optionalDefault(z.enum(['fallback', 'disabled']).default('fallback')),
   AI_INTERPRETER_TIMEOUT_MS: optionalDefault(z.coerce.number().int().min(1).max(30000).default(5000)),
   AI_INTERPRETER_MAX_OUTPUT_TOKENS: optionalDefault(z.coerce.number().int().min(128).max(4096).default(2048)),
@@ -36,6 +40,7 @@ export const EnvSchema = z.object({
   HSTS_ENABLED: flag('false'),
   RELEASE: optionalDefault(z.string().regex(/^[A-Za-z0-9._-]{1,100}$/).optional()),
 }).superRefine((env, ctx) => {
+  if (env.AI_CONVERSATION_MODE === 'local' && (!env.AI_CONVERSATION_ENDPOINT || !env.AI_CONVERSATION_MODEL)) ctx.addIssue({ code: 'custom', path: ['AI_CONVERSATION_MODE'], message: 'Local inference requires an endpoint and model' });
   if (env.NODE_ENV === 'production' && !env.SENTRY_DSN) ctx.addIssue({ code: 'custom', path: ['SENTRY_DSN'], message: 'Required in production' });
   for (const proxy of env.TRUST_PROXY.split(',').map(value => value.trim()).filter(Boolean)) {
     const [address, prefix, extra] = proxy.split('/');

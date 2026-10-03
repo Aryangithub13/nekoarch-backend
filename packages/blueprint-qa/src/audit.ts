@@ -1,3 +1,4 @@
+import { architecturalConstraintsAudit } from './architectural-constraints.js';
 import { BuildingModelShapeSchema } from '@designflow/shared';
 import { Context, QaResourceLimit } from './context.js';
 import { documentAudit, levelsSiteAudit, slabsColumnsAudit, spacesAudit, wallsAudit } from './core.js';
@@ -8,6 +9,7 @@ import { circulationAudit } from './circulation.js';
 import { BlueprintQaOptionsSchema } from './options.js';
 import { emptyReport, finish, type BlueprintQaReport, type Finding } from './report.js';
 import { rulesAudit, rulesNotEvaluated } from './rules.js';
+import { siteAllocationsAudit } from './site-allocations.js';
 
 /** Bounded plain JSON preflight prevents accessors, cycles and oversized rings reaching Zod refinements. */
 function preflight(value: unknown): void {
@@ -80,14 +82,14 @@ export function auditBlueprint(input: unknown, options: unknown = {}): Blueprint
   const c = new Context(parsed.data, config, report);
   const stages: [BlueprintQaReport['coverage'][number]['stage'], (c: Context) => void, string][] = [
     ['document', documentAudit, 'Independent identity, cross-reference and completeness checks'],
-    ['levels-site', levelsSiteAudit, 'Level order/heights, declared permitted polygons, rectangular site setbacks'],
+    ['levels-site', c => { levelsSiteAudit(c); siteAllocationsAudit(c); }, 'Level order/heights, declared permitted polygons, rectangular site setbacks, optional parking allocations and primary entry'],
     ['spaces', spacesAudit, 'Centerline area/spans, same-level interior overlap and level containment'],
     ['walls', wallsAudit, 'Wall extents, vertical geometry, interval duplication, geometric adjacency, represented-edge gaps and fragments; not watertight solids'],
     ['openings', openingsAudit, 'Exact hosted bounds, vertical extents, rectangle overlaps and orthogonal interval topology'],
     ['dimensions', dimensionsAudit, 'Independent anchors, axis measurements, strict ordering and exact controlling reconciliation'],
     ['slabs-columns', slabsColumnsAudit, 'Plate areas, levels, extents, same-kind overlap, column bounds and vertical geometry'],
     ['stairs', stairsAudit, 'Straight-flight arithmetic, footprint, endpoint landings, access, full-flight void correspondence and conservative solid interference'],
-    ['circulation', circulationAudit, 'Rebuilt valid door/passage/stair graph; reachability only from explicit caller/pack entries'],
+    ['circulation', c => { circulationAudit(c); architecturalConstraintsAudit(c); }, 'Rebuilt valid door/passage/stair graph; reachability only from explicit caller/pack entries'],
     ['rules', rulesAudit, 'Opt-in versioned declarative policies, independent of core geometry validity'],
   ];
   for (const [stage, execute, details] of stages) {

@@ -1,0 +1,12 @@
+{
+  "label": "benchmark",
+  "command": [
+    "npx",
+    "tsx",
+    "scripts/benchmark-solver-v2.ts"
+  ],
+  "startedAt": "2026-10-02T16:00:07.261381+00:00",
+  "durationSeconds": 0.264,
+  "exitCode": 1,
+  "log": "phase19-evidence/completion/benchmark.txt"
+}

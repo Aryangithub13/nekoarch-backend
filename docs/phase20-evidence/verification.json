@@ -1,0 +1,233 @@
+[
+  {
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 13.885,
+    "startedAt": "2026-10-03T05:05:33.766654+00:00",
+    "log": "docs/phase20-evidence/gate-01-build.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 22.625,
+    "startedAt": "2026-10-03T05:05:47.652139+00:00",
+    "log": "docs/phase20-evidence/gate-02-typecheck.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 3.371,
+    "startedAt": "2026-10-03T05:06:10.277194+00:00",
+    "log": "docs/phase20-evidence/gate-03-lint.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:unit"
+    ],
+    "exitCode": 1,
+    "durationSeconds": 40.831,
+    "startedAt": "2026-10-03T05:06:13.648153+00:00",
+    "log": "docs/phase20-evidence/gate-04-test-unit.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:generator"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 16.394,
+    "startedAt": "2026-10-03T05:06:54.479561+00:00",
+    "log": "docs/phase20-evidence/gate-05-test-generator.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:blueprint"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 8.212,
+    "startedAt": "2026-10-03T05:07:10.874177+00:00",
+    "log": "docs/phase20-evidence/gate-06-test-blueprint.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:blueprint-qa"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 15.45,
+    "startedAt": "2026-10-03T05:07:19.086560+00:00",
+    "log": "docs/phase20-evidence/gate-07-test-blueprint-qa.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:solver-v2"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 29.288,
+    "startedAt": "2026-10-03T05:07:34.536359+00:00",
+    "log": "docs/phase20-evidence/gate-08-test-solver-v2.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:projects"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 22.567,
+    "startedAt": "2026-10-03T05:08:03.824890+00:00",
+    "log": "docs/phase20-evidence/gate-09-test-projects.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:takeoff"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 26.726,
+    "startedAt": "2026-10-03T05:08:26.392171+00:00",
+    "log": "docs/phase20-evidence/gate-10-test-takeoff.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:construction"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 22.732,
+    "startedAt": "2026-10-03T05:08:53.119053+00:00",
+    "log": "docs/phase20-evidence/gate-11-test-construction.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:cost"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 22.306,
+    "startedAt": "2026-10-03T05:09:15.851353+00:00",
+    "log": "docs/phase20-evidence/gate-12-test-cost.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:workflows"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 22.507,
+    "startedAt": "2026-10-03T05:09:38.157338+00:00",
+    "log": "docs/phase20-evidence/gate-13-test-workflows.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:interpretation"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 19.617,
+    "startedAt": "2026-10-03T05:10:00.665138+00:00",
+    "log": "docs/phase20-evidence/gate-14-test-interpretation.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 57.604,
+    "startedAt": "2026-10-03T05:10:20.282181+00:00",
+    "log": "docs/phase20-evidence/gate-15-test-integration.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 59.237,
+    "startedAt": "2026-10-03T05:11:17.886655+00:00",
+    "log": "docs/phase20-evidence/gate-16-test-integration.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:conversations"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 20.852,
+    "startedAt": "2026-10-03T05:12:17.124403+00:00",
+    "log": "docs/phase20-evidence/gate-17-test-conversations.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:supabase"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 71.337,
+    "startedAt": "2026-10-03T05:12:37.977197+00:00",
+    "log": "docs/phase20-evidence/gate-18-test-supabase.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 171.97,
+    "startedAt": "2026-10-03T05:13:49.315102+00:00",
+    "log": "docs/phase20-evidence/gate-19-check.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "db:test"
+    ],
+    "exitCode": 1,
+    "durationSeconds": 2.063,
+    "startedAt": "2026-10-03T05:16:41.285565+00:00",
+    "log": "docs/phase20-evidence/gate-20-db-test.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "web:build"
+    ],
+    "exitCode": 1,
+    "durationSeconds": 0.097,
+    "startedAt": "2026-10-03T05:16:43.348747+00:00",
+    "log": "docs/phase20-evidence/gate-21-web-build.txt"
+  }
+]

@@ -3,6 +3,7 @@ import type { BuildingModelV2 } from './model-shape.js';
 import { CoordinateMmSchema, reconcileDimensions } from './units.js';
 import { abs, cross, lengthSquared, ringContains, ringsOverlap, ringsTouch, segmentInRing, signedArea2 } from './geometry.js';
 import { dimensionMeasurements, dimensionPoints, wallSpaceIds } from './relationships.js';
+import { validateSiteAllocations } from './site-invariants.js';
 
 export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.RefinementCtx): void {
   const issue = (path: (string | number)[], message: string) => ctx.addIssue({ code: 'custom', path, message });
@@ -17,12 +18,14 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
   register(model.id, ['id']);
   if (model.site) {
     register(model.site.id, ['site', 'id']);
+    model.site.parkingZones?.forEach((s, i) => register(s.id, ['site', 'parkingZones', i, 'id']));
     model.site.setbacks.forEach((s, i) => {
       register(s.id, ['site', 'setbacks', i, 'id']);
       if (s.boundaryEdgeStart >= model.site!.boundary.length) issue(['site', 'setbacks', i], 'Setback edge must exist');
     });
     if (model.site.buildableBoundary && !ringContains(model.site.boundary, model.site.buildableBoundary)) issue(['site', 'buildableBoundary'], 'Buildable region must be contained in site');
   }
+  validateSiteAllocations(model, ctx);
   const collections = ['levels', 'spaces', 'walls', 'openings', 'stairs', 'slabs', 'columns', 'dimensions', 'specifications'] as const;
   for (const key of collections) model[key].forEach((entity, index) => {
     register(entity.id, [key, index, 'id']);

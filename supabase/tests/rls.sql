@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(48);
+select plan(51);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 15, 'exactly fifteen public tables including workflows');
+  where n.nspname = 'public' and c.relkind = 'r'), 16, 'exactly sixteen public tables including conversations');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -96,5 +96,10 @@ select throws_ok('select * from public.project_revision_takeoffs', '42501', null
 select throws_ok('select * from public.project_revision_cost_estimates', '42501', null, 'cost reports are never public');
 select throws_ok('select * from public.project_revision_construction_calculations', '42501', null, 'construction reports are never public');
 reset role;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
+select throws_ok('update public.architectural_conversations set state = ''{}''', '42501', null, 'clients cannot forge conversational state');
+select throws_ok('delete from public.architectural_conversations', '42501', null, 'conversation deletion requires trusted owner route');
+select throws_ok('select public.conversation_write(''submit'',''{}'',null,null)', '42501', null, 'approval RPC requires a server attestation');
 select * from finish();
 rollback;

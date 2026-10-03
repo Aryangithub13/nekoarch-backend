@@ -29,14 +29,15 @@ export function constructWalls(r: NormalizedBlueprintRequirements, c: Constraint
   }
   return walls;
 }
-export function constructModel(r: NormalizedBlueprintRequirements, c: Constraints, candidate: Candidate): BuildingModelV2 {
+export interface ConstructionPolicy { generatorVersion?: string; entranceEnd?: 'min' | 'max'; centeredStair?: boolean; stairPosition?: 'front' | 'center' | 'rear'; rankWindows?: boolean }
+export function constructModel(r: NormalizedBlueprintRequirements, c: Constraints, candidate: Candidate, policy: ConstructionPolicy = {}): BuildingModelV2 {
   const model: BuildingModelV2 = {
     schemaVersion: 2, id: 'blueprint', name: 'Precision residential blueprint', completeness: 'architectural', units: 'mm', coordinateSystem: 'x-right-y-up-z-depth',
     site: { ...r.site, id: 'site', name: 'Site', boundary: r.site.boundary, buildableBoundary: c.buildableBoundary,
       setbacks: r.site.setbacks.map((s, i) => ({ ...s, id: `setback-${i}` })) },
     levels: Array.from({ length: r.floors }, (_, index) => ({ id: `level-${index}`, name: `Floor ${index + 1}`, index, kind: 'storey', elevationMm: index * r.floorToFloorHeightMm, floorToFloorHeightMm: r.floorToFloorHeightMm, boundary: rectangle(c.outer) })),
     spaces: candidate.spaces.map(s => s.entity), walls: constructWalls(r, c, candidate), openings: [], stairs: [], slabs: [], columns: [], dimensions: [], specifications: [],
-    provenance: { creationMode: 'generated', generatorVersion: BLUEPRINT_VERSION, seed: r.seed, measurementVersion: 'mm-exact/1' },
+    provenance: { creationMode: 'generated', generatorVersion: policy.generatorVersion ?? BLUEPRINT_VERSION, seed: r.seed, measurementVersion: 'mm-exact/1' },
   };
   function marginAt(wall: BuildingWall, end: 'start' | 'end'): number {
     const vertical = wall.path.start.x === wall.path.end.x;
@@ -65,7 +66,8 @@ export function constructModel(r: NormalizedBlueprintRequirements, c: Constraint
   }
   const corridor0 = candidate.spaces.find(s => s.key === 'corridor-0')!;
   const local = candidate.axis === 'z' ? corridor0.box : transpose(corridor0.box);
-  const entrancePoint = candidate.axis === 'z' ? { x: local.x + Math.floor(local.w / 2), z: local.z } : { x: local.z, z: local.x + Math.floor(local.w / 2) };
+  const entryAlong = local.z + (policy.entranceEnd === 'max' ? local.d : 0);
+  const entrancePoint = candidate.axis === 'z' ? { x: local.x + Math.floor(local.w / 2), z: entryAlong } : { x: entryAlong, z: local.x + Math.floor(local.w / 2) };
   const entranceHost = model.walls.find(w => w.levelId === 'level-0' && w.classification === 'exterior' && w.spaceIds?.includes(corridor0.entity.id) && onSegment(entrancePoint, w.path.start, w.path.end));
   if (!entranceHost || !insert(entranceHost, 'door')) throw new BlueprintError('IMPOSSIBLE_LAYOUT', 'Entrance cannot fit the circulation frontage');
   for (const edge of r.relationships.filter(e => e.kind !== 'adjacent')) {
@@ -81,8 +83,9 @@ export function constructModel(r: NormalizedBlueprintRequirements, c: Constraint
     const clear = candidate.axis === 'z' ? core.clear : transpose(core.clear);
     const landingDepth = Math.max(config.landingDepthMm, r.door.widthMm + 2 * r.door.jambMm);
     const run = (config.riserCount - 1) * config.treadDepthMm;
-    const flight = { x: clear.x, z: clear.z + landingDepth, w: config.widthMm, d: run };
-    const bottom = { ...flight, z: clear.z, d: landingDepth }, top = { ...flight, z: flight.z + run, d: landingDepth };
+    const stairStart = clear.z + (policy.stairPosition === 'rear' ? clear.d - run - 2 * landingDepth : policy.stairPosition === 'center' || (!policy.stairPosition && policy.centeredStair) ? Math.floor((clear.d - run - 2 * landingDepth) / 2) : 0);
+    const flight = { x: clear.x, z: stairStart + landingDepth, w: config.widthMm, d: run };
+    const bottom = { ...flight, z: stairStart, d: landingDepth }, top = { ...flight, z: flight.z + run, d: landingDepth };
     const world = (box: typeof flight) => rectangle(candidate.axis === 'z' ? box : transpose(box));
     model.stairs.push({ id: 'stair-0', fromLevelId: 'level-0', toLevelId: 'level-1', footprint: world(flight), direction: candidate.axis === 'z' ? '+z' : '+x', widthMm: config.widthMm,
       riseMm: r.floorToFloorHeightMm, runMm: run, treadDepthMm: config.treadDepthMm,
@@ -96,7 +99,9 @@ export function constructModel(r: NormalizedBlueprintRequirements, c: Constraint
   for (let level = 0; level < r.floors; level++) model.slabs.push({ id: `slab-${level}`, levelId: `level-${level}`, kind: 'floor', footprint: { outer: rectangle(c.outer), voids: level === 1 ? [model.stairs[0]!.footprint] : [] }, topOffsetMm: 0, thicknessMm: r.slabThicknessMm });
   model.slabs.push({ id: 'roof', levelId: `level-${r.floors - 1}`, kind: 'flat-roof', footprint: { outer: rectangle(c.outer), voids: [] }, topOffsetMm: r.floorToFloorHeightMm, thicknessMm: r.slabThicknessMm });
   if (r.windows.enabled) for (const room of candidate.spaces.filter(s => s.role === 'room')) {
-    const host = model.walls.find(w => w.classification === 'exterior' && w.spaceIds?.includes(room.entity.id) && Math.floor((segmentLengthMm(w.path) - r.windows.widthMm) / 2) >= Math.max(marginAt(w, 'start'), marginAt(w, 'end')) && !model.openings.some(o => o.wallId === w.id));
+    const hosts = model.walls.filter(w => w.classification === 'exterior' && w.spaceIds?.includes(room.entity.id) && Math.floor((segmentLengthMm(w.path) - r.windows.widthMm) / 2) >= Math.max(marginAt(w, 'start'), marginAt(w, 'end')) && !model.openings.some(o => o.wallId === w.id));
+    if (policy.rankWindows) hosts.sort((a, b) => segmentLengthMm(b.path) - segmentLengthMm(a.path) || (a.id < b.id ? -1 : 1));
+    const host = hosts[0];
     if (!host) { candidate.warnings.push(`Default window omitted: ${room.key} has no exterior segment with sufficient clearance`); continue; }
     model.openings.push({ id: `opening-${model.openings.length}`, kind: 'window', wallId: host.id, levelId: host.levelId, offsetMm: Math.floor((segmentLengthMm(host.path) - r.windows.widthMm) / 2),
       widthMm: r.windows.widthMm, heightMm: r.windows.heightMm, sillMm: r.windows.sillMm, type: 'default-exterior-window' });

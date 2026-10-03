@@ -1,0 +1,91 @@
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/api/client.ts
+    5:3   error  'BuildingModelV2' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+    7:3   error  'QuantityTakeoff' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+   78:19  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   79:19  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   80:19  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+   85:19  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  107:39  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  127:39  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  162:14  error  'err' is defined but never used                                                    @typescript-eslint/no-unused-vars
+  162:19  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  177:38  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  242:39  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  300:20  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  402:48  error  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/ai-generator/AiRequirementInput.tsx
+   10:3   error  'FileCode' is defined but never used      @typescript-eslint/no-unused-vars
+   12:3   error  'Layers' is defined but never used        @typescript-eslint/no-unused-vars
+   46:87  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/cad-2d/FloorPlanViewer.tsx
+    7:3   error  'Layers' is defined but never used                    @typescript-eslint/no-unused-vars
+   33:22  error  'setShowStairs' is assigned a value but never used    @typescript-eslint/no-unused-vars
+   35:24  error  'setShowSetbacks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   36:20  error  'setShowGrid' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   53:9   error  'siteWidth' is assigned a value but never used        @typescript-eslint/no-unused-vars
+   54:9   error  'siteDepth' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  449:23  error  'x1' is assigned a value but never used               @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/cad-3d/Bim3dViewer.tsx
+    6:3   error  'Layers' is defined but never used       @typescript-eslint/no-unused-vars
+    7:3   error  'Eye' is defined but never used          @typescript-eslint/no-unused-vars
+    8:3   error  'Maximize2' is defined but never used    @typescript-eslint/no-unused-vars
+    9:3   error  'Camera' is defined but never used       @typescript-eslint/no-unused-vars
+   11:3   error  'Compass' is defined but never used      @typescript-eslint/no-unused-vars
+   12:3   error  'RotateCw' is defined but never used     @typescript-eslint/no-unused-vars
+  165:34  error  'levelIdx' is defined but never used     @typescript-eslint/no-unused-vars
+  261:15  error  'x1' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/construction/ConstructionCalcPanel.tsx
+  10:3   error  'RefreshCw' is defined but never used              @typescript-eslint/no-unused-vars
+  44:36  error  'batchBatches' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/cost/CostDashboard.tsx
+   4:3  error  'DollarSign' is defined but never used  @typescript-eslint/no-unused-vars
+   7:3  error  'PieChart' is defined but never used    @typescript-eslint/no-unused-vars
+   8:3  error  'Layers' is defined but never used      @typescript-eslint/no-unused-vars
+  10:3  error  'Building' is defined but never used    @typescript-eslint/no-unused-vars
+  11:3  error  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/history/RevisionTimeline.tsx
+   4:3  error  'GitBranch' is defined but never used    @typescript-eslint/no-unused-vars
+   7:3  error  'Check' is defined but never used        @typescript-eslint/no-unused-vars
+   9:3  error  'Hash' is defined but never used         @typescript-eslint/no-unused-vars
+  11:3  error  'Maximize2' is defined but never used    @typescript-eslint/no-unused-vars
+  12:3  error  'TrendingUp' is defined but never used   @typescript-eslint/no-unused-vars
+  13:3  error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/qa-audit/QaReportPanel.tsx
+   9:3   error  'Search' is defined but never used        @typescript-eslint/no-unused-vars
+  11:3   error  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  12:3   error  'DoorOpen' is defined but never used      @typescript-eslint/no-unused-vars
+  14:29  error  'QaFinding' is defined but never used     @typescript-eslint/no-unused-vars
+  14:40  error  'RuleResult' is defined but never used    @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/takeoff/QuantityTakeoffTable.tsx
+   6:3   error  'Layers' is defined but never used           @typescript-eslint/no-unused-vars
+   7:3   error  'Box' is defined but never used              @typescript-eslint/no-unused-vars
+   8:3   error  'Sparkles' is defined but never used         @typescript-eslint/no-unused-vars
+   9:3   error  'FileSpreadsheet' is defined but never used  @typescript-eslint/no-unused-vars
+  11:27  error  'TakeoffItem' is defined but never used      @typescript-eslint/no-unused-vars
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/web/src/components/workflows/WorkflowPipeline.tsx
+    7:3   error  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+   10:3   error  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+   15:3   error  'Layers' is defined but never used        @typescript-eslint/no-unused-vars
+   16:3   error  'ArrowRight' is defined but never used    @typescript-eslint/no-unused-vars
+   98:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:26  error  'idx' is defined but never used           @typescript-eslint/no-unused-vars
+
+✖ 64 problems (64 errors, 0 warnings)
+

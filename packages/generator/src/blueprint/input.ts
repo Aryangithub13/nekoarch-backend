@@ -9,7 +9,7 @@ const length = LengthMmSchema.max(60000);
 const thickness = length.max(1000).refine(n => n % 2 === 0, 'Even thickness keeps wall faces on the integer grid');
 const selector = z.object({ type: RoomTypeSchema, ordinal: z.number().int().min(1).max(24).default(1) }).strict();
 export const BlueprintRequirementsSchema = z.object({
-  site: SiteSchema.omit({ id: true, name: true, setbacks: true }).extend({
+  site: SiteSchema.omit({ id: true, name: true, setbacks: true, accessSide: true, primaryEntryOpeningId: true, parkingZones: true }).extend({
     setbacks: z.array(z.object({ boundaryEdgeStart: z.number().int().min(0).max(255), minimumMm: length.or(z.literal(0)) }).strict()).max(4).default([]),
   }).strict(),
   floors: z.union([z.literal(1), z.literal(2)]).default(1),

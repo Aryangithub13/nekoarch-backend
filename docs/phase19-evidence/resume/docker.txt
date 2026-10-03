@@ -1,0 +1,31 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  1.023MB
+Step 1/46 : FROM node:22-bookworm-slim AS build
+ ---> 43ac6c60b8f8
+Step 2/46 : WORKDIR /app
+ ---> Using cache
+ ---> 091af58af5a5
+Step 3/46 : COPY package.json package-lock.json .npmrc ./
+ ---> 1a9c5859d6fb
+Step 4/46 : COPY apps/api/package.json apps/api/package.json
+ ---> c39dd11c08df
+Step 5/46 : COPY packages/shared/package.json packages/shared/package.json
+ ---> 5a78217efc29
+Step 6/46 : COPY packages/generator/package.json packages/generator/package.json
+ ---> 2c7ff4796f13
+Step 7/46 : COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
+ ---> 65da3d5990ad
+Step 8/46 : COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
+ ---> 9da79df80407
+Step 9/46 : COPY packages/construction-calculations/package.json packages/construction-calculations/package.json
+ ---> ac5168308852
+Step 10/46 : COPY packages/boq-cost/package.json packages/boq-cost/package.json
+ ---> 276e5666cac0
+Step 11/46 : RUN npm ci
+ ---> Running in 2b7b86a3408f
+[91mnpm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[0m
+Runner timed out after 1200 seconds.

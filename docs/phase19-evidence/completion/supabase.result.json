@@ -1,0 +1,12 @@
+{
+  "label": "supabase",
+  "command": [
+    "npm",
+    "run",
+    "test:supabase"
+  ],
+  "startedAt": "2026-10-02T15:52:50.886047+00:00",
+  "durationSeconds": 80.317,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/supabase.txt"
+}

@@ -15,6 +15,9 @@ export function requirementInterpretationRoutes(app: FastifyInstance, backend: B
     const input = parseRequest(NaturalLanguageDesignRequestSchema, request.body);
     const project = ProjectDetailSchema.parse(await new ProjectRepository(repository).read('get', projectId));
     if (input.baseRevisionId && input.baseRevisionId !== project.currentRevisionId) throw new ApiError(409, 'REVISION_CONFLICT', 'The project current revision has changed; reload before interpreting');
+    if (input.baseRevisionId && project.currentRevision?.normalizedRequirements && 'layoutV2' in project.currentRevision.normalizedRequirements) {
+      throw new ApiError(422, 'V2_INTERPRETATION_UNSUPPORTED', 'Modify V2 requirements through structured generation; the current language interpreter cannot preserve V2 preferences.');
+    }
     const start = performance.now();
     const result = await interpretRequirements(input, input.baseRevisionId ? project.currentRevision?.normalizedRequirements ?? null : null,
       { disabled: env.AI_INTERPRETER_MODE === 'disabled', timeoutMs: env.AI_INTERPRETER_TIMEOUT_MS, maxOutputTokens: env.AI_INTERPRETER_MAX_OUTPUT_TOKENS, ...options });

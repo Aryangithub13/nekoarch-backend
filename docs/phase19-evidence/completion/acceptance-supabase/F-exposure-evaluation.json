@@ -1,0 +1,761 @@
+{
+  "scoreVersion": "precision-layout-score-v2",
+  "operationCount": 1365,
+  "decompositionCells": 1,
+  "envelopes": 1,
+  "topologyCount": 33,
+  "rejectedBy": {},
+  "evaluations": [
+    {
+      "candidate": 0,
+      "total": -4538,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -983,
+        "serviceClustering": 559,
+        "DAYLIGHT_POTENTIAL": -1249,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 38,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 1,
+      "total": -3314,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -863,
+        "serviceClustering": 547,
+        "DAYLIGHT_POTENTIAL": -1174,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 1104,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 2,
+      "total": -5975,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -796,
+        "serviceClustering": 186,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 38,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 3,
+      "total": -4909,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -724,
+        "serviceClustering": 139,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 1104,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 4,
+      "total": -4618,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1076,
+        "serviceClustering": 140,
+        "DAYLIGHT_POTENTIAL": -1337,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 1558,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 5,
+      "total": -1905,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -933,
+        "serviceClustering": 104,
+        "DAYLIGHT_POTENTIAL": -1333,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 4185,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 6,
+      "total": -5835,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1006,
+        "serviceClustering": 140,
+        "DAYLIGHT_POTENTIAL": -1624,
+        "VENTILATION_POTENTIAL": -4000,
+        "roomShape": 1558,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 7,
+      "total": -3210,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -881,
+        "serviceClustering": 104,
+        "DAYLIGHT_POTENTIAL": -1690,
+        "VENTILATION_POTENTIAL": -4000,
+        "roomShape": 4185,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 8,
+      "total": 4214,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1320,
+        "serviceClustering": 112,
+        "DAYLIGHT_POTENTIAL": -1115,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 9440,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 9,
+      "total": 29267,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 72,
+        "privacy": -1234,
+        "serviceClustering": 83,
+        "DAYLIGHT_POTENTIAL": -1069,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 24415,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 10,
+      "total": 4214,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1320,
+        "serviceClustering": 112,
+        "DAYLIGHT_POTENTIAL": -1115,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 9440,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 11,
+      "total": 19267,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -1234,
+        "serviceClustering": 83,
+        "DAYLIGHT_POTENTIAL": -1069,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 24415,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 12,
+      "total": -3108,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1041,
+        "serviceClustering": 559,
+        "DAYLIGHT_POTENTIAL": -1215,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 1492,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 13,
+      "total": -1285,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -958,
+        "serviceClustering": 547,
+        "DAYLIGHT_POTENTIAL": -1141,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 3195,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 14,
+      "total": -6071,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -854,
+        "serviceClustering": 186,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 0,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 15,
+      "total": -5718,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -819,
+        "serviceClustering": 139,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 390,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 16,
+      "total": -2093,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1134,
+        "serviceClustering": 140,
+        "DAYLIGHT_POTENTIAL": -1273,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 4077,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 17,
+      "total": 2804,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -1028,
+        "serviceClustering": 104,
+        "DAYLIGHT_POTENTIAL": -1254,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 8910,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 18,
+      "total": -6609,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1006,
+        "serviceClustering": 140,
+        "DAYLIGHT_POTENTIAL": -1651,
+        "VENTILATION_POTENTIAL": -4000,
+        "roomShape": 811,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 19,
+      "total": -7132,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -880,
+        "serviceClustering": 104,
+        "DAYLIGHT_POTENTIAL": -1728,
+        "VENTILATION_POTENTIAL": -4000,
+        "roomShape": 300,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 20,
+      "total": 4214,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1320,
+        "serviceClustering": 112,
+        "DAYLIGHT_POTENTIAL": -1115,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 9440,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 21,
+      "total": 29267,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 72,
+        "privacy": -1234,
+        "serviceClustering": 83,
+        "DAYLIGHT_POTENTIAL": -1069,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 24415,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 22,
+      "total": 4214,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -1320,
+        "serviceClustering": 112,
+        "DAYLIGHT_POTENTIAL": -1115,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 9440,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 23,
+      "total": 19267,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -1234,
+        "serviceClustering": 83,
+        "DAYLIGHT_POTENTIAL": -1069,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 24415,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 24,
+      "total": -4576,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 97,
+        "privacy": -655,
+        "serviceClustering": 278,
+        "DAYLIGHT_POTENTIAL": -1296,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 0,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 25,
+      "total": 5951,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 72,
+        "privacy": -620,
+        "serviceClustering": 338,
+        "DAYLIGHT_POTENTIAL": -1229,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 390,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 26,
+      "total": 5993,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 97,
+        "privacy": -468,
+        "serviceClustering": 372,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 1492,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 27,
+      "total": -2305,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -480,
+        "serviceClustering": 408,
+        "DAYLIGHT_POTENTIAL": -1500,
+        "VENTILATION_POTENTIAL": -3000,
+        "roomShape": 3195,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 28,
+      "total": 6292,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 97,
+        "privacy": -865,
+        "serviceClustering": 420,
+        "DAYLIGHT_POTENTIAL": -1171,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 811,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 29,
+      "total": 5793,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 72,
+        "privacy": -776,
+        "serviceClustering": 313,
+        "DAYLIGHT_POTENTIAL": -1116,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 300,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 30,
+      "total": 9441,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 10000,
+        "circulation": 97,
+        "privacy": -854,
+        "serviceClustering": 302,
+        "DAYLIGHT_POTENTIAL": -1181,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 4077,
+        "siteUtilization": -1000
+      }
+    },
+    {
+      "candidate": 31,
+      "total": 4404,
+      "components": {
+        "relationships": 0,
+        "separation": 0,
+        "preferredDimensions": 0,
+        "position": 0,
+        "orientation": 0,
+        "circulation": 72,
+        "privacy": -819,
+        "serviceClustering": 355,
+        "DAYLIGHT_POTENTIAL": -1114,
+        "VENTILATION_POTENTIAL": -2000,
+        "roomShape": 8910,
+        "siteUtilization": -1000
+      }
+    }
+  ],
+  "winner": {
+    "scoreVersion": "precision-layout-score-v2",
+    "total": -7132,
+    "hardValidity": true,
+    "components": {
+      "relationships": 0,
+      "separation": 0,
+      "preferredDimensions": 0,
+      "position": 0,
+      "orientation": 0,
+      "circulation": 72,
+      "privacy": -880,
+      "serviceClustering": 104,
+      "DAYLIGHT_POTENTIAL": -1728,
+      "VENTILATION_POTENTIAL": -4000,
+      "roomShape": 300,
+      "siteUtilization": -1000
+    },
+    "relationships": [],
+    "separations": [],
+    "exposure": [
+      {
+        "spaceId": "space-living-1",
+        "key": "living-1",
+        "habitable": true,
+        "exteriorLengthMm": 7575,
+        "exteriorSides": [
+          "min-x",
+          "min-z"
+        ],
+        "daylightPotential": 500,
+        "ventilationPotential": 1000,
+        "windowOpeningIds": [
+          "opening-6"
+        ]
+      },
+      {
+        "spaceId": "space-bathroom-1",
+        "key": "bathroom-1",
+        "habitable": false,
+        "exteriorLengthMm": 2925,
+        "exteriorSides": [
+          "min-z"
+        ],
+        "daylightPotential": 194,
+        "ventilationPotential": 0,
+        "windowOpeningIds": [
+          "opening-7"
+        ]
+      },
+      {
+        "spaceId": "space-kitchen-1",
+        "key": "kitchen-1",
+        "habitable": false,
+        "exteriorLengthMm": 2925,
+        "exteriorSides": [
+          "min-z"
+        ],
+        "daylightPotential": 194,
+        "ventilationPotential": 0,
+        "windowOpeningIds": [
+          "opening-8"
+        ]
+      },
+      {
+        "spaceId": "space-bedroom-1",
+        "key": "bedroom-1",
+        "habitable": true,
+        "exteriorLengthMm": 7575,
+        "exteriorSides": [
+          "max-x",
+          "min-z"
+        ],
+        "daylightPotential": 500,
+        "ventilationPotential": 1000,
+        "windowOpeningIds": [
+          "opening-9"
+        ]
+      },
+      {
+        "spaceId": "space-bedroom-2",
+        "key": "bedroom-2",
+        "habitable": true,
+        "exteriorLengthMm": 31600,
+        "exteriorSides": [
+          "max-x",
+          "max-z",
+          "min-x"
+        ],
+        "daylightPotential": 728,
+        "ventilationPotential": 2000,
+        "windowOpeningIds": [
+          "opening-10"
+        ]
+      }
+    ],
+    "privacyEvidence": [
+      {
+        "spaceId": "space-bedroom-1",
+        "entryDistance2Mm": 26425,
+        "level": 0
+      },
+      {
+        "spaceId": "space-bedroom-2",
+        "entryDistance2Mm": 22950,
+        "level": 0
+      }
+    ],
+    "servicePairs": [
+      {
+        "from": "space-bathroom-1",
+        "to": "space-kitchen-1",
+        "centerDistance2Mm": 5850
+      }
+    ],
+    "verticalService": [],
+    "orientation": [
+      {
+        "spaceId": "space-living-1",
+        "requested": "north",
+        "weight": 1,
+        "satisfied": true
+      }
+    ],
+    "circulation": {
+      "clearAreaMm2": 13920000,
+      "privateThroughAccessCount": 0,
+      "privateThroughAccessIds": [],
+      "roomCount": 5
+    },
+    "parking": {
+      "status": "NOT_REQUESTED",
+      "bayIds": []
+    },
+    "notEvaluated": [
+      "DAYLIGHT_SIMULATION",
+      "AIRFLOW_SIMULATION",
+      "CLIMATE",
+      "SOLAR_POSITION",
+      "WIND_DIRECTION",
+      "PARKING_TURNING_PATH",
+      "PARKING_GRADIENT",
+      "PARKING_CODE",
+      "ACCESSIBILITY",
+      "PLUMBING_DESIGN",
+      "BUILDING_CODE"
+    ]
+  },
+  "program": [
+    {
+      "key": "living-1",
+      "level": 0,
+      "zone": "public"
+    },
+    {
+      "key": "bathroom-1",
+      "level": 0,
+      "zone": "service"
+    },
+    {
+      "key": "kitchen-1",
+      "level": 0,
+      "zone": "service"
+    },
+    {
+      "key": "bedroom-1",
+      "level": 0,
+      "zone": "private"
+    },
+    {
+      "key": "bedroom-2",
+      "level": 0,
+      "zone": "private"
+    }
+  ]
+}

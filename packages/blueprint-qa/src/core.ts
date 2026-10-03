@@ -6,7 +6,7 @@ export function documentAudit(c: Context): void {
   const m = c.model, ids = new Set<string>(), specs = new Set(m.specifications.map(s => s.id));
   const register = (id: string) => { if (ids.has(id)) c.add('QA_DUPLICATE_ID', 'document', [id], 'Entity ID is not document-unique.', 'unique ID', id); ids.add(id); };
   register(m.id);
-  if (m.site) { register(m.site.id); for (const s of m.site.setbacks) register(s.id); }
+  if (m.site) { register(m.site.id); for (const s of m.site.setbacks) register(s.id); for (const p of m.site.parkingZones ?? []) register(p.id); }
   for (const group of [m.levels, m.spaces, m.walls, m.openings, m.stairs, m.slabs, m.columns, m.dimensions, m.specifications]) for (const e of group) {
     register(e.id);
     if ('levelId' in e && e.levelId && !c.levels.has(e.levelId)) c.add('QA_LEVEL_REFERENCE', 'document', [e.id], 'Level reference does not resolve.', 'existing level', e.levelId);

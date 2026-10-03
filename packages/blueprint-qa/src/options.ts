@@ -28,6 +28,10 @@ export const BlueprintQaOptionsSchema = z.object({
   entrySpaceIds: z.array(EntityIdSchema).max(4096).default([]),
   entryOpeningIds: z.array(EntityIdSchema).max(8192).default([]),
   requireReachability: z.boolean().default(false),
+  requiredRelationships: z.array(z.object({ from: EntityIdSchema, to: EntityIdSchema, kind: z.enum(['adjacent', 'connected', 'passage']) }).strict()).max(48).default([]),
+  requiredClearSpaces: z.array(z.object({ id: EntityIdSchema, levelId: EntityIdSchema.optional(), minimumWidthMm: LengthMmSchema, minimumDepthMm: LengthMmSchema, minimumAreaMm2: z.number().int().positive().safe().optional() }).strict()).max(24).default([]),
+  requiredSeparations: z.array(z.object({ from: EntityIdSchema, to: EntityIdSchema, minimumClearDistanceMm: z.number().int().min(0).max(60000) }).strict()).max(48).default([]),
+  forbiddenTransitSpaceIds: z.array(EntityIdSchema).max(24).default([]),
   occupiedSpacesOnly: z.boolean().default(false),
   maxGeometryWork: z.number().int().min(1).max(100_000_000).default(20_000_000),
 }).strict().superRefine((o, ctx) => {

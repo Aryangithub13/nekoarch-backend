@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/conversations.integration.test.ts (8 tests | 1 failed) 1771ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  305ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  441ms
+   × Phase 20 real PostgreSQL conversation acceptance > C/D/J: rejects ambiguous, contradictory and unsupported requests without generating 44ms
+     → {"error":{"code":"INTERNAL_ERROR","message":"An unexpected error occurred","requestId":"c90bac98-725d-47e6-873b-66c35b15769b"}}: expected 500 to be 200 // Object.is equality
+   ✓ Phase 20 real PostgreSQL conversation acceptance > F/K: competing conversations cannot overwrite the current revision or replay obsolete approval 120ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > H: enforces ownership, project binding, tool registry and exact approval schemas 21ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > K/L: serializes concurrent messages and replays identical accepted requests 26ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > lists with safe pagination and deletes conversation data without deleting accepted history 16ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > actual authenticated and anon SQL roles cannot forge writes or cross owner RLS 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/conversations.integration.test.ts > Phase 20 real PostgreSQL conversation acceptance > C/D/J: rejects ambiguous, contradictory and unsupported requests without generating
+AssertionError: {"error":{"code":"INTERNAL_ERROR","message":"An unexpected error occurred","requestId":"c90bac98-725d-47e6-873b-66c35b15769b"}}: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ message test-support/conversation-acceptance.ts:24:184
+     22|     const {app,owner}=get(),start=performance.now();
+     23|     const payload={messageId:randomUUID(),expectedVersion:c.state.vers…
+     24|     const r=await app.inject({method:'POST',url:`${c.url}/messages`,he…
+       |                                                                                                                                                                                        ^
+     25|     c.state=ConversationSchema.parse(r.json()).state;return {r,payload…
+     26|   }
+ ❯ test-support/conversation-acceptance.ts:54:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:29:38
+   Duration  3.06s (transform 475ms, setup 0ms, collect 1.09s, tests 1.77s, environment 0ms, prepare 51ms)
+

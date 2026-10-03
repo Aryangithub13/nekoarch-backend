@@ -1,0 +1,20 @@
+{
+  "before": {
+    "capturedAt": "2026-10-02T15:50:28.016574+00:00",
+    "projects": 488,
+    "revisions": 531,
+    "plans": 0,
+    "authUsers": 0
+  },
+  "after": {
+    "capturedAt": "2026-10-02T16:01:12.021273+00:00",
+    "projects": 520,
+    "revisions": 567,
+    "plans": 0,
+    "authUsers": 0
+  },
+  "existingRevisionCount": 531,
+  "missingOrChangedExistingRevisionIds": [],
+  "newImmutableTestRevisions": 36,
+  "databaseReset": false
+}

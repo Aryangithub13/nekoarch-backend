@@ -1,0 +1,12 @@
+{
+  "label": "smoke",
+  "command": [
+    "node",
+    "scripts/smoke-container.mjs",
+    "designflow-api:phase19"
+  ],
+  "startedAt": "2026-10-02T16:01:07.302973+00:00",
+  "durationSeconds": 1.267,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/smoke.txt"
+}

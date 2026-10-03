@@ -8,7 +8,9 @@ COPY packages/blueprint-qa/package.json packages/blueprint-qa/package.json
 COPY packages/quantity-takeoff/package.json packages/quantity-takeoff/package.json
 COPY packages/construction-calculations/package.json packages/construction-calculations/package.json
 COPY packages/boq-cost/package.json packages/boq-cost/package.json
-RUN npm ci
+# Backend compilation uses tsc only; optional development binaries and their
+# installers are not needed in the API image.
+RUN npm ci --omit=optional --ignore-scripts
 COPY tsconfig.base.json ./
 COPY apps/api/tsconfig.build.json apps/api/tsconfig.build.json
 COPY apps/api/src apps/api/src
@@ -19,7 +21,7 @@ COPY packages/quantity-takeoff packages/quantity-takeoff
 COPY packages/construction-calculations packages/construction-calculations
 COPY packages/boq-cost packages/boq-cost
 RUN npm run build
-RUN npm prune --omit=dev
+RUN npm prune --omit=dev --omit=optional --ignore-scripts
 
 FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3001

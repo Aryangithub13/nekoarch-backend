@@ -1,0 +1,62 @@
+
+> designflow@0.1.0 test:solver-v2
+> npm run build && vitest run packages/generator/tests/solver-v2.test.ts apps/api/tests/solver-v2.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/solver-v2.integration.test.ts (10 tests) 6015ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-L-site: accepts V2 orthogonal sites through immutable revisions  390ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-U-site: accepts V2 orthogonal sites through immutable revisions  324ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > D: persists coordinated two-storey stairs and actual entrance reachability  388ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > E: records a measured privacy comparison over the same candidate schedule  1009ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > F: preserves actual window and facade evidence without physical simulation claims  724ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > H: generates, audits, persists and costs V2 with honest parking coverage and matching workflow versions  955ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > protects ownership, strict input, changed-command identity, freshness and interpreter boundaries for V2  1092ms
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 5769ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  409ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real L site output  306ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-z  304ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-z  312ms
+   ✓ Precision Solver V2 geometry and independent evidence > models conceptual parking and explicitly excludes construction quantities  316ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  617ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  562ms
+   ✓ Precision Solver V2 geometry and independent evidence > repeats deterministically across independent concurrent calls and hashes version/seed correctly  312ms
+
+ Test Files  2 passed (2)
+      Tests  40 passed (40)
+   Start at  16:16:43
+   Duration  13.65s (transform 629ms, setup 0ms, collect 1.44s, tests 11.78s, environment 0ms, prepare 124ms)
+

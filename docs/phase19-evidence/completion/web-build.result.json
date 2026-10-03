@@ -1,0 +1,12 @@
+{
+  "label": "web-build",
+  "command": [
+    "npm",
+    "run",
+    "web:build"
+  ],
+  "startedAt": "2026-10-02T15:50:47.577144+00:00",
+  "durationSeconds": 6.326,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/web-build.txt"
+}

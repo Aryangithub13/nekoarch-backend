@@ -2,7 +2,7 @@ import pino, { type DestinationStream } from 'pino';
 import type { Env } from '../config/env.js';
 
 const privateFields = new Set([
-  'authorization', 'cookie', 'cookies', 'setcookie', 'sharetoken', 'prompt',
+  'aiconversationapikey', 'text', 'intent', 'messages', 'authorization', 'cookie', 'cookies', 'setcookie', 'sharetoken', 'prompt',
   'supabaseanonkey', 'supabaseservicerolekey', 'accesstoken', 'refreshtoken',
   'projectcommitsecret', 'model', 'modeljson', 'report', 'reportjson', 'envelope', 'signature',
   'body', 'plandata', 'plan', 'headers', 'config', 'env', 'idempotencykey', 'databaseurl', 'connectionstring', 'apikey', 'password', 'token', 'url', 'originalurl', 'requesturl',

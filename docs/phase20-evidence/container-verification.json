@@ -1,0 +1,26 @@
+[
+  {
+    "command": [
+      "docker",
+      "build",
+      "-t",
+      "designflow-api:phase20",
+      "."
+    ],
+    "exitCode": 0,
+    "durationSeconds": 58.778,
+    "log": "docs/phase20-evidence/final-docker.txt",
+    "finishedAt": "2026-10-03T05:20:29.290947+00:00"
+  },
+  {
+    "command": [
+      "node",
+      "scripts/smoke-container.mjs",
+      "designflow-api:phase20"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 1.444,
+    "log": "docs/phase20-evidence/final-smoke.txt",
+    "finishedAt": "2026-10-03T05:20:30.735203+00:00"
+  }
+]

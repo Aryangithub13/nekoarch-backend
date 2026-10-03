@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/conversations.integration.test.ts (8 tests | 8 skipped) 6ms
+   ↓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision
+   ↓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed
+   ↓ Phase 20 real PostgreSQL conversation acceptance > C/D/J: rejects ambiguous, contradictory and unsupported requests without generating
+   ↓ Phase 20 real PostgreSQL conversation acceptance > F/K: competing conversations cannot overwrite the current revision or replay obsolete approval
+   ↓ Phase 20 real PostgreSQL conversation acceptance > H: enforces ownership, project binding, tool registry and exact approval schemas
+   ↓ Phase 20 real PostgreSQL conversation acceptance > K/L: serializes concurrent messages and replays identical accepted requests
+   ↓ Phase 20 real PostgreSQL conversation acceptance > lists with safe pagination and deletes conversation data without deleting accepted history
+   ↓ Phase 20 real PostgreSQL conversation acceptance > actual authenticated and anon SQL roles cannot forge writes or cross owner RLS
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/conversations.integration.test.ts > Phase 20 real PostgreSQL conversation acceptance
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 skipped (8)
+   Start at  10:29:09
+   Duration  1.39s (transform 513ms, setup 0ms, collect 1.21s, tests 6ms, environment 0ms, prepare 52ms)
+

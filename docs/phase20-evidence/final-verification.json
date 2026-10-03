@@ -1,0 +1,79 @@
+[
+  {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 176.752,
+    "startedAt": "2026-10-03T05:19:00.081299+00:00",
+    "log": "docs/phase20-evidence/final-check.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:unit"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 42.557,
+    "startedAt": "2026-10-03T05:21:56.834042+00:00",
+    "log": "docs/phase20-evidence/final-unit.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 61.471,
+    "startedAt": "2026-10-03T05:22:39.391179+00:00",
+    "log": "docs/phase20-evidence/final-integration-1.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 58.949,
+    "startedAt": "2026-10-03T05:23:40.862732+00:00",
+    "log": "docs/phase20-evidence/final-integration-2.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:supabase"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 71.641,
+    "startedAt": "2026-10-03T05:24:39.812364+00:00",
+    "log": "docs/phase20-evidence/final-supabase.txt"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "db:test"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 2.436,
+    "startedAt": "2026-10-03T05:25:51.453362+00:00",
+    "log": "docs/phase20-evidence/final-db.txt"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "durationSeconds": 0.02,
+    "startedAt": "2026-10-03T05:25:53.889709+00:00",
+    "log": "docs/phase20-evidence/final-diff.txt"
+  }
+]

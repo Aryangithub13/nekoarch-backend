@@ -183,6 +183,10 @@ export function calculateQuantityTakeoff(input: unknown, options: TakeoffOptions
   cover('columns',model.columns.length,false,'Architectural column geometry only');
   cover('site',model.site ? 1 : 0,false,'Explicit site boundary');
   cover('buildable_area',model.site?.buildableBoundary ? 1 : 0,false,'Explicit buildable boundary only');
+  if (model.site?.parkingZones?.length) {
+    coverage.push({ category: 'parking_construction', status: 'NOT_EVALUATED', reason: 'Conceptual site bays have no pavement, foundation, drainage or material specification.', entityCount: model.site.parkingZones.length });
+    for (const bay of model.site.parkingZones) warn('TAKEOFF_PARKING_NOT_EVALUATED', [bay.id]);
+  }
   cover('level_envelopes',model.levels.length,false,'Plan envelopes, not physical plates');
   for (const category of ['implicit_ceiling_finish','pitched_roofs','building_footprint_union','structural_engineering','mep','material_recipes','prices']) cover(category,0,false,'Not represented/evaluated by this measurement policy');
   const report = { engineVersion: TAKEOFF_ENGINE_VERSION, modelSchemaVersion: 2 as const, measurementPolicyVersion: MEASUREMENT_POLICY_VERSION,

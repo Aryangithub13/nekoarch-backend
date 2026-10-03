@@ -1,0 +1,13 @@
+{
+  "label": "benchmark-final",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/benchmark-solver-v2.ts"
+  ],
+  "startedAt": "2026-10-02T16:00:17.323923+00:00",
+  "durationSeconds": 12.991,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/benchmark-final.txt"
+}

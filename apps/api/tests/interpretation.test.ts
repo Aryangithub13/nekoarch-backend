@@ -204,7 +204,7 @@ it('rejects hidden geometry and duplicate clarification answers', () => {
 it('enforces a closed import boundary for all AI modules and their contract', () => {
   const dir = fileURLToPath(new URL('../src/ai/', import.meta.url));
   const files = [...readdirSync(dir, { recursive: true, encoding: 'utf8' }).filter(f => f.endsWith('.ts')).map(f => dir + f), fileURLToPath(new URL('../src/contracts/requirement-interpretation.ts', import.meta.url))];
-  const allowed = new Set(['node:crypto', 'zod', '@designflow/generator', '@designflow/shared', '../contracts/requirement-interpretation.js', './fallback-parser.js', './interpreter-provider.js']);
+  const allowed = new Set(['../contracts/conversations.js', '../lib/generation-identity.js', '../lib/errors.js', './conversation-provider.js', './architectural-interpreter.js', 'node:crypto', 'zod', '@designflow/generator', '@designflow/shared', '../contracts/requirement-interpretation.js', './fallback-parser.js', './interpreter-provider.js']);
   for (const file of files) {
     const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
     const visit = (node: ts.Node) => {
@@ -213,7 +213,7 @@ it('enforces a closed import boundary for all AI modules and their contract', ()
           const name = node.moduleSpecifier.text; expect(allowed.has(name), `${file}: ${name}`).toBe(true);
           if (ts.isImportDeclaration(node) && ['@designflow/generator', '@designflow/shared'].includes(name)) {
             const binding = node.importClause?.namedBindings; expect(binding && ts.isNamedImports(binding)).toBe(true);
-            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres']).toContain(e.propertyName?.text ?? e.name.text);
+            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['normalizeBlueprintForVersion', 'blueprintVersionForRequirements', 'NormalizedBlueprintV2Requirements', 'normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres']).toContain(e.propertyName?.text ?? e.name.text);
           }
         }
       }

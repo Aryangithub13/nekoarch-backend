@@ -1,0 +1,12 @@
+{
+  "label": "diff-check",
+  "command": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "startedAt": "2026-10-02T16:05:58.253524+00:00",
+  "durationSeconds": 0.016,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/diff-check.txt"
+}

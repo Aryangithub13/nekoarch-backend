@@ -1,0 +1,19 @@
+{
+  "label": "container-solver",
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "--network",
+    "none",
+    "designflow-api:phase19",
+    "node",
+    "--input-type=module",
+    "-e",
+    "import { generateBlueprintV2 } from \"@designflow/generator\"; import { auditBlueprint } from \"@designflow/blueprint-qa\"; import { calculateQuantityTakeoff } from \"@designflow/quantity-takeoff\"; const result=generateBlueprintV2({site:{boundary:[{x:0,z:0},{x:12000,z:0},{x:12000,z:16000},{x:0,z:16000}],northMilliDegrees:0},rooms:[{type:\"bedroom\",count:2},{type:\"living\",count:1},{type:\"kitchen\",count:1},{type:\"bathroom\",count:1}],seed:\"phase19-container\",layoutV2:{accessSide:\"min-z\",parking:{count:1}}}); const qa=auditBlueprint(result.model,{requireReachability:true}); const coverage=calculateQuantityTakeoff(result.model).coverage.find(c=>c.category===\"parking_construction\"); if(result.metadata.solverVersion!==\"precision-blueprint-v2\"||qa.status===\"FAIL\"||coverage?.status!==\"NOT_EVALUATED\") throw new Error(\"Container V2 acceptance failed\"); console.log(JSON.stringify({generator:result.metadata.solverVersion,qa:qa.status,parkingCoverage:coverage.status,unreachable:qa.circulation.unreachableSpaceIds}));"
+  ],
+  "startedAt": "2026-10-02T16:02:32.509898+00:00",
+  "durationSeconds": 0.715,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/container-solver.txt"
+}

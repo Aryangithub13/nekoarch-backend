@@ -1,0 +1,8 @@
+npm error Missing script: "web:build"
+npm error
+npm error Did you mean this?
+npm error   npm rebuild # Rebuild a package
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: /home/aryan/.npm/_logs/2026-10-03T05_16_43_390Z-debug-0.log

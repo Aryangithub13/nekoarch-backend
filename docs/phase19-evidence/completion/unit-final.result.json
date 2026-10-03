@@ -1,0 +1,12 @@
+{
+  "label": "unit-final",
+  "command": [
+    "npm",
+    "run",
+    "test:unit"
+  ],
+  "startedAt": "2026-10-02T16:02:57.665475+00:00",
+  "durationSeconds": 41.097,
+  "exitCode": 0,
+  "log": "phase19-evidence/completion/unit-final.txt"
+}

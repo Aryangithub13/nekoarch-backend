@@ -1,0 +1,416 @@
+[
+  {
+    "name": "build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "startedAt": "2026-10-02T10:47:54.364419+00:00",
+    "durationSeconds": 14.996,
+    "exitCode": 0,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/build.txt"
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-02T10:48:09.360466+00:00",
+    "durationSeconds": 23.663,
+    "exitCode": 0,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/typecheck.txt"
+  },
+  {
+    "name": "lint",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "startedAt": "2026-10-02T10:48:33.023652+00:00",
+    "durationSeconds": 3.923,
+    "exitCode": 1,
+    "summaries": [
+      "\u2716 64 problems (64 errors, 0 warnings)"
+    ],
+    "log": "docs/phase19-evidence/resume/lint.txt"
+  },
+  {
+    "name": "backend-lint",
+    "command": [
+      "npx",
+      "eslint",
+      "packages",
+      "apps/api",
+      "test-support",
+      "scripts"
+    ],
+    "startedAt": "2026-10-02T10:48:36.946589+00:00",
+    "durationSeconds": 3.521,
+    "exitCode": 0,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/backend-lint.txt"
+  },
+  {
+    "name": "unit",
+    "command": [
+      "npm",
+      "run",
+      "test:unit"
+    ],
+    "startedAt": "2026-10-02T10:48:40.468352+00:00",
+    "durationSeconds": 42.403,
+    "exitCode": 1,
+    "summaries": [
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      "Test Files  1 failed | 29 passed (30)",
+      "Tests  1 failed | 1624 passed (1625)"
+    ],
+    "log": "docs/phase19-evidence/resume/unit.txt"
+  },
+  {
+    "name": "generator",
+    "command": [
+      "npm",
+      "run",
+      "test:generator"
+    ],
+    "startedAt": "2026-10-02T10:49:22.872029+00:00",
+    "durationSeconds": 17.551,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  9 passed (9)",
+      "Tests  491 passed (491)"
+    ],
+    "log": "docs/phase19-evidence/resume/generator.txt"
+  },
+  {
+    "name": "blueprint",
+    "command": [
+      "npm",
+      "run",
+      "test:blueprint"
+    ],
+    "startedAt": "2026-10-02T10:49:40.423384+00:00",
+    "durationSeconds": 9.034,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  1 passed (1)",
+      "Tests  137 passed (137)"
+    ],
+    "log": "docs/phase19-evidence/resume/blueprint.txt"
+  },
+  {
+    "name": "blueprint-qa",
+    "command": [
+      "npm",
+      "run",
+      "test:blueprint-qa"
+    ],
+    "startedAt": "2026-10-02T10:49:49.457675+00:00",
+    "durationSeconds": 16.198,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  6 passed (6)",
+      "Tests  177 passed (177)"
+    ],
+    "log": "docs/phase19-evidence/resume/blueprint-qa.txt"
+  },
+  {
+    "name": "solver-v2",
+    "command": [
+      "npm",
+      "run",
+      "test:solver-v2"
+    ],
+    "startedAt": "2026-10-02T10:50:05.655925+00:00",
+    "durationSeconds": 28.225,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  40 passed (40)"
+    ],
+    "log": "docs/phase19-evidence/resume/solver-v2.txt"
+  },
+  {
+    "name": "projects",
+    "command": [
+      "npm",
+      "run",
+      "test:projects"
+    ],
+    "startedAt": "2026-10-02T10:50:33.880912+00:00",
+    "durationSeconds": 20.357,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  1 passed (1)",
+      "Tests  23 passed (23)"
+    ],
+    "log": "docs/phase19-evidence/resume/projects.txt"
+  },
+  {
+    "name": "takeoff",
+    "command": [
+      "npm",
+      "run",
+      "test:takeoff"
+    ],
+    "startedAt": "2026-10-02T10:50:54.238302+00:00",
+    "durationSeconds": 22.962,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  23 passed (23)"
+    ],
+    "log": "docs/phase19-evidence/resume/takeoff.txt"
+  },
+  {
+    "name": "construction",
+    "command": [
+      "npm",
+      "run",
+      "test:construction"
+    ],
+    "startedAt": "2026-10-02T10:51:17.200931+00:00",
+    "durationSeconds": 20.457,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  34 passed (34)"
+    ],
+    "log": "docs/phase19-evidence/resume/construction.txt"
+  },
+  {
+    "name": "cost",
+    "command": [
+      "npm",
+      "run",
+      "test:cost"
+    ],
+    "startedAt": "2026-10-02T10:51:37.658447+00:00",
+    "durationSeconds": 22.913,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  39 passed (39)"
+    ],
+    "log": "docs/phase19-evidence/resume/cost.txt"
+  },
+  {
+    "name": "workflows",
+    "command": [
+      "npm",
+      "run",
+      "test:workflows"
+    ],
+    "startedAt": "2026-10-02T10:52:00.572057+00:00",
+    "durationSeconds": 23.313,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  51 passed (51)"
+    ],
+    "log": "docs/phase19-evidence/resume/workflows.txt"
+  },
+  {
+    "name": "interpretation",
+    "command": [
+      "npm",
+      "run",
+      "test:interpretation"
+    ],
+    "startedAt": "2026-10-02T10:52:23.885312+00:00",
+    "durationSeconds": 19.606,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  2 passed (2)",
+      "Tests  133 passed (133)"
+    ],
+    "log": "docs/phase19-evidence/resume/interpretation.txt"
+  },
+  {
+    "name": "integration-1",
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "startedAt": "2026-10-02T10:52:43.491442+00:00",
+    "durationSeconds": 55.73,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  12 passed (12)",
+      "Tests  161 passed (161)"
+    ],
+    "log": "docs/phase19-evidence/resume/integration-1.txt"
+  },
+  {
+    "name": "integration-2",
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "startedAt": "2026-10-02T10:53:39.222017+00:00",
+    "durationSeconds": 56.031,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  12 passed (12)",
+      "Tests  161 passed (161)"
+    ],
+    "log": "docs/phase19-evidence/resume/integration-2.txt"
+  },
+  {
+    "name": "integration-3",
+    "command": [
+      "npm",
+      "run",
+      "test:integration"
+    ],
+    "startedAt": "2026-10-02T10:54:35.253435+00:00",
+    "durationSeconds": 55.531,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  12 passed (12)",
+      "Tests  161 passed (161)"
+    ],
+    "log": "docs/phase19-evidence/resume/integration-3.txt"
+  },
+  {
+    "name": "supabase-1",
+    "command": [
+      "npm",
+      "run",
+      "test:supabase"
+    ],
+    "startedAt": "2026-10-02T10:55:30.784934+00:00",
+    "durationSeconds": 68.656,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  1 passed (1)",
+      "Tests  74 passed (74)"
+    ],
+    "log": "docs/phase19-evidence/resume/supabase-1.txt"
+  },
+  {
+    "name": "supabase-2",
+    "command": [
+      "npm",
+      "run",
+      "test:supabase"
+    ],
+    "startedAt": "2026-10-02T10:56:39.441315+00:00",
+    "durationSeconds": 68.254,
+    "exitCode": 0,
+    "summaries": [
+      "Test Files  1 passed (1)",
+      "Tests  74 passed (74)"
+    ],
+    "log": "docs/phase19-evidence/resume/supabase-2.txt"
+  },
+  {
+    "name": "all-tests",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "startedAt": "2026-10-02T10:57:47.695579+00:00",
+    "durationSeconds": 86.166,
+    "exitCode": 1,
+    "summaries": [
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      "Test Files  1 failed | 42 passed (43)",
+      "Tests  1 failed | 1787 passed (1788)"
+    ],
+    "log": "docs/phase19-evidence/resume/all-tests.txt"
+  },
+  {
+    "name": "check",
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "startedAt": "2026-10-02T11:50:02.772800+00:00",
+    "durationSeconds": 41.149,
+    "exitCode": 1,
+    "summaries": [
+      "\u2716 64 problems (64 errors, 0 warnings)"
+    ],
+    "log": "docs/phase19-evidence/resume/check.txt"
+  },
+  {
+    "name": "db-test",
+    "command": [
+      "npm",
+      "run",
+      "db:test"
+    ],
+    "startedAt": "2026-10-02T11:50:43.922381+00:00",
+    "durationSeconds": 2.369,
+    "exitCode": 0,
+    "summaries": [
+      "Files=1, Tests=48,  0 wallclock secs ( 0.02 usr +  0.00 sys =  0.02 CPU)"
+    ],
+    "log": "docs/phase19-evidence/resume/db-test.txt"
+  },
+  {
+    "name": "docker",
+    "command": [
+      "docker",
+      "build",
+      "-t",
+      "designflow-api:phase19",
+      "."
+    ],
+    "startedAt": "2026-10-02T11:50:46.291650+00:00",
+    "durationSeconds": 1200.006,
+    "exitCode": 124,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/docker.txt"
+  },
+  {
+    "name": "smoke",
+    "command": [
+      "node",
+      "scripts/smoke-container.mjs",
+      "designflow-api:phase19"
+    ],
+    "startedAt": "2026-10-02T12:10:46.300082+00:00",
+    "durationSeconds": 1.97,
+    "exitCode": 1,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/smoke.txt"
+  },
+  {
+    "name": "benchmark",
+    "command": [
+      "npx",
+      "tsx",
+      "scripts/benchmark-solver-v2.ts"
+    ],
+    "startedAt": "2026-10-02T12:10:48.270582+00:00",
+    "durationSeconds": 13.543,
+    "exitCode": 0,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/benchmark.txt"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "startedAt": "2026-10-02T12:11:01.814174+00:00",
+    "durationSeconds": 0.008,
+    "exitCode": 0,
+    "summaries": [],
+    "log": "docs/phase19-evidence/resume/diff-check.txt"
+  }
+]

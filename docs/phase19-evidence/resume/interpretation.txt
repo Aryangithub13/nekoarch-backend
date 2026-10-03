@@ -1,0 +1,48 @@
+
+> designflow@0.1.0 test:interpretation
+> npm run build && vitest run apps/api/tests/interpretation.test.ts apps/api/tests/interpretation.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1661ms
+   ✓ Phase 18 on real PostgreSQL and owner RLS > modifies explicit base requirements through clarification and normal CAS generation without fabricated sizing  331ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 177ms
+
+ Test Files  2 passed (2)
+      Tests  133 passed (133)
+   Start at  16:22:39
+   Duration  3.88s (transform 492ms, setup 0ms, collect 1.67s, tests 1.84s, environment 0ms, prepare 104ms)
+

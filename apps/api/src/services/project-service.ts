@@ -1,7 +1,8 @@
+import { solverV2QaOptions } from './solver-v2-qa.js';
 import { createHmac, randomUUID } from 'node:crypto';
 import type { FastifyBaseLogger } from 'fastify';
 import { ArchitecturalBuildingModelV2Schema, type BuildingModelV2 } from '@designflow/shared';
-import { generateBlueprint, normalizeBlueprintRequirements, BlueprintError, BLUEPRINT_VERSION } from '@designflow/generator';
+import { generateBlueprint, generateBlueprintV2, normalizeBlueprintForVersion, blueprintVersionForRequirements, normalizeBlueprintV2Requirements, BlueprintError } from '@designflow/generator';
 import { auditBlueprint, BlueprintQaReportSchema, PRODUCT_DEFAULTS_RULE_PACK } from '@designflow/blueprint-qa';
 import type { z } from 'zod';
 import { ProjectDetailSchema, RevisionCommitResponseSchema, type GenerateRevisionRequestSchema, type SaveRevisionRequestSchema } from '../contracts/projects.js';
@@ -29,27 +30,32 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
   // under the commit lock, after durable receipt replay, to avoid replay-vs-CAS races.
   ProjectDetailSchema.parse(await repository.read('get', projectId));
   if (!secret) throw new ApiError(503, 'PROJECTS_UNAVAILABLE', 'Project revision persistence is not configured');
-  const normalizedRequirements = 'requirements' in input ? normalizeBlueprintRequirements(input.requirements) : null;
+  const version = 'requirements' in input ? blueprintVersionForRequirements(input.requirements) : null;
+  const normalizedRequirements = 'requirements' in input && version ? normalizeBlueprintForVersion(input.requirements, version) : null;
+  const v2Requirements = version === 'precision-blueprint-v2' && normalizedRequirements ? normalizeBlueprintV2Requirements(normalizedRequirements) : null;
   const generationId = normalizedRequirements ? randomUUID() : null;
   const inputHash = normalizedRequirements ? requirementsHash(normalizedRequirements) : null;
   const trace = { projectId, baseRevisionId: input.baseRevisionId, generationId,
-    requirementsHash: inputHash, seed: normalizedRequirements?.seed ?? null, generatorVersion: normalizedRequirements ? BLUEPRINT_VERSION : null };
+    requirementsHash: inputHash, seed: normalizedRequirements?.seed ?? null, generatorVersion: version };
   let rawModel;
   try {
     if (normalizedRequirements) {
       logger?.info(trace, 'blueprint generation started');
-      const generated = generateBlueprint(normalizedRequirements);
+      const generated = version === 'precision-blueprint-v2' ? generateBlueprintV2(normalizedRequirements, { timeoutMs: 10000 }) : generateBlueprint(normalizedRequirements);
       rawModel = generated.model;
       logger?.info({ ...trace, modelHash: modelHash(rawModel), candidateAttempts: generated.metadata.candidateAttempts,
         selectedCandidate: generated.metadata.selectedCandidate }, 'blueprint generation executed');
     } else if ('model' in input) rawModel = input.model;
   }
   catch (error) {
-    if (error instanceof BlueprintError) throw new ApiError(422, error.code, 'The requested blueprint could not be generated');
+    if (error instanceof BlueprintError) {
+      if (version !== 'precision-blueprint-v2') throw new ApiError(422, error.code, 'The requested blueprint could not be generated');
+      throw new ApiError(422, error.code, error.message, Object.fromEntries(Object.entries(error.diagnostics).map(([key, value]) => [key, Array.isArray(value) ? value : [String(value)]])));
+    }
     throw error;
   }
   const model = ArchitecturalBuildingModelV2Schema.parse(rawModel);
-  const report = BlueprintQaReportSchema.parse(auditBlueprint(model, projectQaOptions(model)));
+  const report = BlueprintQaReportSchema.parse(auditBlueprint(model, { ...projectQaOptions(model), ...(v2Requirements ? solverV2QaOptions(v2Requirements) : {}) }));
   if (report.status === 'FAIL') {
     // Existing error envelope, bounded machine-readable entries; no raw geometry.
     throw new ApiError(422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision', {
@@ -62,6 +68,6 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
   const identity = { identityVersion: GENERATION_IDENTITY_VERSION, generationId, requirementsHash: inputHash,
     modelHash: modelHash(model), seed: normalizedRequirements?.seed ?? null };
   const commit = { projectId, baseRevisionId: input.baseRevisionId, model, report, sourceMode, identity, normalizedRequirements,
-    generatorVersion: sourceMode === 'generated' ? BLUEPRINT_VERSION : null };
+    generatorVersion: sourceMode === 'generated' ? version : null };
   return RevisionCommitResponseSchema.parse(await repository.write('revision', commit, context, signProjectCommit(secret, userId, operation, commit, context)));
 }

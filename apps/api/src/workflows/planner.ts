@@ -1,7 +1,13 @@
+import { blueprintVersionForRequirements } from '@designflow/generator';
 import { WORKFLOW_VERSION, WorkflowPlanSchema, type WorkflowRequest, type WorkflowOutput, type CapabilityId, type WorkflowPlan } from '../contracts/workflows.js';
 import { CAPABILITIES, MODES, validateRegistry, type Capability } from './registry.js';
 /** Source evidence is server-resolved. This function performs no I/O or input mutation. */
 export function planWorkflow(request: WorkflowRequest, available: readonly WorkflowOutput[] = [], registry: readonly Capability[] = CAPABILITIES): WorkflowPlan {
+  if (request.source.kind === 'GENERATE' && registry === CAPABILITIES) {
+    const version = blueprintVersionForRequirements(request.source.requirements);
+    registry = registry.map(c => ({ ...c, version: c.capabilityId === 'BLUEPRINT_GENERATION' ? version : c.version,
+      dependencies: c.dependencies.map(d => d.capabilityId === 'BLUEPRINT_GENERATION' ? { ...d, version } : d) }));
+  }
   validateRegistry(registry);
   if (available.length > 13 || new Set(available.map(o => o.capability)).size !== available.length) throw new Error('Invalid source evidence');
   const mode = MODES.find(m => m.mode === request.mode)!;
