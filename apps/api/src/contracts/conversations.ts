@@ -4,7 +4,7 @@ import { GenerationIdentitySchema } from './freshness.js';
 import { QaSummarySchema } from './projects.js';
 import { WorkflowPlanSchema, WorkflowRequestSchema } from './workflows.js';
 import { z } from 'zod';
-import { SelectedBlueprintRequirementsSchema, BlueprintV2RequirementsSchema } from '@designflow/generator';
+import { SelectedBlueprintRequirementsSchema, BlueprintV2RequirementsSchema, ParametricEditSchema } from '@designflow/generator';
 import { IntentCandidateSchema, NaturalLanguageDesignRequestSchema } from './requirement-interpretation.js';
 
 export const CONVERSATION_LIMITS = Object.freeze({ turns: 100, messages: 20, perProject: 20, perUser: 100, text: 4000, contextBytes: 12000, outputBytes: 16384, stateBytes: 131072, actions: 4 });
@@ -29,6 +29,7 @@ export const ConversationParamsSchema = z.object({ projectId: id, conversationId
 // Explicit native updates are user-only. Provider output cannot supply this object.
 const native = BlueprintV2RequirementsSchema.innerType().shape;
 export const NativeConversationUpdateSchema = z.object({
+  parametricEdit: ParametricEditSchema.optional(),
   rooms: native.rooms.optional(), relationships: native.relationships.optional(),
   site: native.site.optional(), stair: native.stair.optional(), layoutV2: native.layoutV2.optional(),
 }).strict();
@@ -47,7 +48,7 @@ export const ProposalSchema = z.object({ id, version: z.number().int().positive(
   requirements: SelectedBlueprintRequirementsSchema, requirementsHash: z.string().regex(/^[a-f0-9]{64}$/),
   expiresAt: z.string().datetime(), changedFields: z.array(z.string().max(100)).max(32) }).strict();
 export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), version: z.number().int().min(0).max(100),
-  baseRevisionId: id.nullable(), solver: z.enum(['V1', 'V2']),
+  baseRevisionId: id.nullable(), solver: z.enum(['V1', 'V2', 'PARAMETRIC']),
   status: z.enum(['DRAFT','NEEDS_CLARIFICATION','AWAITING_APPROVAL','SUBMITTED','REJECTED','FAILED']),
   baseRequirements: SelectedBlueprintRequirementsSchema.nullable().default(null),
   intent: ConversationIntentSchema, pendingIntent: ConversationIntentSchema.default({}), requirements: SelectedBlueprintRequirementsSchema.nullable(),

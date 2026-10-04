@@ -1,3 +1,4 @@
+import { parametricAudit } from './parametric.js';
 import { architecturalConstraintsAudit } from './architectural-constraints.js';
 import { BuildingModelShapeSchema } from '@designflow/shared';
 import { Context, QaResourceLimit } from './context.js';
@@ -89,7 +90,7 @@ export function auditBlueprint(input: unknown, options: unknown = {}): Blueprint
     ['dimensions', dimensionsAudit, 'Independent anchors, axis measurements, strict ordering and exact controlling reconciliation'],
     ['slabs-columns', slabsColumnsAudit, 'Plate areas, levels, extents, same-kind overlap, column bounds and vertical geometry'],
     ['stairs', stairsAudit, 'Straight-flight arithmetic, footprint, endpoint landings, access, full-flight void correspondence and conservative solid interference'],
-    ['circulation', c => { circulationAudit(c); architecturalConstraintsAudit(c); }, 'Rebuilt valid door/passage/stair graph; reachability only from explicit caller/pack entries'],
+    ['circulation', c => { circulationAudit(c); architecturalConstraintsAudit(c); parametricAudit(c); }, 'Rebuilt valid door/passage/stair graph; reachability only from explicit caller/pack entries'],
     ['rules', rulesAudit, 'Opt-in versioned declarative policies, independent of core geometry validity'],
   ];
   for (const [stage, execute, details] of stages) {

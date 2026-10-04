@@ -1,0 +1,90 @@
+[
+  {
+    "case": "rectangular-v2-baseline",
+    "samples": 3,
+    "medianFullMs": 260.326,
+    "medianGenerationMs": 254.677,
+    "medianQaMs": 5.803,
+    "candidateCount": 32,
+    "operations": 1365,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "L-four-rooms",
+    "samples": 3,
+    "medianFullMs": 36.033,
+    "medianGenerationMs": 29.15,
+    "medianQaMs": 6.88,
+    "candidateCount": 12,
+    "operations": 1724,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "L-widened-west",
+    "samples": 3,
+    "medianFullMs": 33.493,
+    "medianGenerationMs": 27.066,
+    "medianQaMs": 6.461,
+    "candidateCount": 12,
+    "operations": 1724,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "two-floor-setback",
+    "samples": 3,
+    "medianFullMs": 39.199,
+    "medianGenerationMs": 27.634,
+    "medianQaMs": 11.649,
+    "candidateCount": 4,
+    "operations": 1328,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "dense-minimums",
+    "samples": 3,
+    "medianFullMs": 22.545,
+    "medianGenerationMs": 18.188,
+    "medianQaMs": 4.754,
+    "candidateCount": 12,
+    "operations": 1216,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "maximum-24-rooms",
+    "samples": 3,
+    "medianFullMs": 109.497,
+    "medianGenerationMs": 79.104,
+    "medianQaMs": 30.39,
+    "candidateCount": 15,
+    "operations": 19261,
+    "outcome": "PASS",
+    "stableHash": true
+  },
+  {
+    "case": "infeasible-width",
+    "samples": 3,
+    "medianFullMs": 0.478,
+    "medianGenerationMs": 0.478,
+    "medianQaMs": 0,
+    "candidateCount": null,
+    "operations": null,
+    "outcome": "PROGRAM_DOES_NOT_FIT",
+    "stableHash": false
+  },
+  {
+    "case": "operation-exhaustion",
+    "samples": 3,
+    "medianFullMs": 0.308,
+    "medianGenerationMs": 0.308,
+    "medianQaMs": 0,
+    "candidateCount": null,
+    "operations": null,
+    "outcome": "SEARCH_LIMIT_EXHAUSTED",
+    "stableHash": false
+  }
+]

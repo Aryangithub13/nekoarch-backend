@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { toMillimetres } from '@designflow/shared';
-import { normalizeBlueprintForVersion, blueprintVersionForRequirements, type NormalizedBlueprintV2Requirements } from '@designflow/generator';
+import { normalizeBlueprintForVersion, blueprintVersionForRequirements, modifyParametricRequirements, ParametricEditSchema, type NormalizedBlueprintV2Requirements } from '@designflow/generator';
 import { requirementsHash } from '../lib/generation-identity.js';
 import { ConversationIntentSchema, ConversationStateSchema, type ConversationIntent, type ConversationMessage, type ConversationState } from '../contracts/conversations.js';
 import { IntentCandidateSchema, NaturalLanguageDesignRequestSchema } from '../contracts/requirement-interpretation.js';
@@ -13,7 +13,7 @@ import { ApiError } from '../lib/errors.js';
 
 type Requirements = NonNullable<ConversationState['requirements']>;
 export function initialConversation(baseRevisionId: string | null, requirements: Requirements | null, v2: boolean): ConversationState {
-  return ConversationStateSchema.parse({ schemaVersion: 1, version: 0, baseRevisionId, solver: requirements && 'layoutV2' in requirements || v2 ? 'V2' : 'V1',
+  return ConversationStateSchema.parse({ schemaVersion: 1, version: 0, baseRevisionId, solver: requirements && 'parametricArchitecture' in requirements ? 'PARAMETRIC' : requirements && 'layoutV2' in requirements || v2 ? 'V2' : 'V1',
     status: 'DRAFT', intent: {}, baseRequirements: requirements, requirements, questions: [], unsupported: [], explanations: [], fieldSources: requirements ? { base: 'PERSISTED' } : {},
     summary: 'No proposal has been approved.', proposal: null, messages: [], provider: { kind: 'fallback', model: 'bounded-conversation-v1', failure: null } });
 }
@@ -145,14 +145,19 @@ export async function planConversation(previous: ConversationState, message: Con
   state.provider = {kind:'fallback',model:'bounded-conversation-v1',failure:null};
   delete state.orchestration;
   if(options.restoredRequirements) {
-    const version='layoutV2' in options.restoredRequirements ? 'V2' : 'V1';
+    const version='parametricArchitecture' in options.restoredRequirements ? 'PARAMETRIC' : 'layoutV2' in options.restoredRequirements ? 'V2' : 'V1';
     if(version!==state.solver) throw new ApiError(422,'SOLVER_VERSION_CONFLICT','Restore cannot change the selected solver version');
     state.intent=ConversationIntentSchema.parse({}); state.pendingIntent=ConversationIntentSchema.parse({});state.unsupported=[];state.pendingBedroomMove=false;
     state.explanations=[`Proposed requirements copied from explicitly selected revision ${message.restoreRevisionId}. Approval will generate a new revision using the current base identity.`];
     state.fieldSources={restoredRevision:'USER_EXPLICIT'};
     return finalize(state,options.restoredRequirements);
   }
-  let patch = parseConversation(message.text);
+  // Exact local grammar only: provider output cannot supply a parametric edit.
+  const wingCommand = /^(?:set|increase|reduce) (?:the )?(ground|upper) floor (west wing width|south wing depth|width|depth) to (\d+) mm[.!]?$/i.exec(message.text.trim());
+  const languageEdit = wingCommand ? ParametricEditSchema.safeParse({ level: wingCommand[1]!.toLowerCase() === 'ground' ? 0 : 1,
+    parameter: ({ 'west wing width': 'westWingWidthMm', 'south wing depth': 'southWingDepthMm', width: 'widthMm', depth: 'depthMm' } as Record<string, string>)[wingCommand[2]!.toLowerCase()], valueMm: Number(wingCommand[3]) }) : null;
+  const parametricEdit = message.nativeUpdate?.parametricEdit ?? (languageEdit?.success ? languageEdit.data : undefined);
+  let patch = parametricEdit && wingCommand ? ConversationIntentSchema.parse({}) : parseConversation(message.text);
   if (patch.upperFloorBedrooms !== undefined || patch.groundFloorBedrooms !== undefined || message.nativeUpdate?.rooms) state.pendingBedroomMove=false;
   const relativeMove=/\bmove\s+(one|two|three|\d+)\s+bedrooms?\s+(upstairs|downstairs)\b/i.exec(message.text);
   if(relativeMove) {
@@ -233,7 +238,8 @@ export async function planConversation(previous: ConversationState, message: Con
       if (message.nativeUpdate) {
         if (message.nativeUpdate.layoutV2 && state.solver !== 'V2') state.questions.push('layoutV2 must be opted into when creating the conversation.');
         else {
-          r = {...r,...message.nativeUpdate} as Requirements; state.fieldSources.nativeUpdate='USER_EXPLICIT';
+          const { parametricEdit: _edit, ...nativeUpdate } = message.nativeUpdate;
+          r = {...r,...nativeUpdate} as Requirements; state.fieldSources.nativeUpdate='USER_EXPLICIT';
           // Remove superseded language fields so provider context cannot contradict
           // the exact user-authored native replacement on a later turn.
           if(message.nativeUpdate.site) delete state.intent.site;
@@ -243,6 +249,10 @@ export async function planConversation(previous: ConversationState, message: Con
           }
           if(message.nativeUpdate.relationships) {delete state.intent.relationship;delete state.intent.kitchenConnection;delete state.intent.relationshipKind;delete state.intent.relationshipStrength;delete state.intent.kitchen;}
         }
+      }
+      if (parametricEdit) {
+        if (state.solver !== 'PARAMETRIC') state.questions.push('Wing edits require an existing explicitly generated parametric revision.');
+        else { r = modifyParametricRequirements(r, parametricEdit); state.fieldSources.parametricArchitecture = 'USER_EXPLICIT'; }
       }
       r = normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r));
     }

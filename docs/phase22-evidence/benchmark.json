@@ -1,0 +1,376 @@
+{
+  "runtime": "v22.22.2",
+  "platform": "linux",
+  "arch": "x64",
+  "measurements": [
+    {
+      "case": "rectangular-v2-baseline",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 349.49976200000003,
+      "qaMs": 13.343815999999947,
+      "fullMs": 362.849235,
+      "heapDeltaBytes": 10672344,
+      "rssBytes": 144633856,
+      "candidateCount": 32,
+      "operations": 1365,
+      "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+      "phases": null
+    },
+    {
+      "case": "rectangular-v2-baseline",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 254.67676099999994,
+      "qaMs": 5.646163999999999,
+      "fullMs": 260.326278,
+      "heapDeltaBytes": 11058536,
+      "rssBytes": 156221440,
+      "candidateCount": 32,
+      "operations": 1365,
+      "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+      "phases": null
+    },
+    {
+      "case": "rectangular-v2-baseline",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 229.30366299999991,
+      "qaMs": 5.803305000000137,
+      "fullMs": 235.10990100000004,
+      "heapDeltaBytes": 7140688,
+      "rssBytes": 167907328,
+      "candidateCount": 32,
+      "operations": 1365,
+      "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+      "phases": null
+    },
+    {
+      "case": "L-four-rooms",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 43.623190999999906,
+      "qaMs": 8.025622000000112,
+      "fullMs": 51.6516059999999,
+      "heapDeltaBytes": 10284736,
+      "rssBytes": 173568000,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+      "phases": {
+        "normalization": 0.48902099999986604,
+        "layout": 1.0014369999996688,
+        "construction": 39.861177000000225,
+        "total": 43.16608599999995
+      }
+    },
+    {
+      "case": "L-four-rooms",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 29.150129000000106,
+      "qaMs": 6.880310999999892,
+      "fullMs": 36.03274499999998,
+      "heapDeltaBytes": -7978768,
+      "rssBytes": 176238592,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+      "phases": {
+        "normalization": 0.75965199999996,
+        "layout": 0.3201480000000174,
+        "construction": 27.576349999999593,
+        "total": 29.09153399999991
+      }
+    },
+    {
+      "case": "L-four-rooms",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 27.874776999999995,
+      "qaMs": 6.70948199999998,
+      "fullMs": 34.58705299999997,
+      "heapDeltaBytes": 7655080,
+      "rssBytes": 175968256,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+      "phases": {
+        "normalization": 0.36142400000017005,
+        "layout": 0.36589100000037433,
+        "construction": 26.570302999999967,
+        "total": 27.85082299999999
+      }
+    },
+    {
+      "case": "L-widened-west",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 28.185148000000027,
+      "qaMs": 5.305204000000003,
+      "fullMs": 33.49272700000006,
+      "heapDeltaBytes": 7482664,
+      "rssBytes": 177762304,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "fb0c990d32d1d99010c37064be131aac43d08cf034d40dbbed71ddb4d0f52c92",
+      "phases": {
+        "normalization": 0.38705400000003465,
+        "layout": 0.3008020000002034,
+        "construction": 27.06665799999996,
+        "total": 28.15979500000003
+      }
+    },
+    {
+      "case": "L-widened-west",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 25.004133000000138,
+      "qaMs": 6.873606999999993,
+      "fullMs": 31.88060399999995,
+      "heapDeltaBytes": -7913152,
+      "rssBytes": 180514816,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "fb0c990d32d1d99010c37064be131aac43d08cf034d40dbbed71ddb4d0f52c92",
+      "phases": {
+        "normalization": 0.31288399999994,
+        "layout": 0.27551900000003116,
+        "construction": 24.077912000000197,
+        "total": 24.983530999999857
+      }
+    },
+    {
+      "case": "L-widened-west",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 27.06644600000004,
+      "qaMs": 6.460642000000007,
+      "fullMs": 33.52988099999993,
+      "heapDeltaBytes": 7279248,
+      "rssBytes": 182300672,
+      "candidateCount": 12,
+      "operations": 1724,
+      "modelHash": "fb0c990d32d1d99010c37064be131aac43d08cf034d40dbbed71ddb4d0f52c92",
+      "phases": {
+        "normalization": 0.3820260000002236,
+        "layout": 0.372597999999698,
+        "construction": 25.789348000000246,
+        "total": 27.038720000000012
+      }
+    },
+    {
+      "case": "two-floor-setback",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 27.634456999999884,
+      "qaMs": 11.561284000000114,
+      "fullMs": 39.19853499999999,
+      "heapDeltaBytes": -8196120,
+      "rssBytes": 185344000,
+      "candidateCount": 4,
+      "operations": 1328,
+      "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c",
+      "phases": {
+        "normalization": 0.7250819999999294,
+        "layout": 0.21133700000018507,
+        "construction": 26.081767999999784,
+        "total": 27.59402
+      }
+    },
+    {
+      "case": "two-floor-setback",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 29.69914400000016,
+      "qaMs": 13.283194999999978,
+      "fullMs": 42.9842950000002,
+      "heapDeltaBytes": -35254384,
+      "rssBytes": 187133952,
+      "candidateCount": 4,
+      "operations": 1328,
+      "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c",
+      "phases": {
+        "normalization": 0.4112199999999575,
+        "layout": 0.17509000000018204,
+        "construction": 28.692815999999993,
+        "total": 29.677633999999898
+      }
+    },
+    {
+      "case": "two-floor-setback",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 25.5936549999999,
+      "qaMs": 11.648932999999943,
+      "fullMs": 37.24496299999987,
+      "heapDeltaBytes": -8518800,
+      "rssBytes": 185024512,
+      "candidateCount": 4,
+      "operations": 1328,
+      "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c",
+      "phases": {
+        "normalization": 0.576949999999897,
+        "layout": 0.23019399999998313,
+        "construction": 24.34016200000019,
+        "total": 25.563413999999966
+      }
+    },
+    {
+      "case": "dense-minimums",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 17.789567000000034,
+      "qaMs": 4.754026000000067,
+      "fullMs": 22.544988999999987,
+      "heapDeltaBytes": 6276696,
+      "rssBytes": 184979456,
+      "candidateCount": 12,
+      "operations": 1216,
+      "modelHash": "fecd660c2dc84f41d74598fb4bf7e5fbf84a4578816143985ed1f365f227a674",
+      "phases": {
+        "normalization": 0.29430600000000595,
+        "layout": 0.19611200000031204,
+        "construction": 16.644955999999866,
+        "total": 17.768894000000046
+      }
+    },
+    {
+      "case": "dense-minimums",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 18.188215000000127,
+      "qaMs": 5.484134999999924,
+      "fullMs": 23.674236000000064,
+      "heapDeltaBytes": -8713552,
+      "rssBytes": 184631296,
+      "candidateCount": 12,
+      "operations": 1216,
+      "modelHash": "fecd660c2dc84f41d74598fb4bf7e5fbf84a4578816143985ed1f365f227a674",
+      "phases": {
+        "normalization": 0.33621099999982107,
+        "layout": 0.2241860000001452,
+        "construction": 16.99883600000021,
+        "total": 18.161814999999933
+      }
+    },
+    {
+      "case": "dense-minimums",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 18.348218999999972,
+      "qaMs": 4.12127200000009,
+      "fullMs": 22.47193600000014,
+      "heapDeltaBytes": 6623768,
+      "rssBytes": 184496128,
+      "candidateCount": 12,
+      "operations": 1216,
+      "modelHash": "fecd660c2dc84f41d74598fb4bf7e5fbf84a4578816143985ed1f365f227a674",
+      "phases": {
+        "normalization": 0.2722369999999046,
+        "layout": 0.16699000000039632,
+        "construction": 17.2380390000003,
+        "total": 18.32810500000005
+      }
+    },
+    {
+      "case": "maximum-24-rooms",
+      "repeat": 0,
+      "outcome": "PASS",
+      "generationMs": 79.54091199999993,
+      "qaMs": 31.582317000000103,
+      "fullMs": 111.12609199999997,
+      "heapDeltaBytes": 6830416,
+      "rssBytes": 185409536,
+      "candidateCount": 15,
+      "operations": 19261,
+      "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92",
+      "phases": {
+        "normalization": 0.2417169999998805,
+        "layout": 0.3901970000001711,
+        "construction": 76.7352900000003,
+        "total": 79.5226839999998
+      }
+    },
+    {
+      "case": "maximum-24-rooms",
+      "repeat": 1,
+      "outcome": "PASS",
+      "generationMs": 79.10427200000004,
+      "qaMs": 30.390212999999903,
+      "fullMs": 109.49734899999999,
+      "heapDeltaBytes": 4015888,
+      "rssBytes": 185483264,
+      "candidateCount": 15,
+      "operations": 19261,
+      "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92",
+      "phases": {
+        "normalization": 0.2930499999999938,
+        "layout": 0.42176500000005035,
+        "construction": 75.50924599999985,
+        "total": 79.07605600000011
+      }
+    },
+    {
+      "case": "maximum-24-rooms",
+      "repeat": 2,
+      "outcome": "PASS",
+      "generationMs": 77.12220500000012,
+      "qaMs": 27.90865000000008,
+      "fullMs": 105.03322900000012,
+      "heapDeltaBytes": 3906544,
+      "rssBytes": 189272064,
+      "candidateCount": 15,
+      "operations": 19261,
+      "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92",
+      "phases": {
+        "normalization": 0.40004399999997986,
+        "layout": 0.379024999999956,
+        "construction": 74.24269099999992,
+        "total": 77.0786250000001
+      }
+    },
+    {
+      "case": "infeasible-width",
+      "repeat": 0,
+      "outcome": "PROGRAM_DOES_NOT_FIT",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.6902319999999236
+    },
+    {
+      "case": "infeasible-width",
+      "repeat": 1,
+      "outcome": "PROGRAM_DOES_NOT_FIT",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.47847600000000057
+    },
+    {
+      "case": "infeasible-width",
+      "repeat": 2,
+      "outcome": "PROGRAM_DOES_NOT_FIT",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.4393649999999525
+    },
+    {
+      "case": "operation-exhaustion",
+      "repeat": 0,
+      "outcome": "SEARCH_LIMIT_EXHAUSTED",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.307645999999977
+    },
+    {
+      "case": "operation-exhaustion",
+      "repeat": 1,
+      "outcome": "SEARCH_LIMIT_EXHAUSTED",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.3080649999999423
+    },
+    {
+      "case": "operation-exhaustion",
+      "repeat": 2,
+      "outcome": "SEARCH_LIMIT_EXHAUSTED",
+      "message": "No feasible L-wing allocation within the supported family and budget",
+      "fullMs": 0.27139900000020134
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "tables": {
+    "architectural_conversations": {
+      "before": 0,
+      "after": 0,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "cost_estimates": {
+      "before": 0,
+      "after": 0,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "generation_logs": {
+      "before": 0,
+      "after": 0,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "idempotency_records": {
+      "before": 3,
+      "after": 3,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "plans": {
+      "before": 0,
+      "after": 0,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "profiles": {
+      "before": 1,
+      "after": 1,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_audit_events": {
+      "before": 1487,
+      "after": 1643,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_revision_construction_calculations": {
+      "before": 390,
+      "after": 430,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_revision_cost_estimates": {
+      "before": 275,
+      "after": 305,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_revision_qa_runs": {
+      "before": 716,
+      "after": 794,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_revision_takeoffs": {
+      "before": 555,
+      "after": 607,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_revisions": {
+      "before": 716,
+      "after": 794,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "project_workflow_runs": {
+      "before": 414,
+      "after": 470,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "projects": {
+      "before": 653,
+      "after": 721,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "rate_table_entries": {
+      "before": 9,
+      "after": 9,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    },
+    "rate_table_versions": {
+      "before": 1,
+      "after": 1,
+      "allOriginalRowsPreserved": true,
+      "missingDigestCount": 0
+    }
+  },
+  "migrationHistoryUnchanged": true,
+  "rlsUnchanged": true,
+  "policiesUnchanged": true
+}

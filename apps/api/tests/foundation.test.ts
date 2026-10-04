@@ -324,7 +324,7 @@ it('allows only the public generator integration boundary and keeps Three.js out
     const imports = [...readFileSync(file, 'utf8').matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g)];
     for (const match of imports) {
       if (match[1] === '@designflow/generator') {
-        expect(['contracts/conversations.ts', 'ai/conversation-planner.ts', 'contracts/requirement-interpretation.ts', 'ai/architectural-interpreter.ts', 'contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'services/solver-v2-qa.ts', 'contracts/workflows.ts', 'workflows/planner.ts', 'workflows/registry.ts', 'lib/generation-identity.ts'].map(path => join(sourceRoot, path))).toContain(file);
+        expect(['contracts/conversations.ts', 'ai/conversation-planner.ts', 'contracts/requirement-interpretation.ts', 'ai/architectural-interpreter.ts', 'contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'services/solver-v2-qa.ts', 'services/parametric-qa.ts', 'contracts/workflows.ts', 'workflows/planner.ts', 'workflows/registry.ts', 'lib/generation-identity.ts'].map(path => join(sourceRoot, path))).toContain(file);
       } else {
         expect(match[1], file).not.toMatch(/(?:generator|generation\/|^three(?:\/|$))/);
       }

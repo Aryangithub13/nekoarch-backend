@@ -1,0 +1,21 @@
+{
+  "image": "designflow-api:phase22",
+  "localImageIdPrefix": "e23e331b8e6a",
+  "commands": [
+    {
+      "command": "docker build -t designflow-api:phase22 .",
+      "exitCode": 0,
+      "log": "docker-build.txt"
+    },
+    {
+      "command": "node scripts/smoke-container.mjs designflow-api:phase22",
+      "exitCode": 0,
+      "log": "docker-smoke.txt"
+    },
+    {
+      "command": "docker run --rm -i --network none designflow-api:phase22 node --input-type=module < docs/phase22-evidence/container-acceptance.mjs",
+      "exitCode": 0,
+      "log": "docker-acceptance.txt"
+    }
+  ]
+}

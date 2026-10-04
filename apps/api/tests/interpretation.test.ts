@@ -215,7 +215,7 @@ it('enforces a closed import boundary for all AI modules and their contract', ()
           expect(allowed.has(name), `${file}: ${name}`).toBe(true);
           if (ts.isImportDeclaration(node) && ['@designflow/generator', '@designflow/shared'].includes(name)) {
             const binding = node.importClause?.namedBindings; expect(binding && ts.isNamedImports(binding)).toBe(true);
-            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['normalizeBlueprintForVersion', 'blueprintVersionForRequirements', 'NormalizedBlueprintV2Requirements', 'normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres']).toContain(e.propertyName?.text ?? e.name.text);
+            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['modifyParametricRequirements', 'ParametricEditSchema', 'normalizeBlueprintForVersion', 'blueprintVersionForRequirements', 'NormalizedBlueprintV2Requirements', 'normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres']).toContain(e.propertyName?.text ?? e.name.text);
           }
         }
       }

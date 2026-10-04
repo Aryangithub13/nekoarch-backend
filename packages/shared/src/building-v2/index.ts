@@ -15,3 +15,4 @@ export { BuildingModelShapeSchema } from './model-shape.js';
 export * from './relationships.js';
 export * from './measurements.js';
 export * from './adapter.js';
+export * from './parametric.js';

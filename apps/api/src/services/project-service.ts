@@ -1,8 +1,9 @@
+import { parametricQaOptions } from './parametric-qa.js';
 import { solverV2QaOptions } from './solver-v2-qa.js';
 import { createHmac, randomUUID } from 'node:crypto';
 import type { FastifyBaseLogger } from 'fastify';
 import { ArchitecturalBuildingModelV2Schema, type BuildingModelV2 } from '@designflow/shared';
-import { generateBlueprint, generateBlueprintV2, normalizeBlueprintForVersion, blueprintVersionForRequirements, normalizeBlueprintV2Requirements, BlueprintError } from '@designflow/generator';
+import { generateBlueprint, generateBlueprintV2, generateParametricBlueprint, normalizeBlueprintForVersion, blueprintVersionForRequirements, normalizeBlueprintV2Requirements, normalizeParametricRequirements, BlueprintError } from '@designflow/generator';
 import { auditBlueprint, BlueprintQaReportSchema, PRODUCT_DEFAULTS_RULE_PACK } from '@designflow/blueprint-qa';
 import type { z } from 'zod';
 import { ProjectDetailSchema, RevisionCommitResponseSchema, type GenerateRevisionRequestSchema, type SaveRevisionRequestSchema } from '../contracts/projects.js';
@@ -41,7 +42,7 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
   try {
     if (normalizedRequirements) {
       logger?.info(trace, 'blueprint generation started');
-      const generated = version === 'precision-blueprint-v2' ? generateBlueprintV2(normalizedRequirements, { timeoutMs: 10000 }) : generateBlueprint(normalizedRequirements);
+      const generated = version === 'parametric-architecture-v1' ? generateParametricBlueprint(normalizedRequirements, { timeoutMs: 10000 }) : version === 'precision-blueprint-v2' ? generateBlueprintV2(normalizedRequirements, { timeoutMs: 10000 }) : generateBlueprint(normalizedRequirements);
       rawModel = generated.model;
       logger?.info({ ...trace, modelHash: modelHash(rawModel), candidateAttempts: generated.metadata.candidateAttempts,
         selectedCandidate: generated.metadata.selectedCandidate }, 'blueprint generation executed');
@@ -49,13 +50,13 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
   }
   catch (error) {
     if (error instanceof BlueprintError) {
-      if (version !== 'precision-blueprint-v2') throw new ApiError(422, error.code, 'The requested blueprint could not be generated');
+      if (version === 'precision-blueprint-v1') throw new ApiError(422, error.code, 'The requested blueprint could not be generated');
       throw new ApiError(422, error.code, error.message, Object.fromEntries(Object.entries(error.diagnostics).map(([key, value]) => [key, Array.isArray(value) ? value : [String(value)]])));
     }
     throw error;
   }
   const model = ArchitecturalBuildingModelV2Schema.parse(rawModel);
-  const report = BlueprintQaReportSchema.parse(auditBlueprint(model, { ...projectQaOptions(model), ...(v2Requirements ? solverV2QaOptions(v2Requirements) : {}) }));
+  const report = BlueprintQaReportSchema.parse(auditBlueprint(model, { ...projectQaOptions(model), ...(v2Requirements ? solverV2QaOptions(v2Requirements) : {}), ...(normalizedRequirements && 'parametricArchitecture' in normalizedRequirements ? parametricQaOptions(normalizeParametricRequirements(normalizedRequirements)) : {}) }));
   if (report.status === 'FAIL') {
     // Existing error envelope, bounded machine-readable entries; no raw geometry.
     throw new ApiError(422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision', {

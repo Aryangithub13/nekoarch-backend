@@ -98,8 +98,11 @@ export function calculateQuantityTakeoff(input: unknown, options: TakeoffOptions
   if (model.walls.length) warn('TAKEOFF_WALL_JUNCTION_OVERLAP_POLICY');
   for (const space of model.spaces) {
     const a = area(space.boundary), p = perimeter(space.boundary), evidence = { areaMm2: decimal(a), boundaryBasis: space.boundaryBasis };
-    add('SPACE_FLOOR_AREA', a, space, 'SPACE', evidence, ['CENTERLINE_SPACE']);
-    add('FLOOR_FINISH_BASE_AREA', a, space, 'SPACE', evidence, ['CENTERLINE_SPACE']);
+    if (model.parametricArchitecture && space.classification === 'stairwell') warn('TAKEOFF_PARAMETRIC_STAIR_CORE_FINISH_NOT_EVALUATED', [space.id]);
+    else {
+      add('SPACE_FLOOR_AREA', a, space, 'SPACE', evidence, ['CENTERLINE_SPACE']);
+      add('FLOOR_FINISH_BASE_AREA', a, space, 'SPACE', evidence, ['CENTERLINE_SPACE']);
+    }
     add('SPACE_PERIMETER', p.mm * 2n, space, 'SPACE', { perimeterMm: p.mm.toString() }, ['CENTERLINE_SPACE'], p.rounded);
     if (p.rounded) warn('TAKEOFF_DIAGONAL_ROUNDING', [space.id]);
   }
@@ -174,6 +177,10 @@ export function calculateQuantityTakeoff(input: unknown, options: TakeoffOptions
   cover('wall_centerline_and_segment_prism',model.walls.length,items.some(i => i.category === 'WALL' && i.status === 'PARTIAL'),'Explicit wall segments; junction overlap policy applies');
   cover('wall_union_solid',model.walls.length,true,'No boolean union; segment-prism basis only');
   cover('single_wall_faces',model.walls.length,items.some(i => i.category === 'WALL' && i.status === 'PARTIAL'),'One longitudinal face, no finish assignment');
+  if (model.parametricArchitecture) {
+    coverage.push({ category: 'parametric_wing_decomposition', entityCount: model.parametricArchitecture.floors.length * 2, status: 'EVALUATED', reason: 'Architectural region identities derive from versioned parameters; not additional physical plates or double-counted quantities.' });
+    if (model.stairs.length) coverage.push({ category: 'parametric_stair_core_finish', entityCount: model.stairs.length, status: 'NOT_EVALUATED', reason: 'Stair cores are excluded from ordinary usable/finish floor area; explicit flight and landing geometry is scheduled separately.' });
+  }
   cover('spaces',model.spaces.length,items.some(i => i.category === 'SPACE' && i.status === 'PARTIAL'),'Centerline-space area and perimeter');
   cover('floor_plates',model.slabs.filter(s => s.kind === 'floor').length,false,'Explicit net floor plates and geometric GFA');
   cover('flat_roofs',model.slabs.filter(s => s.kind === 'flat-roof').length,false,'Explicit flat-roof plates only');

@@ -1,0 +1,72 @@
+{
+  "supabase/migrations/0001_core_tables.sql": {
+    "baselineSha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929",
+    "currentSha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929",
+    "unchanged": true
+  },
+  "supabase/migrations/0002_rate_tables.sql": {
+    "baselineSha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca",
+    "currentSha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca",
+    "unchanged": true
+  },
+  "supabase/migrations/0003_estimates_and_logs.sql": {
+    "baselineSha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107",
+    "currentSha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107",
+    "unchanged": true
+  },
+  "supabase/migrations/0004_rls_policies.sql": {
+    "baselineSha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447",
+    "currentSha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447",
+    "unchanged": true
+  },
+  "supabase/migrations/0005_idempotency.sql": {
+    "baselineSha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1",
+    "currentSha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1",
+    "unchanged": true
+  },
+  "supabase/migrations/0006_projects.sql": {
+    "baselineSha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979",
+    "currentSha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979",
+    "unchanged": true
+  },
+  "supabase/migrations/0007_quantity_takeoffs.sql": {
+    "baselineSha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0",
+    "currentSha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0",
+    "unchanged": true
+  },
+  "supabase/migrations/0008_construction_calculations.sql": {
+    "baselineSha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8",
+    "currentSha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8",
+    "unchanged": true
+  },
+  "supabase/migrations/0009_boq_costs.sql": {
+    "baselineSha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a",
+    "currentSha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a",
+    "unchanged": true
+  },
+  "supabase/migrations/0010_workflows.sql": {
+    "baselineSha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325",
+    "currentSha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325",
+    "unchanged": true
+  },
+  "supabase/migrations/0011_generation_freshness.sql": {
+    "baselineSha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957",
+    "currentSha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957",
+    "unchanged": true
+  },
+  "supabase/migrations/0012_conversations.sql": {
+    "baselineSha256": "46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d",
+    "currentSha256": "46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d",
+    "unchanged": true
+  },
+  "packages/generator/tests/fixtures/blueprint/cases.json": {
+    "baselineSha256": "dc74ab297f8c680a2bc6f291791c131c0d02ca911f65818145b78768c54a55f9",
+    "currentSha256": "dc74ab297f8c680a2bc6f291791c131c0d02ca911f65818145b78768c54a55f9",
+    "unchanged": true
+  },
+  "docs/phase19-evidence/v1-fixtures.json": {
+    "baselineSha256": "d3f067609239a209718ed1bfbc441fe1c40bc9cb000e17f6f1d5246c758f0b90",
+    "currentSha256": "d3f067609239a209718ed1bfbc441fe1c40bc9cb000e17f6f1d5246c758f0b90",
+    "unchanged": true
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 15.546,
+    "log": "docs/phase22-evidence/build.txt"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "seconds": 25.869,
+    "log": "docs/phase22-evidence/typecheck.txt"
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "seconds": 4.226,
+    "log": "docs/phase22-evidence/lint.txt"
+  },
+  {
+    "command": "npm run test:unit",
+    "exitCode": 1,
+    "seconds": 49.326,
+    "log": "docs/phase22-evidence/test-unit.txt"
+  },
+  {
+    "command": "npm run test:generator",
+    "exitCode": 0,
+    "seconds": 19.697,
+    "log": "docs/phase22-evidence/test-generator.txt"
+  },
+  {
+    "command": "npm run test:blueprint",
+    "exitCode": 0,
+    "seconds": 8.447,
+    "log": "docs/phase22-evidence/test-blueprint.txt"
+  },
+  {
+    "command": "npm run test:blueprint-qa",
+    "exitCode": 1,
+    "seconds": 15.675,
+    "log": "docs/phase22-evidence/test-blueprint-qa.txt"
+  },
+  {
+    "command": "npm run test:solver-v2",
+    "exitCode": 0,
+    "seconds": 28.031,
+    "log": "docs/phase22-evidence/test-solver-v2.txt"
+  },
+  {
+    "command": "npm run test:projects",
+    "exitCode": 0,
+    "seconds": 20.163,
+    "log": "docs/phase22-evidence/test-projects.txt"
+  }
+]

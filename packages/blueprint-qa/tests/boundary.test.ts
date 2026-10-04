@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import ts from 'typescript';
 it('production dependency boundary contains only QA files, generic V2 contracts and Zod', () => {
   const dir = new URL('../src/', import.meta.url), files = readdirSync(dir).filter(f => f.endsWith('.ts'));
-  const permittedShared = new Set(['BuildingModelShapeSchema', 'EntityIdSchema', 'LengthMmSchema', 'MAX_MM', 'cross', 'onSegment', 'pointLocation', 'segmentsCross', 'segmentInRing', 'ringContains', 'ringsOverlap']);
+  const permittedShared = new Set(['ParametricArchitectureSchema', 'signedArea2', 'BuildingModelShapeSchema', 'EntityIdSchema', 'LengthMmSchema', 'MAX_MM', 'cross', 'onSegment', 'pointLocation', 'segmentsCross', 'segmentInRing', 'ringContains', 'ringsOverlap']);
   for (const file of files) {
     const source = readFileSync(new URL(file, dir), 'utf8');
     expect(source).not.toMatch(/@designflow\/generator|blueprint\/validation|analyzeCirculation|validateBlueprint|dimensionMeasurements|wallSpaceIds/);

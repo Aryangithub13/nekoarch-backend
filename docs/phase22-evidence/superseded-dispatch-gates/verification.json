@@ -1,0 +1,156 @@
+[
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 15.289,
+    "log": "docs/phase22-evidence/build.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "seconds": 23.703,
+    "log": "docs/phase22-evidence/typecheck.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 0,
+    "seconds": 3.643,
+    "log": "docs/phase22-evidence/lint.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:unit",
+    "exitCode": 0,
+    "seconds": 43.315,
+    "log": "docs/phase22-evidence/test-unit.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:generator",
+    "exitCode": 0,
+    "seconds": 17.968,
+    "log": "docs/phase22-evidence/test-generator.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:blueprint",
+    "exitCode": 0,
+    "seconds": 8.368,
+    "log": "docs/phase22-evidence/test-blueprint.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:blueprint-qa",
+    "exitCode": 0,
+    "seconds": 16.795,
+    "log": "docs/phase22-evidence/test-blueprint-qa.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:solver-v2",
+    "exitCode": 0,
+    "seconds": 31.77,
+    "log": "docs/phase22-evidence/test-solver-v2.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:projects",
+    "exitCode": 0,
+    "seconds": 21.218,
+    "log": "docs/phase22-evidence/test-projects.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:takeoff",
+    "exitCode": 0,
+    "seconds": 23.735,
+    "log": "docs/phase22-evidence/test-takeoff.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:construction",
+    "exitCode": 0,
+    "seconds": 21.607,
+    "log": "docs/phase22-evidence/test-construction.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:cost",
+    "exitCode": 0,
+    "seconds": 23.604,
+    "log": "docs/phase22-evidence/test-cost.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:workflows",
+    "exitCode": 1,
+    "seconds": 23.317,
+    "log": "docs/phase22-evidence/test-workflows.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:interpretation",
+    "exitCode": 0,
+    "seconds": 18.523,
+    "log": "docs/phase22-evidence/test-interpretation.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:conversations",
+    "exitCode": 0,
+    "seconds": 20.558,
+    "log": "docs/phase22-evidence/test-conversations.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:ai-orchestration",
+    "exitCode": 0,
+    "seconds": 27.005,
+    "log": "docs/phase22-evidence/test-ai-orchestration.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:parametric",
+    "exitCode": 0,
+    "seconds": 23.988,
+    "log": "docs/phase22-evidence/test-parametric.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:integration",
+    "exitCode": 1,
+    "seconds": 73.616,
+    "log": "docs/phase22-evidence/test-integration.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run test:supabase",
+    "exitCode": 0,
+    "seconds": 80.73,
+    "log": "docs/phase22-evidence/test-supabase.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run db:test",
+    "exitCode": 0,
+    "seconds": 2.556,
+    "log": "docs/phase22-evidence/db-test.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run check",
+    "exitCode": 1,
+    "seconds": 162.428,
+    "log": "docs/phase22-evidence/check.txt",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run benchmark:parametric",
+    "exitCode": 0,
+    "seconds": 20.426,
+    "log": "docs/phase22-evidence/benchmark-parametric.txt",
+    "sourceUnchanged": true
+  }
+]

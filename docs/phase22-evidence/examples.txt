@@ -1,0 +1,4 @@
+single-floor-L: PASS; 5 spaces; 18 walls
+two-floor-setback: PASS; 8 spaces; 32 walls
+modified-west-wing: PASS; 8 spaces; 32 walls
+hard-connected-rooms: PASS; 8 spaces; 32 walls

@@ -1,3 +1,4 @@
+import { validateParametricInvariants } from './parametric-invariants.js';
 import type { z } from 'zod';
 import type { BuildingModelV2 } from './model-shape.js';
 import { CoordinateMmSchema, reconcileDimensions } from './units.js';
@@ -6,6 +7,7 @@ import { dimensionMeasurements, dimensionPoints, wallSpaceIds } from './relation
 import { validateSiteAllocations } from './site-invariants.js';
 
 export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.RefinementCtx): void {
+  validateParametricInvariants(model, ctx);
   const issue = (path: (string | number)[], message: string) => ctx.addIssue({ code: 'custom', path, message });
   const levels = new Map(model.levels.map(l => [l.id, l]));
   const walls = new Map(model.walls.map(w => [w.id, w]));

@@ -1,0 +1,49 @@
+
+> designflow@0.1.0 test:parametric
+> npm run build && vitest run packages/generator/tests/parametric.test.ts packages/generator/tests/parametric-quantities.test.ts apps/api/tests/parametric.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/parametric.integration.test.ts (1 test) 2160ms
+   ✓ Phase 22 real PostgreSQL acceptance > Phase 22: signed L/setback revision, exact proposal approval, immutable ancestry, concurrency, owner isolation and quantities  1435ms
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 989ms
+ ✓ packages/generator/tests/parametric-quantities.test.ts (1 test) 140ms
+
+ Test Files  3 passed (3)
+      Tests  36 passed (36)
+   Start at  16:24:21
+   Duration  5.58s (transform 729ms, setup 0ms, collect 1.74s, tests 3.29s, environment 1ms, prepare 155ms)
+

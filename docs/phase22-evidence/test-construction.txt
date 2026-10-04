@@ -1,0 +1,50 @@
+
+> designflow@0.1.0 test:construction
+> npm run build && vitest run packages/construction-calculations/tests apps/api/tests/construction.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 3160ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > persists and retrieves exact calculations without changing source artifacts or leaking through public projects  316ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  553ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > rejects deterministic report drift and permits distinct engine identities  368ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 295ms
+
+ Test Files  2 passed (2)
+      Tests  34 passed (34)
+   Start at  16:22:05
+   Duration  5.23s (transform 600ms, setup 0ms, collect 1.37s, tests 3.45s, environment 0ms, prepare 122ms)
+

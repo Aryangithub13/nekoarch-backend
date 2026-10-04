@@ -1,0 +1,82 @@
+
+> designflow@0.1.0 test:workflows
+> npm run build && vitest run apps/api/tests/workflows.test.ts apps/api/tests/workflows.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/workflows.integration.test.ts (19 tests | 1 failed) 5049ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  655ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > BLUEPRINT_ONLY creates geometry and accepted QA with zero automatic downstream artifacts 125ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > reuses revision, QA, takeoff and construction and executes only missing cost  678ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > replays identical keys after newer revisions and conflicts on changed mode, revision and outputs 294ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > persists honest blocked future contracts and validates attached space references 194ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > blocks required unavailable outputs before generation but does not block optional ones 105ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > preserves upstream artifacts and reports a downstream domain failure precisely  365ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > retains required outputs when optional cost fails and optional 3D is unavailable  374ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > isolates private workflows on public projects and rejects cross-project revisions and client output injection 117ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > paginates summaries and exposes only safe capability metadata 58ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > denies direct mutation, unsigned/forged/cross-user/expired writes and keeps terminals immutable 124ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > atomically rolls back a revision when its workflow manifest update fails, then resumes without a duplicate 207ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > commits terminal state and durable receipt atomically, then resumes already recorded artifacts 121ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > fences stale execution tokens and preserves reserved key identity 14ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > checks the blueprint-only downstream row counts directly and bounds bodies 94ms
+   × workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest 489ms
+     → expected "generateBlueprint" to be called 1 times, but got 0 times
+   ✓ workflow persistence, recovery, atomic steps and owner security > converges concurrent keyed and keyless requests without duplicate revision writes 218ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > rejects forged server projections of artifact ids, versions and future capability states 119ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > fails closed when signing configuration is missing 13ms
+ ✓ apps/api/tests/workflows.test.ts (32 tests) 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/workflows.integration.test.ts > workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest
+AssertionError: expected "generateBlueprint" to be called 1 times, but got 0 times
+ ❯ apps/api/tests/workflows.integration.test.ts:88:25
+     86|       const f=await workflowSetup(context()),payload=workflowPayload();
+     87|       const a=await app.inject({method:'POST',url:f.url,headers:owner,…
+     88|       expect(generated).toHaveBeenCalledTimes(1);expect(audited).toHav…
+       |                         ^
+     89|       const request={...payload,source:{kind:'REVISION',sourceRevision…
+     90|       const b=await app.inject({method:'POST',url:f.url,headers:owner,…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 50 passed (51)
+   Start at  16:22:50
+   Duration  6.67s (transform 523ms, setup 0ms, collect 1.26s, tests 5.08s, environment 0ms, prepare 96ms)
+

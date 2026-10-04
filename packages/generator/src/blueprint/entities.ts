@@ -3,7 +3,7 @@ import { selectorKey, BLUEPRINT_VERSION, type NormalizedBlueprintRequirements } 
 import { bounds, rectangle, reconcilePartition, transpose } from './geometry.js';
 import { BlueprintError, type Candidate, type Constraints } from './types.js';
 
-export function constructWalls(r: NormalizedBlueprintRequirements, c: Constraints, candidate: Candidate): BuildingWall[] {
+export function constructWalls(r: NormalizedBlueprintRequirements, c: Constraints, candidate: Candidate, parametric = false): BuildingWall[] {
   const walls: BuildingWall[] = [];
   for (let level = 0; level < r.floors; level++) {
     const levelId = `level-${level}`;
@@ -20,7 +20,7 @@ export function constructWalls(r: NormalizedBlueprintRequirements, c: Constraint
         const spaceIds = group.spans.filter(s => s.start <= start && s.end >= end).map(s => s.spaceId).sort();
         if (!spaceIds.length) continue;
         const point = (value: number): Point2Mm => group.axis === 'x' ? { x: value, z: group.fixed } : { x: group.fixed, z: value };
-        const exterior = group.axis === 'x' ? group.fixed === c.center.z || group.fixed === c.center.z + c.center.d : group.fixed === c.center.x || group.fixed === c.center.x + c.center.w;
+        const exterior = parametric ? spaceIds.length === 1 : group.axis === 'x' ? group.fixed === c.center.z || group.fixed === c.center.z + c.center.d : group.fixed === c.center.x || group.fixed === c.center.x + c.center.w;
         walls.push({ id: `wall-${level}-${walls.length}`, levelId, path: { start: point(start), end: point(end) }, pathReference: 'centerline',
           thicknessMm: exterior ? r.exteriorWallThicknessMm : r.interiorWallThicknessMm, heightMm: r.floorToFloorHeightMm - r.slabThicknessMm, baseOffsetMm: 0,
           classification: exterior ? 'exterior' : 'interior', spaceIds });
@@ -29,14 +29,14 @@ export function constructWalls(r: NormalizedBlueprintRequirements, c: Constraint
   }
   return walls;
 }
-export interface ConstructionPolicy { generatorVersion?: string; entranceEnd?: 'min' | 'max'; centeredStair?: boolean; stairPosition?: 'front' | 'center' | 'rear'; rankWindows?: boolean }
+export interface ConstructionPolicy { floorBoundaries?: import('@designflow/shared').RingMm[]; generatorVersion?: string; entranceEnd?: 'min' | 'max'; centeredStair?: boolean; stairPosition?: 'front' | 'center' | 'rear'; rankWindows?: boolean }
 export function constructModel(r: NormalizedBlueprintRequirements, c: Constraints, candidate: Candidate, policy: ConstructionPolicy = {}): BuildingModelV2 {
   const model: BuildingModelV2 = {
     schemaVersion: 2, id: 'blueprint', name: 'Precision residential blueprint', completeness: 'architectural', units: 'mm', coordinateSystem: 'x-right-y-up-z-depth',
     site: { ...r.site, id: 'site', name: 'Site', boundary: r.site.boundary, buildableBoundary: c.buildableBoundary,
       setbacks: r.site.setbacks.map((s, i) => ({ ...s, id: `setback-${i}` })) },
-    levels: Array.from({ length: r.floors }, (_, index) => ({ id: `level-${index}`, name: `Floor ${index + 1}`, index, kind: 'storey', elevationMm: index * r.floorToFloorHeightMm, floorToFloorHeightMm: r.floorToFloorHeightMm, boundary: rectangle(c.outer) })),
-    spaces: candidate.spaces.map(s => s.entity), walls: constructWalls(r, c, candidate), openings: [], stairs: [], slabs: [], columns: [], dimensions: [], specifications: [],
+    levels: Array.from({ length: r.floors }, (_, index) => ({ id: `level-${index}`, name: `Floor ${index + 1}`, index, kind: 'storey', elevationMm: index * r.floorToFloorHeightMm, floorToFloorHeightMm: r.floorToFloorHeightMm, boundary: policy.floorBoundaries?.[index] ?? rectangle(c.outer) })),
+    spaces: candidate.spaces.map(s => s.entity), walls: constructWalls(r, c, candidate, !!policy.floorBoundaries), openings: [], stairs: [], slabs: [], columns: [], dimensions: [], specifications: [],
     provenance: { creationMode: 'generated', generatorVersion: policy.generatorVersion ?? BLUEPRINT_VERSION, seed: r.seed, measurementVersion: 'mm-exact/1' },
   };
   function marginAt(wall: BuildingWall, end: 'start' | 'end'): number {
@@ -58,7 +58,7 @@ export function constructModel(r: NormalizedBlueprintRequirements, c: Constraint
     model.openings.push(kind === 'door' ? { ...common, kind, operation: { kind: 'hinged', hinge: 'start', swingSide: 'left', angleMilliDegrees: 90000 } } : { ...common, kind, purpose: 'passage' });
     return true;
   }
-  function between(a: string, b: string): BuildingWall | undefined { return model.walls.find(w => w.spaceIds?.includes(a) && w.spaceIds.includes(b)); }
+  function between(a: string, b: string): BuildingWall | undefined { return model.walls.find(w => w.spaceIds?.includes(a) && w.spaceIds.includes(b) && (!policy.floorBoundaries || !a.startsWith('space-stairwell-') || w.path.start.x === w.path.end.x)); }
   for (const room of candidate.spaces.filter(s => s.role === 'room')) {
     const corridor = `space-corridor-${room.entity.levelId.slice('level-'.length)}`;
     const host = between(room.entity.id, corridor);
@@ -96,8 +96,8 @@ export function constructModel(r: NormalizedBlueprintRequirements, c: Constraint
       if (!host || !insert(host, 'door', landing.z + Math.floor(landing.d / 2))) throw new BlueprintError('STAIR_PLACEMENT_FAILED', 'Landing access door cannot fit');
     }
   }
-  for (let level = 0; level < r.floors; level++) model.slabs.push({ id: `slab-${level}`, levelId: `level-${level}`, kind: 'floor', footprint: { outer: rectangle(c.outer), voids: level === 1 ? [model.stairs[0]!.footprint] : [] }, topOffsetMm: 0, thicknessMm: r.slabThicknessMm });
-  model.slabs.push({ id: 'roof', levelId: `level-${r.floors - 1}`, kind: 'flat-roof', footprint: { outer: rectangle(c.outer), voids: [] }, topOffsetMm: r.floorToFloorHeightMm, thicknessMm: r.slabThicknessMm });
+  for (let level = 0; level < r.floors; level++) model.slabs.push({ id: `slab-${level}`, levelId: `level-${level}`, kind: 'floor', footprint: { outer: policy.floorBoundaries?.[level] ?? rectangle(c.outer), voids: level === 1 ? [model.stairs[0]!.footprint] : [] }, topOffsetMm: 0, thicknessMm: r.slabThicknessMm });
+  model.slabs.push({ id: 'roof', levelId: `level-${r.floors - 1}`, kind: 'flat-roof', footprint: { outer: policy.floorBoundaries?.[r.floors - 1] ?? rectangle(c.outer), voids: [] }, topOffsetMm: r.floorToFloorHeightMm, thicknessMm: r.slabThicknessMm });
   if (r.windows.enabled) for (const room of candidate.spaces.filter(s => s.role === 'room')) {
     const hosts = model.walls.filter(w => w.classification === 'exterior' && w.spaceIds?.includes(room.entity.id) && Math.floor((segmentLengthMm(w.path) - r.windows.widthMm) / 2) >= Math.max(marginAt(w, 'start'), marginAt(w, 'end')) && !model.openings.some(o => o.wallId === w.id));
     if (policy.rankWindows) hosts.sort((a, b) => segmentLengthMm(b.path) - segmentLengthMm(a.path) || (a.id < b.id ? -1 : 1));

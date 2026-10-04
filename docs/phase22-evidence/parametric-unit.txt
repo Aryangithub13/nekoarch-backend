@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 1099ms
+
+ Test Files  1 passed (1)
+      Tests  34 passed (34)
+   Start at  16:12:35
+   Duration  2.26s (transform 628ms, setup 0ms, collect 967ms, tests 1.10s, environment 0ms, prepare 55ms)
+

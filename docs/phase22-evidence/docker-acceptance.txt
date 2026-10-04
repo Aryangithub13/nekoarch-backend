@@ -1,0 +1,1 @@
+{"runtime":"compiled production container; network none","solver":"parametric-architecture-v1","qa":"PASS","modifiedQa":"PASS","modelHash":"d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c","modifiedHash":"c5a5feb4f14b04caf8314cf86da982c245d171edc836962f991e1a964759376f","takeoffItems":321,"nonRoot":true}

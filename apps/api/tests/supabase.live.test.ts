@@ -1,3 +1,4 @@
+import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
 import { interpretationAcceptance } from '../../../test-support/interpretation-acceptance.js';
@@ -377,6 +378,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     const foreign = await other!.client.from('architectural_conversations').select('id').eq('owner_id', owner!.id);
     expect(foreign.error).toBeNull(); expect(foreign.data).toEqual([]);
   });
+  parametricAcceptance(() => ({ app: app!, owner: owner!.headers, other: other!.headers }));
   conversationAcceptance(() => ({ app: app!, owner: owner!.headers, other: other!.headers }), process.env.PHASE20_SUPABASE_EXAMPLE_PATH);
   interpretationAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Acceptance setup incomplete');

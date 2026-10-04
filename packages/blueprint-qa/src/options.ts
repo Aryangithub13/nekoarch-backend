@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { EntityIdSchema, LengthMmSchema } from '@designflow/shared';
+import { EntityIdSchema, LengthMmSchema, ParametricArchitectureSchema } from '@designflow/shared';
 import { SeveritySchema } from './report.js';
 const common = { id: EntityIdSchema, version: z.string().min(1).max(100), severity: SeveritySchema };
 const selection = { classifications: z.array(z.string().min(1).max(200)).max(256).optional() };
@@ -24,6 +24,7 @@ export const ArchitecturalRulePackSchema = z.object({
 export type ArchitecturalRulePack = z.infer<typeof ArchitecturalRulePackSchema>;
 export type ArchitecturalRule = z.infer<typeof ArchitecturalRuleSchema>;
 export const BlueprintQaOptionsSchema = z.object({
+  parametric: z.object({ architecture: ParametricArchitectureSchema, circulationWidthMm: LengthMmSchema, exteriorWallThicknessMm: LengthMmSchema, interiorWallThicknessMm: LengthMmSchema, doorJambMm: z.number().int().min(0).max(500) }).strict().optional(),
   rulePacks: z.array(ArchitecturalRulePackSchema).max(32).default([]),
   entrySpaceIds: z.array(EntityIdSchema).max(4096).default([]),
   entryOpeningIds: z.array(EntityIdSchema).max(8192).default([]),
