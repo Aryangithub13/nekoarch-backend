@@ -1,0 +1,12 @@
+{
+  "label": "test:workflows",
+  "command": [
+    "npm",
+    "run",
+    "test:workflows"
+  ],
+  "startedAt": "2026-10-03T10:53:08.664457+00:00",
+  "durationSeconds": 20.732,
+  "exitCode": 0,
+  "log": "test:workflows.txt"
+}

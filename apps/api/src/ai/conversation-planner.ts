@@ -19,6 +19,23 @@ export function initialConversation(baseRevisionId: string | null, requirements:
 export function changedFields(before: Requirements | null, after: Requirements) {
   return Object.keys(after).filter(k => JSON.stringify(before?.[k as keyof Requirements]) !== JSON.stringify(after[k as keyof Requirements])).sort();
 }
+// Explicit native replacements supersede pending language for the same fields.
+// Discard that language before validating it, so its old clarification cannot
+// prevent the user from supplying exactly the native update we requested.
+function supersedeNativeIntent(intent: ConversationIntent, update: ConversationMessage['nativeUpdate']) {
+  if (!update) return;
+  if (update.site) { delete intent.site; delete intent.northMilliDegrees; }
+  if (update.rooms) {
+    for (const key of ['roomChange','bedrooms','bathrooms','living','dining','study','groundFloorBedrooms','upperFloorBedrooms','kitchenLarger','kitchenMinWidthMm','kitchenMinDepthMm'] as const) delete intent[key];
+  }
+  if (update.relationships) {
+    for (const key of ['relationship','kitchenConnection','relationshipKind','relationshipStrength','kitchen'] as const) delete intent[key];
+  }
+  if (update.layoutV2) {
+    for (const key of ['parking','accessSide','privacy','daylight','ventilation'] as const) delete intent[key];
+  }
+  if (update.stair) delete intent.noStairs;
+}
 function parseConversation(text: string) {
   let t = text.replace(/\bactually\b/gi, '').replace(/\bbigger\b/gi, 'larger').replace(/\b(?:design|put|move|else)\b/gi, '').replace(/\bmake it (?=(?:one|two|1|2) floors?)/gi, '');
   const extra: Partial<ConversationIntent> = {};
@@ -128,26 +145,30 @@ export async function planConversation(previous: ConversationState, message: Con
   if(options.restoredRequirements) {
     const version='layoutV2' in options.restoredRequirements ? 'V2' : 'V1';
     if(version!==state.solver) throw new ApiError(422,'SOLVER_VERSION_CONFLICT','Restore cannot change the selected solver version');
-    state.intent=ConversationIntentSchema.parse({}); state.pendingIntent=ConversationIntentSchema.parse({});state.unsupported=[];
+    state.intent=ConversationIntentSchema.parse({}); state.pendingIntent=ConversationIntentSchema.parse({});state.unsupported=[];state.pendingBedroomMove=false;
     state.explanations=[`Proposed requirements copied from explicitly selected revision ${message.restoreRevisionId}. Approval will generate a new revision using the current base identity.`];
     state.fieldSources={restoredRevision:'USER_EXPLICIT'};
     return finalize(state,options.restoredRequirements);
   }
   let patch = parseConversation(message.text);
+  if (patch.upperFloorBedrooms !== undefined || patch.groundFloorBedrooms !== undefined || message.nativeUpdate?.rooms) state.pendingBedroomMove=false;
   const relativeMove=/\bmove\s+(one|two|three|\d+)\s+bedrooms?\s+(upstairs|downstairs)\b/i.exec(message.text);
   if(relativeMove) {
     const bedrooms=state.requirements?.rooms.filter(room=>room.type==='bedroom');
-    if(!bedrooms?.length || bedrooms.some(room=>room.level===undefined)) state.questions.push('The current bedroom floor allocation is unspecified. State the desired total upstairs or supply an explicit native allocation.');
+    if(!bedrooms?.length || bedrooms.some(room=>room.level===undefined)) {
+      state.pendingBedroomMove=true;
+      delete patch.upperFloorBedrooms;delete patch.groundFloorBedrooms;
+    }
     else {
       const count=Number(({one:1,two:2,three:3} as Record<string,number>)[relativeMove[1]!.toLowerCase()] ?? relativeMove[1]);
       const upstairs=bedrooms.filter(room=>room.level===1).reduce((n,room)=>n+room.count,0);
       patch.upperFloorBedrooms=upstairs+(relativeMove[2]!.toLowerCase()==='upstairs'?count:-count);delete patch.groundFloorBedrooms;
-      if(patch.upperFloorBedrooms<0) {state.questions.push('There are not enough upstairs bedrooms for this move.');delete patch.upperFloorBedrooms;}
+      if(patch.upperFloorBedrooms<0) {state.pendingBedroomMove=true;delete patch.upperFloorBedrooms;}
     }
   }
   const ambiguous = /\b(?:move it|that room|the room|previous version|another feasible alternative)\b/i.test(message.text);
   if (ambiguous) state.questions.push('Name the room and its ordinal, or the exact previous revision. No ambiguous reference has been applied.');
-  if (options.disabled) { state.status = 'FAILED'; state.provider.failure = 'AI_CONFIGURATION_UNAVAILABLE'; return ConversationStateSchema.parse(state); }
+  if (options.disabled) { state.status = 'FAILED'; state.provider.failure = 'AI_CONFIGURATION_UNAVAILABLE'; return boundedState(state); }
   if (options.provider && !ambiguous && patch.unsupported.includes('unrecognized_language')) {
     try { patch = ConversationIntentSchema.parse(await options.provider.interpret(message.text,{intent:state.intent,questions:previous.questions},options.signal)); state.provider = {kind:options.provider.kind,model:options.provider.model,failure:null}; }
     catch (error) { state.provider.failure = error instanceof InterpreterProviderError ? error.code : 'AI_PROVIDER_INVALID_RESPONSE'; state.explanations.push('Optional inference failed; bounded deterministic interpretation remains available.'); }
@@ -172,6 +193,10 @@ export async function planConversation(previous: ConversationState, message: Con
   const intent = ConversationIntentSchema.parse({...state.intent,...patch,unsupported:[],contradictions:patch.contradictions});
   state.intent = intent;
   const pending = ConversationIntentSchema.parse({...state.pendingIntent,...patch,unsupported:[],contradictions:patch.contradictions});
+  supersedeNativeIntent(pending,message.nativeUpdate);
+  supersedeNativeIntent(intent,message.nativeUpdate);
+  if (message.nativeUpdate?.rooms) state.pendingBedroomMove=false;
+  if (state.pendingBedroomMove) state.questions.push('The relative bedroom move is unresolved because its source allocation is unspecified or insufficient. State the desired total upstairs or supply an explicit native allocation.');
   state.pendingIntent = pending;
   state.questions.push(...intent.contradictions.map(f => `Resolve contradictory ${f} requirements.`));
   if (ambiguous) return finalize(state,null);
@@ -219,9 +244,12 @@ function finalize(state: ConversationState, requirements: Requirements|null): Co
     state.proposal={id:randomUUID(),version:state.version,baseRevisionId:state.baseRevisionId,requirements,requirementsHash:requirementsHash(requirements),expiresAt:new Date(Date.now()+86400000).toISOString(),changedFields:diff};
     state.explanations.push(`Changed requirement fields: ${diff.join(', ') || 'none'}. Explicit approval of this proposal is required.`);
   }
+  return boundedState(state);
+}
+function boundedState(state: ConversationState): ConversationState {
+  state.summary=`Version ${state.version}; ${state.status}; ${state.questions.length} unresolved questions; ${state.unsupported.length} unsupported requests. Structured intent and native requirements are authoritative, not this summary.`;
   // Trim only display history, never structured requirements, to stay below the
   // PostgreSQL JSONB byte ceiling even with multibyte user text.
   while(state.messages.length && Buffer.byteLength(JSON.stringify(state))>120000) state.messages.shift();
-  state.summary=`Version ${state.version}; ${state.status}; ${state.questions.length} unresolved questions; ${state.unsupported.length} unsupported requests. Structured intent and native requirements are authoritative, not this summary.`;
   return ConversationStateSchema.parse(state);
 }

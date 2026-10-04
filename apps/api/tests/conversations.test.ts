@@ -27,6 +27,30 @@ describe('bounded native conversation reasoning',()=>{
     const base=normalizeBlueprintV2Requirements(solverInput({site:{boundary:lSite,northMilliDegrees:0}}));
     const s=await planConversation(initialConversation(randomUUID(),base,true),message('30 by 50 feet'));expect(s.proposal).toBeNull();expect(s.requirements).toEqual(base);expect(s.questions.join(' ')).toContain('constrained site');
   });
+  it('lets an explicit native replacement resolve a pending constrained-site clarification',async()=>{
+    const base=normalizeBlueprintV2Requirements(solverInput({site:{boundary:lSite,northMilliDegrees:0}}));
+    let s=await planConversation(initialConversation(randomUUID(),base,true),message('30 by 50 feet'));
+    expect(s.status).toBe('NEEDS_CLARIFICATION');
+    const site={...base.site,northMilliDegrees:90000};
+    s=await planConversation(s,message('Use these values',{nativeUpdate:{site}}));
+    expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements).toEqual({...base,site});
+  });
+  it('keeps an unresolved relative bedroom move blocked across unrelated turns',async()=>{
+    let s=await planConversation(initialConversation(null,null,false),message('30 by 50 feet 3BHK two floors'));
+    const before=structuredClone(s.requirements);
+    s=await planConversation(s,message('Move one bedroom upstairs'));
+    s=await planConversation(s,message('seed changed'));
+    expect(s.status).toBe('NEEDS_CLARIFICATION');expect(s.proposal).toBeNull();expect(s.requirements).toEqual(before);
+    s=await planConversation(s,message('Put two bedrooms upstairs'));
+    expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    expect(s.requirements?.seed).toBe('changed');
+  });
+  it('bounds multibyte display history in disabled mode while preserving native requirements',async()=>{
+    const base=normalizeBlueprintV2Requirements(solverInput());let s=initialConversation(randomUUID(),base,true);
+    for(let i=0;i<20;i++) s=await planConversation(s,message('房'.repeat(4000)),{disabled:true});
+    expect(s.status).toBe('FAILED');expect(Buffer.byteLength(JSON.stringify(s))).toBeLessThan(120000);
+    expect(s.requirements).toEqual(base);expect(s.proposal).toBeNull();
+  });
   it('does not reapply an old site intent over an explicitly updated native site',async()=>{
     let s=await planConversation(initialConversation(null,null,true),message('30 by 50 feet 3BHK'));
     s=await planConversation(s,message('Use these values',{nativeUpdate:{site:{boundary:lSite,northMilliDegrees:0}},removeUnsupported:['unrecognized_language']}));

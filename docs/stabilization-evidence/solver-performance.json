@@ -1,0 +1,952 @@
+{
+  "capturedAt": "2026-10-03T10:56:03.717Z",
+  "node": "v22.22.2",
+  "platform": "linux",
+  "repeats": 3,
+  "notes": [
+    "Sequential measurements; timing is observational and not authoritative.",
+    "processPeakRssKiB is the cumulative process high-water mark, not isolated per-case allocation.",
+    "V1 iterations and V2 charged operations use different accounting; they are not directly comparable.",
+    "Inscribed envelopes only; no global optimality claim."
+  ],
+  "measurements": [
+    {
+      "name": "1BHK",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 44.198980000000006,
+          "qaMs": 11.404827000000012,
+          "hash": "df2b9ca0e6b1009d100efc1257ece2d57ad99217beeab1b2e003374699a449bf",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 160,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.008,
+          "processPeakRssKiB": 121856
+        },
+        {
+          "solverMs": 21.668768,
+          "qaMs": 4.847323999999958,
+          "hash": "df2b9ca0e6b1009d100efc1257ece2d57ad99217beeab1b2e003374699a449bf",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 160,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.008,
+          "processPeakRssKiB": 123260
+        },
+        {
+          "solverMs": 18.727882000000022,
+          "qaMs": 4.555240000000026,
+          "hash": "df2b9ca0e6b1009d100efc1257ece2d57ad99217beeab1b2e003374699a449bf",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 160,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.008,
+          "processPeakRssKiB": 123260
+        }
+      ]
+    },
+    {
+      "name": "1BHK",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 220.04566300000005,
+          "qaMs": 4.5216460000000325,
+          "hash": "d8b68c6fb72eccad18239c745cb17b82c12fe4f80ee84f00089405c8ac905386",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1142,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0571,
+          "processPeakRssKiB": 145124
+        },
+        {
+          "solverMs": 187.40097400000002,
+          "qaMs": 4.361634000000095,
+          "hash": "d8b68c6fb72eccad18239c745cb17b82c12fe4f80ee84f00089405c8ac905386",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1142,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0571,
+          "processPeakRssKiB": 157708
+        },
+        {
+          "solverMs": 177.24962200000004,
+          "qaMs": 3.6057220000000143,
+          "hash": "d8b68c6fb72eccad18239c745cb17b82c12fe4f80ee84f00089405c8ac905386",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1142,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0571,
+          "processPeakRssKiB": 165188
+        }
+      ]
+    },
+    {
+      "name": "2BHK",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 11.596128000000022,
+          "qaMs": 3.826846000000046,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 192,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0096,
+          "processPeakRssKiB": 166548
+        },
+        {
+          "solverMs": 11.472086999999988,
+          "qaMs": 3.8394180000000233,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 192,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0096,
+          "processPeakRssKiB": 166548
+        },
+        {
+          "solverMs": 12.573582999999985,
+          "qaMs": 5.494630000000029,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 192,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0096,
+          "processPeakRssKiB": 172352
+        }
+      ]
+    },
+    {
+      "name": "2BHK",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 236.38749500000006,
+          "qaMs": 4.253936999999951,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1365,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.06825,
+          "processPeakRssKiB": 181364
+        },
+        {
+          "solverMs": 264.94209899999987,
+          "qaMs": 5.858653000000004,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1365,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.06825,
+          "processPeakRssKiB": 188020
+        },
+        {
+          "solverMs": 230.103427,
+          "qaMs": 5.2554170000000795,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1365,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.06825,
+          "processPeakRssKiB": 188020
+        }
+      ]
+    },
+    {
+      "name": "3BHK",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 14.971578000000136,
+          "qaMs": 5.5353489999999965,
+          "hash": "eadc708d039b019b660264ab6ba042703da920aa3d125b1459fbd402df476698",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 224,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0112,
+          "processPeakRssKiB": 188020
+        },
+        {
+          "solverMs": 14.058308000000125,
+          "qaMs": 4.330623999999943,
+          "hash": "eadc708d039b019b660264ab6ba042703da920aa3d125b1459fbd402df476698",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 224,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0112,
+          "processPeakRssKiB": 188020
+        },
+        {
+          "solverMs": 14.841249999999945,
+          "qaMs": 4.463187000000062,
+          "hash": "eadc708d039b019b660264ab6ba042703da920aa3d125b1459fbd402df476698",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 224,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0112,
+          "processPeakRssKiB": 188020
+        }
+      ]
+    },
+    {
+      "name": "3BHK",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 270.19877599999995,
+          "qaMs": 4.928062999999838,
+          "hash": "bdabece3ca299a74b155c13174ade9ebc765c2846fab9af45a267798cab84a09",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1592,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0796,
+          "processPeakRssKiB": 188020
+        },
+        {
+          "solverMs": 268.86190799999986,
+          "qaMs": 4.518432999999732,
+          "hash": "bdabece3ca299a74b155c13174ade9ebc765c2846fab9af45a267798cab84a09",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1592,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0796,
+          "processPeakRssKiB": 188020
+        },
+        {
+          "solverMs": 273.1660630000001,
+          "qaMs": 5.70583600000009,
+          "hash": "bdabece3ca299a74b155c13174ade9ebc765c2846fab9af45a267798cab84a09",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1592,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0796,
+          "processPeakRssKiB": 203932
+        }
+      ]
+    },
+    {
+      "name": "24-rooms",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 103.3964289999999,
+          "qaMs": 25.14548999999988,
+          "hash": "025c5815a64ed7d1bc1d70579ba854a5f78220d4d229eac0d0ca0a0dd7465916",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 800,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.04,
+          "processPeakRssKiB": 204156
+        },
+        {
+          "solverMs": 97.83321299999989,
+          "qaMs": 22.028251000000182,
+          "hash": "025c5815a64ed7d1bc1d70579ba854a5f78220d4d229eac0d0ca0a0dd7465916",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 800,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.04,
+          "processPeakRssKiB": 204156
+        },
+        {
+          "solverMs": 92.75785200000018,
+          "qaMs": 21.188874999999825,
+          "hash": "025c5815a64ed7d1bc1d70579ba854a5f78220d4d229eac0d0ca0a0dd7465916",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 800,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.04,
+          "processPeakRssKiB": 204548
+        }
+      ]
+    },
+    {
+      "name": "24-rooms",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 2060.826824,
+          "qaMs": 18.775236999999834,
+          "hash": "c089e5ff3f51940b4695419a0465c4bf952799c4fee97e0a2cb0916fc207cfcd",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 5630,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.2815,
+          "processPeakRssKiB": 204676
+        },
+        {
+          "solverMs": 2090.476955,
+          "qaMs": 20.73838799999976,
+          "hash": "c089e5ff3f51940b4695419a0465c4bf952799c4fee97e0a2cb0916fc207cfcd",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 5630,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.2815,
+          "processPeakRssKiB": 205256
+        },
+        {
+          "solverMs": 2117.7721870000005,
+          "qaMs": 24.24367700000039,
+          "hash": "c089e5ff3f51940b4695419a0465c4bf952799c4fee97e0a2cb0916fc207cfcd",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 5630,
+          "validCandidates": 32,
+          "rejectedCandidates": 0,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.2815,
+          "processPeakRssKiB": 207696
+        }
+      ]
+    },
+    {
+      "name": "two-floor",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 18.694148999999015,
+          "qaMs": 5.733842999999979,
+          "hash": "3709f0d1b5f3b630d03d41a1049f3c747e680fc6469a262dc8b4c8a6ec1550b4",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 96,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0048,
+          "processPeakRssKiB": 207696
+        },
+        {
+          "solverMs": 17.606621000000814,
+          "qaMs": 6.30299500000001,
+          "hash": "3709f0d1b5f3b630d03d41a1049f3c747e680fc6469a262dc8b4c8a6ec1550b4",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 96,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0048,
+          "processPeakRssKiB": 207696
+        },
+        {
+          "solverMs": 16.795043999998597,
+          "qaMs": 5.460338000000775,
+          "hash": "3709f0d1b5f3b630d03d41a1049f3c747e680fc6469a262dc8b4c8a6ec1550b4",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 96,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0048,
+          "processPeakRssKiB": 207696
+        }
+      ]
+    },
+    {
+      "name": "two-floor",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 185.62641299999996,
+          "qaMs": 6.305859000000055,
+          "hash": "7e12360269b2ad4628bfb765693617b25596d48ea3aadb284bcb64bd47b05a24",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 958,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0479,
+          "processPeakRssKiB": 207696
+        },
+        {
+          "solverMs": 182.86083400000098,
+          "qaMs": 6.242231999998694,
+          "hash": "7e12360269b2ad4628bfb765693617b25596d48ea3aadb284bcb64bd47b05a24",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 958,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0479,
+          "processPeakRssKiB": 207696
+        },
+        {
+          "solverMs": 174.71202500000072,
+          "qaMs": 4.7708459999994375,
+          "hash": "7e12360269b2ad4628bfb765693617b25596d48ea3aadb284bcb64bd47b05a24",
+          "qa": "PASS",
+          "candidates": 16,
+          "operations": 958,
+          "validCandidates": 16,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.5,
+          "operationBudgetUtilization": 0.0479,
+          "processPeakRssKiB": 207696
+        }
+      ]
+    },
+    {
+      "name": "L-site",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 236.97524300000077,
+          "qaMs": 3.3356389999989915,
+          "hash": "38b7bda6aa3a519303e4880d2bc25c8695d55fbedf55945eb10b65429950f5f0",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1304,
+          "validCandidates": 30,
+          "rejectedCandidates": 2,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0652,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 235.23098000000027,
+          "qaMs": 4.05181100000118,
+          "hash": "38b7bda6aa3a519303e4880d2bc25c8695d55fbedf55945eb10b65429950f5f0",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1304,
+          "validCandidates": 30,
+          "rejectedCandidates": 2,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0652,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 236.7765389999986,
+          "qaMs": 4.154410000001008,
+          "hash": "38b7bda6aa3a519303e4880d2bc25c8695d55fbedf55945eb10b65429950f5f0",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1304,
+          "validCandidates": 30,
+          "rejectedCandidates": 2,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.0652,
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "U-site",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 184.65783100000044,
+          "qaMs": 4.772731999999451,
+          "hash": "67f80b63383e48e719efee06a5b7cf8d0e2bbdbd4e5e87457a92bb1ebe20f3b5",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1101,
+          "validCandidates": 24,
+          "rejectedCandidates": 8,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.05505,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 176.09024200000022,
+          "qaMs": 4.99294700000064,
+          "hash": "67f80b63383e48e719efee06a5b7cf8d0e2bbdbd4e5e87457a92bb1ebe20f3b5",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1101,
+          "validCandidates": 24,
+          "rejectedCandidates": 8,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.05505,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 180.1143950000005,
+          "qaMs": 3.4667349999999715,
+          "hash": "67f80b63383e48e719efee06a5b7cf8d0e2bbdbd4e5e87457a92bb1ebe20f3b5",
+          "qa": "PASS",
+          "candidates": 32,
+          "operations": 1101,
+          "validCandidates": 24,
+          "rejectedCandidates": 8,
+          "searchComplete": false,
+          "candidateBudgetUtilization": 1,
+          "operationBudgetUtilization": 0.05505,
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "relationship-chain",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 10.120552000000316,
+          "qaMs": 2.480199999999968,
+          "hash": "336d7d4a46b19c373402986e4ea7dabdc43410eabdffa80ca59052e21ec7fc4b",
+          "qa": "PASS",
+          "candidates": 80,
+          "operations": 400,
+          "validCandidates": 12,
+          "rejectedCandidates": 68,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.625,
+          "operationBudgetUtilization": 0.02,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 8.713632000000871,
+          "qaMs": 3.138961000000563,
+          "hash": "336d7d4a46b19c373402986e4ea7dabdc43410eabdffa80ca59052e21ec7fc4b",
+          "qa": "PASS",
+          "candidates": 80,
+          "operations": 400,
+          "validCandidates": 12,
+          "rejectedCandidates": 68,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.625,
+          "operationBudgetUtilization": 0.02,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 8.196654000001217,
+          "qaMs": 3.291848000000755,
+          "hash": "336d7d4a46b19c373402986e4ea7dabdc43410eabdffa80ca59052e21ec7fc4b",
+          "qa": "PASS",
+          "candidates": 80,
+          "operations": 400,
+          "validCandidates": 12,
+          "rejectedCandidates": 68,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.625,
+          "operationBudgetUtilization": 0.02,
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "relationship-chain",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 74.65234600000076,
+          "qaMs": 2.8015489999997953,
+          "hash": "56b4c57bcbedf90ad08bb9960dc2fa7633143b584ddbc8a6d791000243c2733e",
+          "qa": "PASS",
+          "candidates": 48,
+          "operations": 662,
+          "validCandidates": 12,
+          "rejectedCandidates": 36,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.375,
+          "operationBudgetUtilization": 0.0331,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 75.69587299999876,
+          "qaMs": 2.820616000000882,
+          "hash": "56b4c57bcbedf90ad08bb9960dc2fa7633143b584ddbc8a6d791000243c2733e",
+          "qa": "PASS",
+          "candidates": 48,
+          "operations": 662,
+          "validCandidates": 12,
+          "rejectedCandidates": 36,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.375,
+          "operationBudgetUtilization": 0.0331,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 75.33352700000069,
+          "qaMs": 3.0710739999994985,
+          "hash": "56b4c57bcbedf90ad08bb9960dc2fa7633143b584ddbc8a6d791000243c2733e",
+          "qa": "PASS",
+          "candidates": 48,
+          "operations": 662,
+          "validCandidates": 12,
+          "rejectedCandidates": 36,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.375,
+          "operationBudgetUtilization": 0.0331,
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "dense-infeasible-graph",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 1.5177610000009736,
+          "failure": "UNSATISFIED_HARD_CONSTRAINT",
+          "diagnostics": {
+            "candidateAttempts": 96,
+            "iterations": 576,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:96"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 1.3906470000001718,
+          "failure": "UNSATISFIED_HARD_CONSTRAINT",
+          "diagnostics": {
+            "candidateAttempts": 96,
+            "iterations": 576,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:96"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 1.3828950000006444,
+          "failure": "UNSATISFIED_HARD_CONSTRAINT",
+          "diagnostics": {
+            "candidateAttempts": 96,
+            "iterations": 576,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:96"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "dense-infeasible-graph",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 1.0317230000000563,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "operations": 238,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.9266789999983303,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "operations": 238,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.8849829999999201,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "operations": 238,
+            "rejectedBy": [
+              "UNSATISFIED_HARD_CONSTRAINT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "infeasible-area",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 0.36339399999997113,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "iterations": 32,
+            "rejectedBy": [
+              "IMPOSSIBLE_LAYOUT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.3436279999987164,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "iterations": 32,
+            "rejectedBy": [
+              "IMPOSSIBLE_LAYOUT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.3222559999994701,
+          "failure": "SEARCH_LIMIT_EXHAUSTED",
+          "diagnostics": {
+            "candidateAttempts": 32,
+            "iterations": 32,
+            "rejectedBy": [
+              "IMPOSSIBLE_LAYOUT:32"
+            ]
+          },
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "infeasible-area",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 0.17782099999931233,
+          "failure": "PROGRAM_DOES_NOT_FIT",
+          "diagnostics": {},
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.16867099999944912,
+          "failure": "PROGRAM_DOES_NOT_FIT",
+          "diagnostics": {},
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 0.16028999999980442,
+          "failure": "PROGRAM_DOES_NOT_FIT",
+          "diagnostics": {},
+          "processPeakRssKiB": 207712
+        }
+      ]
+    },
+    {
+      "name": "candidate-limit",
+      "version": "v1",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 22.038797999999588,
+          "qaMs": 2.639581999999791,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 576,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.0288,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 20.303475999999137,
+          "qaMs": 2.7847170000004553,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 576,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.0288,
+          "processPeakRssKiB": 207712
+        },
+        {
+          "solverMs": 21.256765000000087,
+          "qaMs": 3.0156879999995,
+          "hash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 576,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.0288,
+          "processPeakRssKiB": 210580
+        }
+      ]
+    },
+    {
+      "name": "candidate-limit",
+      "version": "v2",
+      "deterministic": true,
+      "runs": [
+        {
+          "solverMs": 660.14257,
+          "qaMs": 3.4042949999984558,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 4078,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.2039,
+          "processPeakRssKiB": 210708
+        },
+        {
+          "solverMs": 636.758455000001,
+          "qaMs": 3.768108000000211,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 4078,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.2039,
+          "processPeakRssKiB": 210708
+        },
+        {
+          "solverMs": 648.6019729999989,
+          "qaMs": 3.807639000000563,
+          "hash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+          "qa": "PASS",
+          "candidates": 96,
+          "operations": 4078,
+          "validCandidates": 96,
+          "rejectedCandidates": 0,
+          "searchComplete": true,
+          "candidateBudgetUtilization": 0.75,
+          "operationBudgetUtilization": 0.2039,
+          "processPeakRssKiB": 210708
+        }
+      ]
+    }
+  ]
+}

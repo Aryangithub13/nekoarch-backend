@@ -1,0 +1,13 @@
+{
+  "label": "benchmark-solver",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/benchmark-solver-v2.ts"
+  ],
+  "startedAt": "2026-10-03T10:55:50.147789+00:00",
+  "durationSeconds": 13.593,
+  "exitCode": 0,
+  "log": "benchmark-solver.txt"
+}

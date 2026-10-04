@@ -58,6 +58,19 @@ export function conversationAcceptance(get:()=>{app:FastifyInstance;owner:{autho
     const d=await setup();await message(d,'30 by 50 feet 3BHK one floor');await message(d,'Put two bedrooms upstairs.');expect(d.state.questions.join(' ')).toContain('conflict');expect(d.state.proposal).toBeNull();
     const j=await setup();await message(j,'A 100-floor twisting skyscraper with structural certification.');expect(j.state.unsupported).toContain('engineering_compliance');expect(j.state.proposal).toBeNull();
   });
+  it('persists unresolved relative moves until explicit allocation and accepts native clarification repairs',async()=>{
+    const c=await setup();await message(c,'30 by 50 feet 3BHK two floors');
+    const before=structuredClone(c.state.requirements);
+    await message(c,'Move one bedroom upstairs');await message(c,'seed clarified');
+    expect(c.state.status).toBe('NEEDS_CLARIFICATION');expect(c.state.proposal).toBeNull();expect(c.state.requirements).toEqual(before);
+    const {app,owner}=get();expect(ConversationSchema.parse((await app.inject({url:c.url,headers:owner})).json()).state.pendingBedroomMove).toBe(true);
+    await message(c,'Put two bedrooms upstairs');expect(c.state.status).toBe('AWAITING_APPROVAL');expect(c.state.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    const d=await setup(solverInput({site:{boundary:lSite,northMilliDegrees:0}}));
+    const nativeBefore=structuredClone(d.state.requirements!);
+    await message(d,'30 by 50 feet');expect(d.state.status).toBe('NEEDS_CLARIFICATION');
+    await message(d,'Use these values',{nativeUpdate:{site:{...nativeBefore.site,northMilliDegrees:90000}}});
+    expect(d.state.status).toBe('AWAITING_APPROVAL');expect(d.state.requirements).toEqual({...nativeBefore,site:{...nativeBefore.site,northMilliDegrees:90000}});
+  });
   it('F/K: competing conversations cannot overwrite the current revision or replay obsolete approval',async()=>{
     const c=await setup(),{app,owner}=get();await message(c,'30 by 50 feet 2BHK');
     const second=randomUUID();await app.inject({method:'POST',url:`/api/projects/${c.projectId}/conversations`,headers:owner,payload:{conversationId:second,baseRevisionId:null}});

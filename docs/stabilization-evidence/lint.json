@@ -1,0 +1,12 @@
+{
+  "label": "lint",
+  "command": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "startedAt": "2026-10-03T10:57:38.103473+00:00",
+  "durationSeconds": 3.219,
+  "exitCode": 0,
+  "log": "lint.txt"
+}

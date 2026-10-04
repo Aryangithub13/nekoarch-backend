@@ -1,0 +1,12 @@
+{
+  "label": "test:generator",
+  "command": [
+    "npm",
+    "run",
+    "test:generator"
+  ],
+  "startedAt": "2026-10-03T10:50:46.941154+00:00",
+  "durationSeconds": 15.592,
+  "exitCode": 0,
+  "log": "test:generator.txt"
+}

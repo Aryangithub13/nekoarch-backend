@@ -1,0 +1,12 @@
+{
+  "label": "build",
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "startedAt": "2026-10-03T10:49:31.543774+00:00",
+  "durationSeconds": 13.084,
+  "exitCode": 0,
+  "log": "build.txt"
+}

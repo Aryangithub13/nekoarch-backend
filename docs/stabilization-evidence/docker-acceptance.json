@@ -1,0 +1,18 @@
+{
+  "label": "docker-acceptance",
+  "command": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--network",
+    "none",
+    "designflow-api:stabilization",
+    "node",
+    "--input-type=module"
+  ],
+  "startedAt": "2026-10-03T10:58:35.495106+00:00",
+  "durationSeconds": 0.915,
+  "exitCode": 0,
+  "log": "docker-acceptance.txt"
+}

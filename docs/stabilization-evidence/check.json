@@ -1,0 +1,12 @@
+{
+  "label": "check",
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "startedAt": "2026-10-03T10:46:08.516385+00:00",
+  "durationSeconds": 160.492,
+  "exitCode": 0,
+  "log": "check.txt"
+}

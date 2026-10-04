@@ -1,0 +1,12 @@
+{
+  "label": "diff-check",
+  "command": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "startedAt": "2026-10-03T11:04:46.533898+00:00",
+  "durationSeconds": 0.004,
+  "exitCode": 0,
+  "log": "diff-check.txt"
+}

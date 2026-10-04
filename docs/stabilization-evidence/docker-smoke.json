@@ -1,0 +1,12 @@
+{
+  "label": "docker-smoke",
+  "command": [
+    "node",
+    "scripts/smoke-container.mjs",
+    "designflow-api:stabilization"
+  ],
+  "startedAt": "2026-10-03T10:47:43.200779+00:00",
+  "durationSeconds": 1.312,
+  "exitCode": 0,
+  "log": "docker-smoke.txt"
+}

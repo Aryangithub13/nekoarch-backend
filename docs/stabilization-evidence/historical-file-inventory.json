@@ -1,0 +1,1761 @@
+{
+  "baseline": "094e6856a61abfeee78881dbc98fe34ef10eb970",
+  "combinedCommit": "f17a33703b226117ad3cbfa4f25a1889dccce71b",
+  "phase18UnchangedPaths": [
+    ".gitignore",
+    ".npmrc",
+    "apps/api/package.json",
+    "apps/api/src/ai/architectural-interpreter.ts",
+    "apps/api/src/ai/fallback-parser.ts",
+    "apps/api/src/ai/interpreter-provider.ts",
+    "apps/api/src/content/disclaimers.ts",
+    "apps/api/src/contracts/construction.ts",
+    "apps/api/src/contracts/costs.ts",
+    "apps/api/src/contracts/freshness.ts",
+    "apps/api/src/contracts/generation.ts",
+    "apps/api/src/contracts/requirement-interpretation.ts",
+    "apps/api/src/contracts/takeoffs.ts",
+    "apps/api/src/lib/auth.ts",
+    "apps/api/src/lib/construction-repository.ts",
+    "apps/api/src/lib/cost-repository.ts",
+    "apps/api/src/lib/errors.ts",
+    "apps/api/src/lib/idempotency.ts",
+    "apps/api/src/lib/lifecycle.ts",
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/lib/safe-error.ts",
+    "apps/api/src/lib/sentry.ts",
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/lib/workflow-repository.ts",
+    "apps/api/src/routes/construction.ts",
+    "apps/api/src/routes/costs.ts",
+    "apps/api/src/routes/estimates.ts",
+    "apps/api/src/routes/plans.ts",
+    "apps/api/src/routes/projects.ts",
+    "apps/api/src/routes/regions.ts",
+    "apps/api/src/routes/takeoffs.ts",
+    "apps/api/src/routes/workflows.ts",
+    "apps/api/src/server.ts",
+    "apps/api/src/services/construction-service.ts",
+    "apps/api/src/services/cost-service.ts",
+    "apps/api/src/services/estimate-service.ts",
+    "apps/api/src/services/generation-service.ts",
+    "apps/api/src/services/plan-service.ts",
+    "apps/api/src/services/rate-service.ts",
+    "apps/api/src/services/takeoff-service.ts",
+    "apps/api/src/services/workflow-service.ts",
+    "apps/api/src/workflows/registry.ts",
+    "apps/api/src/workflows/sources.ts",
+    "apps/api/tests/backend.integration.test.ts",
+    "apps/api/tests/construction.integration.test.ts",
+    "apps/api/tests/costs.integration.test.ts",
+    "apps/api/tests/estimate-service.test.ts",
+    "apps/api/tests/freshness.integration.test.ts",
+    "apps/api/tests/freshness.test.ts",
+    "apps/api/tests/generation.integration.test.ts",
+    "apps/api/tests/generation.test.ts",
+    "apps/api/tests/hardening.integration.test.ts",
+    "apps/api/tests/hardening.test.ts",
+    "apps/api/tests/interpretation.integration.test.ts",
+    "apps/api/tests/postgres-harness.test.ts",
+    "apps/api/tests/projects.integration.test.ts",
+    "apps/api/tests/supabase-adapter.test.ts",
+    "apps/api/tests/takeoffs.integration.test.ts",
+    "apps/api/tests/workflows.integration.test.ts",
+    "apps/api/tests/workflows.test.ts",
+    "apps/api/tsconfig.build.json",
+    "apps/api/tsconfig.json",
+    "docs/PHASE10.md",
+    "docs/PHASE11.md",
+    "docs/PHASE12.md",
+    "docs/PHASE13.md",
+    "docs/PHASE14.md",
+    "docs/PHASE15.md",
+    "docs/PHASE16.md",
+    "docs/PHASE5.md",
+    "docs/PHASE6.md",
+    "docs/PHASE7.md",
+    "docs/PHASE8.md",
+    "docs/PHASE9-DESIGN.md",
+    "docs/PHASE9.md",
+    "docs/phase12-design.md",
+    "docs/phase12-verification.json",
+    "docs/phase13-design.md",
+    "docs/phase13-example.json",
+    "docs/phase13-verification.json",
+    "docs/phase14-design.md",
+    "docs/phase14-example.json",
+    "docs/phase14-verification.json",
+    "docs/phase15-design.md",
+    "docs/phase15-example.json",
+    "docs/phase15-signoff-evidence/clock-16.2.json",
+    "docs/phase15-signoff-evidence/clock-16.3.json",
+    "docs/phase15-signoff-evidence/clock-regression.json",
+    "docs/phase15-signoff-evidence/diagnostic-fixed.json",
+    "docs/phase15-signoff-evidence/diagnostic-original.json",
+    "docs/phase15-signoff-evidence/fixed-infrastructure.json",
+    "docs/phase15-signoff-evidence/local-migration-state.json",
+    "docs/phase15-signoff-evidence/original-container-logs.json",
+    "docs/phase15-signoff-evidence/verification-output.txt",
+    "docs/phase15-verification.json",
+    "docs/phase16-design.md",
+    "docs/phase16-evidence/baseline.json",
+    "docs/phase16-evidence/blueprint-qa.txt",
+    "docs/phase16-evidence/blueprint.txt",
+    "docs/phase16-evidence/build.txt",
+    "docs/phase16-evidence/check.txt",
+    "docs/phase16-evidence/construction.txt",
+    "docs/phase16-evidence/cost.txt",
+    "docs/phase16-evidence/db-rls.txt",
+    "docs/phase16-evidence/diff-check.txt",
+    "docs/phase16-evidence/docker.txt",
+    "docs/phase16-evidence/generator.txt",
+    "docs/phase16-evidence/integration-1.txt",
+    "docs/phase16-evidence/integration-2.txt",
+    "docs/phase16-evidence/integration-3.txt",
+    "docs/phase16-evidence/lint.txt",
+    "docs/phase16-evidence/migration-application.txt",
+    "docs/phase16-evidence/projects.txt",
+    "docs/phase16-evidence/resume-2026-10-01/baseline.json",
+    "docs/phase16-evidence/resume-2026-10-01/blueprint-qa.txt",
+    "docs/phase16-evidence/resume-2026-10-01/blueprint.txt",
+    "docs/phase16-evidence/resume-2026-10-01/build.txt",
+    "docs/phase16-evidence/resume-2026-10-01/check.txt",
+    "docs/phase16-evidence/resume-2026-10-01/construction.txt",
+    "docs/phase16-evidence/resume-2026-10-01/cost.txt",
+    "docs/phase16-evidence/resume-2026-10-01/db-rls.txt",
+    "docs/phase16-evidence/resume-2026-10-01/diff-check.txt",
+    "docs/phase16-evidence/resume-2026-10-01/docker.txt",
+    "docs/phase16-evidence/resume-2026-10-01/generator.txt",
+    "docs/phase16-evidence/resume-2026-10-01/integration-1.txt",
+    "docs/phase16-evidence/resume-2026-10-01/integration-2.txt",
+    "docs/phase16-evidence/resume-2026-10-01/integration-3.txt",
+    "docs/phase16-evidence/resume-2026-10-01/lint.txt",
+    "docs/phase16-evidence/resume-2026-10-01/previous-verification.json",
+    "docs/phase16-evidence/resume-2026-10-01/projects.txt",
+    "docs/phase16-evidence/resume-2026-10-01/smoke.txt",
+    "docs/phase16-evidence/resume-2026-10-01/supabase-1.txt",
+    "docs/phase16-evidence/resume-2026-10-01/supabase-2.txt",
+    "docs/phase16-evidence/resume-2026-10-01/takeoff.txt",
+    "docs/phase16-evidence/resume-2026-10-01/typecheck.txt",
+    "docs/phase16-evidence/resume-2026-10-01/unit.txt",
+    "docs/phase16-evidence/resume-2026-10-01/workflows.txt",
+    "docs/phase16-evidence/smoke.txt",
+    "docs/phase16-evidence/supabase-1.txt",
+    "docs/phase16-evidence/supabase-2.txt",
+    "docs/phase16-evidence/supabase-2026-09-30T12-14-37.866Z.json",
+    "docs/phase16-evidence/supabase-2026-09-30T12-23-21.071Z.json",
+    "docs/phase16-evidence/supabase-2026-09-30T12-24-00.271Z.json",
+    "docs/phase16-evidence/supabase-2026-10-01T04-43-33.718Z.json",
+    "docs/phase16-evidence/supabase-2026-10-01T04-44-11.940Z.json",
+    "docs/phase16-evidence/supabase-watch-summary.json",
+    "docs/phase16-evidence/takeoff.txt",
+    "docs/phase16-evidence/typecheck.txt",
+    "docs/phase16-evidence/unit-before-boundary-update.txt",
+    "docs/phase16-evidence/unit.txt",
+    "docs/phase16-evidence/workflows.txt",
+    "docs/phase16-example.json",
+    "docs/phase16-verification.json",
+    "docs/phase17-design.md",
+    "docs/phase17-evidence/baseline.json",
+    "docs/phase17-evidence/blueprint-qa.txt",
+    "docs/phase17-evidence/blueprint.txt",
+    "docs/phase17-evidence/build.txt",
+    "docs/phase17-evidence/check.txt",
+    "docs/phase17-evidence/construction.txt",
+    "docs/phase17-evidence/cost.txt",
+    "docs/phase17-evidence/db-rls.txt",
+    "docs/phase17-evidence/diff-check.txt",
+    "docs/phase17-evidence/docker.txt",
+    "docs/phase17-evidence/final-diff-check.txt",
+    "docs/phase17-evidence/generator.txt",
+    "docs/phase17-evidence/integration-1.txt",
+    "docs/phase17-evidence/integration-2.txt",
+    "docs/phase17-evidence/integration-3.txt",
+    "docs/phase17-evidence/lint.txt",
+    "docs/phase17-evidence/migration-after.json",
+    "docs/phase17-evidence/migration-application.txt",
+    "docs/phase17-evidence/migration-before.json",
+    "docs/phase17-evidence/projects.txt",
+    "docs/phase17-evidence/rpc-preservation.diff",
+    "docs/phase17-evidence/seed-audit/check.txt",
+    "docs/phase17-evidence/seed-audit/diff-check.txt",
+    "docs/phase17-evidence/seed-audit/final-diff-check.txt",
+    "docs/phase17-evidence/seed-audit/focused.txt",
+    "docs/phase17-evidence/seed-audit/input-comparison.json",
+    "docs/phase17-evidence/smoke.txt",
+    "docs/phase17-evidence/supabase-1.txt",
+    "docs/phase17-evidence/supabase-2.txt",
+    "docs/phase17-evidence/supabase-2026-10-01T05-17-21.918Z.json",
+    "docs/phase17-evidence/supabase-2026-10-01T05-18-10.401Z.json",
+    "docs/phase17-evidence/supabase-observation-summary.json",
+    "docs/phase17-evidence/takeoff.txt",
+    "docs/phase17-evidence/typecheck.txt",
+    "docs/phase17-evidence/unit.txt",
+    "docs/phase17-evidence/workflows.txt",
+    "docs/phase17-example.json",
+    "docs/phase17-frontend-integration.md",
+    "docs/phase17-review-report.md",
+    "docs/phase17-verification.json",
+    "docs/phase18-design.md",
+    "docs/phase18-evidence/baseline.json",
+    "docs/phase18-evidence/blueprint-qa.txt",
+    "docs/phase18-evidence/blueprint.txt",
+    "docs/phase18-evidence/build.txt",
+    "docs/phase18-evidence/check.txt",
+    "docs/phase18-evidence/construction.txt",
+    "docs/phase18-evidence/cost.txt",
+    "docs/phase18-evidence/database-observation.json",
+    "docs/phase18-evidence/db-rls.txt",
+    "docs/phase18-evidence/diff-check.txt",
+    "docs/phase18-evidence/docker.txt",
+    "docs/phase18-evidence/final-review.json",
+    "docs/phase18-evidence/generator.txt",
+    "docs/phase18-evidence/integration-1.txt",
+    "docs/phase18-evidence/integration-2.txt",
+    "docs/phase18-evidence/integration-3.txt",
+    "docs/phase18-evidence/interpretation-examples.json",
+    "docs/phase18-evidence/interpretation.txt",
+    "docs/phase18-evidence/lint.txt",
+    "docs/phase18-evidence/projects.txt",
+    "docs/phase18-evidence/protected-boundaries.json",
+    "docs/phase18-evidence/repair-history/first-gate-attempt.json",
+    "docs/phase18-evidence/repair-history/focused-before-capacity-check.txt",
+    "docs/phase18-evidence/repair-history/initial-sandbox-tests.txt",
+    "docs/phase18-evidence/repair-history/initial-unrestricted-tests.txt",
+    "docs/phase18-evidence/repair-history/lint-before-fix.txt",
+    "docs/phase18-evidence/repair-history/second-gate-attempt.json",
+    "docs/phase18-evidence/repair-history/seed-test-before-correction.txt",
+    "docs/phase18-evidence/repair-history/typecheck-before-fix.txt",
+    "docs/phase18-evidence/smoke.txt",
+    "docs/phase18-evidence/supabase-1.txt",
+    "docs/phase18-evidence/supabase-2.txt",
+    "docs/phase18-evidence/supabase-2026-10-01T10-46-39.085Z.json",
+    "docs/phase18-evidence/supabase-2026-10-01T10-47-37.455Z.json",
+    "docs/phase18-evidence/supabase-observation-summary.json",
+    "docs/phase18-evidence/takeoff.txt",
+    "docs/phase18-evidence/tested-source-sha256.json",
+    "docs/phase18-evidence/typecheck.txt",
+    "docs/phase18-evidence/unit.txt",
+    "docs/phase18-evidence/workflows.txt",
+    "docs/phase18-example.json",
+    "docs/phase18-review-report.md",
+    "docs/phase18-verification.json",
+    "docs/supabase-500-investigation-evidence.json",
+    "docs/supabase-500-investigation.md",
+    "eslint.config.js",
+    "packages/blueprint-qa/README.md",
+    "packages/blueprint-qa/package.json",
+    "packages/blueprint-qa/src/context.ts",
+    "packages/blueprint-qa/src/dimensions.ts",
+    "packages/blueprint-qa/src/geometry.ts",
+    "packages/blueprint-qa/src/index.ts",
+    "packages/blueprint-qa/src/openings.ts",
+    "packages/blueprint-qa/src/report.ts",
+    "packages/blueprint-qa/src/rules.ts",
+    "packages/blueprint-qa/src/stairs.ts",
+    "packages/blueprint-qa/tests/audit.test.ts",
+    "packages/blueprint-qa/tests/boundary.test.ts",
+    "packages/blueprint-qa/tests/circulation-stairs.test.ts",
+    "packages/blueprint-qa/tests/differential.test.ts",
+    "packages/blueprint-qa/tests/fixtures.ts",
+    "packages/blueprint-qa/tests/geometry-coverage.test.ts",
+    "packages/blueprint-qa/tests/rules.test.ts",
+    "packages/blueprint-qa/tsconfig.json",
+    "packages/boq-cost/README.md",
+    "packages/boq-cost/package.json",
+    "packages/boq-cost/src/calculate.ts",
+    "packages/boq-cost/src/contracts.ts",
+    "packages/boq-cost/src/demo.ts",
+    "packages/boq-cost/src/hash.ts",
+    "packages/boq-cost/src/index.ts",
+    "packages/boq-cost/src/report.ts",
+    "packages/boq-cost/tests/cost.test.ts",
+    "packages/boq-cost/tests/fixtures.ts",
+    "packages/boq-cost/tsconfig.json",
+    "packages/construction-calculations/README.md",
+    "packages/construction-calculations/package.json",
+    "packages/construction-calculations/src/calculate.ts",
+    "packages/construction-calculations/src/index.ts",
+    "packages/construction-calculations/src/precision.ts",
+    "packages/construction-calculations/src/recipes.ts",
+    "packages/construction-calculations/src/report.ts",
+    "packages/construction-calculations/src/specification.ts",
+    "packages/construction-calculations/tests/construction.test.ts",
+    "packages/construction-calculations/tests/fixtures.ts",
+    "packages/construction-calculations/tsconfig.json",
+    "packages/generator/README.md",
+    "packages/generator/package.json",
+    "packages/generator/src/blueprint/dimensions.ts",
+    "packages/generator/src/blueprint/generate.ts",
+    "packages/generator/src/blueprint/geometry.ts",
+    "packages/generator/src/blueprint/index.ts",
+    "packages/generator/src/blueprint/validation.ts",
+    "packages/generator/src/errors.ts",
+    "packages/generator/src/furniture.ts",
+    "packages/generator/src/generate.ts",
+    "packages/generator/src/geometry.ts",
+    "packages/generator/src/input.ts",
+    "packages/generator/src/invariants.ts",
+    "packages/generator/src/layout.ts",
+    "packages/generator/src/random.ts",
+    "packages/generator/tests/blueprint.test.ts",
+    "packages/generator/tests/browser-compatibility.ts",
+    "packages/generator/tests/building-v2-compatibility.test.ts",
+    "packages/generator/tests/fixtures/blueprint/cases.json",
+    "packages/generator/tests/furniture-pipeline.test.ts",
+    "packages/generator/tests/furniture.test.ts",
+    "packages/generator/tests/generate.test.ts",
+    "packages/generator/tests/geometry.test.ts",
+    "packages/generator/tests/input.test.ts",
+    "packages/generator/tests/invariants.test.ts",
+    "packages/generator/tsconfig.browser.json",
+    "packages/generator/tsconfig.json",
+    "packages/quantity-takeoff/package.json",
+    "packages/quantity-takeoff/src/index.ts",
+    "packages/quantity-takeoff/src/precision.ts",
+    "packages/quantity-takeoff/src/report.ts",
+    "packages/quantity-takeoff/tests/fixtures.ts",
+    "packages/quantity-takeoff/tests/takeoff.test.ts",
+    "packages/quantity-takeoff/tsconfig.json",
+    "packages/shared/package.json",
+    "packages/shared/src/api.ts",
+    "packages/shared/src/building-v2/README.md",
+    "packages/shared/src/building-v2/adapter.ts",
+    "packages/shared/src/building-v2/building-model.ts",
+    "packages/shared/src/building-v2/common.ts",
+    "packages/shared/src/building-v2/dimensions.ts",
+    "packages/shared/src/building-v2/geometry.ts",
+    "packages/shared/src/building-v2/index.ts",
+    "packages/shared/src/building-v2/levels.ts",
+    "packages/shared/src/building-v2/measurements.ts",
+    "packages/shared/src/building-v2/model-shape.ts",
+    "packages/shared/src/building-v2/openings.ts",
+    "packages/shared/src/building-v2/relationships.ts",
+    "packages/shared/src/building-v2/slabs.ts",
+    "packages/shared/src/building-v2/spaces.ts",
+    "packages/shared/src/building-v2/stairs.ts",
+    "packages/shared/src/building-v2/units.ts",
+    "packages/shared/src/building-v2/walls.ts",
+    "packages/shared/src/errors.ts",
+    "packages/shared/src/index.ts",
+    "packages/shared/src/types.ts",
+    "packages/shared/tests/browser-compatibility.ts",
+    "packages/shared/tests/building-v2-adapter.test.ts",
+    "packages/shared/tests/building-v2-model.test.ts",
+    "packages/shared/tests/building-v2-precision.test.ts",
+    "packages/shared/tests/contracts.test.ts",
+    "packages/shared/tests/fixtures/building-v2/explicit-openings.json",
+    "packages/shared/tests/fixtures/building-v2/invalid-crossed-room.json",
+    "packages/shared/tests/fixtures/building-v2/invalid-dangling-host.json",
+    "packages/shared/tests/fixtures/building-v2/multi-room.json",
+    "packages/shared/tests/fixtures/building-v2/single-room.json",
+    "packages/shared/tests/fixtures/building-v2/small-residence.json",
+    "packages/shared/tests/fixtures/building-v2/two-level.json",
+    "packages/shared/tsconfig.browser.json",
+    "packages/shared/tsconfig.build.json",
+    "packages/shared/tsconfig.json",
+    "packages/shared/vitest.config.ts",
+    "scripts/ensure-local-postgrest.mjs",
+    "scripts/investigate-supabase-500.ts",
+    "scripts/probe-postgrest-clock.ts",
+    "scripts/sentry-smoke.ts",
+    "scripts/smoke-container.mjs",
+    "scripts/test-local-supabase.mjs",
+    "supabase/config.toml",
+    "supabase/migrations/0001_core_tables.sql",
+    "supabase/migrations/0002_rate_tables.sql",
+    "supabase/migrations/0003_estimates_and_logs.sql",
+    "supabase/migrations/0004_rls_policies.sql",
+    "supabase/migrations/0005_idempotency.sql",
+    "supabase/migrations/0006_projects.sql",
+    "supabase/migrations/0007_quantity_takeoffs.sql",
+    "supabase/migrations/0008_construction_calculations.sql",
+    "supabase/migrations/0009_boq_costs.sql",
+    "supabase/migrations/0010_workflows.sql",
+    "supabase/migrations/0011_generation_freshness.sql",
+    "supabase/seed.sql",
+    "test-support/construction-acceptance.ts",
+    "test-support/cost-acceptance.ts",
+    "test-support/fixtures.ts",
+    "test-support/freshness-acceptance.ts",
+    "test-support/interpretation-acceptance.ts",
+    "test-support/interpretation-corpus.ts",
+    "test-support/postgres.ts",
+    "test-support/project-acceptance.ts",
+    "test-support/supabase-failure-evidence.ts",
+    "test-support/takeoff-acceptance.ts",
+    "test-support/workflow-acceptance.ts",
+    "tsconfig.base.json",
+    "tsconfig.json",
+    "vitest.config.ts",
+    "vitest.supabase.config.ts"
+  ],
+  "combinedCommitChanges": [
+    {
+      "path": ".dockerignore",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": ".env.example",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": ".github/workflows/backend-ci.yml",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "Dockerfile",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/ai/conversation-planner.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/src/ai/conversation-provider.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/src/app.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/config/env.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/contracts/conversations.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/src/contracts/projects.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/contracts/workflows.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/lib/conversation-repository.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/src/lib/generation-identity.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/lib/http-protection.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/lib/logger.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/lib/repository.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/lib/supabase.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/routes/conversations.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/src/routes/requirement-interpretation.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "apps/api/src/services/project-service.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/src/services/solver-v2-qa.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "apps/api/src/workflows/planner.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/tests/conversations.integration.test.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/tests/conversations.test.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "apps/api/tests/foundation.test.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/tests/interpretation.test.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/api/tests/solver-v2.integration.test.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "apps/api/tests/supabase.live.test.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "apps/web/README.md",
+      "status": "D",
+      "category": "historical frontend placeholder deletion; no frontend source imported"
+    },
+    {
+      "path": "docs/phase16-evidence/supabase-2026-10-01T12-47-59.278Z.json",
+      "status": "A",
+      "category": "historical Phase16 acceptance evidence bundled in combined commit"
+    },
+    {
+      "path": "docs/phase16-evidence/supabase-2026-10-02T10-55-49.937Z.json",
+      "status": "A",
+      "category": "historical Phase16 acceptance evidence bundled in combined commit"
+    },
+    {
+      "path": "docs/phase16-evidence/supabase-2026-10-02T10-56-58.755Z.json",
+      "status": "A",
+      "category": "historical Phase16 acceptance evidence bundled in combined commit"
+    },
+    {
+      "path": "docs/phase19-baseline-analysis.md",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-design.md",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/A-v1.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/B-L-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/B-U-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/C-relationships.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/D-two-floor.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/E-privacy-comparison.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/E-privacy.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/F-exposure-evaluation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/F-exposure.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/G-infeasible.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-postgres/H-complete-building.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/A-v1.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/B-L-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/B-U-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/C-relationships.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/D-two-floor.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/E-privacy-comparison.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/E-privacy.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/F-exposure-evaluation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/F-exposure.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/G-infeasible.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/acceptance-supabase/H-complete-building.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/baseline.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/benchmark-final.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/benchmark-final.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/benchmark.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/benchmark.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/check.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/check.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/container-solver.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/container-solver.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/database-preservation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/db-test.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/db-test.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/diff-check.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/diff-check.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/docker-final.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/docker-final.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/docker.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/docker.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/lint-final.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/lint-final.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/lint.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/lint.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/local-data-after.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/local-data-before.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/performance.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/preservation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/smoke.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/smoke.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/solver-initial.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/solver-v2.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/solver-v2.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/supabase-observations/supabase-2026-10-02T15-53-11.078Z.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/supabase.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/supabase.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/typecheck-final.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/typecheck-final.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/unit-final.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/unit-final.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/web-build.result.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/completion/web-build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/A-v1.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/B-L-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/B-U-site.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/C-relationships.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/D-two-floor.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/E-privacy-comparison.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/E-privacy.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/F-exposure-evaluation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/F-exposure.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/G-infeasible.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/acceptance/H-complete-building.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/all-tests.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/backend-lint.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/baseline-build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/baseline.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/benchmark.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/blueprint-qa.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/blueprint.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/check.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/construction.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/cost.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/db-test.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/diff-check.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/docker.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/generator.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/http-first.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/integration-1.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/integration-2.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/integration-3.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/integration-build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/interpretation.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/lint-first.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/lint-focused.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/lint.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/local-data-before.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/performance.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/preservation.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/projects.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/refined-build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/smoke.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/solver-final-focused.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/solver-first.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/solver-second.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/solver-v2.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/supabase-1.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/supabase-2.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/takeoff.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/test-build.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/typecheck-final-focused.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/typecheck-first.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/typecheck-second.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/typecheck-third.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/typecheck.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/unit.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/verification.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/resume/workflows.txt",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-evidence/v1-fixtures.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-example.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-review-report.md",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase19-verification.json",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "docs/phase20-design.md",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/acceptance-postgres.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/acceptance-supabase.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/baseline.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/benchmark-final.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/benchmark.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/build-initial.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/container-verification.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/conversations-initial.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/conversations-postgres.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/conversations-unit.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/conversations.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/database-before.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/docker-build.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-check.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-db.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-diff.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-docker.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-integration-1.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-integration-2.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-preservation-tests.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-smoke.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-supabase.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-targeted.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-unit.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/final-verification.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-01-build.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-02-typecheck.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-03-lint.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-04-test-unit.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-05-test-generator.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-06-test-blueprint.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-07-test-blueprint-qa.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-08-test-solver-v2.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-09-test-projects.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-10-test-takeoff.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-11-test-construction.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-12-test-cost.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-13-test-workflows.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-14-test-interpretation.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-15-test-integration.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-16-test-integration.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-17-test-conversations.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-18-test-supabase.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-19-check.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-20-db-test.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/gate-21-web-build.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/lint-initial.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/lint.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/merge-boundary-regression.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/migration-local-retry.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/migration-local.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/performance.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/room-intent-tests.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/A-v1.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/B-L-site.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/B-U-site.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/C-relationships.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/D-two-floor.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/E-privacy-comparison.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/E-privacy.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/F-exposure-evaluation.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/F-exposure.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/G-infeasible.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-postgres/H-complete-building.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/A-v1.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/B-L-site.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/B-U-site.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/C-relationships.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/D-two-floor.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/E-privacy-comparison.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/E-privacy.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/F-exposure-evaluation.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/F-exposure.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/G-infeasible.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/solver-v2-supabase/H-complete-building.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/supabase-observations/supabase-2026-10-03T05-12-56.765Z.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/supabase-observations/supabase-2026-10-03T05-24-58.458Z.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/typecheck-followup.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/typecheck-initial.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/typecheck-latest.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/typecheck-room.txt",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "docs/phase20-evidence/verification.json",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "package.json",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "packages/blueprint-qa/src/architectural-constraints.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/blueprint-qa/src/audit.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/blueprint-qa/src/circulation.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/blueprint-qa/src/core.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/blueprint-qa/src/options.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/blueprint-qa/src/site-allocations.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/blueprint/entities.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/blueprint/input.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/blueprint/layout.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/blueprint/types.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/index.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/evaluate.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/generate.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/index.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/input.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/site.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/src/solver-v2/topology.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/generator/tests/solver-v2.test.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/quantity-takeoff/src/calculate.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/shared/src/building-v2/invariants.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/shared/src/building-v2/site-invariants.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "packages/shared/src/building-v2/site.ts",
+      "status": "M",
+      "category": "Phase19"
+    },
+    {
+      "path": "scripts/benchmark-conversations.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "scripts/benchmark-solver-v2.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "supabase/migrations/0012_conversations.sql",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "supabase/tests/database.test.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "supabase/tests/rls.sql",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "test-support/conversation-acceptance.ts",
+      "status": "A",
+      "category": "Phase20"
+    },
+    {
+      "path": "test-support/pg-backend.ts",
+      "status": "M",
+      "category": "shared Phase19/20 integration; requires hunk review for any historical separation"
+    },
+    {
+      "path": "test-support/solver-v2-acceptance.ts",
+      "status": "A",
+      "category": "Phase19"
+    },
+    {
+      "path": "test-support/solver-v2-fixtures.ts",
+      "status": "A",
+      "category": "Phase19"
+    }
+  ],
+  "note": "Categories describe responsibility, not separate commits. Shared files contain multiple phases."
+}

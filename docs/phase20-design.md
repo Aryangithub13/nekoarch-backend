@@ -1,5 +1,7 @@
 # Phase 20 — conversational architectural intelligence
 
+> Stabilization update (2026-10-03): the starting-point narrative below is historical. Current HEAD is the combined Phase 19/20 commit `f17a337`, and `designflow` is intentionally backend-only. See [the final review](phase20-review-report.md) and [verification manifest](phase20-verification.json). Unresolved relative bedroom moves now persist in the defaulted `pendingBedroomMove` state field until explicit allocation/native clarification. Native replacements supersede pending language for the same fields before validation. Every state-return path, including disabled mode, trims multibyte display history after setting its summary. Older states lacking the new boolean remain readable; no migration or historical revision rewrite is required.
+
 ## Verified starting point
 
 The working directory for this implementation is the Linux `designflow` checkout, not the Windows path in the request. HEAD is `094e6856a61abfeee78881dbc98fe34ef10eb970`, branch `main`. The last verified checkpoint is `backend-v1-phase18-complete`. Phase 19 is present as uncommitted implementation and evidence; `backend-v1-phase19-complete` does not exist. No commit, tag, branch change, staging, reset, stash or push was performed.

@@ -1,0 +1,12 @@
+{
+  "label": "test:unit",
+  "command": [
+    "npm",
+    "run",
+    "test:unit"
+  ],
+  "startedAt": "2026-10-03T10:50:08.756137+00:00",
+  "durationSeconds": 38.185,
+  "exitCode": 0,
+  "log": "test:unit.txt"
+}

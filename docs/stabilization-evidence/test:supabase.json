@@ -1,0 +1,12 @@
+{
+  "label": "test:supabase",
+  "command": [
+    "npm",
+    "run",
+    "test:supabase"
+  ],
+  "startedAt": "2026-10-03T10:54:41.345944+00:00",
+  "durationSeconds": 66.455,
+  "exitCode": 0,
+  "log": "test:supabase.txt"
+}

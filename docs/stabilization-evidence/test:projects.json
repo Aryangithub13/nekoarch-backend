@@ -1,0 +1,12 @@
+{
+  "label": "test:projects",
+  "command": [
+    "npm",
+    "run",
+    "test:projects"
+  ],
+  "startedAt": "2026-10-03T10:51:49.852116+00:00",
+  "durationSeconds": 18.117,
+  "exitCode": 0,
+  "log": "test:projects.txt"
+}

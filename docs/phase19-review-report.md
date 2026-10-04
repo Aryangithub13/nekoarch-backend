@@ -1,5 +1,7 @@
 **Phase 19 — Precision Solver V2 completion report**
 
+> Historical completion report. The official repository is now explicitly backend-only; earlier frontend and uncommitted-state statements describe the historical working copy. See [the final stabilization review](phase19-final-review.md) and [current release evidence](stabilization-report.md) for the verified current state.
+
 Status: **COMPLETE — ready for manual review**. The outstanding implementation-verification work is finished. Completion means the bounded Phase 19 backend scope and local release checks; it does not mean a deployment, Git commit, tag, or certification of architectural/engineering compliance.
 
 **What was pending, and what this pass completed.** The incoming work already contained the V2 solver, version selection, independent QA additions, API/workflow integration and regression fixtures. Earlier logs still showed frontend lint errors, a failed unit import-boundary check, a cost-test timeout, an incomplete Docker build, and a failed container smoke test. There was no final Phase 19 review report or root verification manifest.

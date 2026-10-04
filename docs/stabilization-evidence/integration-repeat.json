@@ -1,0 +1,12 @@
+{
+  "label": "integration-repeat",
+  "command": [
+    "npm",
+    "run",
+    "test:integration"
+  ],
+  "startedAt": "2026-10-03T10:57:41.322590+00:00",
+  "durationSeconds": 54.172,
+  "exitCode": 0,
+  "log": "integration-repeat.txt"
+}

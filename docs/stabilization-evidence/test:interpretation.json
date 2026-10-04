@@ -1,0 +1,12 @@
+{
+  "label": "test:interpretation",
+  "command": [
+    "npm",
+    "run",
+    "test:interpretation"
+  ],
+  "startedAt": "2026-10-03T10:53:29.396453+00:00",
+  "durationSeconds": 17.537,
+  "exitCode": 0,
+  "log": "test:interpretation.txt"
+}

@@ -1,0 +1,12 @@
+{
+  "label": "test:blueprint-qa",
+  "command": [
+    "npm",
+    "run",
+    "test:blueprint-qa"
+  ],
+  "startedAt": "2026-10-03T10:51:10.181317+00:00",
+  "durationSeconds": 14.025,
+  "exitCode": 0,
+  "log": "test:blueprint-qa.txt"
+}

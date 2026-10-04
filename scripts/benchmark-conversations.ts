@@ -12,6 +12,7 @@ import { parseEnv } from '../apps/api/src/config/env.js';
 import { ConversationSchema,ConversationIntentSchema,ConversationMessageSchema } from '../apps/api/src/contracts/conversations.js';
 import { initialConversation,planConversation,changedFields } from '../apps/api/src/ai/conversation-planner.js';
 import { createLocalInferenceProvider } from '../apps/api/src/ai/conversation-provider.js';
+import { ConversationRepository } from '../apps/api/src/lib/conversation-repository.js';
 
 const measurements:Record<string,number[]>={};
 async function time<T>(name:string,run:()=>Promise<T>){const start=performance.now();try{return await run();}finally{(measurements[name]??=[]).push(performance.now()-start);}}
@@ -41,6 +42,18 @@ try {
    await time('native-merge-and-validation',async()=>{const r=structuredClone(state.requirements!);r.rooms.find(room=>room.type==='kitchen')!.minWidthMm=2400;return normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r));});
    await time('proposal-diff-and-identity',async()=>({diff:changedFields(state.baseRequirements,state.requirements!),hash:requirementsHash(state.requirements)}));
  }
+ const leases=new ConversationRepository(backend.repository('owner'),uid,secret);
+ await leases.write('reserve',{projectId:project.id,conversationId:cid,messageId:randomUUID(),expectedVersion:state.version,baseRevisionId:null,fingerprint:'abandoned-benchmark-fixture',token:randomUUID()});
+ const recoveryPayload={messageId:randomUUID(),expectedVersion:state.version,baseRevisionId:null,text:'seed recovered'};
+ const blocked=await time('active-lease-conflict',()=>app.inject({method:'POST',url:`${url}/messages`,headers,payload:recoveryPayload}));
+ if(blocked.statusCode!==409)throw new Error('Active lease did not reject competing message');
+ // Expire only this disposable fixture; measure recovery, not a 60-second sleep.
+ await db.pool.query("update architectural_conversations set pending_until=clock_timestamp()-interval '1 second' where id=$1",[cid]);
+ const recovered=await time('expired-lease-recovery',()=>app.inject({method:'POST',url:`${url}/messages`,headers,payload:recoveryPayload}));
+ if(recovered.statusCode!==200)throw new Error('Expired lease did not recover');state=ConversationSchema.parse(recovered.json()).state;
+ let large=initialConversation(null,state.requirements,false);
+ for(let i=0;i<30;i++) large=await time('bounded-multibyte-disabled-state',()=>planConversation(large,ConversationMessageSchema.parse({messageId:randomUUID(),expectedVersion:large.version,baseRevisionId:null,text:'房'.repeat(4000)}),{disabled:true}));
+ if(Buffer.byteLength(JSON.stringify(large))>120000)throw new Error('Bounded history exceeded trimming budget');
  const payload={messageId:randomUUID(),expectedVersion:state.version,baseRevisionId:null,text:'seed concurrent'};
  const concurrent=await time('concurrent-ten-messages',()=>Promise.all(Array.from({length:10},()=>app.inject({method:'POST',url:`${url}/messages`,headers,payload}))));
  const successful=concurrent.find(r=>r.statusCode===200);if(!successful)throw new Error('No concurrent request completed');state=ConversationSchema.parse(successful.json()).state;

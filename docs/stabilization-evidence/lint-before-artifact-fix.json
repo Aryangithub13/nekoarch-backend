@@ -1,0 +1,12 @@
+{
+  "label": "lint-before-artifact-fix",
+  "command": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "startedAt": "2026-10-03T10:50:05.430087+00:00",
+  "durationSeconds": 3.326,
+  "exitCode": 1,
+  "log": "lint-before-artifact-fix.txt"
+}

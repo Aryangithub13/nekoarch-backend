@@ -1,0 +1,11 @@
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/stabilization-evidence/container-acceptance.mjs
+  27:1    error  'console' is not defined  no-undef
+  27:331  error  'process' is not defined  no-undef
+
+✖ 2 problems (2 errors, 0 warnings)
+

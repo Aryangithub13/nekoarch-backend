@@ -5,13 +5,14 @@ import { auditBlueprint } from '@designflow/blueprint-qa';
 import { modelHash } from '../apps/api/src/lib/generation-identity.js';
 import { solverV2QaOptions } from '../apps/api/src/services/solver-v2-qa.js';
 import { normalizeBlueprintV2Requirements } from '@designflow/generator';
-import { solverInput, rectangleSite, lSite, relationshipInput } from '../test-support/solver-v2-fixtures.js';
+import { solverInput, rectangleSite, lSite, uSite, relationshipInput } from '../test-support/solver-v2-fixtures.js';
 
 const cases: { name: string; input: BlueprintV2Requirements; compareV1: boolean }[] = [
   ...[1, 2, 3].map(bedrooms => ({ name: `${bedrooms}BHK`, input: solverInput({ rooms: [{ type: 'bedroom' as const, count: bedrooms }, { type: 'living' as const, count: 1 }, { type: 'kitchen' as const, count: 1 }, { type: 'bathroom' as const, count: 1 }] }), compareV1: true })),
   { name: '24-rooms', input: solverInput({ site: { boundary: rectangleSite(60000, 60000), northMilliDegrees: 0 }, rooms: [{ type: 'bedroom', count: 20 }, { type: 'bathroom', count: 2 }, { type: 'kitchen', count: 1 }, { type: 'living', count: 1 }] }), compareV1: true },
   { name: 'two-floor', input: solverInput({ floors: 2 }), compareV1: true },
   { name: 'L-site', input: solverInput({ site: { boundary: lSite, northMilliDegrees: 0 } }), compareV1: false },
+  { name: 'U-site', input: solverInput({ site: { boundary: uSite, northMilliDegrees: 0 } }), compareV1: false },
   { name: 'relationship-chain', input: relationshipInput(), compareV1: true },
   { name: 'dense-infeasible-graph', input: solverInput({ rooms: [{ type: 'bedroom', count: 5 }], relationships: Array.from({ length: 5 }, (_, i) => Array.from({ length: i }, (_, j) => ({ from: { type: 'bedroom' as const, ordinal: i + 1 }, to: { type: 'bedroom' as const, ordinal: j + 1 }, kind: 'connected' as const, strength: 'hard' as const }))).flat(), solver: { maxCandidates: 128 } }), compareV1: true },
   { name: 'infeasible-area', input: solverInput({ site: { boundary: rectangleSite(2500, 2500), northMilliDegrees: 0 } }), compareV1: true },

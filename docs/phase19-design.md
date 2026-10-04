@@ -1,5 +1,7 @@
 # Phase 19 — Precision Solver V2 design
 
+> Current repository clarification: `designflow` is the authoritative standalone backend. Historical frontend references below do not create a frontend dependency. Current verification and Git checkpoint analysis are in [the final review](phase19-final-review.md).
+
 Completion follow-up (2026-10-02): see [the final review report](phase19-review-report.md) and [verification manifest](phase19-verification.json). The `completion/` evidence supersedes failed or incomplete `resume/` gates. The final pass fixes the frontend lint blockers and API Docker packaging, adds separate live acceptance/benchmark evidence destinations, and preserves the solver implementation, V1 fixtures, dependency lockfile and all eleven migrations.
 
 ## Actual baseline and continuation plan

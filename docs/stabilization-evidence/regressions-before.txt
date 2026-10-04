@@ -1,0 +1,94 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/conversations.test.ts (34 tests | 3 failed | 31 skipped) 79ms
+   ↓ bounded native conversation reasoning > persists exact dimensions and explicit feet correction without rebuilding unrelated defaults
+   ↓ bounded native conversation reasoning > keeps an L-site and all V2 preferences when modifying kitchen minima
+   ↓ bounded native conversation reasoning > does not infer two floors over a persisted one-floor constraint
+   ↓ bounded native conversation reasoning > does not downgrade V2 or resize a constrained site from a rectangular phrase
+   × bounded native conversation reasoning > lets an explicit native replacement resolve a pending constrained-site clarification 32ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   × bounded native conversation reasoning > keeps an unresolved relative bedroom move blocked across unrelated turns 9ms
+     → expected 'AWAITING_APPROVAL' to be 'NEEDS_CLARIFICATION' // Object.is equality
+   × bounded native conversation reasoning > bounds multibyte display history in disabled mode while preserving native requirements 36ms
+     → expected 244603 to be less than 120000
+   ↓ bounded native conversation reasoning > does not reapply an old site intent over an explicitly updated native site
+   ↓ bounded native conversation reasoning > keeps 20 messages and all exact structured intent over a long conversation
+   ↓ bounded native conversation reasoning > blocks unsupported requirements and keeps unsupported intent until explicitly removed
+   ↓ bounded native conversation reasoning > can apply and remove V2 scoring preferences while preserving hard privacy constraints
+   ↓ bounded native conversation reasoning > understands explicit room dimensions, supported movement and service adjacency
+   ↓ bounded native conversation reasoning > asks instead of applying singular room dimensions to multiple bedrooms
+   ↓ bounded native conversation reasoning > diffs the full proposal against the approved base across multiple edits
+   ↓ bounded native conversation reasoning > clarifies relative movement from unspecified allocations and moves a counted room from explicit allocations
+   ↓ bounded native conversation reasoning > disabled mode returns no proposal and cannot authorize a generation
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://example.com/v1/chat/completions
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://localhost/v1/chat/completions
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://169.254.169.254/v1/chat/completions
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint file:///etc/passwd
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://user:secret@127.0.0.1/v1/chat/completions
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://127.0.0.1/other
+   ↓ bounded native conversation reasoning > rejects untrusted inference endpoint http://127.0.0.1/v1/chat/completions?key=secret
+   ↓ bounded native conversation reasoning > rejects model-authored privileged fields and user-authored forged state
+   ↓ real optional compatible HTTP adapter against controlled local server > makes a real bounded JSON HTTP request without including credentials in prompts
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies malformed without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies oversize without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies privileged without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies tools without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies unavailable without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies redirect without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > classifies timeout without retaining raw provider details
+   ↓ real optional compatible HTTP adapter against controlled local server > honors caller cancellation and limits context before making a request
+   ↓ real optional compatible HTTP adapter against controlled local server > uses controlled fallback on provider failure without inventing success
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/conversations.test.ts > bounded native conversation reasoning > lets an explicit native replacement resolve a pending constrained-site clarification
+AssertionError: expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+Expected: "AWAITING_APPROVAL"
+Received: "NEEDS_CLARIFICATION"
+
+ ❯ apps/api/tests/conversations.test.ts:36:22
+     34|     const site={...base.site,northMilliDegrees:90000};
+     35|     s=await planConversation(s,message('Use these values',{nativeUpdat…
+     36|     expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements).…
+       |                      ^
+     37|   });
+     38|   it('keeps an unresolved relative bedroom move blocked across unrelat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  apps/api/tests/conversations.test.ts > bounded native conversation reasoning > keeps an unresolved relative bedroom move blocked across unrelated turns
+AssertionError: expected 'AWAITING_APPROVAL' to be 'NEEDS_CLARIFICATION' // Object.is equality
+
+Expected: "NEEDS_CLARIFICATION"
+Received: "AWAITING_APPROVAL"
+
+ ❯ apps/api/tests/conversations.test.ts:43:22
+     41|     s=await planConversation(s,message('Move one bedroom upstairs'));
+     42|     s=await planConversation(s,message('seed changed'));
+     43|     expect(s.status).toBe('NEEDS_CLARIFICATION');expect(s.proposal).to…
+       |                      ^
+     44|     s=await planConversation(s,message('Put two bedrooms upstairs'));
+     45|     expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  apps/api/tests/conversations.test.ts > bounded native conversation reasoning > bounds multibyte display history in disabled mode while preserving native requirements
+AssertionError: expected 244603 to be less than 120000
+ ❯ apps/api/tests/conversations.test.ts:51:82
+     49|     const base=normalizeBlueprintV2Requirements(solverInput());let s=i…
+     50|     for(let i=0;i<20;i++) s=await planConversation(s,message('房'.repea…
+     51|     expect(s.status).toBe('FAILED');expect(Buffer.byteLength(JSON.stri…
+       |                                                                                  ^
+     52|     expect(s.requirements).toEqual(base);expect(s.proposal).toBeNull();
+     53|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 31 skipped (34)
+   Start at  16:11:07
+   Duration  715ms (transform 307ms, setup 0ms, collect 483ms, tests 79ms, environment 0ms, prepare 42ms)
+

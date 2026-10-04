@@ -1,0 +1,12 @@
+{
+  "label": "test:solver-v2",
+  "command": [
+    "npm",
+    "run",
+    "test:solver-v2"
+  ],
+  "startedAt": "2026-10-03T10:51:24.206614+00:00",
+  "durationSeconds": 25.645,
+  "exitCode": 0,
+  "log": "test:solver-v2.txt"
+}

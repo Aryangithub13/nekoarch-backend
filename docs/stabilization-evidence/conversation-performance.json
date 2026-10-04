@@ -1,0 +1,192 @@
+{
+  "recordedAt": "2026-10-03T10:56:05.840Z",
+  "environment": "Isolated embedded PostgreSQL, Fastify injection, local mock inference; not production load",
+  "summary": {
+    "project:project_write:create": {
+      "runs": 1,
+      "minMs": 5.766810000000078,
+      "medianMs": 5.766810000000078,
+      "p95Ms": 5.766810000000078,
+      "maxMs": 5.766810000000078
+    },
+    "project:project_read:get": {
+      "runs": 3,
+      "minMs": 1.1032430000000204,
+      "medianMs": 1.7205860000001394,
+      "p95Ms": 2.0990670000001046,
+      "maxMs": 2.0990670000001046
+    },
+    "database:conversation_write:create": {
+      "runs": 1,
+      "minMs": 3.0346850000000813,
+      "medianMs": 3.0346850000000813,
+      "p95Ms": 3.0346850000000813,
+      "maxMs": 3.0346850000000813
+    },
+    "conversation-create": {
+      "runs": 1,
+      "minMs": 7.2071860000000925,
+      "medianMs": 7.2071860000000925,
+      "p95Ms": 7.2071860000000925,
+      "maxMs": 7.2071860000000925
+    },
+    "database:conversation_write:reserve": {
+      "runs": 43,
+      "minMs": 0.9704710000000887,
+      "medianMs": 1.3664110000001983,
+      "p95Ms": 13.910382000000027,
+      "maxMs": 15.496380000000045
+    },
+    "database:conversation_write:finish": {
+      "runs": 32,
+      "minMs": 1.1553450000001249,
+      "medianMs": 1.5660930000001372,
+      "p95Ms": 3.5631190000001425,
+      "maxMs": 7.261175000000094
+    },
+    "message-total": {
+      "runs": 30,
+      "minMs": 3.868752000000086,
+      "medianMs": 4.997767000000067,
+      "p95Ms": 8.059551000000056,
+      "maxMs": 16.919785000000047
+    },
+    "database:conversation_read:get": {
+      "runs": 31,
+      "minMs": 0.7220389999999952,
+      "medianMs": 0.9315679999999702,
+      "p95Ms": 1.462724999999864,
+      "maxMs": 2.9438199999999597
+    },
+    "state-retrieval": {
+      "runs": 30,
+      "minMs": 1.2369220000000496,
+      "medianMs": 1.557013999999981,
+      "p95Ms": 2.9228660000001128,
+      "maxMs": 4.042731000000003
+    },
+    "clarification-plan": {
+      "runs": 30,
+      "minMs": 0.1842460000000301,
+      "medianMs": 0.20645700000000033,
+      "p95Ms": 0.49246400000015456,
+      "maxMs": 0.8154890000000705
+    },
+    "deterministic-interpretation": {
+      "runs": 30,
+      "minMs": 0.03757499999983338,
+      "medianMs": 0.04476999999997133,
+      "p95Ms": 0.062370000000100845,
+      "maxMs": 0.15358500000002095
+    },
+    "native-merge-and-validation": {
+      "runs": 30,
+      "minMs": 0.05873799999994844,
+      "medianMs": 0.06914400000005116,
+      "p95Ms": 0.12830200000007608,
+      "maxMs": 0.18410700000004
+    },
+    "proposal-diff-and-identity": {
+      "runs": 30,
+      "minMs": 0.08339300000011463,
+      "medianMs": 0.09833899999989626,
+      "p95Ms": 0.1695799999999963,
+      "maxMs": 0.2365589999999429
+    },
+    "active-lease-conflict": {
+      "runs": 1,
+      "minMs": 2.11205700000005,
+      "medianMs": 2.11205700000005,
+      "p95Ms": 2.11205700000005,
+      "maxMs": 2.11205700000005
+    },
+    "expired-lease-recovery": {
+      "runs": 1,
+      "minMs": 5.054898999999978,
+      "medianMs": 5.054898999999978,
+      "p95Ms": 5.054898999999978,
+      "maxMs": 5.054898999999978
+    },
+    "bounded-multibyte-disabled-state": {
+      "runs": 30,
+      "minMs": 0.5154430000000048,
+      "medianMs": 0.7321660000000065,
+      "p95Ms": 1.6689719999999397,
+      "maxMs": 2.56240600000001
+    },
+    "concurrent-ten-messages": {
+      "runs": 1,
+      "minMs": 19.777137999999923,
+      "medianMs": 19.777137999999923,
+      "p95Ms": 19.777137999999923,
+      "maxMs": 19.777137999999923
+    },
+    "database:conversation_read:replay": {
+      "runs": 1,
+      "minMs": 1.3027850000000853,
+      "medianMs": 1.3027850000000853,
+      "p95Ms": 1.3027850000000853,
+      "maxMs": 1.3027850000000853
+    },
+    "database:conversation_write:approve-start": {
+      "runs": 1,
+      "minMs": 1.6033199999999397,
+      "medianMs": 1.6033199999999397,
+      "p95Ms": 1.6033199999999397,
+      "maxMs": 1.6033199999999397
+    },
+    "database:conversation_write:submit": {
+      "runs": 1,
+      "minMs": 61.446684000000005,
+      "medianMs": 61.446684000000005,
+      "p95Ms": 61.446684000000005,
+      "maxMs": 61.446684000000005
+    },
+    "approved-generation-qa-commit": {
+      "runs": 1,
+      "minMs": 133.41118899999992,
+      "medianMs": 133.41118899999992,
+      "p95Ms": 133.41118899999992,
+      "maxMs": 133.41118899999992
+    },
+    "local-mock-http-response-validation": {
+      "runs": 10,
+      "minMs": 0.8594900000000507,
+      "medianMs": 1.3464360000000397,
+      "p95Ms": 18.600560000000087,
+      "maxMs": 18.600560000000087
+    },
+    "local-mock-timeout-10ms": {
+      "runs": 5,
+      "minMs": 9.777344000000085,
+      "medianMs": 10.568806000000222,
+      "p95Ms": 11.403990999999905,
+      "maxMs": 11.403990999999905
+    }
+  },
+  "concurrentStatusCodes": [
+    200,
+    409,
+    409,
+    200,
+    200,
+    409,
+    200,
+    200,
+    409,
+    409
+  ],
+  "retainedMessages": 20,
+  "stateBytes": 5889,
+  "peakRssKiB": 243488,
+  "tokenUsage": null,
+  "tokenUsageReason": "No real model configured; mock HTTP returns no usage accounting",
+  "acceptedIdentity": {
+    "identityVersion": "generation-freshness-v1",
+    "generationId": "89bb1598-d585-46d9-8af1-5d38d396aedb",
+    "requirementsHash": "4b0c3b1db7a8bccde80e13dae2b4384f87e2bbeec24664efb16e587109c9c755",
+    "modelHash": "a78228287983598866b8b06c88b56455c645f6de5f25b8e646ad89bcc72a839e",
+    "seed": "concurrent"
+  },
+  "qa": "PASS"
+}

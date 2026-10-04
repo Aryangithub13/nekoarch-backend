@@ -1,0 +1,12 @@
+{
+  "label": "sandbox-check",
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "startedAt": "2026-10-03T10:37:41.687532+00:00",
+  "durationSeconds": 172.67,
+  "exitCode": 1,
+  "log": "sandbox-check.txt"
+}

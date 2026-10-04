@@ -1,0 +1,13 @@
+{
+  "label": "benchmark-conversations",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "scripts/benchmark-conversations.ts"
+  ],
+  "startedAt": "2026-10-03T10:56:03.741241+00:00",
+  "durationSeconds": 2.138,
+  "exitCode": 0,
+  "log": "benchmark-conversations.txt"
+}

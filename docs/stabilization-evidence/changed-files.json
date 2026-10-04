@@ -1,0 +1,597 @@
+{
+  "incomingHead": "f17a33703b226117ad3cbfa4f25a1889dccce71b",
+  "files": [
+    {
+      "path": "apps/api/src/ai/conversation-planner.ts",
+      "status": "modified",
+      "category": "Phase20 production repair"
+    },
+    {
+      "path": "apps/api/src/contracts/conversations.ts",
+      "status": "modified",
+      "category": "Phase20 production repair"
+    },
+    {
+      "path": "apps/api/tests/conversations.integration.test.ts",
+      "status": "modified",
+      "category": "Phase20 regression and durability verification"
+    },
+    {
+      "path": "apps/api/tests/conversations.test.ts",
+      "status": "modified",
+      "category": "Phase20 regression and durability verification"
+    },
+    {
+      "path": "docs/data-preservation-report.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase19-20-known-limitations.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase19-design.md",
+      "status": "modified",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase19-final-review.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase19-final-verification.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase19-review-report.md",
+      "status": "modified",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase20-design.md",
+      "status": "modified",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase20-review-report.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/phase20-verification.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/repository-reconciliation.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/security-audit.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/benchmark-conversations.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/benchmark-conversations.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/benchmark-solver.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/benchmark-solver.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/build.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/build.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/changed-files.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/check.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/check.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/container-acceptance.mjs",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/conversation-performance.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/conversation-postgres.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/conversation-supabase.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/data-preservation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/database-after.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/database-before.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/db:test.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/db:test.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/diff-check.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/diff-check.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-acceptance.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-acceptance.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-build.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-build.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-smoke.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/docker-smoke.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/historical-file-inventory.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/incoming.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/integration-repeat.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/integration-repeat.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/lint-before-artifact-fix.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/lint-before-artifact-fix.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/lint.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/lint.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/migration-preservation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/phase18-to-incoming-files.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/provider-environment.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/regressions-before.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/retained-test-fixtures.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/run-gates.py",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/sandbox-check.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/sandbox-check.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/snapshot-local-db.py",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-performance.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/A-v1.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/B-L-site.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/B-U-site.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/C-relationships.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/D-two-floor.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/E-privacy-comparison.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/E-privacy.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/F-exposure-evaluation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/F-exposure.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/G-infeasible.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-postgres/H-complete-building.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/A-v1.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/B-L-site.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/B-U-site.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/C-relationships.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/D-two-floor.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/E-privacy-comparison.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/E-privacy.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/F-exposure-evaluation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/F-exposure.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/G-infeasible.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/solver-supabase/H-complete-building.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/source-preservation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/supabase-observations/supabase-2026-10-03T10-54-59.144Z.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:blueprint-qa.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:blueprint-qa.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:blueprint.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:blueprint.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:construction.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:construction.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:conversations.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:conversations.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:cost.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:cost.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:generator.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:generator.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:integration.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:integration.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:interpretation.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:interpretation.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:projects.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:projects.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:solver-v2.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:solver-v2.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:supabase.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:supabase.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:takeoff.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:takeoff.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:unit.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:unit.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:workflows.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/test:workflows.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/typecheck.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/typecheck.txt",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-evidence/verification.json",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "docs/stabilization-report.md",
+      "status": "new",
+      "category": "Combined release documentation and reproducible evidence"
+    },
+    {
+      "path": "scripts/benchmark-conversations.ts",
+      "status": "modified",
+      "category": "Phase20 verification coverage"
+    },
+    {
+      "path": "scripts/benchmark-solver-v2.ts",
+      "status": "modified",
+      "category": "Phase19 verification coverage"
+    },
+    {
+      "path": "test-support/conversation-acceptance.ts",
+      "status": "modified",
+      "category": "Phase20 regression and durability verification"
+    }
+  ],
+  "count": 118,
+  "allUnstaged": true
+}

@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-10-03T11:04:46.503266+00:00",
+  "headUnchanged": true,
+  "branchUnchanged": true,
+  "tagsUnchanged": true,
+  "missingIncomingFiles": [],
+  "modifiedIncomingFiles": [
+    "apps/api/src/ai/conversation-planner.ts",
+    "apps/api/src/contracts/conversations.ts",
+    "apps/api/tests/conversations.integration.test.ts",
+    "apps/api/tests/conversations.test.ts",
+    "docs/phase19-design.md",
+    "docs/phase19-review-report.md",
+    "docs/phase20-design.md",
+    "scripts/benchmark-conversations.ts",
+    "scripts/benchmark-solver-v2.ts",
+    "test-support/conversation-acceptance.ts"
+  ],
+  "unchangedIncomingFiles": 649,
+  "historicalMigrationsAllUnchanged": true
+}

@@ -1,0 +1,12 @@
+{
+  "label": "test:blueprint",
+  "command": [
+    "npm",
+    "run",
+    "test:blueprint"
+  ],
+  "startedAt": "2026-10-03T10:51:02.533093+00:00",
+  "durationSeconds": 7.648,
+  "exitCode": 0,
+  "log": "test:blueprint.txt"
+}

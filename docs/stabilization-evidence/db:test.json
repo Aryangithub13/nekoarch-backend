@@ -1,0 +1,12 @@
+{
+  "label": "db:test",
+  "command": [
+    "npm",
+    "run",
+    "db:test"
+  ],
+  "startedAt": "2026-10-03T10:55:47.800834+00:00",
+  "durationSeconds": 2.347,
+  "exitCode": 0,
+  "log": "db:test.txt"
+}

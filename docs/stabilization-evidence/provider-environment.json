@@ -1,0 +1,11 @@
+{
+  "executables": {
+    "ollama": null,
+    "llama-server": null,
+    "vllm": null,
+    "lms": null
+  },
+  "ollamaDefaultManifestsPresent": false,
+  "configuredFields": {},
+  "realModelEvaluation": "NOT EXECUTED: no discovered local model runtime; reproducible controlled mock HTTP only"
+}

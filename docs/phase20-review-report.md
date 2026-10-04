@@ -1,0 +1,21 @@
+# Phase 20 final review — 2026-10-03
+
+**FULLY IMPLEMENTED AND VERIFIED within the documented bounded backend scope.**
+
+Owner-scoped conversation state, finite language interpretation, strict native merging, V2 preservation, proposal diff/identity, explicit approval, existing solver/QA invocation, signed atomic revision/receipt persistence and bounded read-only tools were audited. The optional numeric-loopback adapter was verified with controlled actual HTTP mocks; no real model language accuracy is claimed.
+
+1. **Unresolved bedroom moves could silently become proposals.** The fallback parser represented “move one bedroom upstairs” as an absolute upstairs count. The planner asked for clarification when the source allocation was unknown but retained that count in pending intent. A later unrelated seed edit applied it. The planner now removes that inferred allocation and persists a defaulted `pendingBedroomMove` flag until an explicit allocation or native room replacement resolves it. Tests cover the multi-turn failure, persistence and repair through both PostgreSQL and live Supabase.
+2. **Explicit native clarifications could remain stuck.** Pending natural-language site/room/relationship constraints were applied before their explicit native replacement, re-adding the clarification the replacement was intended to resolve. `supersedeNativeIntent` clears language fields covered by the supplied native objects before validation; omitted fields and V2 intent stay intact. A constrained L-site regression now accepts the exact native site replacement and preserves unrelated requirements.
+3. **Disabled mode bypassed history trimming.** Its early return retained twenty 4,000-character multibyte messages, reaching 244,603 serialized bytes in the reproducer and violating the 128 KiB database bound. A shared finalizer now computes the summary then trims display messages on both ordinary and disabled paths while preserving exact native requirements. The regression and bounded-state benchmark pass below 120,000 bytes.
+
+The original three failures are retained in [regressions-before.txt](stabilization-evidence/regressions-before.txt). Tests, budgets, lint rules and security controls were not relaxed. No Phase 19 solver correction was necessary. U-site and conversation recovery benchmark coverage was added. A new container-test artifact initially failed lint because Node globals were not imported; explicit imports fixed that artifact, and final lint passes.
+
+Final conversation suite: **52 passed** (34 unit/provider checks and 18 real-PostgreSQL acceptance/security cases). Full `check`: **1,840 core tests**, followed by overlapping **133 interpreter** and **52 conversation** checks. Two standalone integration runs: **179 passed each**. Local Supabase: **84 passed**; database/RLS: **51 passed**. Production image, lifecycle smoke and compiled conversation/V2 acceptance passed. These totals overlap and must not be summed.
+
+Durability evidence covers quota races, concurrent exact approval, expired/mismatched/superseded proposal rejection, lease reclamation and stale workers, database receipt failure with transaction rollback, and a lost response after a committed write replayed through another API instance. Native clarification and unresolved bedroom-move corrections are tested through both PostgreSQL and live Supabase. All existing database rows, migrations and RLS policy state remain unchanged. New retained test artifacts are separately inventoried.
+
+`pendingBedroomMove` is an additive defaulted state field; no migration is needed to read older persisted states. Structured requirements remain authoritative; trimmed display history cannot remove them. Proposals retain 24-hour expiry, leases 60 seconds, 100 turns, 20 retained messages and durable per-owner/project quotas. The system does not promise globally exactly-once inference, unrestricted language handling, production-scale capacity or engineering certification.
+
+[Full review and proposed commands](stabilization-report.md), [manifest](phase20-verification.json), [security review](security-audit.md), [data preservation](data-preservation-report.md), [limitations](phase19-20-known-limitations.md).
+
+Ready for manual review and checkpoint approval. No Phase 20 tag, commit, staging, push or deployment was performed.

@@ -50,6 +50,7 @@ export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), v
   status: z.enum(['DRAFT','NEEDS_CLARIFICATION','AWAITING_APPROVAL','SUBMITTED','REJECTED','FAILED']),
   baseRequirements: SelectedBlueprintRequirementsSchema.nullable().default(null),
   intent: ConversationIntentSchema, pendingIntent: ConversationIntentSchema.default({}), requirements: SelectedBlueprintRequirementsSchema.nullable(),
+  pendingBedroomMove: z.boolean().default(false),
   questions: z.array(z.string().max(300)).max(24), unsupported: z.array(z.string().max(100)).max(24),
   explanations: z.array(z.string().max(400)).max(40),
   fieldSources: z.record(z.enum(['USER_EXPLICIT','USER_INFERRED','PRODUCT_DEFAULT','PERSISTED'])),
