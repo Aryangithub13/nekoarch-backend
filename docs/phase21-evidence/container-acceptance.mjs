@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import console from 'node:console';
+import process from 'node:process';
+import { randomUUID } from 'node:crypto';
+import { generateBlueprintV2 } from '@designflow/generator';
+import { auditBlueprint } from '@designflow/blueprint-qa';
+import { initialConversation, planConversation } from './apps/api/dist/ai/conversation-planner.js';
+import { solverV2QaOptions } from './apps/api/dist/services/solver-v2-qa.js';
+import { createConversationOrchestrator } from './apps/api/dist/config/ai.js';
+import { parseEnv } from './apps/api/dist/config/env.js';
+import { modelHash } from './apps/api/dist/lib/generation-identity.js';
+const env=parseEnv({NODE_ENV:'production',SUPABASE_URL:'http://127.0.0.1:9',SUPABASE_ANON_KEY:'fixture',SENTRY_DSN:'http://fixture@127.0.0.1:9/1'});
+const provider=createConversationOrchestrator(env);
+const state=await planConversation(initialConversation(null,null,true),{messageId:randomUUID(),expectedVersion:0,baseRevisionId:null,text:'Design a 3 bedroom two floor house on a 30 by 50 foot plot. Keep one bedroom downstairs.'},{provider});
+assert.equal(state.status,'AWAITING_APPROVAL');assert.equal(state.orchestration.providerId,'deterministic');
+const generated=generateBlueprintV2(state.proposal.requirements);const qa=auditBlueprint(generated.model,{requireReachability:true,...solverV2QaOptions(state.proposal.requirements)});assert.notEqual(qa.status,'FAIL');assert.equal(qa.summary.errors,0);
+assert.notEqual(process.getuid(),0);
+console.log(JSON.stringify({runtime:'compiled production container; network none; no inference service',provider:state.orchestration,requirementsHash:state.proposal.requirementsHash,modelHash:modelHash(generated.model),qa:qa.status,solver:generated.metadata.solverVersion,nonRoot:true}));

@@ -1,0 +1,22 @@
+
+> designflow@0.1.0 test:blueprint
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3355ms
+
+ Test Files  1 passed (1)
+      Tests  137 passed (137)
+   Start at  09:16:48
+   Duration  3.77s (transform 167ms, setup 0ms, collect 238ms, tests 3.36s, environment 0ms, prepare 47ms)
+

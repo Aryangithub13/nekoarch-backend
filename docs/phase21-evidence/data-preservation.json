@@ -1,0 +1,105 @@
+{
+  "tables": {
+    "architectural_conversations": {
+      "before": 0,
+      "after": 0,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "cost_estimates": {
+      "before": 0,
+      "after": 0,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "generation_logs": {
+      "before": 0,
+      "after": 0,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "idempotency_records": {
+      "before": 3,
+      "after": 3,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "plans": {
+      "before": 0,
+      "after": 0,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "profiles": {
+      "before": 1,
+      "after": 1,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "project_audit_events": {
+      "before": 1412,
+      "after": 1487,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 75
+    },
+    "project_revision_construction_calculations": {
+      "before": 371,
+      "after": 390,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 19
+    },
+    "project_revision_cost_estimates": {
+      "before": 261,
+      "after": 275,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 14
+    },
+    "project_revision_qa_runs": {
+      "before": 679,
+      "after": 716,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 37
+    },
+    "project_revision_takeoffs": {
+      "before": 530,
+      "after": 555,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 25
+    },
+    "project_revisions": {
+      "before": 679,
+      "after": 716,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 37
+    },
+    "project_workflow_runs": {
+      "before": 387,
+      "after": 414,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 27
+    },
+    "projects": {
+      "before": 620,
+      "after": 653,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 33
+    },
+    "rate_table_entries": {
+      "before": 9,
+      "after": 9,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    },
+    "rate_table_versions": {
+      "before": 1,
+      "after": 1,
+      "missingOrChangedExistingRows": 0,
+      "additionalFixtureRows": 0
+    }
+  },
+  "migrationHistoryUnchanged": true,
+  "rlsUnchanged": true,
+  "policiesUnchanged": true,
+  "allExistingRowsPreserved": true,
+  "scope": "Existing local Supabase public-table row digests preserved; additional acceptance fixtures identified separately. No reset or migration applied."
+}

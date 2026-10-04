@@ -12,13 +12,14 @@ import { ConversationRepository } from '../lib/conversation-repository.js';
 import { ProjectDetailSchema, ProjectRevisionDetailSchema, ProjectParamsSchema, RevisionCommitResponseSchema } from '../contracts/projects.js';
 import { ConversationSchema, ConversationListSchema, ConversationPageSchema, ConversationParamsSchema, CreateConversationSchema, ConversationMessageSchema, ProposalApprovalSchema, ConversationToolSchema, ConversationToolResponseSchema } from '../contracts/conversations.js';
 import { initialConversation, planConversation } from '../ai/conversation-planner.js';
-import { createLocalInferenceProvider, type ConversationProvider } from '../ai/conversation-provider.js';
+import { createConversationOrchestrator } from '../config/ai.js';
+import { type ConversationProvider } from '../ai/conversation-provider.js';
 import { saveProjectRevision } from '../services/project-service.js';
 import { CAPABILITIES, CapabilitySchema } from '../workflows/registry.js';
 
 export function conversationsRoutes(app: FastifyInstance, backend: Backend, env: Env, configured?: ConversationProvider) {
   const root='/api/projects/:projectId/conversations', item=`${root}/:conversationId`;
-  const provider=configured ?? (env.AI_CONVERSATION_MODE==='local' && env.AI_CONVERSATION_ENDPOINT && env.AI_CONVERSATION_MODEL ? createLocalInferenceProvider({endpoint:env.AI_CONVERSATION_ENDPOINT,model:env.AI_CONVERSATION_MODEL,timeoutMs:env.AI_INTERPRETER_TIMEOUT_MS,maxTokens:env.AI_INTERPRETER_MAX_OUTPUT_TOKENS,...(env.AI_CONVERSATION_API_KEY ? {apiKey:env.AI_CONVERSATION_API_KEY} : {})}) : undefined);
+  const provider=createConversationOrchestrator(env,configured,event=>app.log.info(event,'AI provider attempt'));
   app.post(root,{bodyLimit:8192},async request=>{
     const {repository,userId}=await requestContext(request,backend,true);
     const {projectId}=parseRequest(ProjectParamsSchema,request.params), input=parseRequest(CreateConversationSchema,request.body);
@@ -42,7 +43,7 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     const {repository,userId}=await requestContext(request,backend,true);
     return z.object({deleted:z.literal(true)}).strict().parse(await new ConversationRepository(repository,userId!,env.PROJECT_COMMIT_SECRET).write('delete',parseRequest(ConversationParamsSchema,request.params)));
   });
-  app.post(`${item}/messages`,{bodyLimit:32768},async request=>{
+  app.post(`${item}/messages`,{bodyLimit:32768},async (request,reply)=>{
     const started=performance.now();
     const {repository,userId}=await requestContext(request,backend,true);
     const params=parseRequest(ConversationParamsSchema,request.params),input=parseRequest(ConversationMessageSchema,request.body);
@@ -56,13 +57,14 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     const fingerprint=createHash('sha256').update(JSON.stringify(input)).digest('hex');
     const reserved=z.object({replay:z.boolean(),conversation:ConversationSchema}).strict().parse(await conversations.write('reserve',{...params,messageId:input.messageId,expectedVersion:input.expectedVersion,baseRevisionId:input.baseRevisionId,fingerprint,token}));
     if(reserved.replay) return reserved.conversation;
-    const controller=new AbortController(); const abort=()=>controller.abort(); request.raw.once('aborted',abort);
+    const controller=new AbortController(); const abort=()=>controller.abort(); const disconnect=()=>{if(!reply.raw.writableEnded)controller.abort();};
+    request.raw.once('aborted',abort);reply.raw.once('close',disconnect);
     try {
       const state=await planConversation(reserved.conversation.state,input,{...(provider?{provider}:{}),disabled:env.AI_CONVERSATION_MODE==='disabled',signal:controller.signal,...(restoredRequirements?{restoredRequirements}:{})});
       const result=ConversationSchema.parse(await conversations.write('finish',{...params,token,state}));
-      request.log.info({conversationId:params.conversationId,version:state.version,status:state.status,provider:state.provider.kind,providerFailure:state.provider.failure,durationMs:performance.now()-started},'conversation message processed');
+      request.log.info({conversationId:params.conversationId,version:state.version,status:state.status,provider:state.provider.kind,providerFailure:state.provider.failure,orchestration:state.orchestration,durationMs:performance.now()-started},'conversation message processed');
       return result;
-    } finally { request.raw.removeListener('aborted',abort); }
+    } finally { request.raw.removeListener('aborted',abort);reply.raw.removeListener('close',disconnect); }
   });
   app.post(`${item}/proposals/approve`,{bodyLimit:8192},async request=>{
     const {repository,userId}=await requestContext(request,backend,true);

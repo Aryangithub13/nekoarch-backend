@@ -1,0 +1,1 @@
+{"refusal":"ECONNREFUSED","provider":"deterministic","attempts":1,"generationId":"d5e9bb9a-b6cb-4cda-8e90-4028812bb31b","qa":"PASS"}

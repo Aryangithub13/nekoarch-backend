@@ -1,0 +1,62 @@
+{
+  "source": "Local fixture benchmark; excludes real model inference; conversation planner excludes database and generation (see acceptance timings)",
+  "routing": {
+    "samples": 1000,
+    "medianMs": 0.004260999999985415,
+    "p95Ms": 0.006146000000001095
+  },
+  "contextConstruction": {
+    "samples": 1000,
+    "medianMs": 0.001956000000006952,
+    "p95Ms": 0.00342200000000048
+  },
+  "validation": {
+    "samples": 1000,
+    "medianMs": 0.017042000000003554,
+    "p95Ms": 0.04008899999996629
+  },
+  "deterministicFallback": {
+    "samples": 100,
+    "medianMs": 0.03946099999996022,
+    "p95Ms": 0.17125299999997878
+  },
+  "adapterOverhead": {
+    "samples": 100,
+    "medianMs": 0.09296000000000504,
+    "p95Ms": 0.15979899999996405
+  },
+  "localHttp": {
+    "samples": 50,
+    "medianMs": 0.7753179999999702,
+    "p95Ms": 2.6859210000000076
+  },
+  "conversation": {
+    "samples": 100,
+    "medianMs": 1.4925969999999893,
+    "p95Ms": 3.682639999999992
+  },
+  "concurrency": {
+    "requests": 32,
+    "maxActive": 4,
+    "providerSuccess": 4,
+    "deterministicFallbacks": 28,
+    "totalMs": 5.943152000000055
+  },
+  "memory": {
+    "before": {
+      "rss": 119640064,
+      "heapTotal": 32092160,
+      "heapUsed": 20173880,
+      "external": 4077543,
+      "arrayBuffers": 76462
+    },
+    "after": {
+      "rss": 176234496,
+      "heapTotal": 65908736,
+      "heapUsed": 44364072,
+      "external": 4204760,
+      "arrayBuffers": 259576
+    },
+    "peakRssKiB": 172104
+  }
+}

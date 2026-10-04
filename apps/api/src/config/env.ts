@@ -1,5 +1,6 @@
 import { isIP } from 'node:net';
 import { z } from 'zod';
+import { AiPolicySchema } from '../contracts/ai-orchestration.js';
 
 const positive = (value: number) => optionalDefault(z.coerce.number().int().min(1).max(2_147_483_647).default(value));
 const flag = (value: 'true' | 'false') => optionalDefault(z.enum(['true', 'false']).default(value)).transform(value => value === 'true');
@@ -17,6 +18,10 @@ export const EnvSchema = z.object({
   LOG_LEVEL: optionalDefault(z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info')),
   CORS_ORIGINS: optionalDefault(z.string().default('')),
   TRUST_PROXY: optionalDefault(z.string().default('')),
+  AI_ROUTING_CONFIG: optionalDefault(z.string().max(32768).default('')).transform((value, ctx) => {
+    try { const parsed=AiPolicySchema.safeParse(value?JSON.parse(value):{}); if(parsed.success)return parsed.data; } catch { /* Reject without reflecting configuration or credentials. */ }
+    ctx.addIssue({code:'custom',message:'Invalid AI routing configuration'}); return z.NEVER;
+  }),
   AI_CONVERSATION_MODE: optionalDefault(z.enum(['fallback', 'local', 'disabled']).default('fallback')),
   AI_CONVERSATION_ENDPOINT: optionalDefault(z.string().optional()),
   AI_CONVERSATION_MODEL: optionalDefault(z.string().regex(/^[A-Za-z0-9._:/-]{1,100}$/).optional()),
@@ -54,7 +59,7 @@ export const EnvSchema = z.object({
     catch { ctx.addIssue({ code: 'custom', path: ['CORS_ORIGINS'], message: 'Use comma-separated exact URL origins' }); }
   }
 });
-export type Env = z.infer<typeof EnvSchema>;
+export type Env = z.infer<typeof EnvSchema> & { AI_PROVIDER_CREDENTIALS: Record<string,string> };
 
 export function parseEnv(source: Record<string, unknown> = process.env): Env {
   const result = EnvSchema.safeParse(source);
@@ -63,5 +68,10 @@ export function parseEnv(source: Record<string, unknown> = process.env): Env {
     throw new Error(`Invalid environment configuration:\n${result.error.issues.map(issue => `${issue.path.join('.')}: ${issue.code === 'invalid_enum_value' ? 'Unsupported value' : issue.message}`).join('\n')}`);
   }
   if (!result.data.CORS_ORIGINS && result.data.NODE_ENV !== 'production') result.data.CORS_ORIGINS = 'http://localhost:5173';
-  return result.data;
+  const credentials:Record<string,string>={};
+  for(const provider of result.data.AI_ROUTING_CONFIG.providers){
+    const name=provider.apiKeyEnv;
+    if(provider.enabled && name && typeof source[name]==='string') credentials[name]=source[name] as string;
+  }
+  return {...result.data,AI_PROVIDER_CREDENTIALS:credentials};
 }

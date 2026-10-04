@@ -2,7 +2,7 @@ import pino, { type DestinationStream } from 'pino';
 import type { Env } from '../config/env.js';
 
 const privateFields = new Set([
-  'aiconversationapikey', 'text', 'intent', 'messages', 'authorization', 'cookie', 'cookies', 'setcookie', 'sharetoken', 'prompt',
+  'airoutingconfig', 'aiprovidercredentials', 'credentials', 'endpoint', 'context', 'aiconversationapikey', 'text', 'intent', 'messages', 'authorization', 'cookie', 'cookies', 'setcookie', 'sharetoken', 'prompt',
   'supabaseanonkey', 'supabaseservicerolekey', 'accesstoken', 'refreshtoken',
   'projectcommitsecret', 'model', 'modeljson', 'report', 'reportjson', 'envelope', 'signature',
   'body', 'plandata', 'plan', 'headers', 'config', 'env', 'idempotencykey', 'databaseurl', 'connectionstring', 'apikey', 'password', 'token', 'url', 'originalurl', 'requesturl',
@@ -15,7 +15,7 @@ function sanitizeFields(value: unknown, depth = 0): unknown {
   if (!value || typeof value !== 'object') return value;
   return Object.fromEntries(Object.entries(value).map(([key, item]) => [
     key,
-    privateFields.has(key.replace(/[_-]/g, '').toLowerCase()) ? '[REDACTED]' : sanitizeFields(item, depth + 1),
+    (privateFields.has(key.replace(/[_-]/g, '').toLowerCase()) || /^AI_PROVIDER_.*_API_KEY$/i.test(key)) ? '[REDACTED]' : sanitizeFields(item, depth + 1),
   ]));
 }
 

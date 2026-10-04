@@ -1,3 +1,4 @@
+import { AiProvenanceSchema } from './ai-orchestration.js';
 import { CapabilitySchema } from '../workflows/registry.js';
 import { GenerationIdentitySchema } from './freshness.js';
 import { QaSummarySchema } from './projects.js';
@@ -56,6 +57,7 @@ export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), v
   fieldSources: z.record(z.enum(['USER_EXPLICIT','USER_INFERRED','PRODUCT_DEFAULT','PERSISTED'])),
   summary: z.string().max(1000), proposal: ProposalSchema.nullable(),
   messages: z.array(z.object({ id, text: z.string().max(4000), createdAt: z.string().datetime() }).strict()).max(20),
+  orchestration: AiProvenanceSchema.optional(),
   provider: z.object({ kind: z.string().max(64), model: z.string().max(100), failure: z.string().max(100).nullable() }).strict(),
 }).strict();
 export type ConversationState = z.infer<typeof ConversationStateSchema>;

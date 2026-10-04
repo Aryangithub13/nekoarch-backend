@@ -8,6 +8,7 @@ import { parseFallback, fallbackProvider } from './fallback-parser.js';
 import { interpretRequirements } from './architectural-interpreter.js';
 import { InterpreterProviderError } from './interpreter-provider.js';
 import type { ConversationProvider } from './conversation-provider.js';
+import { AiProviderError } from '../contracts/ai-orchestration.js';
 import { ApiError } from '../lib/errors.js';
 
 type Requirements = NonNullable<ConversationState['requirements']>;
@@ -142,6 +143,7 @@ export async function planConversation(previous: ConversationState, message: Con
   const state = structuredClone(previous); state.version++; state.proposal = null; state.questions = []; state.explanations = []; state.status = 'NEEDS_CLARIFICATION';
   state.messages = [...state.messages,{id:message.messageId,text:message.text,createdAt:new Date().toISOString()}].slice(-20);
   state.provider = {kind:'fallback',model:'bounded-conversation-v1',failure:null};
+  delete state.orchestration;
   if(options.restoredRequirements) {
     const version='layoutV2' in options.restoredRequirements ? 'V2' : 'V1';
     if(version!==state.solver) throw new ApiError(422,'SOLVER_VERSION_CONFLICT','Restore cannot change the selected solver version');
@@ -169,7 +171,21 @@ export async function planConversation(previous: ConversationState, message: Con
   const ambiguous = /\b(?:move it|that room|the room|previous version|another feasible alternative)\b/i.test(message.text);
   if (ambiguous) state.questions.push('Name the room and its ordinal, or the exact previous revision. No ambiguous reference has been applied.');
   if (options.disabled) { state.status = 'FAILED'; state.provider.failure = 'AI_CONFIGURATION_UNAVAILABLE'; return boundedState(state); }
-  if (options.provider && !ambiguous && patch.unsupported.includes('unrecognized_language')) {
+  if (options.provider?.orchestrate && !ambiguous) {
+    const deterministic=structuredClone(patch);
+    try {
+      const result=await options.provider.orchestrate(message.text,{intent:state.intent,questions:previous.questions},patch,options.signal);
+      patch=ConversationIntentSchema.parse(result.intent);state.orchestration=result.provenance;
+      state.provider={kind:result.provenance.providerId,model:result.provenance.modelId,failure:[...result.provenance.attempts].reverse().find(a=>a.status==='FAILED')?.failure??null};
+      // Deterministically understood explicit constraints retain precedence over advisory output.
+      if(!deterministic.unsupported.includes('unrecognized_language')){patch=deterministic;state.orchestration.intentSource='DETERMINISTIC';}
+      if(relativeMove){delete patch.upperFloorBedrooms;delete patch.groundFloorBedrooms;if(deterministic.upperFloorBedrooms!==undefined)patch.upperFloorBedrooms=deterministic.upperFloorBedrooms;}
+    }catch(error){
+      if(error instanceof AiProviderError && error.code==='REQUEST_CANCELLED')throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
+      if(error instanceof AiProviderError)throw new ApiError(503,error.code,'No allowed interpretation route completed');
+      throw error;
+    }
+  } else if (options.provider && !ambiguous && patch.unsupported.includes('unrecognized_language')) {
     try { patch = ConversationIntentSchema.parse(await options.provider.interpret(message.text,{intent:state.intent,questions:previous.questions},options.signal)); state.provider = {kind:options.provider.kind,model:options.provider.model,failure:null}; }
     catch (error) { state.provider.failure = error instanceof InterpreterProviderError ? error.code : 'AI_PROVIDER_INVALID_RESPONSE'; state.explanations.push('Optional inference failed; bounded deterministic interpretation remains available.'); }
   }

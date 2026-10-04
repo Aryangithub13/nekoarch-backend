@@ -1,0 +1,6183 @@
+{
+  "recordedAt": "2026-10-04T03:58:47.576Z",
+  "source": "Actual isolated HTTP/database acceptance runtime; test IDs",
+  "conversation": {
+    "schemaVersion": 1,
+    "version": 4,
+    "baseRevisionId": null,
+    "solver": "V1",
+    "status": "AWAITING_APPROVAL",
+    "baseRequirements": null,
+    "intent": {
+      "site": {
+        "width": "30",
+        "depth": "50",
+        "unit": "ft"
+      },
+      "floors": 2,
+      "bedrooms": 4,
+      "upperFloorBedrooms": 2,
+      "inferredFields": [
+        "floors"
+      ],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "pendingIntent": {
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "requirements": {
+      "site": {
+        "boundary": [
+          {
+            "x": 0,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 0
+          },
+          {
+            "x": 9144,
+            "z": 15240
+          },
+          {
+            "x": 0,
+            "z": 15240
+          }
+        ],
+        "northMilliDegrees": null,
+        "setbacks": []
+      },
+      "floors": 2,
+      "rooms": [
+        {
+          "type": "bedroom",
+          "count": 2,
+          "level": 0,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "bedroom",
+          "count": 2,
+          "level": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "bathroom",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "living",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        },
+        {
+          "type": "kitchen",
+          "count": 1,
+          "minWidthMm": 1800,
+          "minDepthMm": 1800
+        }
+      ],
+      "relationships": [],
+      "circulationWidthMm": 1200,
+      "floorToFloorHeightMm": 3000,
+      "exteriorWallThicknessMm": 200,
+      "interiorWallThicknessMm": 100,
+      "slabThicknessMm": 150,
+      "door": {
+        "widthMm": 900,
+        "heightMm": 2100,
+        "jambMm": 100
+      },
+      "windows": {
+        "enabled": true,
+        "widthMm": 1200,
+        "heightMm": 1200,
+        "sillMm": 900
+      },
+      "stair": {
+        "widthMm": 1000,
+        "riserCount": 16,
+        "treadDepthMm": 280,
+        "landingDepthMm": 1200
+      },
+      "seed": "blueprint-default",
+      "solver": {
+        "maxCandidates": 32,
+        "maxIterations": 20000
+      }
+    },
+    "pendingBedroomMove": false,
+    "questions": [],
+    "unsupported": [],
+    "explanations": [
+      "Feasibility and physical geometry remain unverified until generation and independent QA. No engineering, daylight or ventilation performance is certified.",
+      "Changed requirement fields: circulationWidthMm, door, exteriorWallThicknessMm, floorToFloorHeightMm, floors, interiorWallThicknessMm, relationships, rooms, seed, site, slabThicknessMm, solver, stair, windows. Explicit approval of this proposal is required."
+    ],
+    "fieldSources": {
+      "door": "PRODUCT_DEFAULT",
+      "seed": "PRODUCT_DEFAULT",
+      "site": "USER_EXPLICIT",
+      "floors": "USER_EXPLICIT",
+      "solver": "PRODUCT_DEFAULT",
+      "windows": "PRODUCT_DEFAULT",
+      "bedrooms": "USER_EXPLICIT",
+      "rooms.living": "PRODUCT_DEFAULT",
+      "rooms.kitchen": "PRODUCT_DEFAULT",
+      "site.setbacks": "PRODUCT_DEFAULT",
+      "rooms.bathrooms": "PRODUCT_DEFAULT",
+      "slabThicknessMm": "PRODUCT_DEFAULT",
+      "circulationWidthMm": "PRODUCT_DEFAULT",
+      "upperFloorBedrooms": "USER_EXPLICIT",
+      "floorToFloorHeightMm": "PRODUCT_DEFAULT",
+      "exteriorWallThicknessMm": "PRODUCT_DEFAULT",
+      "interiorWallThicknessMm": "PRODUCT_DEFAULT",
+      "rooms.minimumDimensions": "PRODUCT_DEFAULT"
+    },
+    "summary": "Version 4; AWAITING_APPROVAL; 0 unresolved questions; 0 unsupported requests. Structured intent and native requirements are authoritative, not this summary.",
+    "proposal": {
+      "id": "35816fb2-f163-41a0-9d84-d52135a58454",
+      "version": 4,
+      "baseRevisionId": null,
+      "requirements": {
+        "site": {
+          "boundary": [
+            {
+              "x": 0,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 15240
+            },
+            {
+              "x": 0,
+              "z": 15240
+            }
+          ],
+          "northMilliDegrees": null,
+          "setbacks": []
+        },
+        "floors": 2,
+        "rooms": [
+          {
+            "type": "bedroom",
+            "count": 2,
+            "level": 0,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "bedroom",
+            "count": 2,
+            "level": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "bathroom",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "living",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "kitchen",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          }
+        ],
+        "relationships": [],
+        "circulationWidthMm": 1200,
+        "floorToFloorHeightMm": 3000,
+        "exteriorWallThicknessMm": 200,
+        "interiorWallThicknessMm": 100,
+        "slabThicknessMm": 150,
+        "door": {
+          "widthMm": 900,
+          "heightMm": 2100,
+          "jambMm": 100
+        },
+        "windows": {
+          "enabled": true,
+          "widthMm": 1200,
+          "heightMm": 1200,
+          "sillMm": 900
+        },
+        "stair": {
+          "widthMm": 1000,
+          "riserCount": 16,
+          "treadDepthMm": 280,
+          "landingDepthMm": 1200
+        },
+        "seed": "blueprint-default",
+        "solver": {
+          "maxCandidates": 32,
+          "maxIterations": 20000
+        }
+      },
+      "requirementsHash": "4e0bffc273d6e61bc1ae0f0aff438e44f66a0ddf3499744e6b51ea081921b772",
+      "expiresAt": "2026-10-05T03:58:47.269Z",
+      "changedFields": [
+        "circulationWidthMm",
+        "door",
+        "exteriorWallThicknessMm",
+        "floorToFloorHeightMm",
+        "floors",
+        "interiorWallThicknessMm",
+        "relationships",
+        "rooms",
+        "seed",
+        "site",
+        "slabThicknessMm",
+        "solver",
+        "stair",
+        "windows"
+      ]
+    },
+    "messages": [
+      {
+        "id": "8e8b5205-cf4c-4196-997f-835b403f35b7",
+        "text": "I want a 4BHK house.",
+        "createdAt": "2026-10-04T03:58:47.234Z"
+      },
+      {
+        "id": "dadefb39-f8e0-4cd9-a307-59bcffac0680",
+        "text": "30 by 50 feet.",
+        "createdAt": "2026-10-04T03:58:47.246Z"
+      },
+      {
+        "id": "497f89fe-2e17-438b-b226-b2c3da18ecf0",
+        "text": "Make it two floors.",
+        "createdAt": "2026-10-04T03:58:47.259Z"
+      },
+      {
+        "id": "ef2bd15a-50dc-44c7-ab2e-91f3b8236236",
+        "text": "Put two bedrooms upstairs.",
+        "createdAt": "2026-10-04T03:58:47.268Z"
+      }
+    ],
+    "orchestration": {
+      "requestId": "6b326385-b5f2-4f33-a3cb-cfee4ab3be68",
+      "capability": "ARCHITECTURAL_INTENT_EXTRACTION",
+      "privacyClass": "LOCAL_ONLY",
+      "providerId": "deterministic",
+      "modelId": "bounded-conversation-v1",
+      "routingReason": "DETERMINISTIC",
+      "fallbackPosition": 0,
+      "latencyMs": 0.18605900000011388,
+      "status": "FALLBACK",
+      "intentSource": "DETERMINISTIC",
+      "requests": 0,
+      "attempts": [],
+      "usage": null
+    },
+    "provider": {
+      "kind": "deterministic",
+      "model": "bounded-conversation-v1",
+      "failure": null
+    }
+  },
+  "accepted": {
+    "project": {
+      "id": "9353a8c6-1d68-4cc5-bac3-9d9deb212c5f",
+      "title": "Phase 20 isolated acceptance",
+      "status": "ACTIVE",
+      "visibility": "PRIVATE",
+      "currentRevisionId": "038ebbeb-cc3c-4af4-b4a9-8b3bb114a365",
+      "currentRevisionNumber": 1,
+      "qaStatus": "PASS",
+      "createdAt": "2026-10-04T09:28:47.214697+05:30",
+      "updatedAt": "2026-10-04T09:28:47.451478+05:30",
+      "archivedAt": null
+    },
+    "revision": {
+      "id": "038ebbeb-cc3c-4af4-b4a9-8b3bb114a365",
+      "projectId": "9353a8c6-1d68-4cc5-bac3-9d9deb212c5f",
+      "revisionNumber": 1,
+      "parentRevisionId": null,
+      "schemaVersion": 2,
+      "completeness": "architectural",
+      "sourceMode": "generated",
+      "generatorVersion": "precision-blueprint-v1",
+      "createdAt": "2026-10-04T09:28:47.36507+05:30",
+      "qa": {
+        "id": "e54964c1-f55c-462f-a881-75d6d00a4ebc",
+        "qaVersion": "blueprint-qa-v1",
+        "modelSchemaVersion": 2,
+        "rulePacks": [
+          {
+            "id": "designflow-product-defaults",
+            "version": "1"
+          }
+        ],
+        "status": "PASS",
+        "summary": {
+          "errors": 0,
+          "warnings": 0,
+          "info": 0,
+          "rulePass": 11,
+          "ruleFail": 0,
+          "ruleNotApplicable": 0,
+          "ruleNotEvaluated": 0
+        },
+        "createdAt": "2026-10-04T09:28:47.36507+05:30"
+      },
+      "identity": {
+        "identityVersion": "generation-freshness-v1",
+        "generationId": "10d88bd3-5337-4a8d-8bd4-bfe918d9cb63",
+        "requirementsHash": "4e0bffc273d6e61bc1ae0f0aff438e44f66a0ddf3499744e6b51ea081921b772",
+        "modelHash": "3f8b93dfae4fbbce3ad0594d6748bd60f2fbffebc5e62a8a1dce1b13ea2013e9",
+        "seed": "blueprint-default"
+      },
+      "model": {
+        "schemaVersion": 2,
+        "id": "blueprint",
+        "name": "Precision residential blueprint",
+        "completeness": "architectural",
+        "units": "mm",
+        "coordinateSystem": "x-right-y-up-z-depth",
+        "site": {
+          "id": "site",
+          "name": "Site",
+          "boundary": [
+            {
+              "x": 0,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 15240
+            },
+            {
+              "x": 0,
+              "z": 15240
+            }
+          ],
+          "buildableBoundary": [
+            {
+              "x": 0,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 15240
+            },
+            {
+              "x": 0,
+              "z": 15240
+            }
+          ],
+          "northMilliDegrees": null,
+          "setbacks": []
+        },
+        "levels": [
+          {
+            "id": "level-0",
+            "name": "Floor 1",
+            "index": 0,
+            "kind": "storey",
+            "elevationMm": 0,
+            "floorToFloorHeightMm": 3000,
+            "boundary": [
+              {
+                "x": 0,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 15240
+              },
+              {
+                "x": 0,
+                "z": 15240
+              }
+            ]
+          },
+          {
+            "id": "level-1",
+            "name": "Floor 2",
+            "index": 1,
+            "kind": "storey",
+            "elevationMm": 3000,
+            "floorToFloorHeightMm": 3000,
+            "boundary": [
+              {
+                "x": 0,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 0
+              },
+              {
+                "x": 9144,
+                "z": 15240
+              },
+              {
+                "x": 0,
+                "z": 15240
+              }
+            ]
+          }
+        ],
+        "spaces": [
+          {
+            "id": "space-corridor-0",
+            "name": "corridor-0",
+            "classification": "circulation",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 1250,
+                "z": 100
+              },
+              {
+                "x": 2550,
+                "z": 100
+              },
+              {
+                "x": 2550,
+                "z": 15140
+              },
+              {
+                "x": 1250,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-bedroom-1",
+            "name": "bedroom-1",
+            "classification": "bedroom",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 100
+              },
+              {
+                "x": 9044,
+                "z": 100
+              },
+              {
+                "x": 9044,
+                "z": 3885
+              },
+              {
+                "x": 2550,
+                "z": 3885
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-kitchen-1",
+            "name": "kitchen-1",
+            "classification": "kitchen",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 3885
+              },
+              {
+                "x": 9044,
+                "z": 3885
+              },
+              {
+                "x": 9044,
+                "z": 7620
+              },
+              {
+                "x": 2550,
+                "z": 7620
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-bedroom-2",
+            "name": "bedroom-2",
+            "classification": "bedroom",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 7620
+              },
+              {
+                "x": 9044,
+                "z": 7620
+              },
+              {
+                "x": 9044,
+                "z": 11355
+              },
+              {
+                "x": 2550,
+                "z": 11355
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-bathroom-1",
+            "name": "bathroom-1",
+            "classification": "bathroom",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 11355
+              },
+              {
+                "x": 9044,
+                "z": 11355
+              },
+              {
+                "x": 9044,
+                "z": 15140
+              },
+              {
+                "x": 2550,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-stairwell-0",
+            "name": "stairwell-0",
+            "classification": "stairwell",
+            "levelId": "level-0",
+            "boundary": [
+              {
+                "x": 100,
+                "z": 100
+              },
+              {
+                "x": 1250,
+                "z": 100
+              },
+              {
+                "x": 1250,
+                "z": 15140
+              },
+              {
+                "x": 100,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-corridor-1",
+            "name": "corridor-1",
+            "classification": "circulation",
+            "levelId": "level-1",
+            "boundary": [
+              {
+                "x": 1250,
+                "z": 100
+              },
+              {
+                "x": 2550,
+                "z": 100
+              },
+              {
+                "x": 2550,
+                "z": 15140
+              },
+              {
+                "x": 1250,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-living-1",
+            "name": "living-1",
+            "classification": "living",
+            "levelId": "level-1",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 100
+              },
+              {
+                "x": 9044,
+                "z": 100
+              },
+              {
+                "x": 9044,
+                "z": 5130
+              },
+              {
+                "x": 2550,
+                "z": 5130
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-bedroom-3",
+            "name": "bedroom-3",
+            "classification": "bedroom",
+            "levelId": "level-1",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 5130
+              },
+              {
+                "x": 9044,
+                "z": 5130
+              },
+              {
+                "x": 9044,
+                "z": 10110
+              },
+              {
+                "x": 2550,
+                "z": 10110
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-bedroom-4",
+            "name": "bedroom-4",
+            "classification": "bedroom",
+            "levelId": "level-1",
+            "boundary": [
+              {
+                "x": 2550,
+                "z": 10110
+              },
+              {
+                "x": 9044,
+                "z": 10110
+              },
+              {
+                "x": 9044,
+                "z": 15140
+              },
+              {
+                "x": 2550,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          },
+          {
+            "id": "space-stairwell-1",
+            "name": "stairwell-1",
+            "classification": "stairwell",
+            "levelId": "level-1",
+            "boundary": [
+              {
+                "x": 100,
+                "z": 100
+              },
+              {
+                "x": 1250,
+                "z": 100
+              },
+              {
+                "x": 1250,
+                "z": 15140
+              },
+              {
+                "x": 100,
+                "z": 15140
+              }
+            ],
+            "boundaryBasis": "wall-centerline"
+          }
+        ],
+        "walls": [
+          {
+            "id": "wall-0-0",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 100
+              },
+              "end": {
+                "x": 1250,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-0"
+            ]
+          },
+          {
+            "id": "wall-0-1",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 100
+              },
+              "end": {
+                "x": 2550,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-corridor-0"
+            ]
+          },
+          {
+            "id": "wall-0-2",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 100
+              },
+              "end": {
+                "x": 9044,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-1"
+            ]
+          },
+          {
+            "id": "wall-0-3",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 3885
+              },
+              "end": {
+                "x": 9044,
+                "z": 3885
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-1",
+              "space-kitchen-1"
+            ]
+          },
+          {
+            "id": "wall-0-4",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 7620
+              },
+              "end": {
+                "x": 9044,
+                "z": 7620
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-2",
+              "space-kitchen-1"
+            ]
+          },
+          {
+            "id": "wall-0-5",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 11355
+              },
+              "end": {
+                "x": 9044,
+                "z": 11355
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bathroom-1",
+              "space-bedroom-2"
+            ]
+          },
+          {
+            "id": "wall-0-6",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 15140
+              },
+              "end": {
+                "x": 1250,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-0"
+            ]
+          },
+          {
+            "id": "wall-0-7",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 15140
+              },
+              "end": {
+                "x": 2550,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-corridor-0"
+            ]
+          },
+          {
+            "id": "wall-0-8",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 15140
+              },
+              "end": {
+                "x": 9044,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bathroom-1"
+            ]
+          },
+          {
+            "id": "wall-0-9",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 100
+              },
+              "end": {
+                "x": 100,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-0"
+            ]
+          },
+          {
+            "id": "wall-0-10",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 100
+              },
+              "end": {
+                "x": 1250,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-corridor-0",
+              "space-stairwell-0"
+            ]
+          },
+          {
+            "id": "wall-0-11",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 100
+              },
+              "end": {
+                "x": 2550,
+                "z": 3885
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-1",
+              "space-corridor-0"
+            ]
+          },
+          {
+            "id": "wall-0-12",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 3885
+              },
+              "end": {
+                "x": 2550,
+                "z": 7620
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-corridor-0",
+              "space-kitchen-1"
+            ]
+          },
+          {
+            "id": "wall-0-13",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 7620
+              },
+              "end": {
+                "x": 2550,
+                "z": 11355
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-2",
+              "space-corridor-0"
+            ]
+          },
+          {
+            "id": "wall-0-14",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 11355
+              },
+              "end": {
+                "x": 2550,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bathroom-1",
+              "space-corridor-0"
+            ]
+          },
+          {
+            "id": "wall-0-15",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 100
+              },
+              "end": {
+                "x": 9044,
+                "z": 3885
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-1"
+            ]
+          },
+          {
+            "id": "wall-0-16",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 3885
+              },
+              "end": {
+                "x": 9044,
+                "z": 7620
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-kitchen-1"
+            ]
+          },
+          {
+            "id": "wall-0-17",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 7620
+              },
+              "end": {
+                "x": 9044,
+                "z": 11355
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-2"
+            ]
+          },
+          {
+            "id": "wall-0-18",
+            "levelId": "level-0",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 11355
+              },
+              "end": {
+                "x": 9044,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bathroom-1"
+            ]
+          },
+          {
+            "id": "wall-1-19",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 100
+              },
+              "end": {
+                "x": 1250,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-1"
+            ]
+          },
+          {
+            "id": "wall-1-20",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 100
+              },
+              "end": {
+                "x": 2550,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-corridor-1"
+            ]
+          },
+          {
+            "id": "wall-1-21",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 100
+              },
+              "end": {
+                "x": 9044,
+                "z": 100
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-living-1"
+            ]
+          },
+          {
+            "id": "wall-1-22",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 5130
+              },
+              "end": {
+                "x": 9044,
+                "z": 5130
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-3",
+              "space-living-1"
+            ]
+          },
+          {
+            "id": "wall-1-23",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 10110
+              },
+              "end": {
+                "x": 9044,
+                "z": 10110
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-3",
+              "space-bedroom-4"
+            ]
+          },
+          {
+            "id": "wall-1-24",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 15140
+              },
+              "end": {
+                "x": 1250,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-1"
+            ]
+          },
+          {
+            "id": "wall-1-25",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 15140
+              },
+              "end": {
+                "x": 2550,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-corridor-1"
+            ]
+          },
+          {
+            "id": "wall-1-26",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 15140
+              },
+              "end": {
+                "x": 9044,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-4"
+            ]
+          },
+          {
+            "id": "wall-1-27",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 100,
+                "z": 100
+              },
+              "end": {
+                "x": 100,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-stairwell-1"
+            ]
+          },
+          {
+            "id": "wall-1-28",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 1250,
+                "z": 100
+              },
+              "end": {
+                "x": 1250,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-corridor-1",
+              "space-stairwell-1"
+            ]
+          },
+          {
+            "id": "wall-1-29",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 100
+              },
+              "end": {
+                "x": 2550,
+                "z": 5130
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-corridor-1",
+              "space-living-1"
+            ]
+          },
+          {
+            "id": "wall-1-30",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 5130
+              },
+              "end": {
+                "x": 2550,
+                "z": 10110
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-3",
+              "space-corridor-1"
+            ]
+          },
+          {
+            "id": "wall-1-31",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 2550,
+                "z": 10110
+              },
+              "end": {
+                "x": 2550,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 100,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "interior",
+            "spaceIds": [
+              "space-bedroom-4",
+              "space-corridor-1"
+            ]
+          },
+          {
+            "id": "wall-1-32",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 100
+              },
+              "end": {
+                "x": 9044,
+                "z": 5130
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-living-1"
+            ]
+          },
+          {
+            "id": "wall-1-33",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 5130
+              },
+              "end": {
+                "x": 9044,
+                "z": 10110
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-3"
+            ]
+          },
+          {
+            "id": "wall-1-34",
+            "levelId": "level-1",
+            "path": {
+              "start": {
+                "x": 9044,
+                "z": 10110
+              },
+              "end": {
+                "x": 9044,
+                "z": 15140
+              }
+            },
+            "pathReference": "centerline",
+            "thicknessMm": 200,
+            "heightMm": 2850,
+            "baseOffsetMm": 0,
+            "classification": "exterior",
+            "spaceIds": [
+              "space-bedroom-4"
+            ]
+          }
+        ],
+        "openings": [
+          {
+            "id": "opening-0",
+            "wallId": "wall-0-11",
+            "levelId": "level-0",
+            "offsetMm": 1442,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-1",
+            "wallId": "wall-0-12",
+            "levelId": "level-0",
+            "offsetMm": 1417,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-2",
+            "wallId": "wall-0-13",
+            "levelId": "level-0",
+            "offsetMm": 1417,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-3",
+            "wallId": "wall-0-14",
+            "levelId": "level-0",
+            "offsetMm": 1442,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-4",
+            "wallId": "wall-1-29",
+            "levelId": "level-1",
+            "offsetMm": 2065,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-5",
+            "wallId": "wall-1-30",
+            "levelId": "level-1",
+            "offsetMm": 2040,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-6",
+            "wallId": "wall-1-31",
+            "levelId": "level-1",
+            "offsetMm": 2065,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-7",
+            "wallId": "wall-0-1",
+            "levelId": "level-0",
+            "offsetMm": 200,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-8",
+            "wallId": "wall-0-10",
+            "levelId": "level-0",
+            "offsetMm": 250,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-9",
+            "wallId": "wall-1-28",
+            "levelId": "level-1",
+            "offsetMm": 5650,
+            "widthMm": 900,
+            "heightMm": 2100,
+            "sillMm": 0,
+            "type": "internal-or-entrance",
+            "kind": "door",
+            "operation": {
+              "kind": "hinged",
+              "hinge": "start",
+              "swingSide": "left",
+              "angleMilliDegrees": 90000
+            }
+          },
+          {
+            "id": "opening-10",
+            "wallId": "wall-0-2",
+            "levelId": "level-0",
+            "offsetMm": 2647,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-11",
+            "wallId": "wall-0-16",
+            "levelId": "level-0",
+            "offsetMm": 1267,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-12",
+            "wallId": "wall-0-17",
+            "levelId": "level-0",
+            "offsetMm": 1267,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-13",
+            "wallId": "wall-0-8",
+            "levelId": "level-0",
+            "offsetMm": 2647,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-14",
+            "wallId": "wall-1-21",
+            "levelId": "level-1",
+            "offsetMm": 2647,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-15",
+            "wallId": "wall-1-33",
+            "levelId": "level-1",
+            "offsetMm": 1890,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          },
+          {
+            "id": "opening-16",
+            "wallId": "wall-1-26",
+            "levelId": "level-1",
+            "offsetMm": 2647,
+            "widthMm": 1200,
+            "heightMm": 1200,
+            "sillMm": 900,
+            "type": "default-exterior-window",
+            "kind": "window"
+          }
+        ],
+        "stairs": [
+          {
+            "id": "stair-0",
+            "fromLevelId": "level-0",
+            "toLevelId": "level-1",
+            "footprint": [
+              {
+                "x": 200,
+                "z": 1400
+              },
+              {
+                "x": 1200,
+                "z": 1400
+              },
+              {
+                "x": 1200,
+                "z": 5600
+              },
+              {
+                "x": 200,
+                "z": 5600
+              }
+            ],
+            "direction": "+z",
+            "widthMm": 1000,
+            "riseMm": 3000,
+            "runMm": 4200,
+            "riserHeightsMm": [
+              188,
+              188,
+              188,
+              188,
+              188,
+              188,
+              188,
+              188,
+              187,
+              187,
+              187,
+              187,
+              187,
+              187,
+              187,
+              187
+            ],
+            "treadDepthMm": 280,
+            "landings": [
+              {
+                "id": "landing-bottom",
+                "footprint": [
+                  {
+                    "x": 200,
+                    "z": 200
+                  },
+                  {
+                    "x": 1200,
+                    "z": 200
+                  },
+                  {
+                    "x": 1200,
+                    "z": 1400
+                  },
+                  {
+                    "x": 200,
+                    "z": 1400
+                  }
+                ],
+                "elevationOffsetMm": 0
+              },
+              {
+                "id": "landing-top",
+                "footprint": [
+                  {
+                    "x": 200,
+                    "z": 5600
+                  },
+                  {
+                    "x": 1200,
+                    "z": 5600
+                  },
+                  {
+                    "x": 1200,
+                    "z": 6800
+                  },
+                  {
+                    "x": 200,
+                    "z": 6800
+                  }
+                ],
+                "elevationOffsetMm": 3000
+              }
+            ]
+          }
+        ],
+        "slabs": [
+          {
+            "id": "slab-0",
+            "levelId": "level-0",
+            "kind": "floor",
+            "footprint": {
+              "outer": [
+                {
+                  "x": 0,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 15240
+                },
+                {
+                  "x": 0,
+                  "z": 15240
+                }
+              ],
+              "voids": []
+            },
+            "topOffsetMm": 0,
+            "thicknessMm": 150
+          },
+          {
+            "id": "slab-1",
+            "levelId": "level-1",
+            "kind": "floor",
+            "footprint": {
+              "outer": [
+                {
+                  "x": 0,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 15240
+                },
+                {
+                  "x": 0,
+                  "z": 15240
+                }
+              ],
+              "voids": [
+                [
+                  {
+                    "x": 200,
+                    "z": 1400
+                  },
+                  {
+                    "x": 1200,
+                    "z": 1400
+                  },
+                  {
+                    "x": 1200,
+                    "z": 5600
+                  },
+                  {
+                    "x": 200,
+                    "z": 5600
+                  }
+                ]
+              ]
+            },
+            "topOffsetMm": 0,
+            "thicknessMm": 150
+          },
+          {
+            "id": "roof",
+            "levelId": "level-1",
+            "kind": "flat-roof",
+            "footprint": {
+              "outer": [
+                {
+                  "x": 0,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 0
+                },
+                {
+                  "x": 9144,
+                  "z": 15240
+                },
+                {
+                  "x": 0,
+                  "z": 15240
+                }
+              ],
+              "voids": []
+            },
+            "topOffsetMm": 3000,
+            "thicknessMm": 150
+          }
+        ],
+        "columns": [],
+        "dimensions": [
+          {
+            "id": "dimension-0",
+            "levelId": "level-0",
+            "purpose": "overall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9144,
+                  "z": 0,
+                  "y": 0
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 9144,
+              "segmentsMm": [
+                9144
+              ]
+            }
+          },
+          {
+            "id": "dimension-1",
+            "levelId": "level-0",
+            "purpose": "chain",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 100,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 1250,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 2550,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9044,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9144,
+                  "z": 0,
+                  "y": 0
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 9144,
+              "segmentsMm": [
+                100,
+                1150,
+                1300,
+                6494,
+                100
+              ]
+            }
+          },
+          {
+            "id": "dimension-2",
+            "levelId": "level-0",
+            "purpose": "overall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15240,
+                  "y": 0
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15240,
+              "segmentsMm": [
+                15240
+              ]
+            }
+          },
+          {
+            "id": "dimension-3",
+            "levelId": "level-0",
+            "purpose": "chain",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 100,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 3885,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 7620,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 11355,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15140,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15240,
+                  "y": 0
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15240,
+              "segmentsMm": [
+                100,
+                3785,
+                3735,
+                3735,
+                3785,
+                100
+              ]
+            }
+          },
+          {
+            "id": "dimension-4",
+            "levelId": "level-1",
+            "purpose": "overall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9144,
+                  "z": 0,
+                  "y": 3000
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 9144,
+              "segmentsMm": [
+                9144
+              ]
+            }
+          },
+          {
+            "id": "dimension-5",
+            "levelId": "level-1",
+            "purpose": "chain",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 100,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 1250,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 2550,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9044,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 9144,
+                  "z": 0,
+                  "y": 3000
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 9144,
+              "segmentsMm": [
+                100,
+                1150,
+                1300,
+                6494,
+                100
+              ]
+            }
+          },
+          {
+            "id": "dimension-6",
+            "levelId": "level-1",
+            "purpose": "overall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15240,
+                  "y": 3000
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15240,
+              "segmentsMm": [
+                15240
+              ]
+            }
+          },
+          {
+            "id": "dimension-7",
+            "levelId": "level-1",
+            "purpose": "chain",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 0,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 100,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 5130,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 10110,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15140,
+                  "y": 3000
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 0,
+                  "z": 15240,
+                  "y": 3000
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15240,
+              "segmentsMm": [
+                100,
+                5030,
+                4980,
+                5030,
+                100
+              ]
+            }
+          },
+          {
+            "id": "dimension-8",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-0",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-0",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-9",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-0",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-0",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-10",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-11",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-12",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-kitchen-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-kitchen-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-13",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-kitchen-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-kitchen-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-14",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-2",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-2",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-15",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-2",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-2",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-16",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bathroom-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bathroom-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-17",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bathroom-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bathroom-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-18",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-0",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-0",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-19",
+            "levelId": "level-0",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-0",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-0",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-20",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-21",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-corridor-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-22",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-living-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-living-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-23",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-living-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-living-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-24",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-3",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-3",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-25",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-3",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-3",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4980,
+              "segmentsMm": [
+                4980
+              ]
+            }
+          },
+          {
+            "id": "dimension-26",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-4",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-4",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-27",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-4",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-bedroom-4",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-28",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-1",
+                "vertexIndex": 0
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-1",
+                "vertexIndex": 1
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-29",
+            "levelId": "level-1",
+            "purpose": "room",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-1",
+                "vertexIndex": 1
+              },
+              {
+                "kind": "space-vertex",
+                "spaceId": "space-stairwell-1",
+                "vertexIndex": 2
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-30",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-0",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-0",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-31",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-1",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-1",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-32",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-1",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-7",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-7",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-1",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                200,
+                900,
+                200
+              ]
+            }
+          },
+          {
+            "id": "dimension-33",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-2",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-2",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-34",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-2",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-10",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-10",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-2",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                2647,
+                1200,
+                2647
+              ]
+            }
+          },
+          {
+            "id": "dimension-35",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-3",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-3",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-36",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-4",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-4",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-37",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-5",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-5",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-38",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-6",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-6",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-39",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-7",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-7",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-40",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-8",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-8",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-41",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-8",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-13",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-13",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-8",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                2647,
+                1200,
+                2647
+              ]
+            }
+          },
+          {
+            "id": "dimension-42",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-9",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-9",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-43",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-10",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-10",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-44",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-10",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-8",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-8",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-10",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                250,
+                900,
+                13890
+              ]
+            }
+          },
+          {
+            "id": "dimension-45",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-11",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-11",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-46",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-11",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-0",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-0",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-11",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                1442,
+                900,
+                1443
+              ]
+            }
+          },
+          {
+            "id": "dimension-47",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-12",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-12",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-48",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-12",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-1",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-1",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-12",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                1417,
+                900,
+                1418
+              ]
+            }
+          },
+          {
+            "id": "dimension-49",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-13",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-13",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-50",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-13",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-2",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-2",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-13",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                1417,
+                900,
+                1418
+              ]
+            }
+          },
+          {
+            "id": "dimension-51",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-14",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-14",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-52",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-14",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-3",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-3",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-14",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                1442,
+                900,
+                1443
+              ]
+            }
+          },
+          {
+            "id": "dimension-53",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-15",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-15",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-54",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-16",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-16",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-55",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-16",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-11",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-11",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-16",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                1267,
+                1200,
+                1268
+              ]
+            }
+          },
+          {
+            "id": "dimension-56",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-17",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-17",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                3735
+              ]
+            }
+          },
+          {
+            "id": "dimension-57",
+            "levelId": "level-0",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-17",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-12",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-12",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-17",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3735,
+              "segmentsMm": [
+                1267,
+                1200,
+                1268
+              ]
+            }
+          },
+          {
+            "id": "dimension-58",
+            "levelId": "level-0",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-18",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-0-18",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3785,
+              "segmentsMm": [
+                3785
+              ]
+            }
+          },
+          {
+            "id": "dimension-59",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-19",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-19",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-60",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-20",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-20",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-61",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-21",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-21",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-62",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-21",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-14",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-14",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-21",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                2647,
+                1200,
+                2647
+              ]
+            }
+          },
+          {
+            "id": "dimension-63",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-22",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-22",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-64",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-23",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-23",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-65",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-24",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-24",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1150,
+              "segmentsMm": [
+                1150
+              ]
+            }
+          },
+          {
+            "id": "dimension-66",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-25",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-25",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 1300,
+              "segmentsMm": [
+                1300
+              ]
+            }
+          },
+          {
+            "id": "dimension-67",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-26",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-26",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                6494
+              ]
+            }
+          },
+          {
+            "id": "dimension-68",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "x",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-26",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-16",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-16",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-26",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 6494,
+              "segmentsMm": [
+                2647,
+                1200,
+                2647
+              ]
+            }
+          },
+          {
+            "id": "dimension-69",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-27",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-27",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-70",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-28",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-28",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                15040
+              ]
+            }
+          },
+          {
+            "id": "dimension-71",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-28",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-9",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-9",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-28",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 15040,
+              "segmentsMm": [
+                5650,
+                900,
+                8490
+              ]
+            }
+          },
+          {
+            "id": "dimension-72",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-29",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-29",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-73",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-29",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-4",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-4",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-29",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                2065,
+                900,
+                2065
+              ]
+            }
+          },
+          {
+            "id": "dimension-74",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-30",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-30",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4980,
+              "segmentsMm": [
+                4980
+              ]
+            }
+          },
+          {
+            "id": "dimension-75",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-30",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-5",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-5",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-30",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4980,
+              "segmentsMm": [
+                2040,
+                900,
+                2040
+              ]
+            }
+          },
+          {
+            "id": "dimension-76",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-31",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-31",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-77",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-31",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-6",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-6",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-31",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                2065,
+                900,
+                2065
+              ]
+            }
+          },
+          {
+            "id": "dimension-78",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-32",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-32",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-79",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-33",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-33",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4980,
+              "segmentsMm": [
+                4980
+              ]
+            }
+          },
+          {
+            "id": "dimension-80",
+            "levelId": "level-1",
+            "purpose": "opening-offset",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-33",
+                "end": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-15",
+                "edge": "start"
+              },
+              {
+                "kind": "opening-edge",
+                "openingId": "opening-15",
+                "edge": "end"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-33",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4980,
+              "segmentsMm": [
+                1890,
+                1200,
+                1890
+              ]
+            }
+          },
+          {
+            "id": "dimension-81",
+            "levelId": "level-1",
+            "purpose": "wall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-34",
+                "end": "start"
+              },
+              {
+                "kind": "wall-end",
+                "wallId": "wall-1-34",
+                "end": "end"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 5030,
+              "segmentsMm": [
+                5030
+              ]
+            }
+          },
+          {
+            "id": "dimension-82",
+            "purpose": "elevation",
+            "axis": "y",
+            "anchors": [
+              {
+                "kind": "level",
+                "levelId": "level-0"
+              },
+              {
+                "kind": "level",
+                "levelId": "level-1"
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 3000,
+              "segmentsMm": [
+                3000
+              ]
+            }
+          },
+          {
+            "id": "dimension-83",
+            "levelId": "level-0",
+            "purpose": "overall",
+            "axis": "z",
+            "anchors": [
+              {
+                "kind": "point",
+                "point": {
+                  "x": 200,
+                  "z": 1400,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "point",
+                "point": {
+                  "x": 200,
+                  "z": 5600,
+                  "y": 0
+                }
+              }
+            ],
+            "constraint": {
+              "mode": "controlling",
+              "overallMm": 4200,
+              "segmentsMm": [
+                4200
+              ]
+            }
+          }
+        ],
+        "specifications": [],
+        "provenance": {
+          "creationMode": "generated",
+          "generatorVersion": "precision-blueprint-v1",
+          "seed": "blueprint-default",
+          "measurementVersion": "mm-exact/1"
+        }
+      },
+      "qaRuns": [
+        {
+          "id": "e54964c1-f55c-462f-a881-75d6d00a4ebc",
+          "qaVersion": "blueprint-qa-v1",
+          "modelSchemaVersion": 2,
+          "rulePacks": [
+            {
+              "id": "designflow-product-defaults",
+              "version": "1"
+            }
+          ],
+          "status": "PASS",
+          "summary": {
+            "errors": 0,
+            "warnings": 0,
+            "info": 0,
+            "rulePass": 11,
+            "ruleFail": 0,
+            "ruleNotApplicable": 0,
+            "ruleNotEvaluated": 0
+          },
+          "createdAt": "2026-10-04T09:28:47.36507+05:30",
+          "report": {
+            "qaVersion": "blueprint-qa-v1",
+            "modelSchemaVersion": 2,
+            "inputStatus": "SCHEMA_VALID",
+            "status": "PASS",
+            "summary": {
+              "errors": 0,
+              "warnings": 0,
+              "info": 0,
+              "rulePass": 11,
+              "ruleFail": 0,
+              "ruleNotApplicable": 0,
+              "ruleNotEvaluated": 0
+            },
+            "findings": [],
+            "measurements": {
+              "siteAreaMm2": "139354560",
+              "buildableAreaMm2": "139354560",
+              "grossFloorAreaMm2": "274509120",
+              "levels": [
+                {
+                  "entityId": "level-0",
+                  "elevationMm": 0,
+                  "envelopeAreaMm2": "139354560"
+                },
+                {
+                  "entityId": "level-1",
+                  "elevationMm": 3000,
+                  "envelopeAreaMm2": "139354560"
+                }
+              ],
+              "spaces": [
+                {
+                  "entityId": "space-bathroom-1",
+                  "areaMm2": "24579790",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 3785
+                },
+                {
+                  "entityId": "space-bedroom-1",
+                  "areaMm2": "24579790",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 3785
+                },
+                {
+                  "entityId": "space-bedroom-2",
+                  "areaMm2": "24255090",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 3735
+                },
+                {
+                  "entityId": "space-bedroom-3",
+                  "areaMm2": "32340120",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 4980
+                },
+                {
+                  "entityId": "space-bedroom-4",
+                  "areaMm2": "32664820",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 5030
+                },
+                {
+                  "entityId": "space-corridor-0",
+                  "areaMm2": "19552000",
+                  "xSpanMm": 1300,
+                  "zSpanMm": 15040
+                },
+                {
+                  "entityId": "space-corridor-1",
+                  "areaMm2": "19552000",
+                  "xSpanMm": 1300,
+                  "zSpanMm": 15040
+                },
+                {
+                  "entityId": "space-kitchen-1",
+                  "areaMm2": "24255090",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 3735
+                },
+                {
+                  "entityId": "space-living-1",
+                  "areaMm2": "32664820",
+                  "xSpanMm": 6494,
+                  "zSpanMm": 5030
+                },
+                {
+                  "entityId": "space-stairwell-0",
+                  "areaMm2": "17296000",
+                  "xSpanMm": 1150,
+                  "zSpanMm": 15040
+                },
+                {
+                  "entityId": "space-stairwell-1",
+                  "areaMm2": "17296000",
+                  "xSpanMm": 1150,
+                  "zSpanMm": 15040
+                }
+              ],
+              "walls": [
+                {
+                  "entityId": "wall-0-0",
+                  "lengthMm": 1150,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3277500",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-1",
+                  "lengthMm": 1300,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3705000",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-10",
+                  "lengthMm": 15040,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "42864000",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-11",
+                  "lengthMm": 3785,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10787250",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-12",
+                  "lengthMm": 3735,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10644750",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-13",
+                  "lengthMm": 3735,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10644750",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-14",
+                  "lengthMm": 3785,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10787250",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-15",
+                  "lengthMm": 3785,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10787250",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-16",
+                  "lengthMm": 3735,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10644750",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-17",
+                  "lengthMm": 3735,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10644750",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-18",
+                  "lengthMm": 3785,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "10787250",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-2",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-3",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-4",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-5",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-6",
+                  "lengthMm": 1150,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3277500",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-7",
+                  "lengthMm": 1300,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3705000",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-8",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-0-9",
+                  "lengthMm": 15040,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "42864000",
+                  "baseMm": 0,
+                  "topMm": 2850
+                },
+                {
+                  "entityId": "wall-1-19",
+                  "lengthMm": 1150,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3277500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-20",
+                  "lengthMm": 1300,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3705000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-21",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-22",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-23",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-24",
+                  "lengthMm": 1150,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3277500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-25",
+                  "lengthMm": 1300,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "3705000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-26",
+                  "lengthMm": 6494,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "18507900",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-27",
+                  "lengthMm": 15040,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "42864000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-28",
+                  "lengthMm": 15040,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "42864000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-29",
+                  "lengthMm": 5030,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14335500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-30",
+                  "lengthMm": 4980,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14193000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-31",
+                  "lengthMm": 5030,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14335500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-32",
+                  "lengthMm": 5030,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14335500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-33",
+                  "lengthMm": 4980,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14193000",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                },
+                {
+                  "entityId": "wall-1-34",
+                  "lengthMm": 5030,
+                  "lengthBasis": "exact",
+                  "grossFaceAreaMm2": "14335500",
+                  "baseMm": 3000,
+                  "topMm": 5850
+                }
+              ],
+              "openings": [
+                {
+                  "entityId": "opening-0",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-1",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-10",
+                  "areaMm2": "1440000",
+                  "baseMm": 900,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-11",
+                  "areaMm2": "1440000",
+                  "baseMm": 900,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-12",
+                  "areaMm2": "1440000",
+                  "baseMm": 900,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-13",
+                  "areaMm2": "1440000",
+                  "baseMm": 900,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-14",
+                  "areaMm2": "1440000",
+                  "baseMm": 3900,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-15",
+                  "areaMm2": "1440000",
+                  "baseMm": 3900,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-16",
+                  "areaMm2": "1440000",
+                  "baseMm": 3900,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-2",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-3",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-4",
+                  "areaMm2": "1890000",
+                  "baseMm": 3000,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-5",
+                  "areaMm2": "1890000",
+                  "baseMm": 3000,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-6",
+                  "areaMm2": "1890000",
+                  "baseMm": 3000,
+                  "topMm": 5100
+                },
+                {
+                  "entityId": "opening-7",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-8",
+                  "areaMm2": "1890000",
+                  "baseMm": 0,
+                  "topMm": 2100
+                },
+                {
+                  "entityId": "opening-9",
+                  "areaMm2": "1890000",
+                  "baseMm": 3000,
+                  "topMm": 5100
+                }
+              ],
+              "slabs": [
+                {
+                  "entityId": "roof",
+                  "netAreaMm2": "139354560",
+                  "topMm": 6000,
+                  "bottomMm": 5850
+                },
+                {
+                  "entityId": "slab-0",
+                  "netAreaMm2": "139354560",
+                  "topMm": 0,
+                  "bottomMm": -150
+                },
+                {
+                  "entityId": "slab-1",
+                  "netAreaMm2": "135154560",
+                  "topMm": 3000,
+                  "bottomMm": 2850
+                }
+              ],
+              "stairs": [
+                {
+                  "entityId": "stair-0",
+                  "levelRiseMm": 3000,
+                  "riserSumMm": 3000,
+                  "treadCount": 15,
+                  "calculatedRunMm": 4200,
+                  "footprintRunMm": 4200,
+                  "footprintWidthMm": 1000
+                }
+              ],
+              "dimensions": [
+                {
+                  "entityId": "dimension-0",
+                  "overallMm": 9144,
+                  "segmentsMm": [
+                    9144
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-1",
+                  "overallMm": 9144,
+                  "segmentsMm": [
+                    100,
+                    1150,
+                    1300,
+                    6494,
+                    100
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-10",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-11",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-12",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-13",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-14",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-15",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-16",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-17",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-18",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-19",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-2",
+                  "overallMm": 15240,
+                  "segmentsMm": [
+                    15240
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-20",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-21",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-22",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-23",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-24",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-25",
+                  "overallMm": 4980,
+                  "segmentsMm": [
+                    4980
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-26",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-27",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-28",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-29",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-3",
+                  "overallMm": 15240,
+                  "segmentsMm": [
+                    100,
+                    3785,
+                    3735,
+                    3735,
+                    3785,
+                    100
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-30",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-31",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-32",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    200,
+                    900,
+                    200
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-33",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-34",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    2647,
+                    1200,
+                    2647
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-35",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-36",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-37",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-38",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-39",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-4",
+                  "overallMm": 9144,
+                  "segmentsMm": [
+                    9144
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-40",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-41",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    2647,
+                    1200,
+                    2647
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-42",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-43",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-44",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    250,
+                    900,
+                    13890
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-45",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-46",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    1442,
+                    900,
+                    1443
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-47",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-48",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    1417,
+                    900,
+                    1418
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-49",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-5",
+                  "overallMm": 9144,
+                  "segmentsMm": [
+                    100,
+                    1150,
+                    1300,
+                    6494,
+                    100
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-50",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    1417,
+                    900,
+                    1418
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-51",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-52",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    1442,
+                    900,
+                    1443
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-53",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-54",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-55",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    1267,
+                    1200,
+                    1268
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-56",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    3735
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-57",
+                  "overallMm": 3735,
+                  "segmentsMm": [
+                    1267,
+                    1200,
+                    1268
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-58",
+                  "overallMm": 3785,
+                  "segmentsMm": [
+                    3785
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-59",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-6",
+                  "overallMm": 15240,
+                  "segmentsMm": [
+                    15240
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-60",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-61",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-62",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    2647,
+                    1200,
+                    2647
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-63",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-64",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-65",
+                  "overallMm": 1150,
+                  "segmentsMm": [
+                    1150
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-66",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-67",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    6494
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-68",
+                  "overallMm": 6494,
+                  "segmentsMm": [
+                    2647,
+                    1200,
+                    2647
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-69",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-7",
+                  "overallMm": 15240,
+                  "segmentsMm": [
+                    100,
+                    5030,
+                    4980,
+                    5030,
+                    100
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-70",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-71",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    5650,
+                    900,
+                    8490
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-72",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-73",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    2065,
+                    900,
+                    2065
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-74",
+                  "overallMm": 4980,
+                  "segmentsMm": [
+                    4980
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-75",
+                  "overallMm": 4980,
+                  "segmentsMm": [
+                    2040,
+                    900,
+                    2040
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-76",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-77",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    2065,
+                    900,
+                    2065
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-78",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-79",
+                  "overallMm": 4980,
+                  "segmentsMm": [
+                    4980
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-8",
+                  "overallMm": 1300,
+                  "segmentsMm": [
+                    1300
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-80",
+                  "overallMm": 4980,
+                  "segmentsMm": [
+                    1890,
+                    1200,
+                    1890
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-81",
+                  "overallMm": 5030,
+                  "segmentsMm": [
+                    5030
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-82",
+                  "overallMm": 3000,
+                  "segmentsMm": [
+                    3000
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-83",
+                  "overallMm": 4200,
+                  "segmentsMm": [
+                    4200
+                  ],
+                  "deltaMm": 0
+                },
+                {
+                  "entityId": "dimension-9",
+                  "overallMm": 15040,
+                  "segmentsMm": [
+                    15040
+                  ],
+                  "deltaMm": 0
+                }
+              ]
+            },
+            "circulation": {
+              "evaluated": true,
+              "entrySpaceIds": [
+                "space-corridor-0"
+              ],
+              "nodes": [
+                "space-bathroom-1",
+                "space-bedroom-1",
+                "space-bedroom-2",
+                "space-bedroom-3",
+                "space-bedroom-4",
+                "space-corridor-0",
+                "space-corridor-1",
+                "space-kitchen-1",
+                "space-living-1",
+                "space-stairwell-0",
+                "space-stairwell-1"
+              ],
+              "edges": [
+                {
+                  "from": "space-bathroom-1",
+                  "to": "space-corridor-0",
+                  "via": "opening-3",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-bedroom-1",
+                  "to": "space-corridor-0",
+                  "via": "opening-0",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-bedroom-2",
+                  "to": "space-corridor-0",
+                  "via": "opening-2",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-bedroom-3",
+                  "to": "space-corridor-1",
+                  "via": "opening-5",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-bedroom-4",
+                  "to": "space-corridor-1",
+                  "via": "opening-6",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-corridor-0",
+                  "to": "space-kitchen-1",
+                  "via": "opening-1",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-corridor-0",
+                  "to": "space-stairwell-0",
+                  "via": "opening-8",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-corridor-1",
+                  "to": "space-living-1",
+                  "via": "opening-4",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-corridor-1",
+                  "to": "space-stairwell-1",
+                  "via": "opening-9",
+                  "kind": "door"
+                },
+                {
+                  "from": "space-stairwell-0",
+                  "to": "space-stairwell-1",
+                  "via": "stair-0",
+                  "kind": "stair"
+                }
+              ],
+              "reachableSpaceIds": [
+                "space-bathroom-1",
+                "space-bedroom-1",
+                "space-bedroom-2",
+                "space-bedroom-3",
+                "space-bedroom-4",
+                "space-corridor-0",
+                "space-corridor-1",
+                "space-kitchen-1",
+                "space-living-1",
+                "space-stairwell-0",
+                "space-stairwell-1"
+              ],
+              "unreachableSpaceIds": []
+            },
+            "rulePacks": [
+              {
+                "id": "designflow-product-defaults",
+                "version": "1"
+              }
+            ],
+            "ruleResults": [
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-0"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-1"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-2"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-3"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-4"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-5"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-6"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-7"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-8"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "door-width",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "opening-9"
+                ],
+                "measured": 900,
+                "required": 900,
+                "message": "Compare modeled door width with the caller-supplied minimum mm."
+              },
+              {
+                "rulePackId": "designflow-product-defaults",
+                "rulePackVersion": "1",
+                "ruleId": "tread-depth",
+                "version": "1",
+                "outcome": "PASS",
+                "severity": "WARNING",
+                "entityIds": [
+                  "stair-0"
+                ],
+                "measured": 280,
+                "required": 280,
+                "message": "Compare tread depth with the caller-supplied minimum mm."
+              }
+            ],
+            "assumptions": [
+              "Computational QA only; no structural, regulatory, fire, accessibility or professional certification.",
+              "Explicit point dimension anchors measure those points; V2 does not bind them to an envelope or stair.",
+              "Gross floor area is the sum of floor plate areas minus voids; it is not a legal GFA definition.",
+              "Orthogonal walls use butt-ended prisms; junction overlap is allowed. No complete 3D solid boolean audit.",
+              "Space areas and spans use declared centerline boundaries, not finished clear room dimensions."
+            ],
+            "coverage": [
+              {
+                "stage": "schema",
+                "outcome": "EVALUATED",
+                "details": "V2 shape, integer units, bounded entities, simple polygons, contained disjoint voids, positive lengths and operation enums"
+              },
+              {
+                "stage": "document",
+                "outcome": "EVALUATED",
+                "details": "Independent identity, cross-reference and completeness checks"
+              },
+              {
+                "stage": "levels-site",
+                "outcome": "EVALUATED",
+                "details": "Level order/heights, declared permitted polygons, rectangular site setbacks, optional parking allocations and primary entry"
+              },
+              {
+                "stage": "spaces",
+                "outcome": "EVALUATED",
+                "details": "Centerline area/spans, same-level interior overlap and level containment"
+              },
+              {
+                "stage": "walls",
+                "outcome": "EVALUATED",
+                "details": "Wall extents, vertical geometry, interval duplication, geometric adjacency, represented-edge gaps and fragments; not watertight solids"
+              },
+              {
+                "stage": "openings",
+                "outcome": "EVALUATED",
+                "details": "Exact hosted bounds, vertical extents, rectangle overlaps and orthogonal interval topology"
+              },
+              {
+                "stage": "dimensions",
+                "outcome": "EVALUATED",
+                "details": "Independent anchors, axis measurements, strict ordering and exact controlling reconciliation"
+              },
+              {
+                "stage": "slabs-columns",
+                "outcome": "EVALUATED",
+                "details": "Plate areas, levels, extents, same-kind overlap, column bounds and vertical geometry"
+              },
+              {
+                "stage": "stairs",
+                "outcome": "EVALUATED",
+                "details": "Straight-flight arithmetic, footprint, endpoint landings, access, full-flight void correspondence and conservative solid interference"
+              },
+              {
+                "stage": "circulation",
+                "outcome": "EVALUATED",
+                "details": "Rebuilt valid door/passage/stair graph; reachability only from explicit caller/pack entries"
+              },
+              {
+                "stage": "rules",
+                "outcome": "EVALUATED",
+                "details": "Opt-in versioned declarative policies, independent of core geometry validity"
+              }
+            ]
+          }
+        }
+      ],
+      "normalizedRequirements": {
+        "site": {
+          "boundary": [
+            {
+              "x": 0,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 0
+            },
+            {
+              "x": 9144,
+              "z": 15240
+            },
+            {
+              "x": 0,
+              "z": 15240
+            }
+          ],
+          "northMilliDegrees": null,
+          "setbacks": []
+        },
+        "floors": 2,
+        "rooms": [
+          {
+            "type": "bedroom",
+            "count": 2,
+            "level": 0,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "bedroom",
+            "count": 2,
+            "level": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "bathroom",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "living",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          },
+          {
+            "type": "kitchen",
+            "count": 1,
+            "minWidthMm": 1800,
+            "minDepthMm": 1800
+          }
+        ],
+        "relationships": [],
+        "circulationWidthMm": 1200,
+        "floorToFloorHeightMm": 3000,
+        "exteriorWallThicknessMm": 200,
+        "interiorWallThicknessMm": 100,
+        "slabThicknessMm": 150,
+        "door": {
+          "widthMm": 900,
+          "heightMm": 2100,
+          "jambMm": 100
+        },
+        "windows": {
+          "enabled": true,
+          "widthMm": 1200,
+          "heightMm": 1200,
+          "sillMm": 900
+        },
+        "stair": {
+          "widthMm": 1000,
+          "riserCount": 16,
+          "treadDepthMm": 280,
+          "landingDepthMm": 1200
+        },
+        "seed": "blueprint-default",
+        "solver": {
+          "maxCandidates": 32,
+          "maxIterations": 20000
+        }
+      }
+    }
+  },
+  "timings": [
+    {
+      "operation": "message",
+      "ms": 13.378274000000147
+    },
+    {
+      "operation": "message",
+      "ms": 10.224618999999848
+    },
+    {
+      "operation": "message",
+      "ms": 8.62523299999998
+    },
+    {
+      "operation": "message",
+      "ms": 7.33357100000012
+    },
+    {
+      "operation": "approve/generate/qa/commit",
+      "ms": 196.20623499999988
+    }
+  ]
+}

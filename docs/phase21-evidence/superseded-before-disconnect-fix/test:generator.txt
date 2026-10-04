@@ -1,0 +1,31 @@
+
+> designflow@0.1.0 test:generator
+> npm run build -w @designflow/shared && vitest run packages/generator/tests
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 4584ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  335ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  468ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  470ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3411ms
+   ✓ bounded adversarial and property corpus > isolates actual parallel worker generations  304ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2289ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  739ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 269ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 236ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 41ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 38ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 21ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 6ms
+
+ Test Files  9 passed (9)
+      Tests  491 passed (491)
+   Start at  09:13:55
+   Duration  13.25s (transform 421ms, setup 0ms, collect 988ms, tests 10.89s, environment 2ms, prepare 421ms)
+
