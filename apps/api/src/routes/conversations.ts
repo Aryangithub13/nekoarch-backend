@@ -61,9 +61,16 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     request.raw.once('aborted',abort);reply.raw.once('close',disconnect);
     try {
       const state=await planConversation(reserved.conversation.state,input,{...(provider?{provider}:{}),disabled:env.AI_CONVERSATION_MODE==='disabled',signal:controller.signal,...(restoredRequirements?{restoredRequirements}:{})});
+      if (controller.signal.aborted) throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
       const result=ConversationSchema.parse(await conversations.write('finish',{...params,token,state}));
       request.log.info({conversationId:params.conversationId,version:state.version,status:state.status,provider:state.provider.kind,providerFailure:state.provider.failure,orchestration:state.orchestration,durationMs:performance.now()-started},'conversation message processed');
       return result;
+    } catch (error) {
+      // Token fencing makes cleanup safe even if finish committed but its reply
+      // was lost, or a replacement worker acquired an expired lease.
+      try { await conversations.write('cancel-message',{...params,token}); }
+      catch { request.log.warn('Conversation lease cleanup unavailable'); }
+      throw error;
     } finally { request.raw.removeListener('aborted',abort);reply.raw.removeListener('close',disconnect); }
   });
   app.post(`${item}/proposals/approve`,{bodyLimit:8192},async request=>{

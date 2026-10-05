@@ -76,7 +76,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     scope.get('/health/live', async () => ({ status: 'ok' }));
     scope.get('/health/ready', async (_request, reply) => {
       try {
-        if (draining || !backend.ready) throw new Error('Unavailable');
+        if (draining || !backend.ready || (options.env.NODE_ENV === 'production' && !options.env.PROJECT_COMMIT_SECRET)) throw new Error('Unavailable');
         await backend.ready();
         return { status: 'ok' };
       } catch { return reply.code(503).send({ status: 'unavailable' }); }

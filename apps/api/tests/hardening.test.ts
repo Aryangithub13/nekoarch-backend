@@ -24,6 +24,14 @@ function appWith(settings: Record<string, string> = {}, source: Backend = backen
 afterEach(async () => { await Promise.all(apps.splice(0).map(app => app.close())); vi.unstubAllGlobals(); vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe('health and lifecycle', () => {
+  it('reports missing production signing capability through readiness without disabling reads or liveness', async () => {
+    const settings = { NODE_ENV: 'production', SENTRY_DSN: 'https://public@example.test/1' };
+    const app = appWith(settings);
+    expect((await app.inject('/health/live')).statusCode).toBe(200);
+    expect((await app.inject('/health/ready')).statusCode).toBe(503);
+    expect((await app.inject(`/api/plans/${userId}`)).statusCode).toBe(200);
+    expect((await appWith({ ...settings, PROJECT_COMMIT_SECRET: 'a'.repeat(64) }).inject('/health/ready')).statusCode).toBe(200);
+  });
   it('keeps liveness independent and readiness recovers from database failure', async () => {
     const ready = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error('private-db-secret')).mockResolvedValueOnce(undefined);
     const app = appWith({}, { ...backend, ready });

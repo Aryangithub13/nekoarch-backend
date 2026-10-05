@@ -12,7 +12,7 @@ export class ConversationRepository {
     if(!this.repository.conversationRpc) throw new ApiError(503,'CONVERSATIONS_UNAVAILABLE','Conversation persistence is unavailable');
     return this.repository.conversationRpc('conversation_read',{p_action:action,p_input:input});
   }
-  write(action: 'create'|'reserve'|'finish'|'submit'|'approve-start'|'release'|'delete',input: Record<string,unknown>) {
+  write(action: 'create'|'reserve'|'finish'|'submit'|'approve-start'|'release'|'cancel-message'|'delete',input: Record<string,unknown>) {
     if(!this.repository.conversationRpc || !this.secret) throw new ApiError(503,'CONVERSATIONS_UNAVAILABLE','Conversation persistence is not configured');
     const attestation=signProjectCommit(this.secret,this.userId,`conversation:${action}`,input);
     return this.repository.conversationRpc('conversation_write',{p_action:action,p_input:input,p_envelope:attestation.envelope,p_signature:attestation.signature});
