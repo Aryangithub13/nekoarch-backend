@@ -1,0 +1,3266 @@
+{
+  "startedAt": "2026-10-05T03:01:06.207Z",
+  "finishedAt": "2026-10-05T03:02:08.116Z",
+  "observedRequests": 211,
+  "failures": [
+    {
+      "at": "2026-10-05T03:01:06.425Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:13 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "7343"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:06.423Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:13 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "7340"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:06.431Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:13 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "7338"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:06.428Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:13 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "7338"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:13.790Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:13 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:14.796Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:14 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:16.798Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:17 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "644"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:21.446Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:21 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:21.451Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:21 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:22.456Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:25 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "2812"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:27.272Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:27 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:31.284Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:31 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:31.287Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:31 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:32.288Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:32 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:34.297Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:34 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.303Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/profiles",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.349Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.394Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.438Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.482Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.526Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.571Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.615Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.657Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.700Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.743Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.786Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.822Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.856Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.890Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.923Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.957Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.992Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:38 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.026Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.061Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.095Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.130Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.168Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.203Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.237Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.270Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.309Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.379Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.416Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.450Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.484Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.517Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:39 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.131Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.168Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.205Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.238Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.274Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.276Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:40 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:41.278Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:42 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "990"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:44.277Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:44 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:48.293Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:48 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:48.295Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "PATCH",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:48 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:48.297Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/conversation_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:48 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:48.299Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:48 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:49.300Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:49 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:51.303Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:51 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.309Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.352Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.396Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.438Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.481Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.523Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.567Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.609Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.652Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.695Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.737Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.780Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.824Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.866Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.908Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.952Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.994Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:55 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.036Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.073Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.075Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rate_table_versions",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.108Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.144Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.179Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.214Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.247Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.281Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.316Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.349Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.382Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.417Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.452Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.487Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.522Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.557Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.591Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.627Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.660Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.693Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.728Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.764Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.804Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.806Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.803Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.807Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/idempotency_records",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.841Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.879Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.913Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.946Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.979Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/project_write",
+      "method": "POST",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "iat": 1791169266,
+        "exp": 1791172866
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.982Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_takeoffs",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:56 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:57.986Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_takeoffs",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:57 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:59.990Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_takeoffs",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:01:59 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:04.001Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_takeoffs",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:04 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:04.004Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_workflow_runs",
+      "method": "GET",
+      "status": 503,
+      "statusText": "Service Temporarily Unavailable",
+      "responseBody": "{\"message\":\"name resolution failed\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "36",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:04 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:05.005Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_workflow_runs",
+      "method": "GET",
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "responseBody": "{\"message\":\"An unexpected error occurred\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "42",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:08 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "2998"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:08.005Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/projects",
+      "method": "GET",
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "responseBody": "{\"message\":\"An unexpected error occurred\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "42",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:08 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:08.007Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/cost_estimates",
+      "method": "DELETE",
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "responseBody": "{\"message\":\"An unexpected error occurred\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "42",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:08 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    },
+    {
+      "at": "2026-10-05T03:02:08.008Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/plans",
+      "method": "DELETE",
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "responseBody": "{\"message\":\"An unexpected error occurred\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "42",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 05 Oct 2026 03:02:08 GMT",
+        "server": "kong/2.8.1",
+        "x-kong-response-latency": "0"
+      }
+    }
+  ],
+  "apiErrors": [
+    {
+      "at": "2026-10-05T03:01:13.773Z",
+      "requestId": "3da7d0d8-b826-4aa4-a7a5-59b9b83e2439",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/plans",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:13.777Z",
+      "requestId": "d6e59e90-3fb8-4973-9d23-fbef2ee0f2af",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/plans",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:13.778Z",
+      "requestId": "7d130c8d-7a66-464c-826e-ceaf52aa860e",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/plans",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:13.779Z",
+      "requestId": "18bcc3a9-b56d-4028-ae4c-ed4f25306124",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/plans",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.352Z",
+      "requestId": "f50d611d-0f0d-425a-bfa0-f02e77cf6c77",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.396Z",
+      "requestId": "8b3bcfeb-9f43-4ea6-adb2-9a86869126ca",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.440Z",
+      "requestId": "8c347663-fac0-4429-b2c8-0f5b6446f1b1",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.484Z",
+      "requestId": "ac5b62ce-cdb3-4cdc-94b5-60cafe9904a1",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.528Z",
+      "requestId": "50245ea6-c54d-4adf-bfd3-793a7c7b20fa",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.573Z",
+      "requestId": "69df8c01-5e31-4860-a4f5-7f3f90a2a29d",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.617Z",
+      "requestId": "2af9c201-0f67-49a0-8cf2-bdd2fbbd5f1d",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.659Z",
+      "requestId": "c5dfee00-72eb-4ef8-a0fc-cc73312a3968",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.702Z",
+      "requestId": "73a8db72-a78a-44e5-a3eb-a2216e02bf70",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.744Z",
+      "requestId": "9ec5bc2a-e2fa-4c07-a5ff-d48caeadfbb6",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.787Z",
+      "requestId": "04913432-0633-4192-a129-8e64fb27e529",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.824Z",
+      "requestId": "702939c8-28fd-4c83-817b-efb3f0364eab",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.857Z",
+      "requestId": "3da2e3fd-e79f-4490-893b-b162efc35d0b",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.891Z",
+      "requestId": "c6a00b08-10c7-497a-a3e5-cdb062ffd7a4",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.924Z",
+      "requestId": "9d8cf997-88b2-4e48-9a00-edb183e91272",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.958Z",
+      "requestId": "76590582-cf13-40a2-9e68-0b1022097271",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:38.993Z",
+      "requestId": "cb06d838-b8a3-4550-856a-8d032d425adc",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.027Z",
+      "requestId": "42f08183-66a7-48cd-a8fd-55fbd3dd8bc1",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.062Z",
+      "requestId": "55b622ed-8215-42f5-8d3c-cb904ae63b81",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.096Z",
+      "requestId": "d05621f4-6b17-4991-b27f-7951b41089a9",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.132Z",
+      "requestId": "82eef142-6307-4ae5-aa84-1f0e435a6aa6",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.169Z",
+      "requestId": "a1f2a4c0-cacb-4a31-80cf-7f811f1e9fdf",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.204Z",
+      "requestId": "5dddbdb9-b8bf-487a-907e-b283908fab5c",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.238Z",
+      "requestId": "83663415-d5e6-4d0d-85fc-09ebceb279d7",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.271Z",
+      "requestId": "5eef44d1-7faf-4d63-9ab4-895e6856931c",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.310Z",
+      "requestId": "2128d8b4-ab29-42e4-9063-1d0d73d24bd0",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.381Z",
+      "requestId": "8523dcb2-2fe6-451c-8c82-7288494c1301",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.417Z",
+      "requestId": "13084a80-5701-40ba-80fa-891ad5e16a74",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.452Z",
+      "requestId": "79eb76ea-1d68-4da2-ab59-6b4333c3ce33",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.485Z",
+      "requestId": "5b53ace7-2e1b-427d-ab07-e492ae1f17ba",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:39.518Z",
+      "requestId": "b5d0f190-863a-4e28-aa76-bc6d615c0ba9",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.133Z",
+      "requestId": "9f8368c1-bc9e-44d8-831a-534a66755880",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.169Z",
+      "requestId": "d9f29e72-e2ce-4dbc-a0d3-24f7ac523279",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.206Z",
+      "requestId": "53f32ebb-41ff-4da2-bab2-63428648cbfb",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.240Z",
+      "requestId": "47f7c273-1ee2-4eee-8694-f8919346c742",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:40.275Z",
+      "requestId": "775e598e-9975-42ae-b98c-ca0b643f2fa5",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.354Z",
+      "requestId": "5e8d980c-492e-4fb6-bfc1-70bb9c310883",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.397Z",
+      "requestId": "5b55057e-5bbf-4370-bf8b-ec371d84159e",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.440Z",
+      "requestId": "8f3c6c39-824b-4e6d-af13-f72dd06f9385",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.483Z",
+      "requestId": "7f7dca79-3603-4a46-9faf-cc4ae4812bcd",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.525Z",
+      "requestId": "1cadf39f-13a2-44f8-ae2b-58919fdaabdf",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.568Z",
+      "requestId": "9673955f-b514-47c6-86b2-ff6039f68e8e",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.610Z",
+      "requestId": "771b0ce8-cbe0-4813-a071-7e9588fe9921",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.653Z",
+      "requestId": "cac7d5a0-8e90-43ad-b16e-65d229d03e3f",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.697Z",
+      "requestId": "823b189f-aeef-4ae0-ac17-8a1c1443be9d",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.739Z",
+      "requestId": "eabf8427-e3b7-4c8d-bf3c-2951cd402309",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.782Z",
+      "requestId": "dd31493e-5502-4434-a0f4-12d8a2b979fe",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.825Z",
+      "requestId": "5e7a4193-3cd2-414e-a0f6-c267bc7324a7",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.867Z",
+      "requestId": "aae78857-b13b-4d21-841d-68321bb4bf1a",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.909Z",
+      "requestId": "bae01384-4e20-45bb-9096-4effb5951b52",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.953Z",
+      "requestId": "81c026bb-641b-4a88-84f4-33565ebadb08",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:55.996Z",
+      "requestId": "6e2b8a57-8c81-4365-ac76-e3235fad6bf8",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.038Z",
+      "requestId": "23aa0aec-67e3-4d6c-9d83-f9ad80211d68",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.074Z",
+      "requestId": "bdbd3e8c-ced5-409a-ae12-4d6c6488b1c2",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.110Z",
+      "requestId": "927b10b8-36fd-4544-b6d7-4dbdf0985c5a",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.145Z",
+      "requestId": "8b615a19-ec8b-458d-b83b-23dd50c9ee08",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.180Z",
+      "requestId": "429f80d7-5d7e-4ff0-9790-8d9be70f6507",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.215Z",
+      "requestId": "a8d8be4c-cde0-4cd3-b790-ee38b1071460",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.248Z",
+      "requestId": "f4b4d294-6e7b-4c72-a94f-4f2dd257f8ec",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.282Z",
+      "requestId": "3eec6f41-7914-4db7-b9e0-4cd2d5d548d9",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.317Z",
+      "requestId": "0ca2d419-fd19-4277-a38e-1a0167058125",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.350Z",
+      "requestId": "31e5fa16-906e-4dff-900b-b8c04d04b964",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.383Z",
+      "requestId": "0fdf9fae-4d8a-4c85-b4c2-9cf628d0f9be",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.419Z",
+      "requestId": "dc9595d2-84d2-4e87-ba17-c9d30388fe07",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.453Z",
+      "requestId": "dc57cda8-92cf-42e7-933e-6a774df9d93c",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.488Z",
+      "requestId": "e6b4c7ec-054c-45a0-90a3-c723396dadb2",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.523Z",
+      "requestId": "1d2bbd2d-d1b7-4325-ace8-e0424afead79",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.558Z",
+      "requestId": "5def57e6-fc1b-4f8a-9fb0-c83b10e3ac0b",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.593Z",
+      "requestId": "9c3c9623-2479-4d8e-8e4b-59b5725502c6",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.628Z",
+      "requestId": "aa4556bc-ceca-43d2-8cdd-8d8df816225e",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.661Z",
+      "requestId": "b62af601-7ab7-4fc9-814f-0eb0c476e174",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.695Z",
+      "requestId": "eec41204-8858-4131-9a35-90c20ae03941",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.729Z",
+      "requestId": "3d9009c2-fc9c-4e20-992a-a647626e8c90",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.765Z",
+      "requestId": "cce3e200-ef58-4d20-a1cc-bb38e29c1483",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.808Z",
+      "requestId": "7ee394a8-e037-4010-bdf0-bbde417ec970",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.810Z",
+      "requestId": "02625fe3-c3ed-403a-bc06-3aebf65c948d",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.810Z",
+      "requestId": "530d4300-557d-499c-b75f-2f25953fd537",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.811Z",
+      "requestId": "07240fc0-148d-449c-99e5-d3d99b93bdd9",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.842Z",
+      "requestId": "9c2dc3cd-df87-4b33-a4af-6fb5a0ee52b5",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.880Z",
+      "requestId": "45fa89b1-0d50-429e-b9e5-19f51e052fa5",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.913Z",
+      "requestId": "e0cc3e99-fb3a-4292-ae53-317e7dea55e9",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.947Z",
+      "requestId": "fb407f36-cb63-46b6-b0f7-7ce5d98c3e61",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    },
+    {
+      "at": "2026-10-05T03:01:56.980Z",
+      "requestId": "a06b4f86-6eb0-4fd5-80c7-29b523c02cf2",
+      "code": "DATABASE_ERROR",
+      "metadata": {
+        "route": "/api/projects",
+        "method": "POST"
+      }
+    }
+  ],
+  "postgrestLogs": ""
+}

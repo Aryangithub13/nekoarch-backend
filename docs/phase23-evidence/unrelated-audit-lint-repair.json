@@ -1,0 +1,26 @@
+{
+  "scope": "Untracked audit scripts remain outside the Phase 23 commit. Type annotations, unused bindings and const declarations only; no audit executed or results rewritten.",
+  "originalBackup": "/tmp/designflow-backend-audit-before-lint.zip",
+  "changes": [
+    {
+      "path": "docs/backend-audit-1-23/diagnostics.mts",
+      "beforeSha256": "76c38364ab82cd91e9a75eee33d51d2d383017511c344198d317405f872e7daa",
+      "afterSha256": "dd9d8557a0258426f0c53d6af02a70ec48f0bd1300470e3982eaa830ecacdf19"
+    },
+    {
+      "path": "docs/backend-audit-1-23/conversation-diagnostics.mts",
+      "beforeSha256": "930d28f41e02f4157186539f7d177490e7e2aa7e1a6dac802aead57b3327ed0a",
+      "afterSha256": "4de9569eb484746251af5f3f3835e7cb10737085baa82670b67febb583acfd4a"
+    },
+    {
+      "path": "docs/backend-audit-1-23/database-diagnostics.mts",
+      "beforeSha256": "9ac81b0492bedf4323794750fe23d80047df084827f679d1ee41acdbe9e8bf67",
+      "afterSha256": "7f9d744078b901a2a7e8efef708f1995359420dcf0e3f3e2fa0ea54d143e6c37"
+    },
+    {
+      "path": "docs/backend-audit-1-23/edge-diagnostics.mts",
+      "beforeSha256": "33726e398d61d27d107bef54ac84459c80f09f31fa3c89975491c1773ab2749b",
+      "afterSha256": "0ee2b289bdde5c73ad2c57e3ed17ae5e9fde8943c542819cf371fcd5b1175701"
+    }
+  ]
+}

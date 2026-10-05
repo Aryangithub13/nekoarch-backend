@@ -1,0 +1,50 @@
+
+> designflow@0.1.0 test:bim
+> npm run build && vitest run apps/api/tests/bim.test.ts apps/api/tests/bim.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/bim.integration.test.ts (1 test) 8121ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23: owner-only BIM/IFC, bounded pagination, immutable snapshots and revision comparison  7386ms
+ ✓ apps/api/tests/bim.test.ts (32 tests) 3473ms
+   ✓ Phase 23 semantic BIM > projects v1 without changing historical geometry or hash  400ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  538ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  467ms
+
+ Test Files  2 passed (2)
+      Tests  33 passed (33)
+   Start at  09:12:12
+   Duration  14.05s (transform 624ms, setup 0ms, collect 2.07s, tests 11.59s, environment 1ms, prepare 104ms)

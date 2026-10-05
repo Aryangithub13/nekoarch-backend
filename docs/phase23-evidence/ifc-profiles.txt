@@ -1,0 +1,44 @@
+[
+  {
+    "fixture": "L.ifc",
+    "exactSlabProfiles": 2,
+    "exactVoidProfiles": 0,
+    "mirroredNotchNegativeControl": "REJECTED"
+  },
+  {
+    "fixture": "maximum-24.ifc",
+    "exactSlabProfiles": 2,
+    "exactVoidProfiles": 0,
+    "mirroredNotchNegativeControl": "REJECTED"
+  },
+  {
+    "fixture": "modified.ifc",
+    "exactSlabProfiles": 10,
+    "exactVoidProfiles": 1,
+    "mirroredNotchNegativeControl": "REJECTED"
+  },
+  {
+    "fixture": "setback.ifc",
+    "exactSlabProfiles": 10,
+    "exactVoidProfiles": 1,
+    "mirroredNotchNegativeControl": "REJECTED"
+  },
+  {
+    "fixture": "specified-material.ifc",
+    "exactSlabProfiles": 2,
+    "exactVoidProfiles": 0,
+    "mirroredNotchNegativeControl": "not applicable: rectangular fixture"
+  },
+  {
+    "fixture": "v1.ifc",
+    "exactSlabProfiles": 2,
+    "exactVoidProfiles": 0,
+    "mirroredNotchNegativeControl": "not applicable: rectangular fixture"
+  },
+  {
+    "fixture": "v2.ifc",
+    "exactSlabProfiles": 2,
+    "exactVoidProfiles": 0,
+    "mirroredNotchNegativeControl": "not applicable: rectangular fixture"
+  }
+]

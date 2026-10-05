@@ -1,0 +1,782 @@
+{
+  "apps/api/src/lib/generation-identity.ts": {
+    "baselineSha256": "91d494a8e0a50c833da215c96bc4da1624abc53912afaf7c34ff4fbcec54c616",
+    "currentSha256": "91d494a8e0a50c833da215c96bc4da1624abc53912afaf7c34ff4fbcec54c616",
+    "unchanged": true
+  },
+  "package-lock.json": {
+    "baselineSha256": "9eba827eaa424c2e5e0deee5bb00ff8d648ad2807c7b6c91514160374050b435",
+    "currentSha256": "9eba827eaa424c2e5e0deee5bb00ff8d648ad2807c7b6c91514160374050b435",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/README.md": {
+    "baselineSha256": "d39ee07e84dd0c15c7b16705cd2ffe780c1b412f29bffa049a97b19ff511c319",
+    "currentSha256": "d39ee07e84dd0c15c7b16705cd2ffe780c1b412f29bffa049a97b19ff511c319",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/package.json": {
+    "baselineSha256": "71d99309f486106e7f352b05f2fe43eb14ae11237c1259e3fdb4035252250e52",
+    "currentSha256": "71d99309f486106e7f352b05f2fe43eb14ae11237c1259e3fdb4035252250e52",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/architectural-constraints.ts": {
+    "baselineSha256": "71a44022ae031bfefadda5acf3f35ec43cd5d2adcfd67ac6be2621decf82bee1",
+    "currentSha256": "71a44022ae031bfefadda5acf3f35ec43cd5d2adcfd67ac6be2621decf82bee1",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/audit.ts": {
+    "baselineSha256": "e4eabc581a8489c2e4b9edc8b436055054e38114fe2b10126ff3bf4b36c43fd2",
+    "currentSha256": "e4eabc581a8489c2e4b9edc8b436055054e38114fe2b10126ff3bf4b36c43fd2",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/circulation.ts": {
+    "baselineSha256": "08a5213c52b916251cb4e27b6e65f8e3041749717029750abad63213a1649011",
+    "currentSha256": "08a5213c52b916251cb4e27b6e65f8e3041749717029750abad63213a1649011",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/context.ts": {
+    "baselineSha256": "9a6d6aa792ea0ce85395c6295d83b7a9bc3723cde52c637b2281a8c49e8c2066",
+    "currentSha256": "9a6d6aa792ea0ce85395c6295d83b7a9bc3723cde52c637b2281a8c49e8c2066",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/core.ts": {
+    "baselineSha256": "1191cfd123559e69f6da7ce800dcb283ec57daf6c1d8e94d1d46e974fa82652a",
+    "currentSha256": "1191cfd123559e69f6da7ce800dcb283ec57daf6c1d8e94d1d46e974fa82652a",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/dimensions.ts": {
+    "baselineSha256": "06ddc660329e7326991d8acfe386db5852f6275dbafa1bc966ef6b8815ee96af",
+    "currentSha256": "06ddc660329e7326991d8acfe386db5852f6275dbafa1bc966ef6b8815ee96af",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/geometry.ts": {
+    "baselineSha256": "73bc17b66ebfe92a1548a0bae2b4ef8181fedcd8683d31f730d0f6213b8d9f3f",
+    "currentSha256": "73bc17b66ebfe92a1548a0bae2b4ef8181fedcd8683d31f730d0f6213b8d9f3f",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/index.ts": {
+    "baselineSha256": "3c249cb90795fac6bf75baefbfc5b79e35a78de1ed47e53a27aaf73124c16376",
+    "currentSha256": "3c249cb90795fac6bf75baefbfc5b79e35a78de1ed47e53a27aaf73124c16376",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/openings.ts": {
+    "baselineSha256": "739083ca8f3540c37acd2e10c093da18df0fe92008cf94e63411188886997491",
+    "currentSha256": "739083ca8f3540c37acd2e10c093da18df0fe92008cf94e63411188886997491",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/options.ts": {
+    "baselineSha256": "018e72a0b02556ad55fc92485e0ed54eebe9e713104d3a09b1511d3083c1d12a",
+    "currentSha256": "018e72a0b02556ad55fc92485e0ed54eebe9e713104d3a09b1511d3083c1d12a",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/parametric.ts": {
+    "baselineSha256": "87fb12f45c5eb278e0a22c969d00c530f729a4d921845435a148358c04f2e6fc",
+    "currentSha256": "87fb12f45c5eb278e0a22c969d00c530f729a4d921845435a148358c04f2e6fc",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/report.ts": {
+    "baselineSha256": "275a0c0715ff7b4a18437fc236bee0ea76b3080bd84683b2ff928a54cca0463d",
+    "currentSha256": "275a0c0715ff7b4a18437fc236bee0ea76b3080bd84683b2ff928a54cca0463d",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/rules.ts": {
+    "baselineSha256": "5b8e0f83504257447d85700a2d324eccae4f7b0f06c2839f755bcf833cd47964",
+    "currentSha256": "5b8e0f83504257447d85700a2d324eccae4f7b0f06c2839f755bcf833cd47964",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/site-allocations.ts": {
+    "baselineSha256": "e4e99c0caaa61fd3bf49a8b8bf1051b09cb906233951ee365f7addfdc0064471",
+    "currentSha256": "e4e99c0caaa61fd3bf49a8b8bf1051b09cb906233951ee365f7addfdc0064471",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/src/stairs.ts": {
+    "baselineSha256": "89c88c2241d22965b911e5cc55fad32d8daf1fff3a4971fd4ae23cdba24ce248",
+    "currentSha256": "89c88c2241d22965b911e5cc55fad32d8daf1fff3a4971fd4ae23cdba24ce248",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/audit.test.ts": {
+    "baselineSha256": "5914eb0e14425ac44ae99646989fe82236a0f56dc92e9d12b890cf2e9c334610",
+    "currentSha256": "5914eb0e14425ac44ae99646989fe82236a0f56dc92e9d12b890cf2e9c334610",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/boundary.test.ts": {
+    "baselineSha256": "2c50b213f10a4234ff326f95ddcab620cdcaef06ff86047d281a372611f890c8",
+    "currentSha256": "2c50b213f10a4234ff326f95ddcab620cdcaef06ff86047d281a372611f890c8",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/circulation-stairs.test.ts": {
+    "baselineSha256": "280f7eb1f09b096fe85897b5c2540c6f736626e1ffe14e57048e871b76efac01",
+    "currentSha256": "280f7eb1f09b096fe85897b5c2540c6f736626e1ffe14e57048e871b76efac01",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/differential.test.ts": {
+    "baselineSha256": "40624888b06f38dd2aa2fd57ed78b2ab6dd2bf9c3fc4fd36bd99f0f7ceeeabc2",
+    "currentSha256": "40624888b06f38dd2aa2fd57ed78b2ab6dd2bf9c3fc4fd36bd99f0f7ceeeabc2",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/fixtures.ts": {
+    "baselineSha256": "91505ea7ea3eea191835e5f2c6ad6e372c5c792a5c75358d8cc2be3a771cdc11",
+    "currentSha256": "91505ea7ea3eea191835e5f2c6ad6e372c5c792a5c75358d8cc2be3a771cdc11",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/geometry-coverage.test.ts": {
+    "baselineSha256": "b07f5b0406477bd07504e6c3248718a03757d9287fc3a7ec902f2cb0d25c685f",
+    "currentSha256": "b07f5b0406477bd07504e6c3248718a03757d9287fc3a7ec902f2cb0d25c685f",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tests/rules.test.ts": {
+    "baselineSha256": "b705eab5ef27d5fe5a377f186cf8f4c911db330f8a2f57b0dfd877c0ee5d7f8b",
+    "currentSha256": "b705eab5ef27d5fe5a377f186cf8f4c911db330f8a2f57b0dfd877c0ee5d7f8b",
+    "unchanged": true
+  },
+  "packages/blueprint-qa/tsconfig.json": {
+    "baselineSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "currentSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "unchanged": true
+  },
+  "packages/boq-cost/README.md": {
+    "baselineSha256": "d9a9b55a2ba046cac87a227d504100c26dbbce9a3d0fe8d5c24bb51ad8256fc7",
+    "currentSha256": "d9a9b55a2ba046cac87a227d504100c26dbbce9a3d0fe8d5c24bb51ad8256fc7",
+    "unchanged": true
+  },
+  "packages/boq-cost/package.json": {
+    "baselineSha256": "c7f75f34a9453907c118b6e3e656eac85ee8b2c456eeaddc7badd2b917420778",
+    "currentSha256": "c7f75f34a9453907c118b6e3e656eac85ee8b2c456eeaddc7badd2b917420778",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/calculate.ts": {
+    "baselineSha256": "164ab79f23df4dfbc8bf4b55763cdff085da13a0232e3b9c8fb6eeb585668556",
+    "currentSha256": "164ab79f23df4dfbc8bf4b55763cdff085da13a0232e3b9c8fb6eeb585668556",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/contracts.ts": {
+    "baselineSha256": "3800dd0d375848627db52875c9130892928cd407a169cac06bfccf6df44ec73e",
+    "currentSha256": "3800dd0d375848627db52875c9130892928cd407a169cac06bfccf6df44ec73e",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/demo.ts": {
+    "baselineSha256": "e54eea5639b7af3816778b5adbdc8fcf7f8dfa24761b22a394219bbfbd53f59a",
+    "currentSha256": "e54eea5639b7af3816778b5adbdc8fcf7f8dfa24761b22a394219bbfbd53f59a",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/hash.ts": {
+    "baselineSha256": "906dce26c93e310c7d3ada3a68f9c61429060a0253911cd7985de994ac5b8be7",
+    "currentSha256": "906dce26c93e310c7d3ada3a68f9c61429060a0253911cd7985de994ac5b8be7",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/index.ts": {
+    "baselineSha256": "a93e6074846afc1f7380593bfd23f89258d4830b6fcf64f631c621a6f6ba66cd",
+    "currentSha256": "a93e6074846afc1f7380593bfd23f89258d4830b6fcf64f631c621a6f6ba66cd",
+    "unchanged": true
+  },
+  "packages/boq-cost/src/report.ts": {
+    "baselineSha256": "3649ece3dd7f474426a568e38f98034cabee35204da96090830c585d4ab49380",
+    "currentSha256": "3649ece3dd7f474426a568e38f98034cabee35204da96090830c585d4ab49380",
+    "unchanged": true
+  },
+  "packages/boq-cost/tests/cost.test.ts": {
+    "baselineSha256": "c8542c288e65b9e2251ef4969d1cbd0be5528eaf792fe57116a7e4f56908f476",
+    "currentSha256": "c8542c288e65b9e2251ef4969d1cbd0be5528eaf792fe57116a7e4f56908f476",
+    "unchanged": true
+  },
+  "packages/boq-cost/tests/fixtures.ts": {
+    "baselineSha256": "129508f1fffef6e68113e9b4ca60094773ae3de9988b609945231173e2b068e6",
+    "currentSha256": "129508f1fffef6e68113e9b4ca60094773ae3de9988b609945231173e2b068e6",
+    "unchanged": true
+  },
+  "packages/boq-cost/tsconfig.json": {
+    "baselineSha256": "bb8a858b438378a4d89f5d38b513a65c5b9eb438431d3687d59a4e563f977eef",
+    "currentSha256": "bb8a858b438378a4d89f5d38b513a65c5b9eb438431d3687d59a4e563f977eef",
+    "unchanged": true
+  },
+  "packages/construction-calculations/README.md": {
+    "baselineSha256": "3126a932f6314b34325394508c2bc81f1cd4e1f7002bc1c7f41f0418e8a944ef",
+    "currentSha256": "3126a932f6314b34325394508c2bc81f1cd4e1f7002bc1c7f41f0418e8a944ef",
+    "unchanged": true
+  },
+  "packages/construction-calculations/package.json": {
+    "baselineSha256": "7eddefa44b54c2645fa25a37ec94b5573826da8830a16fa1f56e0ca13e10b674",
+    "currentSha256": "7eddefa44b54c2645fa25a37ec94b5573826da8830a16fa1f56e0ca13e10b674",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/calculate.ts": {
+    "baselineSha256": "acf35050b29d0995edeccec536b96541ee15571ed5cfa16c33ac607b4b97ff07",
+    "currentSha256": "acf35050b29d0995edeccec536b96541ee15571ed5cfa16c33ac607b4b97ff07",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/index.ts": {
+    "baselineSha256": "12c43a328a32849409fc07ddb913aaa55e9ebf6db4e8b2c84793e105bcf767ec",
+    "currentSha256": "12c43a328a32849409fc07ddb913aaa55e9ebf6db4e8b2c84793e105bcf767ec",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/precision.ts": {
+    "baselineSha256": "39bf536c5c0115181b7b5fff2d87918bf558d3525198081d85ed928931fead95",
+    "currentSha256": "39bf536c5c0115181b7b5fff2d87918bf558d3525198081d85ed928931fead95",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/recipes.ts": {
+    "baselineSha256": "d2dc4e9ee9569c26a5cde58b84b93c0d79f70059642735d18bb265830cf38829",
+    "currentSha256": "d2dc4e9ee9569c26a5cde58b84b93c0d79f70059642735d18bb265830cf38829",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/report.ts": {
+    "baselineSha256": "2c0c66042b5b99851c9d9357d206bef54f0f327fc7ceda783697279631b52b0b",
+    "currentSha256": "2c0c66042b5b99851c9d9357d206bef54f0f327fc7ceda783697279631b52b0b",
+    "unchanged": true
+  },
+  "packages/construction-calculations/src/specification.ts": {
+    "baselineSha256": "e302d918aa11cc3bb60cc83352782226d7922ff015d376c3bf87d86f8c382831",
+    "currentSha256": "e302d918aa11cc3bb60cc83352782226d7922ff015d376c3bf87d86f8c382831",
+    "unchanged": true
+  },
+  "packages/construction-calculations/tests/construction.test.ts": {
+    "baselineSha256": "fd2ff527cea27ad9cbc77de56123810fb3e17015efc2fe270a28662c818a7686",
+    "currentSha256": "fd2ff527cea27ad9cbc77de56123810fb3e17015efc2fe270a28662c818a7686",
+    "unchanged": true
+  },
+  "packages/construction-calculations/tests/fixtures.ts": {
+    "baselineSha256": "95990f4eb7fc03980cba12a4b2c3d4b3948e1f161e3c3e61813b2123b55b67f3",
+    "currentSha256": "95990f4eb7fc03980cba12a4b2c3d4b3948e1f161e3c3e61813b2123b55b67f3",
+    "unchanged": true
+  },
+  "packages/construction-calculations/tsconfig.json": {
+    "baselineSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "currentSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "unchanged": true
+  },
+  "packages/generator/README.md": {
+    "baselineSha256": "3fad3b8df4c964b985b07299052f9f6163354b1e3303123d023ee8c3d3018172",
+    "currentSha256": "3fad3b8df4c964b985b07299052f9f6163354b1e3303123d023ee8c3d3018172",
+    "unchanged": true
+  },
+  "packages/generator/package.json": {
+    "baselineSha256": "15f2a50162ce7b13b65939afcfadfb80c22f785de090f454478fca93f9268595",
+    "currentSha256": "15f2a50162ce7b13b65939afcfadfb80c22f785de090f454478fca93f9268595",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/dimensions.ts": {
+    "baselineSha256": "e25c08d21279850d431059ea42232c3fa22f284faddd851f463cd9d10e906625",
+    "currentSha256": "e25c08d21279850d431059ea42232c3fa22f284faddd851f463cd9d10e906625",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/entities.ts": {
+    "baselineSha256": "3159c16c5bcd8d353f58f431357a68c0ac6b2ac213301f97e3245f12adf5f6a7",
+    "currentSha256": "3159c16c5bcd8d353f58f431357a68c0ac6b2ac213301f97e3245f12adf5f6a7",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/generate.ts": {
+    "baselineSha256": "deb1e57592fa37cb2a4cae248a7a66e190d9cbb75dd4c95bc0f72446f23c0c7b",
+    "currentSha256": "deb1e57592fa37cb2a4cae248a7a66e190d9cbb75dd4c95bc0f72446f23c0c7b",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/geometry.ts": {
+    "baselineSha256": "ea5777b6c28320e48dce0232c16b382f6129f69c45a92955f81ef92567bb448d",
+    "currentSha256": "ea5777b6c28320e48dce0232c16b382f6129f69c45a92955f81ef92567bb448d",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/index.ts": {
+    "baselineSha256": "2f9a6b8a9903faab17d9558a7378dd2ac73d3368cfd5b51c6cdbfeaa03a2814d",
+    "currentSha256": "2f9a6b8a9903faab17d9558a7378dd2ac73d3368cfd5b51c6cdbfeaa03a2814d",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/input.ts": {
+    "baselineSha256": "a769c4b4df4428fe055906a4c0245a6e328bd1f4b70e80aa3a8172fe41d0eeb0",
+    "currentSha256": "a769c4b4df4428fe055906a4c0245a6e328bd1f4b70e80aa3a8172fe41d0eeb0",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/layout.ts": {
+    "baselineSha256": "db2b79970e0e64a6212f64e272ec4c72fd1b9eff4d95176cb2cda0c6225da490",
+    "currentSha256": "db2b79970e0e64a6212f64e272ec4c72fd1b9eff4d95176cb2cda0c6225da490",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/types.ts": {
+    "baselineSha256": "1f452569fdf66d0c4f985555c770a2917f6f87a2c21e37fdb02b9a00121e83dc",
+    "currentSha256": "1f452569fdf66d0c4f985555c770a2917f6f87a2c21e37fdb02b9a00121e83dc",
+    "unchanged": true
+  },
+  "packages/generator/src/blueprint/validation.ts": {
+    "baselineSha256": "24731351e2be8759ffe477d7e0669164720af345fd78f8ce4c36f49d67147dff",
+    "currentSha256": "24731351e2be8759ffe477d7e0669164720af345fd78f8ce4c36f49d67147dff",
+    "unchanged": true
+  },
+  "packages/generator/src/errors.ts": {
+    "baselineSha256": "12b68884850ed643664acf13a7b67de49fa374e57918a0c0f52192fc1ec78418",
+    "currentSha256": "12b68884850ed643664acf13a7b67de49fa374e57918a0c0f52192fc1ec78418",
+    "unchanged": true
+  },
+  "packages/generator/src/furniture.ts": {
+    "baselineSha256": "01d584a0e925a8df9e4755753c1ce632518e1095ab48176c148627a6c21b8d06",
+    "currentSha256": "01d584a0e925a8df9e4755753c1ce632518e1095ab48176c148627a6c21b8d06",
+    "unchanged": true
+  },
+  "packages/generator/src/generate.ts": {
+    "baselineSha256": "9e043151558f6d1da9df4223421d895a2b39f73e8105695f1196aa2bc8fd7ea7",
+    "currentSha256": "9e043151558f6d1da9df4223421d895a2b39f73e8105695f1196aa2bc8fd7ea7",
+    "unchanged": true
+  },
+  "packages/generator/src/geometry.ts": {
+    "baselineSha256": "238cdff49ed43fe99d6b9480a9188b861dc4a21856688ef43e80d9b9984fc37d",
+    "currentSha256": "238cdff49ed43fe99d6b9480a9188b861dc4a21856688ef43e80d9b9984fc37d",
+    "unchanged": true
+  },
+  "packages/generator/src/index.ts": {
+    "baselineSha256": "31abcff756e9b949e87a10afaa0a13be768f858a02cdd3d6cf95d165f1bc4af2",
+    "currentSha256": "31abcff756e9b949e87a10afaa0a13be768f858a02cdd3d6cf95d165f1bc4af2",
+    "unchanged": true
+  },
+  "packages/generator/src/input.ts": {
+    "baselineSha256": "3aa1a3765bb308482ad2b57eca99db1589815c20a94963b78dce8597a59fb219",
+    "currentSha256": "3aa1a3765bb308482ad2b57eca99db1589815c20a94963b78dce8597a59fb219",
+    "unchanged": true
+  },
+  "packages/generator/src/invariants.ts": {
+    "baselineSha256": "8bc37ad1b5659c5b1e87f9a4c46cefd1c6c9db83714e062e613bcdc5b5db402e",
+    "currentSha256": "8bc37ad1b5659c5b1e87f9a4c46cefd1c6c9db83714e062e613bcdc5b5db402e",
+    "unchanged": true
+  },
+  "packages/generator/src/layout.ts": {
+    "baselineSha256": "b016866c2b27e3be39e5dc963b51ca595927772ee2a2eab00c644d046b518d32",
+    "currentSha256": "b016866c2b27e3be39e5dc963b51ca595927772ee2a2eab00c644d046b518d32",
+    "unchanged": true
+  },
+  "packages/generator/src/parametric/components.ts": {
+    "baselineSha256": "99976bf7e972d440cbaa13324f3579eed41ae849c9e6688cc6061707a9937092",
+    "currentSha256": "99976bf7e972d440cbaa13324f3579eed41ae849c9e6688cc6061707a9937092",
+    "unchanged": true
+  },
+  "packages/generator/src/parametric/generate.ts": {
+    "baselineSha256": "ae45c0b7cb9ddfc772ffe315e0bad5ec5f39b9c724bcbddfff64695398523d55",
+    "currentSha256": "ae45c0b7cb9ddfc772ffe315e0bad5ec5f39b9c724bcbddfff64695398523d55",
+    "unchanged": true
+  },
+  "packages/generator/src/parametric/input.ts": {
+    "baselineSha256": "f85844e09dcdc95e2216e0e81b140e2a18c032ad2f60c5970cafb932fe44c61a",
+    "currentSha256": "f85844e09dcdc95e2216e0e81b140e2a18c032ad2f60c5970cafb932fe44c61a",
+    "unchanged": true
+  },
+  "packages/generator/src/random.ts": {
+    "baselineSha256": "0836dc63415859230a39ea77786044ddc6ad5f4d85e86906c5f99da72450ca3e",
+    "currentSha256": "0836dc63415859230a39ea77786044ddc6ad5f4d85e86906c5f99da72450ca3e",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/evaluate.ts": {
+    "baselineSha256": "d3aa1b43f5a3dfc900641e6932232ea4a8f0b9f9682a37330d951a9dab3a85e5",
+    "currentSha256": "d3aa1b43f5a3dfc900641e6932232ea4a8f0b9f9682a37330d951a9dab3a85e5",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/generate.ts": {
+    "baselineSha256": "a2d80f3ad7b370f09c2116ea7418710337b68808de5679fc70efd34c01725b89",
+    "currentSha256": "a2d80f3ad7b370f09c2116ea7418710337b68808de5679fc70efd34c01725b89",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/index.ts": {
+    "baselineSha256": "01239b42aa2960ad17d55d8c49715e5f0e6b48b5a28c02b6c2a79f52599ac2f1",
+    "currentSha256": "01239b42aa2960ad17d55d8c49715e5f0e6b48b5a28c02b6c2a79f52599ac2f1",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/input.ts": {
+    "baselineSha256": "baaa48857b7de8e20abbc74787c1b01edc23397b78acd8a02d244bbf9a9913b0",
+    "currentSha256": "baaa48857b7de8e20abbc74787c1b01edc23397b78acd8a02d244bbf9a9913b0",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/site.ts": {
+    "baselineSha256": "d15892ba2116aa9a02415dee3ee0df7fe4770891604b6a0e25ae24632b16a2ce",
+    "currentSha256": "d15892ba2116aa9a02415dee3ee0df7fe4770891604b6a0e25ae24632b16a2ce",
+    "unchanged": true
+  },
+  "packages/generator/src/solver-v2/topology.ts": {
+    "baselineSha256": "bd0b965b7567017fc921ede449d80ec70cba1fdba9967d977870d063fdf107b6",
+    "currentSha256": "bd0b965b7567017fc921ede449d80ec70cba1fdba9967d977870d063fdf107b6",
+    "unchanged": true
+  },
+  "packages/generator/tests/blueprint.test.ts": {
+    "baselineSha256": "7bbe275e5050f41afd4ef3f61d3dd904af8a55d003708a2f98f71ecea55cee57",
+    "currentSha256": "7bbe275e5050f41afd4ef3f61d3dd904af8a55d003708a2f98f71ecea55cee57",
+    "unchanged": true
+  },
+  "packages/generator/tests/browser-compatibility.ts": {
+    "baselineSha256": "83bbc73257069e684bf7c1717ebd7151ba98e967809a8068fd08b38130c0a405",
+    "currentSha256": "83bbc73257069e684bf7c1717ebd7151ba98e967809a8068fd08b38130c0a405",
+    "unchanged": true
+  },
+  "packages/generator/tests/building-v2-compatibility.test.ts": {
+    "baselineSha256": "1fe381284ca1acc2c0c1634487b4887810f17a6274bdfd501c0c88db85d83363",
+    "currentSha256": "1fe381284ca1acc2c0c1634487b4887810f17a6274bdfd501c0c88db85d83363",
+    "unchanged": true
+  },
+  "packages/generator/tests/fixtures/blueprint/cases.json": {
+    "baselineSha256": "dc74ab297f8c680a2bc6f291791c131c0d02ca911f65818145b78768c54a55f9",
+    "currentSha256": "dc74ab297f8c680a2bc6f291791c131c0d02ca911f65818145b78768c54a55f9",
+    "unchanged": true
+  },
+  "packages/generator/tests/furniture-pipeline.test.ts": {
+    "baselineSha256": "05480542443da3571dc89929fab49cd4d9f35ededa85a7385e680821f811a983",
+    "currentSha256": "05480542443da3571dc89929fab49cd4d9f35ededa85a7385e680821f811a983",
+    "unchanged": true
+  },
+  "packages/generator/tests/furniture.test.ts": {
+    "baselineSha256": "a8a3377e823e53c1f2fa15067c6393e42cc693c456b385e00a7a831b9c1504f8",
+    "currentSha256": "a8a3377e823e53c1f2fa15067c6393e42cc693c456b385e00a7a831b9c1504f8",
+    "unchanged": true
+  },
+  "packages/generator/tests/generate.test.ts": {
+    "baselineSha256": "77f3fb7b8e4c8db46a750130f687cd3f318117d03c3aecda51f1e86c677d8670",
+    "currentSha256": "77f3fb7b8e4c8db46a750130f687cd3f318117d03c3aecda51f1e86c677d8670",
+    "unchanged": true
+  },
+  "packages/generator/tests/geometry.test.ts": {
+    "baselineSha256": "6e15cf684126fc666bba883969fe6ebbc6e9f663c9e4134babf1b0ee3fdc4960",
+    "currentSha256": "6e15cf684126fc666bba883969fe6ebbc6e9f663c9e4134babf1b0ee3fdc4960",
+    "unchanged": true
+  },
+  "packages/generator/tests/input.test.ts": {
+    "baselineSha256": "267a85a9282bd4fa4c1b1bceda7938a5fd3cc0dcca988a45f91f1c379fc399b3",
+    "currentSha256": "267a85a9282bd4fa4c1b1bceda7938a5fd3cc0dcca988a45f91f1c379fc399b3",
+    "unchanged": true
+  },
+  "packages/generator/tests/invariants.test.ts": {
+    "baselineSha256": "0f5e96dac8a5a1fd317b0e2ccc8bc7bd8ae22a068a3f9dc5f498102f532ab70d",
+    "currentSha256": "0f5e96dac8a5a1fd317b0e2ccc8bc7bd8ae22a068a3f9dc5f498102f532ab70d",
+    "unchanged": true
+  },
+  "packages/generator/tests/parametric-quantities.test.ts": {
+    "baselineSha256": "ebb7145a8088f8690898ade60e00ca680c27ad57b2f116b7e6302f09c4f429b4",
+    "currentSha256": "ebb7145a8088f8690898ade60e00ca680c27ad57b2f116b7e6302f09c4f429b4",
+    "unchanged": true
+  },
+  "packages/generator/tests/parametric.test.ts": {
+    "baselineSha256": "3d300eb460eb423d918c60ac3233607a9b2cf2289e430a599e6bda207e8ea1e0",
+    "currentSha256": "3d300eb460eb423d918c60ac3233607a9b2cf2289e430a599e6bda207e8ea1e0",
+    "unchanged": true
+  },
+  "packages/generator/tests/solver-v2.test.ts": {
+    "baselineSha256": "df3d6df163a614a309bbd5483e096c86357e57e4a7d71dbe1197b73b5459a743",
+    "currentSha256": "df3d6df163a614a309bbd5483e096c86357e57e4a7d71dbe1197b73b5459a743",
+    "unchanged": true
+  },
+  "packages/generator/tsconfig.browser.json": {
+    "baselineSha256": "b231046c06659400067353acaf5ec3ce29864f6a7beae40510162c7e86a09d9a",
+    "currentSha256": "b231046c06659400067353acaf5ec3ce29864f6a7beae40510162c7e86a09d9a",
+    "unchanged": true
+  },
+  "packages/generator/tsconfig.json": {
+    "baselineSha256": "7b0b383c5f874db8ef923e001ea84c10c5a5850188b8da7fc96fa338416ee027",
+    "currentSha256": "7b0b383c5f874db8ef923e001ea84c10c5a5850188b8da7fc96fa338416ee027",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/package.json": {
+    "baselineSha256": "784d5e388bafa9e9b5f103f4863b8fecf8663c1c5539d30deced407749748677",
+    "currentSha256": "784d5e388bafa9e9b5f103f4863b8fecf8663c1c5539d30deced407749748677",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/src/calculate.ts": {
+    "baselineSha256": "005941ea8040881e302be62dc0d7bfa0313c4a0fe9c6d8a59b3caf9bb4c691d6",
+    "currentSha256": "005941ea8040881e302be62dc0d7bfa0313c4a0fe9c6d8a59b3caf9bb4c691d6",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/src/index.ts": {
+    "baselineSha256": "71c4c579e2e30f49c8acdc0c11bbe66b8a6977a2e18b084781fcf78ead36cc60",
+    "currentSha256": "71c4c579e2e30f49c8acdc0c11bbe66b8a6977a2e18b084781fcf78ead36cc60",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/src/precision.ts": {
+    "baselineSha256": "8f445494cf27b3bcde96ca9a8c757fd36635ee0d21179af9cb5a19e8e9bde2e8",
+    "currentSha256": "8f445494cf27b3bcde96ca9a8c757fd36635ee0d21179af9cb5a19e8e9bde2e8",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/src/report.ts": {
+    "baselineSha256": "0dd9202e33ec2eddf6ec5b29feda948ba681168f97380ea2139ce5fecca424fc",
+    "currentSha256": "0dd9202e33ec2eddf6ec5b29feda948ba681168f97380ea2139ce5fecca424fc",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/tests/fixtures.ts": {
+    "baselineSha256": "458f77f411c4cbb9b1062e712692b3ea6be41a9e3302baa9f84e14cb9a93078c",
+    "currentSha256": "458f77f411c4cbb9b1062e712692b3ea6be41a9e3302baa9f84e14cb9a93078c",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/tests/takeoff.test.ts": {
+    "baselineSha256": "0c2378432df0b01dd81563805c532ff1d8739cde801b6c86ebb38744039c8a06",
+    "currentSha256": "0c2378432df0b01dd81563805c532ff1d8739cde801b6c86ebb38744039c8a06",
+    "unchanged": true
+  },
+  "packages/quantity-takeoff/tsconfig.json": {
+    "baselineSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "currentSha256": "ceb96a3fbdd37e73d1e473fd07cec01d4707e7159428c603c305f1486cbca30e",
+    "unchanged": true
+  },
+  "packages/shared/package.json": {
+    "baselineSha256": "14a53a82ff089dd3cde1cf37a622fdf134189dbc1ea9407f81df7b4ebb856ebc",
+    "currentSha256": "14a53a82ff089dd3cde1cf37a622fdf134189dbc1ea9407f81df7b4ebb856ebc",
+    "unchanged": true
+  },
+  "packages/shared/src/api.ts": {
+    "baselineSha256": "b9f4135e6eff3e6f78c313e98def245529c83924a62ebf5ce563fb2885fda57d",
+    "currentSha256": "b9f4135e6eff3e6f78c313e98def245529c83924a62ebf5ce563fb2885fda57d",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/README.md": {
+    "baselineSha256": "9020f5866fb9046a2f06c23c9dae9b7800de9d81b544bc2cecc252034ec56656",
+    "currentSha256": "9020f5866fb9046a2f06c23c9dae9b7800de9d81b544bc2cecc252034ec56656",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/adapter.ts": {
+    "baselineSha256": "083942479665a32d7b5a4b442da2257a188e4be05381b42aa3256aad08be88b4",
+    "currentSha256": "083942479665a32d7b5a4b442da2257a188e4be05381b42aa3256aad08be88b4",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/building-model.ts": {
+    "baselineSha256": "59623fb94ec700d89ae3594bce507205bd17c83689edb530019f90131945712f",
+    "currentSha256": "59623fb94ec700d89ae3594bce507205bd17c83689edb530019f90131945712f",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/common.ts": {
+    "baselineSha256": "25f7c828ba8cd9f5e13a31877de2555ba5c4c9d5ffa6c8d99668a18eaab1cbc8",
+    "currentSha256": "25f7c828ba8cd9f5e13a31877de2555ba5c4c9d5ffa6c8d99668a18eaab1cbc8",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/dimensions.ts": {
+    "baselineSha256": "a9086149efd6484d9a38fcb94489d3fbb428eff090cb1255ffc13eb46da7dd3c",
+    "currentSha256": "a9086149efd6484d9a38fcb94489d3fbb428eff090cb1255ffc13eb46da7dd3c",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/geometry.ts": {
+    "baselineSha256": "1a42c80d5bac235795ca9c466e7a44ad60dcab03d3d4a6a70325fc834d79dc68",
+    "currentSha256": "1a42c80d5bac235795ca9c466e7a44ad60dcab03d3d4a6a70325fc834d79dc68",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/index.ts": {
+    "baselineSha256": "8e876701ae516ec66bbb595d2bb7315f2a6c3ae983a35a86b5d9d019aa1310cf",
+    "currentSha256": "8e876701ae516ec66bbb595d2bb7315f2a6c3ae983a35a86b5d9d019aa1310cf",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/invariants.ts": {
+    "baselineSha256": "db42ad2f290dc4842a2e13ecddd5955280cdc41b3f945e33eae336e771816d16",
+    "currentSha256": "db42ad2f290dc4842a2e13ecddd5955280cdc41b3f945e33eae336e771816d16",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/levels.ts": {
+    "baselineSha256": "ec2d1387c2a92b2fc047253d933625269669abc09b84fcab2e67327a9b2ccef8",
+    "currentSha256": "ec2d1387c2a92b2fc047253d933625269669abc09b84fcab2e67327a9b2ccef8",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/measurements.ts": {
+    "baselineSha256": "5244d22e61fbaf0fdb3d6817ee82ace28c3a67a1e1f0bc6b88400081cb7db8f3",
+    "currentSha256": "5244d22e61fbaf0fdb3d6817ee82ace28c3a67a1e1f0bc6b88400081cb7db8f3",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/model-shape.ts": {
+    "baselineSha256": "f80473730534c3820b2120591f59b7b14a40f93ef715afe72d72516559914c1b",
+    "currentSha256": "f80473730534c3820b2120591f59b7b14a40f93ef715afe72d72516559914c1b",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/openings.ts": {
+    "baselineSha256": "70c8e8e0046e00481405a0cca22b016b0a37ae9cb251e94d53109d9889bd4667",
+    "currentSha256": "70c8e8e0046e00481405a0cca22b016b0a37ae9cb251e94d53109d9889bd4667",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/parametric-invariants.ts": {
+    "baselineSha256": "ec36495799aa708e5b6522be12e2cbcff74cceb98524de90fd482634e7dadc51",
+    "currentSha256": "ec36495799aa708e5b6522be12e2cbcff74cceb98524de90fd482634e7dadc51",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/parametric.ts": {
+    "baselineSha256": "ca3da13cc954991b4f16fea631a03a7c7062d7bb568bd518917301f6b2b832d1",
+    "currentSha256": "ca3da13cc954991b4f16fea631a03a7c7062d7bb568bd518917301f6b2b832d1",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/relationships.ts": {
+    "baselineSha256": "854db9ce907206074184018b15c0435edea2f781098ab16ca1b3be02dbd5c6e4",
+    "currentSha256": "854db9ce907206074184018b15c0435edea2f781098ab16ca1b3be02dbd5c6e4",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/site-invariants.ts": {
+    "baselineSha256": "476d88f08f0c3dfdbb4ff0ebf29b7b03c61fcdab18bc1ceeb68d6be04abc8a9c",
+    "currentSha256": "476d88f08f0c3dfdbb4ff0ebf29b7b03c61fcdab18bc1ceeb68d6be04abc8a9c",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/site.ts": {
+    "baselineSha256": "657fa5ee0bb990a912f0c971b889a82c62982c1772836832566bd1de31a7cdef",
+    "currentSha256": "657fa5ee0bb990a912f0c971b889a82c62982c1772836832566bd1de31a7cdef",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/slabs.ts": {
+    "baselineSha256": "a2c43b851c13c750d43a6daee216f927b847fc7dec1e449e3607a64e4481844e",
+    "currentSha256": "a2c43b851c13c750d43a6daee216f927b847fc7dec1e449e3607a64e4481844e",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/spaces.ts": {
+    "baselineSha256": "15e19bf1cd31b2b1446346a27c41dfd998c1eb3576348fa69f6f44efeab18bdb",
+    "currentSha256": "15e19bf1cd31b2b1446346a27c41dfd998c1eb3576348fa69f6f44efeab18bdb",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/stairs.ts": {
+    "baselineSha256": "9938def3ca03bcaaa7a198ee715bdcac133e06bab46b017646d7efe43f53461c",
+    "currentSha256": "9938def3ca03bcaaa7a198ee715bdcac133e06bab46b017646d7efe43f53461c",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/units.ts": {
+    "baselineSha256": "a8f3df52b9434a269e04c6d233f1391940a39264779f03fd7e1f21b739cc304c",
+    "currentSha256": "a8f3df52b9434a269e04c6d233f1391940a39264779f03fd7e1f21b739cc304c",
+    "unchanged": true
+  },
+  "packages/shared/src/building-v2/walls.ts": {
+    "baselineSha256": "088631178f4cc216840907831951d6deae2edef6597be9a27472ca96b0eeecfe",
+    "currentSha256": "088631178f4cc216840907831951d6deae2edef6597be9a27472ca96b0eeecfe",
+    "unchanged": true
+  },
+  "packages/shared/src/errors.ts": {
+    "baselineSha256": "908f4771b331c6d0c55adb1b76e3678dd145d64e2dab8d5651fe72ee63802e42",
+    "currentSha256": "908f4771b331c6d0c55adb1b76e3678dd145d64e2dab8d5651fe72ee63802e42",
+    "unchanged": true
+  },
+  "packages/shared/src/index.ts": {
+    "baselineSha256": "21c4aa554790ea6524f587ec8e624723b091ae035dbcc33e9f618f89b4f38c0c",
+    "currentSha256": "21c4aa554790ea6524f587ec8e624723b091ae035dbcc33e9f618f89b4f38c0c",
+    "unchanged": true
+  },
+  "packages/shared/src/types.ts": {
+    "baselineSha256": "3e904d949ca84e10b0ccc6be7fe8d0830cb6213097f0666c5825727b95dbd5f0",
+    "currentSha256": "3e904d949ca84e10b0ccc6be7fe8d0830cb6213097f0666c5825727b95dbd5f0",
+    "unchanged": true
+  },
+  "packages/shared/tests/browser-compatibility.ts": {
+    "baselineSha256": "3891bbeb4f0309bb4edd91759aca1c18537862e4ee15a2c9e874c0242ae87c05",
+    "currentSha256": "3891bbeb4f0309bb4edd91759aca1c18537862e4ee15a2c9e874c0242ae87c05",
+    "unchanged": true
+  },
+  "packages/shared/tests/building-v2-adapter.test.ts": {
+    "baselineSha256": "282824a6308157d9c041995ba8a2d49426700ed05d77316d0b6a8bbfcbecc5d5",
+    "currentSha256": "282824a6308157d9c041995ba8a2d49426700ed05d77316d0b6a8bbfcbecc5d5",
+    "unchanged": true
+  },
+  "packages/shared/tests/building-v2-model.test.ts": {
+    "baselineSha256": "aa298bfa63e6910eac2e47943145d44cf22c2b72f6a6a3f4a116af4c3c8be927",
+    "currentSha256": "aa298bfa63e6910eac2e47943145d44cf22c2b72f6a6a3f4a116af4c3c8be927",
+    "unchanged": true
+  },
+  "packages/shared/tests/building-v2-precision.test.ts": {
+    "baselineSha256": "567d83c1a9d586e8526eacef56a17c3131dfefa8ada660d47130648b36952ffc",
+    "currentSha256": "567d83c1a9d586e8526eacef56a17c3131dfefa8ada660d47130648b36952ffc",
+    "unchanged": true
+  },
+  "packages/shared/tests/contracts.test.ts": {
+    "baselineSha256": "9f6278dd052b0856e40c35ed2627abdb660d4e0ae9a9ec9a468d14db7fa8f97a",
+    "currentSha256": "9f6278dd052b0856e40c35ed2627abdb660d4e0ae9a9ec9a468d14db7fa8f97a",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/explicit-openings.json": {
+    "baselineSha256": "956c322242ea37a8be956564e1a0f0ba2ea0f704d526c8b02599a289256f7946",
+    "currentSha256": "956c322242ea37a8be956564e1a0f0ba2ea0f704d526c8b02599a289256f7946",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/invalid-crossed-room.json": {
+    "baselineSha256": "d0d2e41710c231c8cb6a55c8d14384b6fa292142defc50ac8d28df2639174641",
+    "currentSha256": "d0d2e41710c231c8cb6a55c8d14384b6fa292142defc50ac8d28df2639174641",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/invalid-dangling-host.json": {
+    "baselineSha256": "15294481dbca5d6d2977a39c9fbaab9175fbf0b3f1e4eabb84cf3d51702dd1d9",
+    "currentSha256": "15294481dbca5d6d2977a39c9fbaab9175fbf0b3f1e4eabb84cf3d51702dd1d9",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/multi-room.json": {
+    "baselineSha256": "a1b6fdafcdf50953274239e968585573c09f2d7ae4d909c2251644a200b6bee5",
+    "currentSha256": "a1b6fdafcdf50953274239e968585573c09f2d7ae4d909c2251644a200b6bee5",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/single-room.json": {
+    "baselineSha256": "449c4a083136c44eb167459341885fec40de01f4e069be782c9b7751d9cb19b8",
+    "currentSha256": "449c4a083136c44eb167459341885fec40de01f4e069be782c9b7751d9cb19b8",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/small-residence.json": {
+    "baselineSha256": "1dcfa6636df3e58009a9412171b316e0d0df74f75602561d18ed049c7c08f269",
+    "currentSha256": "1dcfa6636df3e58009a9412171b316e0d0df74f75602561d18ed049c7c08f269",
+    "unchanged": true
+  },
+  "packages/shared/tests/fixtures/building-v2/two-level.json": {
+    "baselineSha256": "0801f1bdae12a4974b1950da5746109f859722dd63b33a68a154b60f4bf55a05",
+    "currentSha256": "0801f1bdae12a4974b1950da5746109f859722dd63b33a68a154b60f4bf55a05",
+    "unchanged": true
+  },
+  "packages/shared/tsconfig.browser.json": {
+    "baselineSha256": "f262d02ab095b4d3030366c7b2ea2ab0971988296b9f516669e61b066059a02d",
+    "currentSha256": "f262d02ab095b4d3030366c7b2ea2ab0971988296b9f516669e61b066059a02d",
+    "unchanged": true
+  },
+  "packages/shared/tsconfig.build.json": {
+    "baselineSha256": "f17e353bb7fbe347521abf5b7e39d05efb06a98fc41e028d1e6fa1d22af336eb",
+    "currentSha256": "f17e353bb7fbe347521abf5b7e39d05efb06a98fc41e028d1e6fa1d22af336eb",
+    "unchanged": true
+  },
+  "packages/shared/tsconfig.json": {
+    "baselineSha256": "92c411b24de5b3cae528f6709527a179e3a037a4cbca8e850ad746f6195a4bc5",
+    "currentSha256": "92c411b24de5b3cae528f6709527a179e3a037a4cbca8e850ad746f6195a4bc5",
+    "unchanged": true
+  },
+  "packages/shared/vitest.config.ts": {
+    "baselineSha256": "ca50a0eb43780d733ea8c31c4f6a9b966fb8e8dce52bf768eea80d69a7a5c89b",
+    "currentSha256": "ca50a0eb43780d733ea8c31c4f6a9b966fb8e8dce52bf768eea80d69a7a5c89b",
+    "unchanged": true
+  },
+  "supabase/migrations/0001_core_tables.sql": {
+    "baselineSha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929",
+    "currentSha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929",
+    "unchanged": true
+  },
+  "supabase/migrations/0002_rate_tables.sql": {
+    "baselineSha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca",
+    "currentSha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca",
+    "unchanged": true
+  },
+  "supabase/migrations/0003_estimates_and_logs.sql": {
+    "baselineSha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107",
+    "currentSha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107",
+    "unchanged": true
+  },
+  "supabase/migrations/0004_rls_policies.sql": {
+    "baselineSha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447",
+    "currentSha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447",
+    "unchanged": true
+  },
+  "supabase/migrations/0005_idempotency.sql": {
+    "baselineSha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1",
+    "currentSha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1",
+    "unchanged": true
+  },
+  "supabase/migrations/0006_projects.sql": {
+    "baselineSha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979",
+    "currentSha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979",
+    "unchanged": true
+  },
+  "supabase/migrations/0007_quantity_takeoffs.sql": {
+    "baselineSha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0",
+    "currentSha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0",
+    "unchanged": true
+  },
+  "supabase/migrations/0008_construction_calculations.sql": {
+    "baselineSha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8",
+    "currentSha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8",
+    "unchanged": true
+  },
+  "supabase/migrations/0009_boq_costs.sql": {
+    "baselineSha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a",
+    "currentSha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a",
+    "unchanged": true
+  },
+  "supabase/migrations/0010_workflows.sql": {
+    "baselineSha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325",
+    "currentSha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325",
+    "unchanged": true
+  },
+  "supabase/migrations/0011_generation_freshness.sql": {
+    "baselineSha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957",
+    "currentSha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957",
+    "unchanged": true
+  },
+  "supabase/migrations/0012_conversations.sql": {
+    "baselineSha256": "46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d",
+    "currentSha256": "46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d",
+    "unchanged": true
+  }
+}

@@ -1,0 +1,93 @@
+[
+  {
+    name: 'v1',
+    projectionAndRelationshipsMs: 112.360431,
+    relationshipEdgeConstructionMs: 3.416317999999819,
+    validationMs: 79.68593899999996,
+    ifcSerializationAndValidationMs: 88.57304799999997,
+    diffMs: 9.778079000000048,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 347930,
+    rssBytes: 144031744,
+    processPeakRssBytes: 144031744
+  },
+  {
+    name: 'v2',
+    projectionAndRelationshipsMs: 46.599234000000024,
+    relationshipEdgeConstructionMs: 1.1800429999980224,
+    validationMs: 59.223093999999946,
+    ifcSerializationAndValidationMs: 60.14870800000017,
+    diffMs: 9.009538999999904,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 347776,
+    rssBytes: 171032576,
+    processPeakRssBytes: 171032576
+  },
+  {
+    name: 'L',
+    projectionAndRelationshipsMs: 28.42880799999989,
+    relationshipEdgeConstructionMs: 0.5393240000009882,
+    validationMs: 36.80942200000004,
+    ifcSerializationAndValidationMs: 58.24467800000002,
+    diffMs: 8.3025990000001,
+    elements: 50,
+    relationships: 151,
+    exportBytes: 331655,
+    rssBytes: 180584448,
+    processPeakRssBytes: 180584448
+  },
+  {
+    name: 'setback',
+    projectionAndRelationshipsMs: 81.0088229999999,
+    relationshipEdgeConstructionMs: 1.0506189999998696,
+    validationMs: 84.33497499999999,
+    ifcSerializationAndValidationMs: 98.32138200000009,
+    diffMs: 17.807808000000023,
+    elements: 87,
+    relationships: 267,
+    exportBytes: 588102,
+    rssBytes: 181792768,
+    processPeakRssBytes: 181923840
+  },
+  {
+    name: 'maximum-24',
+    projectionAndRelationshipsMs: 144.000941,
+    relationshipEdgeConstructionMs: 2.7855249999984153,
+    validationMs: 217.14919400000008,
+    ifcSerializationAndValidationMs: 260.43743700000005,
+    diffMs: 65.1415079999997,
+    elements: 200,
+    relationships: 670,
+    exportBytes: 1391866,
+    rssBytes: 195977216,
+    processPeakRssBytes: 195977216
+  },
+  {
+    name: 'modified',
+    projectionAndRelationshipsMs: 63.03305,
+    relationshipEdgeConstructionMs: 1.029136000001472,
+    validationMs: 90.6111179999998,
+    ifcSerializationAndValidationMs: 100.83074000000033,
+    diffMs: 21.975487999999586,
+    elements: 87,
+    relationships: 267,
+    exportBytes: 588244,
+    rssBytes: 199139328,
+    processPeakRssBytes: 199385088
+  },
+  {
+    name: 'specified-material',
+    projectionAndRelationshipsMs: 37.138662000000295,
+    relationshipEdgeConstructionMs: 0.6102179999961663,
+    validationMs: 37.24991999999975,
+    ifcSerializationAndValidationMs: 47.28962899999988,
+    diffMs: 8.20328500000005,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 348322,
+    rssBytes: 200245248,
+    processPeakRssBytes: 200327168
+  }
+]

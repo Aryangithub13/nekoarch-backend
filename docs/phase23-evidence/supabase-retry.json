@@ -1,0 +1,8 @@
+{
+  "command": "npm run test:supabase",
+  "exitCode": 0,
+  "seconds": 82.785,
+  "log": "docs/phase23-evidence/test-supabase.txt",
+  "sourceUnchanged": true,
+  "retryReason": "Stopped local PostgREST had a stale fixed address occupied by inbucket after Docker restart; reconnected only REST using Docker-assigned address and original rest alias."
+}

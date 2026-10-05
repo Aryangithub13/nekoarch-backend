@@ -1,0 +1,8 @@
+{
+  "stage": "pre-release audit; final commit and annotated tag are verified through Git after checkpoint creation",
+  "branch": "main",
+  "headBeforeRelease": "7086209efd9e337a2c175b9bed1e562fde54ca68",
+  "phase22Tag": "7086209efd9e337a2c175b9bed1e562fde54ca68",
+  "phase23TagsBeforeRelease": [],
+  "stagedFilesBeforeRelease": []
+}

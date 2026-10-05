@@ -1,0 +1,97 @@
+
+> designflow@0.1.0 test:integration
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run apps/api/tests/parametric.integration.test.ts apps/api/tests/solver-v2.integration.test.ts apps/api/tests/backend.integration.test.ts supabase/tests/database.test.ts apps/api/tests/generation.integration.test.ts apps/api/tests/hardening.integration.test.ts apps/api/tests/projects.integration.test.ts apps/api/tests/takeoffs.integration.test.ts apps/api/tests/construction.integration.test.ts apps/api/tests/costs.integration.test.ts apps/api/tests/workflows.integration.test.ts apps/api/tests/freshness.integration.test.ts apps/api/tests/interpretation.integration.test.ts apps/api/tests/conversations.integration.test.ts apps/api/tests/ai-orchestration.integration.test.ts apps/api/tests/bim.integration.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/bim.integration.test.ts (4 tests) 8105ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > enforces owner-only BIM/IFC downloads and redacted failure envelopes  661ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses every element page  1753ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses filtered relationships and rejects invalid pagination queries  3817ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > compares revisions while preserving immutable snapshots and project isolation  795ms
+ ✓ apps/api/tests/ai-orchestration.integration.test.ts (8 tests) 6072ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > local protocol provider → strict intent → exact approval → V2 solver → real QA → signed immutable revision  644ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > preferred provider offline → bounded deterministic fallback → correct signed revision  385ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > LOCAL_ONLY with configured remote prevents all remote calls and completes the same request  350ms
+ ✓ apps/api/tests/workflows.integration.test.ts (19 tests) 5408ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  656ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > reuses revision, QA, takeoff and construction and executes only missing cost  905ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > replays identical keys after newer revisions and conflicts on changed mode, revision and outputs  315ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > preserves upstream artifacts and reports a downstream domain failure precisely  372ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > retains required outputs when optional cost fails and optional 3D is unavailable  383ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest  542ms
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 5223ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  368ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  359ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  364ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  462ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  506ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  500ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  464ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > rolls back artifact and receipt on artifact failure  311ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > rolls back artifact and receipt on receipt failure  329ms
+ ✓ apps/api/tests/solver-v2.integration.test.ts (10 tests) 5369ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-L-site: accepts V2 orthogonal sites through immutable revisions  422ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-U-site: accepts V2 orthogonal sites through immutable revisions  319ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > D: persists coordinated two-storey stairs and actual entrance reachability  330ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > E: records a measured privacy comparison over the same candidate schedule  838ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > F: preserves actual window and facade evidence without physical simulation claims  587ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > H: generates, audits, persists and costs V2 with honest parking coverage and matching workflow versions  786ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > protects ownership, strict input, changed-command identity, freshness and interpreter boundaries for V2  982ms
+ ✓ apps/api/tests/freshness.integration.test.ts (13 tests) 4754ms
+   ✓ generation freshness on real PostgreSQL > A/B/C/A/D changes real rooms/site/current identity and preserves deterministic return to A  876ms
+   ✓ generation freshness on real PostgreSQL > replays the exact durable attempt but rejects changed requirements, seed, base and solver options  302ms
+   ✓ generation freshness on real PostgreSQL > workflow changed-input sequences execute and same-key changed request conflicts without stale reuse  531ms
+   ✓ generation freshness on real PostgreSQL > keeps R1 takeoff/construction/cost historical and returns explicit R2 absence  730ms
+   ✓ generation freshness on real PostgreSQL > independently verifies signed input/output hashes, seed and execution identity in the database  342ms
+ ✓ apps/api/tests/conversations.integration.test.ts (18 tests) 3618ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  416ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  455ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > persists unresolved relative moves until explicit allocation and accepts native clarification repairs  382ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  780ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 3200ms
+   ✓ native V2 projects on actual PostgreSQL transactions and RLS > round-trips generated geometry and complete QA, appends R2 and leaves R1 immutable  315ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 2993ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  452ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  678ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  622ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2859ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  527ms
+ ✓ apps/api/tests/parametric.integration.test.ts (1 test) 1925ms
+   ✓ Phase 22 real PostgreSQL acceptance > Phase 22: signed L/setback revision, exact proposal approval, immutable ancestry, concurrency, owner isolation and quantities  1203ms
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1598ms
+   ✓ Phase 18 on real PostgreSQL and owner RLS > modifies explicit base requirements through clarification and normal CAS generation without fabricated sizing  300ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1289ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 932ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 1020ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 1112ms
+
+ Test Files  16 passed (16)
+      Tests  192 passed (192)
+   Start at  18:18:11
+   Duration  67.71s (transform 849ms, setup 0ms, collect 9.40s, tests 55.48s, environment 3ms, prepare 847ms)

@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/bim.test.ts (37 tests) 4058ms
+   ✓ Phase 23 semantic BIM > projects v1 without changing historical geometry or hash  356ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  617ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  499ms
+
+ Test Files  1 passed (1)
+      Tests  37 passed (37)
+   Start at  18:03:42
+   Duration  5.93s (transform 686ms, setup 0ms, collect 1.67s, tests 4.06s, environment 0ms, prepare 53ms)

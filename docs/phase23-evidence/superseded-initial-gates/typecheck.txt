@@ -1,0 +1,34 @@
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+apps/api/tests/bim.test.ts(75,223): error TS2352: Conversion of type '{ projectRpc: () => Promise<never>; }' to type 'Repository' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ projectRpc: () => Promise<never>; }' is missing the following properties from type 'Repository': insertPlan, getPlan, patchPlan, getRateVersions, and 2 more.
+test-support/bim-acceptance.ts(16,26): error TS2352: Conversion of type '{ projectRpc: () => Promise<any>; }' to type 'Repository' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ projectRpc: () => Promise<any>; }' is missing the following properties from type 'Repository': insertPlan, getPlan, patchPlan, getRateVersions, and 2 more.
+test-support/bim-acceptance.ts(18,26): error TS2352: Conversion of type '{ projectRpc: () => Promise<any>; }' to type 'Repository' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ projectRpc: () => Promise<any>; }' is missing the following properties from type 'Repository': insertPlan, getPlan, patchPlan, getRateVersions, and 2 more.

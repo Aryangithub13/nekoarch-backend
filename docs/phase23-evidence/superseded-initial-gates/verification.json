@@ -1,0 +1,134 @@
+[
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "seconds": 18.692,
+    "log": "docs/phase23-evidence/build.txt"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 2,
+    "seconds": 21.388,
+    "log": "docs/phase23-evidence/typecheck.txt"
+  },
+  {
+    "command": "npm run lint",
+    "exitCode": 1,
+    "seconds": 4.65,
+    "log": "docs/phase23-evidence/lint.txt"
+  },
+  {
+    "command": "npm run test:unit",
+    "exitCode": 0,
+    "seconds": 55.938,
+    "log": "docs/phase23-evidence/test-unit.txt"
+  },
+  {
+    "command": "npm run test:generator",
+    "exitCode": 0,
+    "seconds": 21.198,
+    "log": "docs/phase23-evidence/test-generator.txt"
+  },
+  {
+    "command": "npm run test:blueprint",
+    "exitCode": 0,
+    "seconds": 10.288,
+    "log": "docs/phase23-evidence/test-blueprint.txt"
+  },
+  {
+    "command": "npm run test:blueprint-qa",
+    "exitCode": 0,
+    "seconds": 18.865,
+    "log": "docs/phase23-evidence/test-blueprint-qa.txt"
+  },
+  {
+    "command": "npm run test:solver-v2",
+    "exitCode": 0,
+    "seconds": 34.623,
+    "log": "docs/phase23-evidence/test-solver-v2.txt"
+  },
+  {
+    "command": "npm run test:parametric",
+    "exitCode": 0,
+    "seconds": 24.933,
+    "log": "docs/phase23-evidence/test-parametric.txt"
+  },
+  {
+    "command": "npm run test:projects",
+    "exitCode": 0,
+    "seconds": 24.594,
+    "log": "docs/phase23-evidence/test-projects.txt"
+  },
+  {
+    "command": "npm run test:takeoff",
+    "exitCode": 0,
+    "seconds": 26.64,
+    "log": "docs/phase23-evidence/test-takeoff.txt"
+  },
+  {
+    "command": "npm run test:construction",
+    "exitCode": 0,
+    "seconds": 25.612,
+    "log": "docs/phase23-evidence/test-construction.txt"
+  },
+  {
+    "command": "npm run test:cost",
+    "exitCode": 0,
+    "seconds": 27.996,
+    "log": "docs/phase23-evidence/test-cost.txt"
+  },
+  {
+    "command": "npm run test:workflows",
+    "exitCode": 0,
+    "seconds": 26.615,
+    "log": "docs/phase23-evidence/test-workflows.txt"
+  },
+  {
+    "command": "npm run test:interpretation",
+    "exitCode": 0,
+    "seconds": 23.678,
+    "log": "docs/phase23-evidence/test-interpretation.txt"
+  },
+  {
+    "command": "npm run test:conversations",
+    "exitCode": 0,
+    "seconds": 25.32,
+    "log": "docs/phase23-evidence/test-conversations.txt"
+  },
+  {
+    "command": "npm run test:ai-orchestration",
+    "exitCode": 0,
+    "seconds": 27.677,
+    "log": "docs/phase23-evidence/test-ai-orchestration.txt"
+  },
+  {
+    "command": "npm run test:integration",
+    "exitCode": 0,
+    "seconds": 78.431,
+    "log": "docs/phase23-evidence/test-integration.txt"
+  },
+  {
+    "command": "npm run test:bim",
+    "exitCode": 0,
+    "seconds": 28.761,
+    "log": "docs/phase23-evidence/test-bim.txt"
+  },
+  {
+    "command": "npm run test:supabase",
+    "exitCode": 0,
+    "seconds": 86.502,
+    "log": "docs/phase23-evidence/test-supabase.txt"
+  },
+  {
+    "command": "npm run db:test",
+    "exitCode": 0,
+    "seconds": 2.531,
+    "log": "docs/phase23-evidence/db-test.txt"
+  },
+  {
+    "command": "npm run check",
+    "exitCode": 2,
+    "seconds": 39.706,
+    "log": "docs/phase23-evidence/check.txt"
+  }
+]

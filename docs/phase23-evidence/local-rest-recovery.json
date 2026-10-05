@@ -1,0 +1,17 @@
+{
+  "service": "supabase_rest_designflow",
+  "image": "public.ecr.aws/supabase/postgrest:v16.3",
+  "initialState": "stopped, exit 255",
+  "cause": "Fixed 172.18.0.2 address was assigned to local inbucket after Docker restart.",
+  "actions": [
+    "Attempt existing container restart; address conflict confirmed",
+    "Disconnect stopped REST network endpoint",
+    "Reconnect only REST with alias rest and automatic address assignment",
+    "Start existing REST container",
+    "Verify existing repository PostgREST image compatibility helper"
+  ],
+  "databaseReset": false,
+  "credentialsChanged": false,
+  "imageChanged": false,
+  "otherContainersChanged": false
+}

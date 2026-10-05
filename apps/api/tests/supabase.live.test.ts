@@ -1,3 +1,4 @@
+import { bimAcceptance } from '../../../test-support/bim-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -386,6 +387,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   freshnessAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local project setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  bimAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local BIM setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

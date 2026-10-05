@@ -1,0 +1,157 @@
+
+> designflow@0.1.0 benchmark:bim
+> npm run build && node --import tsx scripts/benchmark-bim.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+[
+  {
+    name: 'v1',
+    sample: 1,
+    temperature: 'first BIM projection in process',
+    nativeModelBytes: 24065,
+    bimModelBytes: 248489,
+    projectionAndRelationshipsMs: 94.554146,
+    relationshipEdgeConstructionMs: 1.095963000000097,
+    validationMs: 64.810719,
+    ifcSerializationAndValidationMs: 68.35067100000003,
+    diffMs: 9.241731999999956,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 347930,
+    rssBytes: 146501632,
+    processPeakRssBytes: 146501632
+  },
+  {
+    name: 'v2',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 24063,
+    bimModelBytes: 248356,
+    projectionAndRelationshipsMs: 32.21458499999994,
+    relationshipEdgeConstructionMs: 0.8724759999989828,
+    validationMs: 39.78695000000005,
+    ifcSerializationAndValidationMs: 56.765034000000014,
+    diffMs: 8.997912999999926,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 347776,
+    rssBytes: 171417600,
+    processPeakRssBytes: 171417600
+  },
+  {
+    name: 'L',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 18739,
+    bimModelBytes: 240732,
+    projectionAndRelationshipsMs: 33.319349999999986,
+    relationshipEdgeConstructionMs: 0.7471060000000307,
+    validationMs: 37.005762000000004,
+    ifcSerializationAndValidationMs: 45.990054999999984,
+    diffMs: 7.504617000000053,
+    elements: 50,
+    relationships: 151,
+    exportBytes: 331655,
+    rssBytes: 183128064,
+    processPeakRssBytes: 183128064
+  },
+  {
+    name: 'setback',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 32844,
+    bimModelBytes: 413304,
+    projectionAndRelationshipsMs: 76.540929,
+    relationshipEdgeConstructionMs: 1.0451980000007097,
+    validationMs: 97.13167399999998,
+    ifcSerializationAndValidationMs: 89.69026499999995,
+    diffMs: 13.397764000000052,
+    elements: 87,
+    relationships: 267,
+    exportBytes: 588102,
+    rssBytes: 182788096,
+    processPeakRssBytes: 183832576
+  },
+  {
+    name: 'maximum-24',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 81017,
+    bimModelBytes: 923738,
+    projectionAndRelationshipsMs: 136.20350900000017,
+    relationshipEdgeConstructionMs: 2.407672000001412,
+    validationMs: 164.82359399999996,
+    ifcSerializationAndValidationMs: 197.74847599999998,
+    diffMs: 36.88039600000002,
+    elements: 200,
+    relationships: 670,
+    exportBytes: 1391866,
+    rssBytes: 199892992,
+    processPeakRssBytes: 199892992
+  },
+  {
+    name: 'modified',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 32889,
+    bimModelBytes: 413616,
+    projectionAndRelationshipsMs: 55.963036999999986,
+    relationshipEdgeConstructionMs: 0.9798180000016146,
+    validationMs: 68.27007400000002,
+    ifcSerializationAndValidationMs: 86.6937539999999,
+    diffMs: 15.177064999999857,
+    elements: 87,
+    relationships: 267,
+    exportBytes: 588244,
+    rssBytes: 200146944,
+    processPeakRssBytes: 202514432
+  },
+  {
+    name: 'specified-material',
+    sample: 1,
+    temperature: 'subsequent projection; not independently warmed',
+    nativeModelBytes: 23529,
+    bimModelBytes: 249601,
+    projectionAndRelationshipsMs: 36.80328899999995,
+    relationshipEdgeConstructionMs: 0.5792079999991984,
+    validationMs: 34.43361300000015,
+    ifcSerializationAndValidationMs: 44.665848000000096,
+    diffMs: 7.953771999999844,
+    elements: 56,
+    relationships: 168,
+    exportBytes: 348322,
+    rssBytes: 201015296,
+    processPeakRssBytes: 202514432
+  }
+]

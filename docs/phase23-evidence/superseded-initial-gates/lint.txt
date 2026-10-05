@@ -1,0 +1,9 @@
+
+> designflow@0.1.0 lint
+> eslint .
+
+
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/phase23-evidence/compiled-acceptance.mjs
+  17:151  error  'Buffer' is not defined  no-undef
+
+✖ 1 problem (1 error, 0 warnings)

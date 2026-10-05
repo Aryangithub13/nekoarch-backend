@@ -1,0 +1,50 @@
+[
+  {
+    "command": "npm run benchmark:bim",
+    "exitCode": 0,
+    "seconds": 21.417,
+    "log": "docs/phase23-evidence/benchmark-bim.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "PATH=/tmp/designflow-phase23-ifc/bin:$PATH npm run test:ifc",
+    "exitCode": 0,
+    "seconds": 68.992,
+    "log": "docs/phase23-evidence/ifc-roundtrip.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "/tmp/designflow-phase23-ifc/bin/python docs/phase23-evidence/verify-ifc-profiles.py",
+    "exitCode": 0,
+    "seconds": 0.666,
+    "log": "docs/phase23-evidence/ifc-profiles.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "docker build -t designflow-api:phase23 .",
+    "exitCode": 0,
+    "seconds": 66.25,
+    "log": "docs/phase23-evidence/docker-build.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "node scripts/smoke-container.mjs designflow-api:phase23",
+    "exitCode": 0,
+    "seconds": 1.568,
+    "log": "docs/phase23-evidence/docker-smoke.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase23 node --input-type=module < docs/phase23-evidence/compiled-acceptance.mjs",
+    "exitCode": 0,
+    "seconds": 1.33,
+    "log": "docs/phase23-evidence/docker-acceptance.txt",
+    "sourceManifestSha256": "ef8ea46856c8ebbeee0867f9d3ebb9a034ea91da773667cf494ceadcd934d0cf",
+    "sourceUnchanged": true
+  }
+]

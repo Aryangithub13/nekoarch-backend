@@ -1,3 +1,4 @@
+import { bimRoutes } from './routes/bim.js';
 import { conversationsRoutes } from './routes/conversations.js';
 import type { ConversationProvider } from './ai/conversation-provider.js';
 import { requirementInterpretationRoutes } from './routes/requirement-interpretation.js';
@@ -85,6 +86,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
     conversationsRoutes(scope, backend, options.env, options.conversationProvider);
     takeoffsRoutes(scope, backend, options.env);
+    bimRoutes(scope, backend);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

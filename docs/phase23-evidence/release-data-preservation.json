@@ -1,0 +1,263 @@
+{
+  "database-before.json": {
+    "tables": {
+      "architectural_conversations": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "cost_estimates": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "generation_logs": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "idempotency_records": {
+        "beforeCount": 3,
+        "afterCount": 3,
+        "missingOriginalRows": 0
+      },
+      "plans": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "profiles": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      },
+      "project_audit_events": {
+        "beforeCount": 1643,
+        "afterCount": 2033,
+        "missingOriginalRows": 0
+      },
+      "project_revision_construction_calculations": {
+        "beforeCount": 430,
+        "afterCount": 530,
+        "missingOriginalRows": 0
+      },
+      "project_revision_cost_estimates": {
+        "beforeCount": 305,
+        "afterCount": 380,
+        "missingOriginalRows": 0
+      },
+      "project_revision_qa_runs": {
+        "beforeCount": 794,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_revision_takeoffs": {
+        "beforeCount": 607,
+        "afterCount": 737,
+        "missingOriginalRows": 0
+      },
+      "project_revisions": {
+        "beforeCount": 794,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_workflow_runs": {
+        "beforeCount": 470,
+        "afterCount": 610,
+        "missingOriginalRows": 0
+      },
+      "projects": {
+        "beforeCount": 721,
+        "afterCount": 891,
+        "missingOriginalRows": 0
+      },
+      "rate_table_entries": {
+        "beforeCount": 9,
+        "afterCount": 9,
+        "missingOriginalRows": 0
+      },
+      "rate_table_versions": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      }
+    },
+    "migrationHistoryUnchanged": true,
+    "rlsUnchanged": true,
+    "policiesUnchanged": true
+  },
+  "database-continuation-before.json": {
+    "tables": {
+      "architectural_conversations": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "cost_estimates": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "generation_logs": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "idempotency_records": {
+        "beforeCount": 3,
+        "afterCount": 3,
+        "missingOriginalRows": 0
+      },
+      "plans": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "profiles": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      },
+      "project_audit_events": {
+        "beforeCount": 1721,
+        "afterCount": 2033,
+        "missingOriginalRows": 0
+      },
+      "project_revision_construction_calculations": {
+        "beforeCount": 450,
+        "afterCount": 530,
+        "missingOriginalRows": 0
+      },
+      "project_revision_cost_estimates": {
+        "beforeCount": 320,
+        "afterCount": 380,
+        "missingOriginalRows": 0
+      },
+      "project_revision_qa_runs": {
+        "beforeCount": 833,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_revision_takeoffs": {
+        "beforeCount": 633,
+        "afterCount": 737,
+        "missingOriginalRows": 0
+      },
+      "project_revisions": {
+        "beforeCount": 833,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_workflow_runs": {
+        "beforeCount": 498,
+        "afterCount": 610,
+        "missingOriginalRows": 0
+      },
+      "projects": {
+        "beforeCount": 755,
+        "afterCount": 891,
+        "missingOriginalRows": 0
+      },
+      "rate_table_entries": {
+        "beforeCount": 9,
+        "afterCount": 9,
+        "missingOriginalRows": 0
+      },
+      "rate_table_versions": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      }
+    },
+    "migrationHistoryUnchanged": true,
+    "rlsUnchanged": true,
+    "policiesUnchanged": true
+  },
+  "database-release-before.json": {
+    "tables": {
+      "architectural_conversations": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "cost_estimates": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "generation_logs": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "idempotency_records": {
+        "beforeCount": 3,
+        "afterCount": 3,
+        "missingOriginalRows": 0
+      },
+      "plans": {
+        "beforeCount": 0,
+        "afterCount": 0,
+        "missingOriginalRows": 0
+      },
+      "profiles": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      },
+      "project_audit_events": {
+        "beforeCount": 1799,
+        "afterCount": 2033,
+        "missingOriginalRows": 0
+      },
+      "project_revision_construction_calculations": {
+        "beforeCount": 470,
+        "afterCount": 530,
+        "missingOriginalRows": 0
+      },
+      "project_revision_cost_estimates": {
+        "beforeCount": 335,
+        "afterCount": 380,
+        "missingOriginalRows": 0
+      },
+      "project_revision_qa_runs": {
+        "beforeCount": 872,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_revision_takeoffs": {
+        "beforeCount": 659,
+        "afterCount": 737,
+        "missingOriginalRows": 0
+      },
+      "project_revisions": {
+        "beforeCount": 872,
+        "afterCount": 989,
+        "missingOriginalRows": 0
+      },
+      "project_workflow_runs": {
+        "beforeCount": 526,
+        "afterCount": 610,
+        "missingOriginalRows": 0
+      },
+      "projects": {
+        "beforeCount": 789,
+        "afterCount": 891,
+        "missingOriginalRows": 0
+      },
+      "rate_table_entries": {
+        "beforeCount": 9,
+        "afterCount": 9,
+        "missingOriginalRows": 0
+      },
+      "rate_table_versions": {
+        "beforeCount": 1,
+        "afterCount": 1,
+        "missingOriginalRows": 0
+      }
+    },
+    "migrationHistoryUnchanged": true,
+    "rlsUnchanged": true,
+    "policiesUnchanged": true
+  }
+}

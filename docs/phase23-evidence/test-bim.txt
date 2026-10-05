@@ -1,0 +1,52 @@
+
+> designflow@0.1.0 test:bim
+> npm run build && vitest run apps/api/tests/bim.test.ts apps/api/tests/bim.integration.test.ts
+
+
+> designflow@0.1.0 build
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/api@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/bim.integration.test.ts (4 tests) 7915ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > enforces owner-only BIM/IFC downloads and redacted failure envelopes  722ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses every element page  1603ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses filtered relationships and rejects invalid pagination queries  3760ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > compares revisions while preserving immutable snapshots and project isolation  722ms
+ ✓ apps/api/tests/bim.test.ts (37 tests) 3662ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  497ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  421ms
+
+ Test Files  2 passed (2)
+      Tests  41 passed (41)
+   Start at  18:19:37
+   Duration  13.92s (transform 611ms, setup 0ms, collect 1.97s, tests 11.58s, environment 0ms, prepare 102ms)
