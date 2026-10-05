@@ -1,0 +1,212 @@
+[
+  {
+    "id": "D01",
+    "title": "Conversation State Contradiction Eradication on Unrelated Turns",
+    "severity": "P1",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Planner",
+    "files": ["apps/api/src/ai/conversation-planner.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "state.intent assignment at line 214 replaces state.intent.contradictions with patch.contradictions, wiping unresolved contradictions from earlier turns when an unrelated prompt produces an empty contradictions patch."
+  },
+  {
+    "id": "D02",
+    "title": "Conversation Unit Correction Retains Stale Site Depth Unit",
+    "severity": "P1",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Planner",
+    "files": ["apps/api/src/ai/conversation-planner.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Unit clarification patches spread existing site intent without clearing depthUnit, causing subsequent dimension evaluations to treat depth as the previous mixed unit."
+  },
+  {
+    "id": "D03",
+    "title": "Case-Sensitive Plural Room Name Matching Rejects Valid Updates",
+    "severity": "P2",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Planner",
+    "files": ["apps/api/src/ai/conversation-planner.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "allOfType uses name.endsWith('s') on raw regex match group without lowercasing, causing uppercase plural room names like BEDROOMS to evaluate to false and trigger ambiguity rejection."
+  },
+  {
+    "id": "D04",
+    "title": "Floor Count Reduction in Conversation Rejected Due to Stale Stair Requirement",
+    "severity": "P2",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Planner / Blueprint Integration",
+    "files": ["apps/api/src/ai/conversation-planner.ts", "packages/generator/src/blueprint/input.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Reducing floors from 2 to 1 updates floors property but retains stair requirement object, triggering BlueprintRequirementsSchema superRefine stair restriction and surfacing as an unresolvable user conflict."
+  },
+  {
+    "id": "D05",
+    "title": "Package Script test:ifc Fails Due to Unbound Python Runtime",
+    "severity": "P2",
+    "phases": ["PHASE_23"],
+    "subsystem": "Tooling & Environment",
+    "files": ["package.json"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "package.json invokes global python3 which lacks ifcopenshell, while the validated ifcopenshell environment resides in /tmp/designflow-phase23-ifc."
+  },
+  {
+    "id": "D06",
+    "title": "Canonical Building Identity Ignores Stair Landing Ordering",
+    "severity": "P2",
+    "phases": ["PHASE_17", "PHASE_23"],
+    "subsystem": "Generation Identity & Canonicalization",
+    "files": ["apps/api/src/lib/generation-identity.ts", "supabase/migrations/0011_generation_freshness.sql"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "canonicalBuilding sorts top-level stairs by ID but leaves stair.landings in insertion order, producing divergent modelHash values for identical stairs and triggering BIM_SOURCE_MISMATCH."
+  },
+  {
+    "id": "D07",
+    "title": "Omitted Optional spaceIds Disconnects BIM and IFC Space Boundaries",
+    "severity": "P2",
+    "phases": ["PHASE_23"],
+    "subsystem": "BIM Semantic Projection & IFC Export",
+    "files": ["apps/api/src/bim/project.ts", "apps/api/src/bim/ifc.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "projectBim relies entirely on optional wall.spaceIds to emit bounds and accesses edges, generating zero IfcRelSpaceBoundary records when spaceIds is omitted."
+  },
+  {
+    "id": "D08",
+    "title": "Coincident Columns Bypass Invariants and QA to Contaminate Downstream Subsystems",
+    "severity": "P1",
+    "phases": ["PHASE_9", "PHASE_11", "PHASE_13", "PHASE_15", "PHASE_23"],
+    "subsystem": "Building Model Invariants & QA",
+    "files": ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Neither invariants nor Blueprint QA checks for column-column collision or coincident duplication, allowing duplicate structural columns to double quantities and crash BIM projection."
+  },
+  {
+    "id": "D09",
+    "title": "Core Blueprint QA Overlooks Slab Voids Under Occupied Spaces",
+    "severity": "P1",
+    "phases": ["PHASE_11"],
+    "subsystem": "Blueprint QA Core",
+    "files": ["packages/blueprint-qa/src/core.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "slabsColumnsAudit tests space containment against slab outer boundary while ignoring slab voids, permitting unfloored open voids under habitable rooms to pass QA with zero errors."
+  },
+  {
+    "id": "D10",
+    "title": "BIM Core Rejects Valid Architectural Models Containing Columns",
+    "severity": "P2",
+    "phases": ["PHASE_23"],
+    "subsystem": "BIM Core Validation",
+    "files": ["apps/api/src/bim/core.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Line 33 unconditionally rejects any model with m.columns.length > 0 as BIM_UNSUPPORTED_MODEL, creating an artificial incompatibility with BuildingModelV2."
+  },
+  {
+    "id": "D11",
+    "title": "Abandoned Message Lease Blocks Subsequent Conversation Interactions",
+    "severity": "P1",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Message Concurrency",
+    "files": ["apps/api/src/routes/conversations.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Route handler fails to wrap planConversation in try-finally to release conversation lease on failure, causing subsequent requests to fail with 409 MESSAGE_IN_PROGRESS for up to 60 seconds."
+  },
+  {
+    "id": "D12",
+    "title": "TOCTOU Race Condition in conversation_write('finish')",
+    "severity": "P1",
+    "phases": ["PHASE_20"],
+    "subsystem": "Database Concurrency & Integrity",
+    "files": ["supabase/migrations/0012_conversations.sql"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Function snapshots project state prior to acquiring row lock on conversation, allowing proposal approval against a stale revision if project is concurrently updated."
+  },
+  {
+    "id": "D13",
+    "title": "Sentry Telemetry Drops All Phase 6–23 Routes and Engine Stack Frames",
+    "severity": "P2",
+    "phases": ["PHASE_8", "PHASE_20", "PHASE_21", "PHASE_22", "PHASE_23"],
+    "subsystem": "Telemetry & Observability",
+    "files": ["apps/api/src/lib/sentry.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "sanitizeEvent route whitelist is restricted to Phase 5 paths and stack frame filter excludes packages/blueprint-qa, quantity-takeoff, construction-calculations, and boq-cost."
+  },
+  {
+    "id": "D14",
+    "title": "QA Core Slab Overlap Validation Fails to Detect Colliding Roof/Ceiling Solids",
+    "severity": "P2",
+    "phases": ["PHASE_11", "PHASE_14", "PHASE_15"],
+    "subsystem": "Blueprint QA Core & Geometry Invariants",
+    "files": ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Slab overlap check bypasses collision detection when non-floor slabs have differing top offsets, ignoring true 3D spatial intersections."
+  },
+  {
+    "id": "D15",
+    "title": "Multi-Mode Workflows Omit BIM Projection and IFC Generation Capabilities",
+    "severity": "P2",
+    "phases": ["PHASE_16", "PHASE_23"],
+    "subsystem": "Workflow Registry & Engine",
+    "files": ["apps/api/src/workflows/registry.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Workflow registry was not extended in Phase 23, leaving workflow orchestration disconnected from BIM and IFC capabilities."
+  },
+  {
+    "id": "D16",
+    "title": "Compute-Intensive Workflow Endpoint Excluded From Generate Rate Limit Group",
+    "severity": "P2",
+    "phases": ["PHASE_8", "PHASE_16"],
+    "subsystem": "HTTP Protection & Rate Limiting",
+    "files": ["apps/api/src/lib/http-protection.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "/api/projects/:projectId/workflows is omitted from 'generate' rate limit list, allowing heavy multi-phase pipelines to execute under high general write limits."
+  },
+  {
+    "id": "D17",
+    "title": "BIM Topology Creates Spatial Access Edges for Non-Traversable Service Openings",
+    "severity": "P2",
+    "phases": ["PHASE_23"],
+    "subsystem": "BIM Topological Projection",
+    "files": ["apps/api/src/bim/project.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Line 41 treats all non-window openings as traversable spatial access connections, incorrectly including MEP service ducts and crawlspaces in circulation topology."
+  },
+  {
+    "id": "D18",
+    "title": "Construction Options Schema Rejects Whole-Integer and Low-Precision Quantities",
+    "severity": "P2",
+    "phases": ["PHASE_14", "PHASE_15"],
+    "subsystem": "Construction Calculations Specification",
+    "files": ["packages/construction-calculations/src/specification.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "quantityDecimalPlaces enforces min(6), preventing standard discrete unit formatting or whole-number procurement displays."
+  },
+  {
+    "id": "D19",
+    "title": "Missing Production Validation for Mandatory PROJECT_COMMIT_SECRET",
+    "severity": "P2",
+    "phases": ["PHASE_5", "PHASE_8"],
+    "subsystem": "Environment & Configuration",
+    "files": ["apps/api/src/config/env.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "PROJECT_COMMIT_SECRET is optional in EnvSchema without superRefine enforcement in production, allowing silent boots that subsequently crash all project mutations with 503."
+  },
+  {
+    "id": "D20",
+    "title": "BIM Core Arbitrarily Restricts Level Footprint Vertex Count to 4 or 6",
+    "severity": "P2",
+    "phases": ["PHASE_23"],
+    "subsystem": "BIM Core Validation",
+    "files": ["apps/api/src/bim/core.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Line 35 restricts storey boundaries strictly to [4, 6] vertices, rejecting valid complex orthogonal building footprints like T-shapes and cross-shapes."
+  },
+  {
+    "id": "D21",
+    "title": "Setting Room Count to Zero Corrupts Requirements Schema",
+    "severity": "P2",
+    "phases": ["PHASE_20"],
+    "subsystem": "Conversation Planner Room Management",
+    "files": ["apps/api/src/ai/conversation-planner.ts"],
+    "verdict": "CONFIRMED DEFECT",
+    "rootCause": "Line 98 mutates room count to 0 instead of filtering the room from requirements, violating the min(1) schema constraint and falsely reporting an unresolvable user conflict."
+  }
+]

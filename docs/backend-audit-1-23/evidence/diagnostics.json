@@ -1,0 +1,227 @@
+[
+  {
+    "name": "control",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 3,
+    "ifcBytes": 131254,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "floor-void-under-occupied-studio",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "36750000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 3,
+    "ifcBytes": 135556,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "omitted-optional-spaceIds",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 0,
+    "accesses": 0,
+    "ifcBytes": 129384,
+    "spaceBoundaries": 0
+  },
+  {
+    "name": "service-opening-access",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 4,
+    "ifcBytes": 125858,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "raised-door-access",
+    "schema": true,
+    "qa": "FAIL",
+    "errors": [
+      "QA_UNREACHABLE_SPACE"
+    ],
+    "warnings": [
+      "QA_RAISED_PASSAGE_NOT_CONNECTED"
+    ],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 3,
+    "ifcBytes": 131276,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "floor-at-2500-mm",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 3,
+    "ifcBytes": 131254,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "overlapping-roof-solids",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bim": "VALID_WITH_INCOMPLETE_DATA",
+    "bounds": 8,
+    "accesses": 3,
+    "ifcBytes": 143180,
+    "spaceBoundaries": 8
+  },
+  {
+    "name": "coincident-columns",
+    "schema": true,
+    "qa": "PASS",
+    "errors": [],
+    "warnings": [],
+    "gfa": "48000000",
+    "bimError": "BIM_UNSUPPORTED_MODEL"
+  },
+  {
+    "name": "landing-order-identity",
+    "schema": true,
+    "equal": false
+  },
+  {
+    "name": "construction-display-precision",
+    "zero": [
+      {
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "2",
+        "wastage": "0",
+        "final": "2",
+        "purchases": [
+          {
+            "unit": "each",
+            "bagMassKg": null,
+            "quantity": "2"
+          }
+        ]
+      },
+      {
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "180.96",
+        "wastage": "18.096",
+        "final": "199.056",
+        "purchases": [
+          {
+            "unit": "piece",
+            "bagMassKg": null,
+            "quantity": "200"
+          }
+        ]
+      },
+      {
+        "materialCode": "READY_MIX_CONCRETE",
+        "unit": "m3",
+        "theoretical": "7.2",
+        "wastage": "0.36",
+        "final": "7.56",
+        "purchases": []
+      }
+    ],
+    "nine": [
+      {
+        "materialCode": "DOOR_UNIT",
+        "unit": "each",
+        "theoretical": "2",
+        "wastage": "0",
+        "final": "2",
+        "purchases": [
+          {
+            "unit": "each",
+            "bagMassKg": null,
+            "quantity": "2"
+          }
+        ]
+      },
+      {
+        "materialCode": "FLOOR_TILE",
+        "unit": "piece",
+        "theoretical": "180.96",
+        "wastage": "18.096",
+        "final": "199.056",
+        "purchases": [
+          {
+            "unit": "piece",
+            "bagMassKg": null,
+            "quantity": "200"
+          }
+        ]
+      },
+      {
+        "materialCode": "READY_MIX_CONCRETE",
+        "unit": "m3",
+        "theoretical": "7.2",
+        "wastage": "0.36",
+        "final": "7.56",
+        "purchases": []
+      }
+    ],
+    "exact": [
+      {
+        "code": "DOOR_UNIT",
+        "exact": {
+          "numerator": "1",
+          "denominator": "1"
+        }
+      },
+      {
+        "code": "DOOR_UNIT",
+        "exact": {
+          "numerator": "1",
+          "denominator": "1"
+        }
+      },
+      {
+        "code": "FLOOR_TILE",
+        "exact": {
+          "numerator": "12441",
+          "denominator": "125"
+        }
+      },
+      {
+        "code": "FLOOR_TILE",
+        "exact": {
+          "numerator": "12441",
+          "denominator": "125"
+        }
+      },
+      {
+        "code": "READY_MIX_CONCRETE",
+        "exact": {
+          "numerator": "189",
+          "denominator": "25"
+        }
+      }
+    ]
+  }
+]

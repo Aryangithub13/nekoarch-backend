@@ -1,0 +1,5 @@
+{
+  "command": "./node_modules/.bin/vitest run --reporter=json --outputFile=docs/backend-audit-1-23/evidence/vitest-unrestricted.json",
+  "exit_code": 0,
+  "duration_seconds": 110.87464585199996
+}

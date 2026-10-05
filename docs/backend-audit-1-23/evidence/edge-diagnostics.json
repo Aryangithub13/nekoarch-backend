@@ -1,0 +1,38 @@
+[
+  {
+    "field": "opening.width",
+    "parse": false,
+    "status": 400,
+    "code": "VALIDATION_ERROR"
+  },
+  {
+    "field": "point.x",
+    "parse": false,
+    "status": 400,
+    "code": "VALIDATION_ERROR"
+  },
+  {
+    "field": "opening.negative",
+    "parse": false,
+    "status": 400,
+    "code": "VALIDATION_ERROR"
+  },
+  {
+    "field": "control",
+    "parse": true,
+    "status": 404,
+    "code": "PROJECT_NOT_FOUND"
+  },
+  {
+    "name": "corner-door",
+    "qa": "PASS",
+    "findings": []
+  },
+  {
+    "name": "sentry-new-route",
+    "result": {
+      "code": "INTERNAL_ERROR",
+      "method": "POST"
+    }
+  }
+]

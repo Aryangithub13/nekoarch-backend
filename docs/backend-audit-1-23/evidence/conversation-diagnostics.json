@@ -1,0 +1,762 @@
+[
+  {
+    "name": "mixed-unit-start",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "site": {
+        "width": "10",
+        "depth": "20",
+        "unit": "m",
+        "depthUnit": "ft"
+      },
+      "bedrooms": 2,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 6096
+      },
+      {
+        "x": 0,
+        "z": 6096
+      }
+    ]
+  },
+  {
+    "name": "mixed-unit-correct-to-m",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "site": {
+        "width": "10",
+        "depth": "20",
+        "unit": "m",
+        "depthUnit": "ft"
+      },
+      "bedrooms": 2,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 6096
+      },
+      {
+        "x": 0,
+        "z": 6096
+      }
+    ]
+  },
+  {
+    "name": "contradictory-start",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "Resolve contradictory floors requirements.",
+      "The brief contains contradictory floors requirements. Which requirement should apply?"
+    ],
+    "unsupported": [],
+    "intent": {
+      "site": {
+        "width": "10",
+        "depth": "12",
+        "unit": "m"
+      },
+      "floors": 2,
+      "bedrooms": 2,
+      "inferredFields": [],
+      "contradictions": [
+        "floors"
+      ],
+      "unsupported": []
+    }
+  },
+  {
+    "name": "unrelated-seed-clears-contradiction",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "site": {
+        "width": "10",
+        "depth": "12",
+        "unit": "m"
+      },
+      "floors": 2,
+      "bedrooms": 2,
+      "seed": "next",
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "explicit-answer-clears",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "site": {
+        "width": "10",
+        "depth": "12",
+        "unit": "m"
+      },
+      "floors": 1,
+      "bedrooms": 2,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "unresolved-bedroom-move",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "The relative bedroom move is unresolved because its source allocation is unspecified or insufficient. State the desired total upstairs or supply an explicit native allocation."
+    ],
+    "unsupported": [],
+    "intent": {
+      "inferredFields": [
+        "floors"
+      ],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "unrelated-seed-after-move",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "The relative bedroom move is unresolved because its source allocation is unspecified or insufficient. State the desired total upstairs or supply an explicit native allocation."
+    ],
+    "unsupported": [],
+    "intent": {
+      "seed": "next",
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "native-rooms-resolve",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "living": 1,
+      "dining": 0,
+      "study": 0,
+      "seed": "next",
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "level": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "level": 0,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "level": 0,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "level": 0,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "uppercase-singular-room",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": [],
+      "roomChange": {
+        "type": "kitchen",
+        "allOfType": false,
+        "minWidthMm": 3000,
+        "minDepthMm": 4000
+      }
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 3000,
+        "minDepthMm": 4000
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "uppercase-plural-room",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "The bedroom reference is ambiguous or absent. Specify all rooms of that type or an explicit native group update."
+    ],
+    "unsupported": [],
+    "intent": {
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": [],
+      "roomChange": {
+        "type": "bedroom",
+        "allOfType": false,
+        "minWidthMm": 3000,
+        "minDepthMm": 4000
+      }
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "lowercase-plural-room",
+    "status": "AWAITING_APPROVAL",
+    "questions": [],
+    "unsupported": [],
+    "intent": {
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": [],
+      "roomChange": {
+        "type": "bedroom",
+        "allOfType": true,
+        "minWidthMm": 3000,
+        "minDepthMm": 4000
+      }
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 3000,
+        "minDepthMm": 4000
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "remove-bathroom-zero",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "The proposed changes conflict with the native room, site, floor or relationship constraints. Supply consistent values; no requirements were replaced."
+    ],
+    "unsupported": [],
+    "intent": {
+      "bathrooms": 0,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  },
+  {
+    "name": "two-to-one-native-rooms",
+    "status": "NEEDS_CLARIFICATION",
+    "questions": [
+      "The proposed changes conflict with the native room, site, floor or relationship constraints. Supply consistent values; no requirements were replaced."
+    ],
+    "unsupported": [],
+    "intent": {
+      "floors": 1,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "living": 1,
+      "dining": 0,
+      "study": 0,
+      "inferredFields": [],
+      "contradictions": [],
+      "unsupported": []
+    },
+    "rooms": [
+      {
+        "type": "bedroom",
+        "count": 2,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "bathroom",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "living",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      },
+      {
+        "type": "kitchen",
+        "count": 1,
+        "minWidthMm": 1800,
+        "minDepthMm": 1800
+      }
+    ],
+    "site": [
+      {
+        "x": 0,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 0
+      },
+      {
+        "x": 10000,
+        "z": 12000
+      },
+      {
+        "x": 0,
+        "z": 12000
+      }
+    ]
+  }
+]

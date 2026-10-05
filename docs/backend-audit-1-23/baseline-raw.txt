@@ -1,0 +1,112 @@
+=== PWD ===
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+=== TOPLEVEL ===
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+=== BRANCH ===
+main
+=== HEAD ===
+7086209efd9e337a2c175b9bed1e562fde54ca68
+=== STATUS SHORT ===
+ M apps/api/src/app.ts
+ M apps/api/tests/supabase.live.test.ts
+ M package.json
+?? apps/api/src/bim/
+?? apps/api/src/routes/bim.ts
+?? apps/api/src/services/bim-service.ts
+?? apps/api/tests/bim.integration.test.ts
+?? apps/api/tests/bim.test.ts
+?? docs/backend-audit-1-23/
+?? docs/phase16-evidence/supabase-2026-10-04T16-57-16.996Z.json
+?? docs/phase16-evidence/supabase-2026-10-05T03-01-06.207Z.json
+?? docs/phase16-evidence/supabase-2026-10-05T03-05-16.443Z.json
+?? docs/phase16-evidence/supabase-2026-10-05T03-59-23.000Z.json
+?? docs/phase23-api.md
+?? docs/phase23-design.md
+?? docs/phase23-evidence/
+?? docs/phase23-report.md
+?? docs/phase23-review-report.md
+?? docs/phase23-review.md
+?? scripts/benchmark-bim.ts
+?? scripts/requirements-ifc.txt
+?? scripts/test-phase23-runner.py
+?? scripts/verify-ifc.py
+?? scripts/verify-phase23.py
+?? test-support/bim-acceptance.ts
+?? test-support/bim-repository.ts
+=== STATUS PORCELAIN V2 ===
+1 .M N... 100644 100644 100644 b2a3cd8c75f308923ef10543806f9608a8282d98 b2a3cd8c75f308923ef10543806f9608a8282d98 apps/api/src/app.ts
+1 .M N... 100644 100644 100644 bcb942eacca0d8a28702b79cc5f2831eed99ce41 bcb942eacca0d8a28702b79cc5f2831eed99ce41 apps/api/tests/supabase.live.test.ts
+1 .M N... 100644 100644 100644 46a99b08d0848b8c7190e76931d61a3ee0179d33 46a99b08d0848b8c7190e76931d61a3ee0179d33 package.json
+? apps/api/src/bim/
+? apps/api/src/routes/bim.ts
+? apps/api/src/services/bim-service.ts
+? apps/api/tests/bim.integration.test.ts
+? apps/api/tests/bim.test.ts
+? docs/backend-audit-1-23/
+? docs/phase16-evidence/supabase-2026-10-04T16-57-16.996Z.json
+? docs/phase16-evidence/supabase-2026-10-05T03-01-06.207Z.json
+? docs/phase16-evidence/supabase-2026-10-05T03-05-16.443Z.json
+? docs/phase16-evidence/supabase-2026-10-05T03-59-23.000Z.json
+? docs/phase23-api.md
+? docs/phase23-design.md
+? docs/phase23-evidence/
+? docs/phase23-report.md
+? docs/phase23-review-report.md
+? docs/phase23-review.md
+? scripts/benchmark-bim.ts
+? scripts/requirements-ifc.txt
+? scripts/test-phase23-runner.py
+? scripts/verify-ifc.py
+? scripts/verify-phase23.py
+? test-support/bim-acceptance.ts
+? test-support/bim-repository.ts
+=== LOG -30 ===
+7086209 (HEAD -> main, tag: backend-v1-phase22-complete) Backend V1 Phase 22 complete
+f39dbbc (tag: backend-v1-phase21-complete) Backend V1 Phase 21 complete
+18d6f8c (tag: backend-v1-phase20-complete, tag: backend-v1-phase19-verified-20261003) Stabilize and verify backend Phases 19 and 20
+f17a337 (tag: backend-v1-phase19-complete) Backend V1 Phase 19 complete
+094e685 (tag: backend-v1-phase18-complete) Backend V1 Phase 18 complete
+1c60e0e Clarify Phase 17 seed identity evidence
+bf3fa6b (tag: backend-v1-phase17-complete) Backend V1 Phase 17 complete
+7a335ac (tag: backend-v1-phase16-complete) Backend V1 Phase 16 complete
+1de9340 (tag: backend-v1-phase15-complete) Backend V1 Phase 15 complete
+ca0cbc2 (tag: backend-v1-phase14-complete) Backend V1 Phase 14 complete
+cceb01d (tag: backend-v1-phase13-complete) Backend V1 Phase 13 complete
+46f0117 (tag: backend-v1-phase12-complete) Backend V1 Phase 12 complete
+f202a44 (tag: backend-v1-phase11-complete) Backend V1 Phase 11 complete
+875bc45 (tag: backend-v1-phase10-complete) Backend V1 Phase 10 complete
+4d95cf9 (tag: backend-v1-phase9-complete) Backend V1 Phase 9 complete
+908b64d (tag: backend-v1-phase8-complete) Backend V1 Phase 8 complete
+b88902d (tag: backend-v1-phase7-complete) Backend V1 Phase 7 complete
+ecc03ff (tag: backend-v1-phase6-complete) Backend V1 Phase 6 complete
+6670abe (tag: backend-v1-phase5-complete) Backend V1 Phase 5 complete
+=== TAG LIST ===
+backend-v1-phase10-complete
+backend-v1-phase11-complete
+backend-v1-phase12-complete
+backend-v1-phase13-complete
+backend-v1-phase14-complete
+backend-v1-phase15-complete
+backend-v1-phase16-complete
+backend-v1-phase17-complete
+backend-v1-phase18-complete
+backend-v1-phase19-complete
+backend-v1-phase19-verified-20261003
+backend-v1-phase20-complete
+backend-v1-phase21-complete
+backend-v1-phase22-complete
+backend-v1-phase5-complete
+backend-v1-phase6-complete
+backend-v1-phase7-complete
+backend-v1-phase8-complete
+backend-v1-phase9-complete
+=== DIFF STAT ===
+ apps/api/src/app.ts                  | 2 ++
+ apps/api/tests/supabase.live.test.ts | 5 +++++
+ package.json                         | 9 ++++++---
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+=== DIFF NAME STATUS ===
+M	apps/api/src/app.ts
+M	apps/api/tests/supabase.live.test.ts
+M	package.json
+=== DIFF CACHED NAME STATUS ===

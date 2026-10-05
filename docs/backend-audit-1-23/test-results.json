@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-10-05T06:27:30Z",
+  "runs": [
+    {
+      "command": "npm run test:unit",
+      "exitCode": 0,
+      "durationSeconds": 36.03,
+      "testFilesTotal": 37,
+      "testFilesPassed": 37,
+      "testFilesFailed": 0,
+      "testsTotal": 1838,
+      "testsPassed": 1838,
+      "testsFailed": 0,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npm run test:bim",
+      "exitCode": 0,
+      "durationSeconds": 12.08,
+      "testFilesTotal": 2,
+      "testFilesPassed": 2,
+      "testFilesFailed": 0,
+      "testsTotal": 33,
+      "testsPassed": 33,
+      "testsFailed": 0,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npm run test:parametric",
+      "exitCode": 0,
+      "durationSeconds": 4.62,
+      "testFilesTotal": 3,
+      "testFilesPassed": 3,
+      "testFilesFailed": 0,
+      "testsTotal": 36,
+      "testsPassed": 36,
+      "testsFailed": 0,
+      "testsSkipped": 0
+    },
+    {
+      "command": "npm run test:ifc",
+      "exitCode": 1,
+      "durationSeconds": 0.5,
+      "error": "ModuleNotFoundError: No module named 'ifcopenshell'",
+      "note": "ifcopenshell Python dependency is not installed in the execution environment"
+    }
+  ]
+}

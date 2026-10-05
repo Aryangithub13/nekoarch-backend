@@ -1,0 +1,191 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "architectural_conversations",
+    "policyname": "conversation_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "((owner_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = architectural_conversations.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid))))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "cost_estimates",
+    "policyname": "estimates_insert_own",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "((user_id = ( SELECT auth.uid() AS uid)) AND ((plan_id IS NULL) OR (EXISTS ( SELECT 1\n   FROM plans p\n  WHERE (p.id = cost_estimates.plan_id)))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "cost_estimates",
+    "policyname": "estimates_read_own",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "idempotency_records",
+    "policyname": "idempotency_delete_own",
+    "roles": "{authenticated}",
+    "cmd": "DELETE",
+    "qual": "((user_id = ( SELECT auth.uid() AS uid)) AND (operation = ANY (ARRAY['/api/plans'::text, '/api/plans/generate'::text, '/api/estimates'::text])))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "idempotency_records",
+    "policyname": "idempotency_insert_own",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "((user_id = ( SELECT auth.uid() AS uid)) AND (operation = ANY (ARRAY['/api/plans'::text, '/api/plans/generate'::text, '/api/estimates'::text])))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "idempotency_records",
+    "policyname": "idempotency_read_own",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "plans",
+    "policyname": "plans_delete_own",
+    "roles": "{authenticated}",
+    "cmd": "DELETE",
+    "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "plans",
+    "policyname": "plans_insert_own",
+    "roles": "{authenticated}",
+    "cmd": "INSERT",
+    "qual": null,
+    "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "plans",
+    "policyname": "plans_read_own_or_public",
+    "roles": "{anon,authenticated}",
+    "cmd": "SELECT",
+    "qual": "(is_public OR (user_id = ( SELECT auth.uid() AS uid)))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "plans",
+    "policyname": "plans_update_own",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+    "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "profiles",
+    "policyname": "profiles_read_own",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(id = ( SELECT auth.uid() AS uid))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "profiles",
+    "policyname": "profiles_update_own",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(id = ( SELECT auth.uid() AS uid))",
+    "with_check": "(id = ( SELECT auth.uid() AS uid))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_revision_construction_calculations",
+    "policyname": "construction_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM (project_revisions r\n     JOIN projects p ON ((p.id = r.project_id)))\n  WHERE ((r.id = project_revision_construction_calculations.project_revision_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_revision_cost_estimates",
+    "policyname": "cost_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM (((project_revision_construction_calculations c\n     JOIN project_revision_takeoffs t ON (((t.id = c.takeoff_id) AND (t.project_revision_id = c.project_revision_id))))\n     JOIN project_revisions r ON ((r.id = t.project_revision_id)))\n     JOIN projects p ON ((p.id = r.project_id)))\n  WHERE ((c.id = project_revision_cost_estimates.construction_calculation_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_revision_qa_runs",
+    "policyname": "qa_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM (project_revisions r\n     JOIN projects p ON ((p.id = r.project_id)))\n  WHERE ((r.id = project_revision_qa_runs.revision_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_revision_takeoffs",
+    "policyname": "takeoffs_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM (project_revisions r\n     JOIN projects p ON ((p.id = r.project_id)))\n  WHERE ((r.id = project_revision_takeoffs.project_revision_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_revisions",
+    "policyname": "revisions_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = project_revisions.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "project_workflow_runs",
+    "policyname": "workflow_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = project_workflow_runs.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "projects",
+    "policyname": "projects_owner_read",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "rate_table_entries",
+    "policyname": "rate_entries_read_active_effective",
+    "roles": "{anon,authenticated}",
+    "cmd": "SELECT",
+    "qual": "(is_active AND (EXISTS ( SELECT 1\n   FROM rate_table_versions v\n  WHERE ((v.id = rate_table_entries.version_id) AND (v.effective_date <= CURRENT_DATE)))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "rate_table_versions",
+    "policyname": "rate_versions_read_effective",
+    "roles": "{anon,authenticated}",
+    "cmd": "SELECT",
+    "qual": "(effective_date <= CURRENT_DATE)",
+    "with_check": null
+  }
+]

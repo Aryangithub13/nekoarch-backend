@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-10-05T06:24:00Z",
+  "repository": {
+    "name": "designflow",
+    "role": "authoritative_backend",
+    "path": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "git": {
+      "head": "7086209efd9e337a2c175b9bed1e562fde54ca68",
+      "branch": "main",
+      "headTag": "backend-v1-phase22-complete",
+      "phase23TagExists": false,
+      "phase23Status": "uncommitted_in_working_tree",
+      "modifiedFiles": [
+        "apps/api/src/app.ts",
+        "apps/api/tests/supabase.live.test.ts",
+        "package.json"
+      ],
+      "untrackedFiles": [
+        "apps/api/src/bim/",
+        "apps/api/src/routes/bim.ts",
+        "apps/api/src/services/bim-service.ts",
+        "apps/api/tests/bim.integration.test.ts",
+        "apps/api/tests/bim.test.ts",
+        "docs/backend-audit-1-23/",
+        "docs/phase16-evidence/",
+        "docs/phase23-api.md",
+        "docs/phase23-design.md",
+        "docs/phase23-evidence/",
+        "docs/phase23-report.md",
+        "docs/phase23-review-report.md",
+        "docs/phase23-review.md",
+        "scripts/benchmark-bim.ts",
+        "scripts/requirements-ifc.txt",
+        "scripts/test-phase23-runner.py",
+        "scripts/verify-ifc.py",
+        "scripts/verify-phase23.py",
+        "test-support/bim-acceptance.ts",
+        "test-support/bim-repository.ts"
+      ]
+    }
+  },
+  "runtime": {
+    "node": "v26.10.0",
+    "npm": "12.2.0",
+    "python": "Python 3.14.7"
+  },
+  "packageHashes": {
+    "packageJsonSha256": "82c6e56fafaa0cbc23002d988f922077092a18d20cd75fe40c18e84350f6a795",
+    "packageLockJsonSha256": "9eba827eaa424c2e5e0deee5bb00ff8d648ad2807c7b6c91514160374050b435"
+  },
+  "database": {
+    "migrationCount": 12,
+    "latestMigration": "0012_conversations.sql",
+    "migrations": [
+      { "file": "supabase/migrations/0001_core_tables.sql", "sha256": "f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929" },
+      { "file": "supabase/migrations/0002_rate_tables.sql", "sha256": "b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca" },
+      { "file": "supabase/migrations/0003_estimates_and_logs.sql", "sha256": "e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107" },
+      { "file": "supabase/migrations/0004_rls_policies.sql", "sha256": "a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447" },
+      { "file": "supabase/migrations/0005_idempotency.sql", "sha256": "d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1" },
+      { "file": "supabase/migrations/0006_projects.sql", "sha256": "2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979" },
+      { "file": "supabase/migrations/0007_quantity_takeoffs.sql", "sha256": "8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0" },
+      { "file": "supabase/migrations/0008_construction_calculations.sql", "sha256": "de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8" },
+      { "file": "supabase/migrations/0009_boq_costs.sql", "sha256": "13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a" },
+      { "file": "supabase/migrations/0010_workflows.sql", "sha256": "25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325" },
+      { "file": "supabase/migrations/0011_generation_freshness.sql", "sha256": "11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957" },
+      { "file": "supabase/migrations/0012_conversations.sql", "sha256": "46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d" }
+    ]
+  },
+  "backupArchive": {
+    "path": "/home/aryan/.gemini/antigravity-ide/brain/5d21d47a-a9bc-4022-96c6-3469d5411c77/backup-source-baseline.tar.gz",
+    "sha256": "ac294036f2bca7b25b5fcbe0340e5b94d04e39935c80b4973d9f9b546f07a3b4",
+    "size": 6186598
+  }
+}

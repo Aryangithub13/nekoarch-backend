@@ -1,0 +1,46 @@
+packages/shared/src/building-v2/invariants.ts:168:    } catch { issue(['dimensions', i, 'anchors'], 'Dimension references must resolve to known geometry'); }
+packages/generator/src/furniture.ts:173:  return [];
+packages/generator/src/geometry.ts:28:  return null;
+packages/generator/src/blueprint/input.ts:66:  try { parsed = BlueprintRequirementsSchema.safeParse(value); } catch {
+packages/quantity-takeoff/src/calculate.ts:27:  try { bytes = jsonBytes(input); } catch { throw new TakeoffError('INVALID_BUILDING_MODEL', 'Expected a JSON-safe document'); }
+packages/generator/src/invariants.ts:218:  } catch {
+packages/generator/src/input.ts:85:  } catch {
+packages/construction-calculations/src/specification.ts:79:  catch { throw new ConstructionError('CONSTRUCTION_SPEC_INVALID','Expected JSON-safe input'); }
+packages/boq-cost/src/contracts.ts:64:  let encoded:string;try{encoded=JSON.stringify(value);if(encoded===undefined)throw new Error();}catch{throw new CostError('COST_CALCULATION_FAILED','Expected JSON-safe input');}
+packages/blueprint-qa/src/openings.ts:21:      c.add('QA_OPENING_TOPOLOGY_NOT_EVALUATED', 'coverage', [o.id], 'Opening topology on a nonorthogonal host is not implemented.', 'orthogonal host', 'nonorthogonal host', {}, 'WARNING');
+packages/blueprint-qa/src/architectural-constraints.ts:10:    if (!space || !isRectangle(space.boundary)) return null;
+packages/blueprint-qa/src/architectural-constraints.ts:15:      if (!coversSegment(a, end, walls.map(w => [w.path.start, w.path.end]))) return null;
+packages/blueprint-qa/src/dimensions.ts:21:  if (!o || !w || !l || w.baseOffsetMm === null) return null;
+packages/blueprint-qa/src/rules.ts:12:  if (!level) return null;
+packages/blueprint-qa/src/rules.ts:15:  if (!solid || !isRectangle(level.boundary)) return null;
+packages/blueprint-qa/src/rules.ts:18:  return null;
+packages/blueprint-qa/src/geometry.ts:42:  if (!axis || w.thicknessMm === null || w.pathReference !== 'centerline') return null;
+packages/blueprint-qa/src/geometry.ts:60:  if (!axisOf(w)) return null;
+apps/api/src/bim/validate.ts:17:  catch { fail('SOURCE','Invalid, unsupported or over-budget authoritative source/BIM'); return output(); }
+apps/api/src/app.ts:67:      try { capture(error, request.id, safe.code, { route: request.routeOptions.url ?? '<unmatched>', method: request.method }); } catch { request.log.warn('Error reporting unavailable'); }
+apps/api/src/app.ts:82:      } catch { return reply.code(503).send({ status: 'unavailable' }); }
+apps/api/src/bim/core.ts:48:  if (ref.collection === 'project' || ref.collection === 'groups') return null;
+apps/api/src/services/workflow-service.ts:38:      if (CAPABILITIES.find(c=>c.capabilityId===capability)?.implementationStatus!=='AVAILABLE') throw new ApiError(422,'CAPABILITY_NOT_IMPLEMENTED','The selected capability is unavailable');
+apps/api/src/ai/orchestration/transport.ts:19:  }catch{throw new AiProviderError('PROVIDER_POLICY_REJECTED');}
+apps/api/src/ai/orchestration/transport.ts:29:  let parsed:unknown;try{parsed=JSON.parse(body);}catch{throw new AiProviderError('PROVIDER_RESPONSE_INVALID');}
+apps/api/src/ai/architectural-interpreter.ts:43:    } catch { throw new InterpreterProviderError('AI_PROVIDER_INVALID_RESPONSE'); }
+apps/api/src/ai/architectural-interpreter.ts:125:      catch { question('site.dimensions', 'Provide positive plot dimensions within 60000 mm per side.', 'DIMENSIONS'); }
+apps/api/src/ai/architectural-interpreter.ts:157:    catch { question('requirements', 'The extracted requirements exceed the native generator input limits. Revise counts, levels or dimensions.'); }
+apps/api/src/ai/orchestration/orchestrator.ts:43:    const record=(event:AiAttempt)=>{attempts.push(event);try{this.observe?.({...event,requestId:request.requestId});}catch{/* Operational observers cannot change results. */}};
+apps/api/src/ai/orchestration/orchestrator.ts:64:          try{json=typeof response.output==='string'?response.output:JSON.stringify(response.output);}catch{throw new AiProviderError('PROVIDER_RESPONSE_INVALID');}
+apps/api/src/ai/orchestration/orchestrator.ts:67:          let raw:unknown;try{raw=JSON.parse(json);}catch{throw new AiProviderError('PROVIDER_RESPONSE_INVALID');}
+apps/api/src/workflows/planner.ts:37:      reason: c.implementationStatus === 'PLANNED' ? 'CAPABILITY_NOT_IMPLEMENTED' : c.implementationStatus === 'DISABLED' ? 'CAPABILITY_DISABLED' : 'DEPENDENCY_UNAVAILABLE', required: required.has(id) }); }
+apps/api/src/ai/conversation-provider.ts:23:  } catch { throw new InterpreterProviderError('AI_CONFIGURATION_UNAVAILABLE'); }
+apps/api/src/lib/project-repository.ts:36:      catch { throw new ApiError(400, 'VALIDATION_ERROR', 'Invalid pagination cursor'); }
+apps/api/src/lib/supabase.ts:49:    if (!data) return null;
+apps/api/src/lib/construction-repository.ts:30:      catch { throw new ApiError(400, 'VALIDATION_ERROR', 'Invalid pagination cursor'); }
+apps/api/src/lib/takeoff-repository.ts:30:      catch { throw new ApiError(400, 'VALIDATION_ERROR', 'Invalid pagination cursor'); }
+apps/api/src/lib/cost-repository.ts:16:    let cursor:unknown=null;if(query.cursor){try{cursor=JSON.parse(Buffer.from(query.cursor,'base64url').toString('utf8'));}catch{throw new ApiError(400,'VALIDATION_ERROR','Invalid pagination cursor');}cursor=parseRequest(TakeoffCursorSchema,cursor);}
+apps/api/src/ai/conversation-planner.ts:48:      try { extra.roomChange={type:roomNames[name.toLowerCase()]!,allOfType:name.endsWith('s'),minWidthMm:toMillimetres(width,units[unit.toLowerCase()]!),minDepthMm:toMillimetres(depth,units[unit.toLowerCase()]!)}; } catch { extra.unsupported=['unsupported_constraint']; } return '';});
+apps/api/src/ai/conversation-planner.ts:259:  } catch { state.questions.push('The proposed changes conflict with the native room, site, floor or relationship constraints. Supply consistent values; no requirements were replaced.'); r=null; }
+apps/api/src/lib/lifecycle.ts:5:    try { await close(); } catch { failed(); }
+apps/api/src/lib/lifecycle.ts:6:    try { if (await flush() === false) failed(); } catch { failed(); }
+apps/api/src/lib/workflow-repository.ts:32:    if (query.cursor) { try { cursor=JSON.parse(Buffer.from(query.cursor,'base64url').toString('utf8')); } catch { throw new ApiError(400,'VALIDATION_ERROR','Invalid pagination cursor'); } cursor=parseRequest(TakeoffCursorSchema,cursor); }
+apps/api/src/contracts/workflows.ts:55:    reason: z.enum(['CAPABILITY_NOT_IMPLEMENTED','CAPABILITY_DISABLED','DEPENDENCY_UNAVAILABLE']), required: z.boolean() }).strict()).max(13),
+apps/api/src/config/env.ts:22:    try { const parsed=AiPolicySchema.safeParse(value?JSON.parse(value):{}); if(parsed.success)return parsed.data; } catch { /* Reject without reflecting configuration or credentials. */ }
+apps/api/src/config/env.ts:59:    catch { ctx.addIssue({ code: 'custom', path: ['CORS_ORIGINS'], message: 'Use comma-separated exact URL origins' }); }
