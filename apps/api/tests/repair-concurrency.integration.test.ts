@@ -101,3 +101,14 @@ it('upgrade replacement preserves existing rows, grants and RLS', async () => {
   expect((await db.pool.query("select has_function_privilege('authenticated','public.conversation_write(text,jsonb,text,text)','execute') allowed, has_function_privilege('anon','public.conversation_write(text,jsonb,text,text)','execute') denied")).rows[0]).toEqual({ allowed: true, denied: false });
   expect((await db.pool.query("select relrowsecurity from pg_class where oid='architectural_conversations'::regclass")).rows[0].relrowsecurity).toBe(true);
 });
+it('persists a QA-accepted one-floor revision after conversational floor reduction', async () => {
+  const { normalizeBlueprintRequirements } = await import('@designflow/generator');
+  const { requirements } = await import('../../../packages/blueprint-qa/tests/fixtures.js');
+  const f = await fixture(), r = normalizeBlueprintRequirements(requirements(2));
+  const reduced = await planConversation(initialConversation(null, r, false), { ...f.message, text: 'one floor', nativeUpdate: { rooms: r.rooms.map(room => ({ ...room, level: 0 })) } });
+  expect(reduced.status).toBe('AWAITING_APPROVAL');
+  const response = await app.inject({ method: 'POST', url: `/api/projects/${f.params.projectId}/revisions/generate`, headers, payload: { requirements: reduced.requirements, baseRevisionId: null } });
+  expect(response.statusCode, response.body).toBe(201);
+  expect(response.json().revision.model.levels).toHaveLength(1);
+  expect(response.json().revision.model.stairs).toHaveLength(0);
+});

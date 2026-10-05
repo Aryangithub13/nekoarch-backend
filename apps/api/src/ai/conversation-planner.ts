@@ -25,8 +25,10 @@ export function changedFields(before: Requirements | null, after: Requirements) 
 // prevent the user from supplying exactly the native update we requested.
 function supersedeNativeIntent(intent: ConversationIntent, update: ConversationMessage['nativeUpdate']) {
   if (!update) return;
-  if (update.site) { delete intent.site; delete intent.northMilliDegrees; }
+  if (update.site) { delete intent.site; delete intent.northMilliDegrees; intent.contradictions = intent.contradictions.filter(f => f !== 'site'); }
   if (update.rooms) {
+    const roomFields = ['bedrooms','bathrooms','living','dining','study','groundFloorBedrooms','upperFloorBedrooms','room_counts'];
+    intent.contradictions = intent.contradictions.filter(f => !roomFields.includes(f));
     for (const key of ['roomChange','bedrooms','bathrooms','living','dining','study','groundFloorBedrooms','upperFloorBedrooms','kitchenLarger','kitchenMinWidthMm','kitchenMinDepthMm'] as const) delete intent[key];
   }
   if (update.relationships) {
@@ -44,8 +46,9 @@ function parseConversation(text: string) {
   // Consume room dimensions before the inherited parser can mistake them for a plot.
   t=t.replace(/\b(?:make\s+(?:the\s+)?)?(bedrooms?|bathrooms?|kitchen|living|dining|study)(?:\s+room)?\s+(\d+(?:\.\d+)?)\s*(?:x|by|×)\s*(\d+(?:\.\d+)?)\s*(mm|cm|m|metres?|meters?|ft|feet)\b/gi,
     (_match,name:string,width:string,depth:string,unit:string)=>{const units:Record<string,'mm'|'cm'|'m'|'ft'>={mm:'mm',cm:'cm',m:'m',metre:'m',metres:'m',meter:'m',meters:'m',ft:'ft',feet:'ft'};
+      name = name.toLowerCase();
       if(extra.roomChange) extra.unsupported=['unsupported_constraint'];
-      try { extra.roomChange={type:roomNames[name.toLowerCase()]!,allOfType:name.endsWith('s'),minWidthMm:toMillimetres(width,units[unit.toLowerCase()]!),minDepthMm:toMillimetres(depth,units[unit.toLowerCase()]!)}; } catch { extra.unsupported=['unsupported_constraint']; } return '';});
+      try { extra.roomChange={type:roomNames[name]!,allOfType:name.endsWith('s'),minWidthMm:toMillimetres(width,units[unit.toLowerCase()]!),minDepthMm:toMillimetres(depth,units[unit.toLowerCase()]!)}; } catch { extra.unsupported=['unsupported_constraint']; } return '';});
   t=t.replace(/\b(?:the\s+)?(kitchen|living|dining|study|bathroom)\s+(upstairs|downstairs)\b/gi,(_match,name:string,level:string)=>{if(extra.roomChange) extra.unsupported=['unsupported_constraint'];extra.roomChange={type:roomNames[name.toLowerCase()]!,allOfType:false,targetLevel:level.toLowerCase()==='upstairs'?1:0};return '';});
   t=t.replace(/\b(bedroom|bathroom|kitchen|living|dining|study)\s+(?:must be\s+|is\s+)?(adjacent to|next to|connected to)\s+(?:the\s+)?(bedroom|bathroom|kitchen|living|dining|study)\b/gi,
     (_match,from:string,kind:string,to:string)=>{if(extra.relationship) extra.unsupported=['unsupported_constraint'];extra.relationship={from:{type:roomNames[from.toLowerCase()]!,ordinal:1},to:{type:roomNames[to.toLowerCase()]!,ordinal:1},kind:kind.toLowerCase()==='connected to'?'connected':'adjacent',strength:'hard'};return '';});
@@ -54,6 +57,8 @@ function parseConversation(text: string) {
     t = t.replace(new RegExp(`\\b(?:(remove|disable|no)\\s+|(?:improve|natural|more|enable)\\s+)?${word}(?:\\s+(?:for|of)\\s+(?:the\\s+)?bedrooms)?\\b`, 'gi'), (_m, remove: string | undefined) => { if(extra[key]!==undefined && extra[key]!==!remove) extra.unsupported=['unsupported_constraint']; extra[key] = !remove; return ''; });
   }
   t = t.replace(/\bcirculation\s+(\d+)\s*mm\b/gi, (_m, value: string) => { extra.circulationWidthMm = Number(value); return ''; });
+  // Explicit removal is a count update, not an invalid zero-count native room.
+  t = t.replace(/\b(?:remove|no)\s+(?:the\s+)?(bedrooms?|bathrooms?|living|dining|study)(?:\s+rooms?)?\b/gi, (_m, name: string) => `0 ${name}`);
   const candidate = parseFallback(t);
   const parsed = ConversationIntentSchema.safeParse({ ...candidate, ...extra });
   return parsed.success ? parsed.data : ConversationIntentSchema.parse({ unsupported: ['unsupported_constraint'] });
@@ -79,7 +84,7 @@ function applyNative(r: Requirements, c: ConversationIntent, questions: string[]
       else if(existing) Object.assign(existing,edge);else r.relationships.push(edge);
     }
   }
-  if (c.floors !== undefined) { if (c.floors === 1 || c.floors === 2) r.floors = c.floors; else questions.push('Only one or two floors are supported.'); }
+  if (c.floors !== undefined) { if (c.floors === 1 || c.floors === 2) { r.floors = c.floors; if (c.floors === 1) delete r.stair; } else questions.push('Only one or two floors are supported.'); }
   if (c.noStairs && r.floors === 2) questions.push('Two floors require the supported straight stair.');
   if (c.seed) r.seed = c.seed;
   if (c.site) {
@@ -95,6 +100,11 @@ function applyNative(r: Requirements, c: ConversationIntent, questions: string[]
     const count = c[field]; if (count === undefined) continue;
     const groups = r.rooms.filter(room => room.type === type), total = groups.reduce((n,g) => n+g.count,0);
     if (count === total) continue;
+    if (count === 0) {
+      r.rooms = r.rooms.filter(room => room.type !== type);
+      r.relationships = r.relationships.filter(edge => edge.from.type !== type && edge.to.type !== type);
+      continue;
+    }
     if (groups.length === 1) groups[0]!.count = count;
     else if (!groups.length && count > 0) r.rooms.push({type,count,minWidthMm:1800,minDepthMm:1800});
     else questions.push(`Specify a native room update for ${type}; changing the total must preserve each floor's constraints.`);
@@ -197,10 +207,10 @@ export async function planConversation(previous: ConversationState, message: Con
   // Never allow inferred upstairs language to overwrite an explicit/persisted floor count.
   if (patch.inferredFields.includes('floors') && (state.intent.floors !== undefined || state.requirements)) delete patch.floors;
   const units = /\bi meant (feet|ft|metres|meters|mm|cm|inches)(?:,? not (?:metres|meters|feet|ft))?\.?$/i.exec(message.text);
-  if (units && state.intent.site) { patch = ConversationIntentSchema.parse({site:{...state.intent.site,unit:({feet:'ft',ft:'ft',metres:'m',meters:'m',mm:'mm',cm:'cm',inches:'in'} as const)[units[1]!.toLowerCase() as 'feet']}}); }
+  if (units && state.intent.site) { patch = ConversationIntentSchema.parse({site:{...state.intent.site,depthUnit:undefined,unit:({feet:'ft',ft:'ft',metres:'m',meters:'m',mm:'mm',cm:'cm',inches:'in'} as const)[units[1]!.toLowerCase() as 'feet']}}); }
   for (const a of message.answers ?? []) {
     if (a.field === 'site.dimensions') patch.site = a.value;
-    if (a.field === 'site.unit' && state.intent.site) patch.site = {...state.intent.site,unit:a.value};
+    if (a.field === 'site.unit' && state.intent.site) patch.site = {...state.intent.site,depthUnit:undefined,unit:a.value};
     if (a.field === 'floors') patch.floors = a.value;
     if (a.field === 'bedrooms') patch.bedrooms = a.value;
     if (a.field === 'kitchen.minimumDimensions') {patch.kitchenMinWidthMm=a.value.widthMm;patch.kitchenMinDepthMm=a.value.depthMm;}
@@ -211,9 +221,13 @@ export async function planConversation(previous: ConversationState, message: Con
   const removed = message.removeUnsupported ?? [];
   state.unsupported = [...new Set([...state.unsupported.filter(u => !removed.includes(u)),...patch.unsupported.filter(u => !v2Handled.includes(u))])];
   if (/\b(?:skyscraper|twisting|certification|structural|engineering|100[ -]?floor)\b/i.test(message.text)) state.unsupported = [...new Set([...state.unsupported,'engineering_compliance','unsupported_building_scope'])];
-  const intent = ConversationIntentSchema.parse({...state.intent,...patch,unsupported:[],contradictions:patch.contradictions});
+  // Only an explicit value for a conflicting field supersedes that conflict.
+  // Empty parser defaults and inferred fields are not clarification answers.
+  const contradictions = [...new Set([...state.intent.contradictions.filter(field =>
+    field === 'room_counts' || patch[field] === undefined || patch.inferredFields.includes(field)), ...patch.contradictions])];
+  const intent = ConversationIntentSchema.parse({...state.intent,...patch,unsupported:[],contradictions});
   state.intent = intent;
-  const pending = ConversationIntentSchema.parse({...state.pendingIntent,...patch,unsupported:[],contradictions:patch.contradictions});
+  const pending = ConversationIntentSchema.parse({...state.pendingIntent,...patch,unsupported:[],contradictions});
   supersedeNativeIntent(pending,message.nativeUpdate);
   supersedeNativeIntent(intent,message.nativeUpdate);
   if (message.nativeUpdate?.rooms) state.pendingBedroomMove=false;
