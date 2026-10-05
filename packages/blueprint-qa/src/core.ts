@@ -152,9 +152,15 @@ export function slabsColumnsAudit(c: Context): void {
   }
   for (let i = 0; i < c.model.slabs.length; i++) for (let j = 0; j < i; j++) {
     c.spend(); const a = c.model.slabs[i]!, b = c.model.slabs[j]!;
-    if (a.levelId === b.levelId && a.kind === b.kind && (a.kind === 'floor' || a.topOffsetMm === b.topOffsetMm) && c.overlap(a.footprint.outer, b.footprint.outer)) {
-      c.add('QA_SLAB_OVERLAP', 'slabs', [a.id, b.id], 'Same-level plates of the same kind have conflicting overlapping outer footprints.');
-      if (a.kind === 'floor') invalidFloors = true;
+    const al = c.levels.get(a.levelId), bl = c.levels.get(b.levelId);
+    if (!al || !bl) continue;
+    const at = al.elevationMm + a.topOffsetMm, bt = bl.elevationMm + b.topOffsetMm;
+    if (at > bt - b.thicknessMm && bt > at - a.thicknessMm
+      && c.overlap(a.footprint.outer, b.footprint.outer)
+      && !a.footprint.voids.some(h => c.contains(h, b.footprint.outer))
+      && !b.footprint.voids.some(h => c.contains(h, a.footprint.outer))) {
+      c.add('QA_SLAB_OVERLAP', 'slabs', [a.id, b.id], 'Plate solids penetrate in both plan and elevation.');
+      if (a.kind === 'floor' || b.kind === 'floor') invalidFloors = true;
     }
   }
   c.report.measurements.grossFloorAreaMm2 = c.model.slabs.some(s => s.kind === 'floor') && !invalidFloors ? areaString(gross) : null;
@@ -167,8 +173,28 @@ export function slabsColumnsAudit(c: Context): void {
     if (l.floorToFloorHeightMm !== null && top > l.floorToFloorHeightMm) c.add('QA_COLUMN_ABOVE_STOREY', 'collisions', [col.id], 'Column top exceeds declared storey height.', l.floorToFloorHeightMm, top);
     if (Math.abs(l.elevationMm + top) > MAX_MM || Math.abs(l.elevationMm + col.baseOffsetMm) > MAX_MM) c.add('QA_VERTICAL_RANGE', 'collisions', [col.id], 'Column top or base exceeds the V2 coordinate envelope.');
   }
+  for (let i = 0; i < c.model.columns.length; i++) for (let j = 0; j < i; j++) {
+    c.spend(); const a = c.model.columns[i]!, b = c.model.columns[j]!;
+    const al = c.levels.get(a.levelId), bl = c.levels.get(b.levelId);
+    if (!al || !bl) continue;
+    const ab = al.elevationMm + a.baseOffsetMm, bb = bl.elevationMm + b.baseOffsetMm;
+    if (ab + a.heightMm > bb && bb + b.heightMm > ab
+      && c.overlap(a.crossSection.outer, b.crossSection.outer)
+      && !a.crossSection.voids.some(h => c.contains(h, b.crossSection.outer))
+      && !b.crossSection.voids.some(h => c.contains(h, a.crossSection.outer))) {
+      c.add('QA_COLUMN_OVERLAP', 'collisions', [a.id, b.id], 'Column solids penetrate in both plan and elevation.');
+    }
+  }
   for (const space of c.model.spaces) {
     const floors = c.model.slabs.filter(s => s.kind === 'floor' && s.levelId === space.levelId);
+    for (const floor of floors.filter(s => s.topOffsetMm === 0)) for (const hole of floor.footprint.voids) {
+      if (!c.overlap(space.boundary, hole)) continue;
+      // A represented flight can occupy its own opening. A stairwell label alone
+      // cannot excuse an unrelated void or missing landing support.
+      const flight = c.model.stairs.some(stair => stair.toLevelId === space.levelId
+        && c.contains(space.boundary, stair.footprint) && c.contains(stair.footprint, hole));
+      if (!flight) c.add('QA_SPACE_FLOOR_VOID', 'slabs', [space.id, floor.id], 'A floor void removes occupied space support outside a represented stair flight.');
+    }
     if (floors.length === 1 && !c.contains(floors[0]!.footprint.outer, space.boundary)) {
       c.add('QA_SPACE_OUTSIDE_FLOOR', 'slabs', [space.id, floors[0]!.id], 'Space extends beyond the only supplied floor plate outer boundary.', 'containing floor plate', 'outside');
     } else if (floors.length > 1 && !floors.some(s => c.contains(s.footprint.outer, space.boundary))) {

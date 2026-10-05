@@ -100,9 +100,13 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
     if (!ringContains(level.boundary, slab.footprint.outer)) issue(['slabs', i, 'footprint'], 'Plate footprint must stay in level boundary');
     for (let j = 0; j < i; j++) {
       const other = model.slabs[j]!;
-      if (other.levelId === slab.levelId && other.kind === slab.kind
-        && (slab.kind === 'floor' || other.topOffsetMm === slab.topOffsetMm)
-        && ringsOverlap(other.footprint.outer, slab.footprint.outer)) issue(['slabs', i], 'Same-level plates of the same kind require disjoint outer footprints');
+      const otherLevel = levels.get(other.levelId);
+      if (!otherLevel) continue;
+      const top = level.elevationMm + slab.topOffsetMm, otherTop = otherLevel.elevationMm + other.topOffsetMm;
+      if (Math.min(top, otherTop) > Math.max(top - slab.thicknessMm, otherTop - other.thicknessMm)
+        && ringsOverlap(other.footprint.outer, slab.footprint.outer)
+        && !other.footprint.voids.some(h => ringContains(h, slab.footprint.outer))
+        && !slab.footprint.voids.some(h => ringContains(h, other.footprint.outer))) issue(['slabs', i], 'Plate solids must not penetrate one another');
     }
     const top = level.elevationMm + slab.topOffsetMm;
     if (![top, top - slab.thicknessMm].every(n => CoordinateMmSchema.safeParse(n).success)) issue(['slabs', i], 'Plate elevation exceeds coordinate range');
@@ -110,6 +114,15 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
   model.columns.forEach((column, i) => {
     const level = levels.get(column.levelId);
     if (!level) return;
+    for (let j = 0; j < i; j++) {
+      const other = model.columns[j]!, otherLevel = levels.get(other.levelId);
+      if (!otherLevel) continue;
+      const base = level.elevationMm + column.baseOffsetMm, otherBase = otherLevel.elevationMm + other.baseOffsetMm;
+      if (Math.min(base + column.heightMm, otherBase + other.heightMm) > Math.max(base, otherBase)
+        && ringsOverlap(column.crossSection.outer, other.crossSection.outer)
+        && !column.crossSection.voids.some(h => ringContains(h, other.crossSection.outer))
+        && !other.crossSection.voids.some(h => ringContains(h, column.crossSection.outer))) issue(['columns', i], 'Column solids must not penetrate one another');
+    }
     if (!ringContains(level.boundary, column.crossSection.outer)) issue(['columns', i], 'Column cross-section must stay in level boundary');
     if (![level.elevationMm + column.baseOffsetMm, level.elevationMm + column.baseOffsetMm + column.heightMm].every(n => CoordinateMmSchema.safeParse(n).success)) issue(['columns', i], 'Column elevation exceeds coordinate range');
     if (level.floorToFloorHeightMm !== null && column.baseOffsetMm + column.heightMm > level.floorToFloorHeightMm) issue(['columns', i], 'Column top exceeds level storey height');
