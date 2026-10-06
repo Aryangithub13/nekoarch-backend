@@ -161,6 +161,7 @@ export function slabsColumnsAudit(c: Context): void {
       && !b.footprint.voids.some(h => c.contains(h, a.footprint.outer))) {
       c.add('QA_SLAB_OVERLAP', 'slabs', [a.id, b.id], 'Plate solids penetrate in both plan and elevation.');
       if (a.kind === 'floor' || b.kind === 'floor') invalidFloors = true;
+      break;
     }
   }
   c.report.measurements.grossFloorAreaMm2 = c.model.slabs.some(s => s.kind === 'floor') && !invalidFloors ? areaString(gross) : null;
@@ -183,6 +184,7 @@ export function slabsColumnsAudit(c: Context): void {
       && !a.crossSection.voids.some(h => c.contains(h, b.crossSection.outer))
       && !b.crossSection.voids.some(h => c.contains(h, a.crossSection.outer))) {
       c.add('QA_COLUMN_OVERLAP', 'collisions', [a.id, b.id], 'Column solids penetrate in both plan and elevation.');
+      break;
     }
   }
   for (const space of c.model.spaces) {

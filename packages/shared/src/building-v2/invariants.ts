@@ -2,7 +2,7 @@ import { validateParametricInvariants } from './parametric-invariants.js';
 import type { z } from 'zod';
 import type { BuildingModelV2 } from './model-shape.js';
 import { CoordinateMmSchema, reconcileDimensions } from './units.js';
-import { abs, cross, lengthSquared, ringContains, ringsOverlap, ringsTouch, segmentInRing, signedArea2 } from './geometry.js';
+import { abs, cross, lengthSquared, ringContains, ringsOverlap, ringsTouch, segmentInRing, signedArea2, type Point2Mm } from './geometry.js';
 import { dimensionMeasurements, dimensionPoints, wallSpaceIds } from './relationships.js';
 import { validateSiteAllocations } from './site-invariants.js';
 
@@ -94,6 +94,10 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
         && Math.min(other.sillMm + other.heightMm, opening.sillMm + opening.heightMm) > Math.max(other.sillMm, opening.sillMm)) issue(['openings', i], 'Hosted opening rectangles may not overlap');
     }
   });
+  // Broad phase: exact polygon predicates are unnecessary for disjoint boxes.
+  const bounds = (ring: readonly Point2Mm[]) => ({ minX: Math.min(...ring.map(p => p.x)), maxX: Math.max(...ring.map(p => p.x)), minZ: Math.min(...ring.map(p => p.z)), maxZ: Math.max(...ring.map(p => p.z)) });
+  const boxesOverlap = (a: ReturnType<typeof bounds>, b: ReturnType<typeof bounds>) => a.maxX > b.minX && b.maxX > a.minX && a.maxZ > b.minZ && b.maxZ > a.minZ;
+  const slabBounds = model.slabs.map(s => bounds(s.footprint.outer)), columnBounds = model.columns.map(c => bounds(c.crossSection.outer));
   model.slabs.forEach((slab, i) => {
     const level = levels.get(slab.levelId);
     if (!level) return;
@@ -104,9 +108,10 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
       if (!otherLevel) continue;
       const top = level.elevationMm + slab.topOffsetMm, otherTop = otherLevel.elevationMm + other.topOffsetMm;
       if (Math.min(top, otherTop) > Math.max(top - slab.thicknessMm, otherTop - other.thicknessMm)
+        && boxesOverlap(slabBounds[i]!, slabBounds[j]!)
         && ringsOverlap(other.footprint.outer, slab.footprint.outer)
         && !other.footprint.voids.some(h => ringContains(h, slab.footprint.outer))
-        && !slab.footprint.voids.some(h => ringContains(h, other.footprint.outer))) issue(['slabs', i], 'Plate solids must not penetrate one another');
+        && !slab.footprint.voids.some(h => ringContains(h, other.footprint.outer))) { issue(['slabs', i], 'Plate solids must not penetrate one another'); break; }
     }
     const top = level.elevationMm + slab.topOffsetMm;
     if (![top, top - slab.thicknessMm].every(n => CoordinateMmSchema.safeParse(n).success)) issue(['slabs', i], 'Plate elevation exceeds coordinate range');
@@ -119,9 +124,10 @@ export function validateBuildingInvariants(model: BuildingModelV2, ctx: z.Refine
       if (!otherLevel) continue;
       const base = level.elevationMm + column.baseOffsetMm, otherBase = otherLevel.elevationMm + other.baseOffsetMm;
       if (Math.min(base + column.heightMm, otherBase + other.heightMm) > Math.max(base, otherBase)
+        && boxesOverlap(columnBounds[i]!, columnBounds[j]!)
         && ringsOverlap(column.crossSection.outer, other.crossSection.outer)
         && !column.crossSection.voids.some(h => ringContains(h, other.crossSection.outer))
-        && !other.crossSection.voids.some(h => ringContains(h, column.crossSection.outer))) issue(['columns', i], 'Column solids must not penetrate one another');
+        && !other.crossSection.voids.some(h => ringContains(h, column.crossSection.outer))) { issue(['columns', i], 'Column solids must not penetrate one another'); break; }
     }
     if (!ringContains(level.boundary, column.crossSection.outer)) issue(['columns', i], 'Column cross-section must stay in level boundary');
     if (![level.elevationMm + column.baseOffsetMm, level.elevationMm + column.baseOffsetMm + column.heightMm].every(n => CoordinateMmSchema.safeParse(n).success)) issue(['columns', i], 'Column elevation exceeds coordinate range');
