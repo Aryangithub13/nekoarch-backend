@@ -206,7 +206,7 @@ export async function planConversation(previous: ConversationState, message: Con
   }
   // Never allow inferred upstairs language to overwrite an explicit/persisted floor count.
   if (patch.inferredFields.includes('floors') && (state.intent.floors !== undefined || state.requirements)) delete patch.floors;
-  const units = /\bi meant (feet|ft|metres|meters|mm|cm|inches)(?:,? not (?:metres|meters|feet|ft))?\.?$/i.exec(message.text);
+  const units = /^\s*i meant (feet|ft|metres|meters|mm|cm|inches)(?:,? not (?:metres|meters|feet|ft))?\.?$/i.exec(message.text);
   if (units && state.intent.site) { patch = ConversationIntentSchema.parse({site:{...state.intent.site,depthUnit:undefined,unit:({feet:'ft',ft:'ft',metres:'m',meters:'m',mm:'mm',cm:'cm',inches:'in'} as const)[units[1]!.toLowerCase() as 'feet']}}); }
   for (const a of message.answers ?? []) {
     if (a.field === 'site.dimensions') patch.site = a.value;
@@ -223,8 +223,10 @@ export async function planConversation(previous: ConversationState, message: Con
   if (/\b(?:skyscraper|twisting|certification|structural|engineering|100[ -]?floor)\b/i.test(message.text)) state.unsupported = [...new Set([...state.unsupported,'engineering_compliance','unsupported_building_scope'])];
   // Only an explicit value for a conflicting field supersedes that conflict.
   // Empty parser defaults and inferred fields are not clarification answers.
+  const unitOnlySiteCorrection = !!units || !!message.answers?.some(a => a.field === 'site.unit')
+    && !message.answers?.some(a => a.field === 'site.dimensions');
   const contradictions = [...new Set([...state.intent.contradictions.filter(field =>
-    field === 'room_counts' || patch[field] === undefined || patch.inferredFields.includes(field)), ...patch.contradictions])];
+    field === 'room_counts' || field === 'site' && unitOnlySiteCorrection || patch[field] === undefined || patch.inferredFields.includes(field)), ...patch.contradictions])];
   const intent = ConversationIntentSchema.parse({...state.intent,...patch,unsupported:[],contradictions});
   state.intent = intent;
   const pending = ConversationIntentSchema.parse({...state.pendingIntent,...patch,unsupported:[],contradictions});

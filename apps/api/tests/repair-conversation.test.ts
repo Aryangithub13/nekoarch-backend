@@ -76,3 +76,12 @@ it('complete dimension answers permit width-only and depth-only corrections with
   s = await turn(s, 'answer', { answers: [{ field: 'site.dimensions', value: { width: '9144', depth: '40', unit: 'mm', depthUnit: 'ft' } }] });
   expect(s.requirements?.site.boundary[2]).toEqual({ x: 9144, z: 12192 });
 });
+it('a unit-only clarification cannot resolve contradictory site dimensions', async () => {
+  const s = await turn(initial(), '10 by 12 m plot and 20 by 24 m plot, 2 bedrooms');
+  expect(s.intent.contradictions).toContain('site');
+  for (const next of [await turn(s, 'i meant metres'), await turn(s, 'answer', { answers: [{ field: 'site.unit', value: 'm' }] })]) {
+    expect(next.intent.contradictions).toContain('site'); expect(next.proposal).toBeNull();
+  }
+  const resolved = await turn(s, 'answer', { answers: [{ field: 'site.dimensions', value: { width: '10', depth: '12', unit: 'm' } }] });
+  expect(resolved.intent.contradictions).not.toContain('site'); expect(resolved.status).toBe('AWAITING_APPROVAL');
+});
