@@ -82,3 +82,22 @@ describe('repair: floor support includes holes', () => {
     expect(codes(m)).toContain('QA_SPACE_FLOOR_VOID');
   });
 });
+
+describe('repair: adversarial floor support follow-up', () => {
+  it.each([-150, 2500])('rejects rooms whose only floor top is offset %s', offset => {
+    const m = authored(); m.slabs[0]!.topOffsetMm = offset;
+    expect(codes(m)).toContain('QA_SPACE_FLOOR_ELEVATION');
+  });
+  it('a small correct-level slab cannot make a floating room floor valid', () => {
+    const m = authored(); m.slabs[0]!.topOffsetMm = 2500;
+    m.slabs.push({ ...m.slabs[0]!, id: 'small-ground', topOffsetMm: 0, footprint: { outer: rect(0,0,50,50), voids: [] } });
+    expect(codes(m)).toContain('QA_SPACE_OUTSIDE_FLOOR');
+  });
+  it('allows a space fully supported by a separate infill inside a plate void', () => {
+    const m = authored(); m.walls = []; m.openings = []; m.dimensions = [];
+    m.spaces = [{ ...m.spaces[1]!, boundary: rect(4500,500,2000,4000) }];
+    const hole = rect(4000,300,3000,5000); m.slabs[0]!.footprint.voids = [hole];
+    m.slabs.push({ ...m.slabs[0]!, id: 'infill', footprint: { outer: hole, voids: [] } });
+    expect(codes(m)).not.toContain('QA_SPACE_FLOOR_VOID');
+  });
+});

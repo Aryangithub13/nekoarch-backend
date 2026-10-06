@@ -98,11 +98,14 @@ export function ringsOverlap(a: readonly Point2Mm[], b: readonly Point2Mm[]): bo
 }
 
 export const RingMmSchema = z.array(Point2MmSchema).min(3).max(256).superRefine((ring, ctx) => {
+  // Collection limits must short-circuit costly refinements even on dirty parses.
+  if (ring.length < 3 || ring.length > 256) return;
   // Zod can invoke refinements after a dirty numeric parse: do not feed floats to BigInt.
   if (!ring.every(p => Point2MmSchema.safeParse(p).success)) return;
   if (!isSimpleRing(ring)) ctx.addIssue({ code: 'custom', message: 'Expected a simple nonzero polygon, without closing duplicate or retraced edges' });
 });
 export const FootprintMmSchema = z.object({ outer: RingMmSchema, voids: z.array(RingMmSchema).max(64) }).strict().superRefine((shape, ctx) => {
+  if (shape.voids.length > 64) return;
   if (![shape.outer, ...shape.voids].every(r => RingMmSchema.safeParse(r).success)) return;
   shape.voids.forEach((hole, i) => {
     if (!ringContains(shape.outer, hole) || ringsTouch(shape.outer, hole)) ctx.addIssue({ code: 'custom', path: ['voids', i], message: 'Void must be strictly inside footprint' });

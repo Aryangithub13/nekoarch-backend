@@ -186,8 +186,12 @@ export function slabsColumnsAudit(c: Context): void {
     }
   }
   for (const space of c.model.spaces) {
-    const floors = c.model.slabs.filter(s => s.kind === 'floor' && s.levelId === space.levelId);
-    for (const floor of floors.filter(s => s.topOffsetMm === 0)) for (const hole of floor.footprint.voids) {
+    const supplied = c.model.slabs.filter(s => s.kind === 'floor' && s.levelId === space.levelId);
+    const floors = supplied.filter(s => s.topOffsetMm === 0);
+    if (supplied.length && !floors.length) c.add('QA_SPACE_FLOOR_ELEVATION', 'slabs', [space.id, ...supplied.map(s => s.id)], 'No supplied floor top supports the space at its level elevation.');
+    const supported = floors.some(s => c.contains(s.footprint.outer, space.boundary)
+      && !s.footprint.voids.some(h => c.overlap(space.boundary, h)));
+    for (const floor of supported ? [] : floors) for (const hole of floor.footprint.voids) {
       if (!c.overlap(space.boundary, hole)) continue;
       // A represented flight can occupy its own opening. A stairwell label alone
       // cannot excuse an unrelated void or missing landing support.
