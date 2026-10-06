@@ -185,3 +185,29 @@ describe('production configuration and safe diagnostics', () => {
   });
 
 });
+
+describe('repair: telemetry coverage and workflow compute quotas', () => {
+  it('retains every registered route template but never raw identifiers or query strings', async () => {
+    const app = appWith(), routes = new Set<string>();
+    app.addHook('onRoute', route => { if (route.url !== '*') routes.add(route.url); });
+    await app.ready();
+    for (const route of routes) expect(sanitizeEvent({ type: undefined, tags: { route } }).tags?.route, route).toBe(route);
+    for (const route of ['/api/projects/private-user-id', '/api/projects/:projectId?token=secret', '/api/private-secret']) expect(sanitizeEvent({ type: undefined, tags: { route } }).tags?.route).toBeUndefined();
+  });
+  it.each(['shared','generator','blueprint-qa','quantity-takeoff','construction-calculations','boq-cost'])('retains safe %s stack coordinates through both redaction stages', pkg => {
+    const error = new Error('private'); error.stack = `Error: private\n    at secret (/workspace/packages/${pkg}/src/calculate.ts:12:3)`;
+    const parsed = safeError(error);
+    const result = sanitizeEvent({ type: undefined, exception: { values: [{ type: parsed.type, value: 'private', stacktrace: { frames: parsed.frames } }] } });
+    expect(result.exception?.values?.[0]?.stacktrace?.frames).toEqual([{ filename: `packages/${pkg}/src/calculate.ts`, lineno: 12, colno: 3 }]);
+    expect(JSON.stringify(result)).not.toContain('private');
+  });
+  it('charges workflow execution to generate quota but keeps workflow and revision reads separate', async () => {
+    const app = appWith({ RATE_LIMIT_GENERATE: '1', RATE_LIMIT_READ: '20', RATE_LIMIT_WRITE: '20' });
+    const headers = { authorization: `Bearer ${userId}` }, url = `/api/projects/${userId}/workflows`;
+    // Invalid body still consumes authenticated quota before any compute/storage.
+    expect((await app.inject({ method: 'POST', url, headers, payload: {} })).statusCode).toBe(400);
+    expect((await app.inject({ method: 'POST', url, headers, payload: {} })).statusCode).toBe(429);
+    expect((await app.inject({ method: 'GET', url, headers })).statusCode).not.toBe(429);
+    expect((await app.inject({ method: 'GET', url: `/api/projects/${userId}/revisions`, headers })).statusCode).not.toBe(429);
+  });
+});

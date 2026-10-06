@@ -2,6 +2,23 @@ import { safeError } from './safe-error.js';
 import * as Sentry from '@sentry/node';
 import type { Env } from '../config/env.js';
 
+// Only literal route templates survive; never request paths or parameter values.
+const project = '/api/projects/:projectId';
+const revision = `${project}/revisions/:revisionId`;
+const takeoff = `${revision}/takeoffs`;
+const construction = `${takeoff}/:takeoffId/construction-calculations`;
+const conversation = `${project}/conversations/:conversationId`;
+const safeRoutes = new Set([
+  '<unmatched>', '/health/live', '/health/ready', '/api/capabilities', '/api/regions', '/api/estimates',
+  '/api/plans', '/api/plans/generate', '/api/plans/:id', '/api/projects', project, `${project}/public`,
+  `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision,
+  `${project}/workflows`, `${project}/workflows/plan`, `${project}/workflows/:workflowRunId`,
+  `${project}/conversations`, conversation, `${conversation}/messages`, `${conversation}/proposals/approve`, `${conversation}/tools`,
+  takeoff, `${takeoff}/:takeoffId`, construction, `${construction}/:calculationId`,
+  `${construction}/:calculationId/cost-estimates`, `${revision}/cost-estimates`, `${revision}/cost-estimates/:costEstimateId`,
+  ...['', '/validation', '/elements', '/elements/:elementId', '/relationships', '/diff/:otherRevisionId', '/export.json', '/export.ifc'].map(suffix => `${revision}/bim${suffix}`),
+]);
+
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
 export function sanitizeEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
   const safe: Sentry.ErrorEvent = {
@@ -23,15 +40,15 @@ export function sanitizeEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
     safe.tags!['code'] = code;
   }
   const method = event.tags?.['method'];
-  if (typeof method === 'string' && ['GET', 'POST', 'PATCH', 'OPTIONS', 'HEAD'].includes(method)) safe.tags!['method'] = method;
+  if (typeof method === 'string' && ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'].includes(method)) safe.tags!['method'] = method;
   const route = event.tags?.['route'];
-  if (typeof route === 'string' && ['/api/plans', '/api/plans/generate', '/api/plans/:id', '/api/estimates', '/api/regions', '/health/ready', '<unmatched>'].includes(route)) safe.tags!['route'] = route;
+  if (typeof route === 'string' && safeRoutes.has(route)) safe.tags!['route'] = route;
   if (event.release && /^[A-Za-z0-9._-]{1,100}$/.test(event.release)) safe.release = event.release;
   safe.exception = { values: (event.exception?.values ?? []).slice(0, 1).map(exception => ({
     type: ['Error', 'TypeError', 'RangeError', 'SyntaxError', 'ReferenceError', 'ApiError', 'ZodError'].includes(exception.type ?? '') ? exception.type! : 'Error',
     value: 'DesignFlow backend request failure',
     stacktrace: { frames: (exception.stacktrace?.frames ?? []).filter(frame =>
-      typeof frame.filename === 'string' && /^(apps\/api|packages\/(shared|generator))\/(src|dist)\/[A-Za-z0-9_./-]+\.[cm]?[jt]s$/.test(frame.filename)
+      typeof frame.filename === 'string' && /^(apps\/api|packages\/(shared|generator|blueprint-qa|quantity-takeoff|construction-calculations|boq-cost))\/(src|dist)\/[A-Za-z0-9_./-]+\.[cm]?[jt]s$/.test(frame.filename)
     ).map(frame => ({ filename: frame.filename!, ...(Number.isInteger(frame.lineno) ? { lineno: frame.lineno! } : {}),
       ...(Number.isInteger(frame.colno) ? { colno: frame.colno! } : {}) })) },
   })) };
