@@ -46,11 +46,11 @@ beforeEach(async () => {
 });
 
 describe('migration replay and relational integrity on real PostgreSQL', () => {
-  it('replays all migrations into exactly sixteen public tables with RLS enabled', async () => {
+  it('replays all migrations into exactly seventeen public tables with RLS enabled', async () => {
     const result = await db.pool.query<{ relname: string; relrowsecurity: boolean }>(`
       select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
       where n.nspname = 'public' and c.relkind = 'r' order by relname`);
-    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_qa_runs', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions']);
+    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_qa_runs', 'project_revision_structural_analyses', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions']);
     expect(result.rows.every(row => row.relrowsecurity)).toBe(true);
   });
 
@@ -58,7 +58,7 @@ describe('migration replay and relational integrity on real PostgreSQL', () => {
     const result = await db.pool.query<{ definition: string }>(`
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and connamespace = 'public'::regnamespace`);
-    expect(result.rows).toHaveLength(26);
+    expect(result.rows).toHaveLength(28);
     expect(result.rows.map(row => row.definition)).toEqual(expect.arrayContaining([
       'FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE',
       'FOREIGN KEY (project_revision_id, takeoff_id, acceptance_qa_id, construction_calculation_id) REFERENCES project_revision_construction_calculations(project_revision_id, takeoff_id, acceptance_qa_id, id)',

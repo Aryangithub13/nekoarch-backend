@@ -1,0 +1,40 @@
+{
+  "missingPreexistingRows": {
+    "architectural_conversations": 0,
+    "cost_estimates": 0,
+    "generation_logs": 0,
+    "idempotency_records": 0,
+    "plans": 0,
+    "profiles": 0,
+    "project_audit_events": 0,
+    "project_revision_construction_calculations": 0,
+    "project_revision_cost_estimates": 0,
+    "project_revision_qa_runs": 0,
+    "project_revision_takeoffs": 0,
+    "project_revisions": 0,
+    "project_workflow_runs": 0,
+    "projects": 0,
+    "rate_table_entries": 0,
+    "rate_table_versions": 0
+  },
+  "counts": {
+    "architectural_conversations": 0,
+    "cost_estimates": 0,
+    "generation_logs": 0,
+    "idempotency_records": 3,
+    "plans": 0,
+    "profiles": 1,
+    "project_audit_events": 2484,
+    "project_revision_construction_calculations": 610,
+    "project_revision_cost_estimates": 440,
+    "project_revision_qa_runs": 1209,
+    "project_revision_structural_analyses": 9,
+    "project_revision_takeoffs": 841,
+    "project_revisions": 1209,
+    "project_workflow_runs": 722,
+    "projects": 1093,
+    "rate_table_entries": 9,
+    "rate_table_versions": 1
+  },
+  "preserved": true
+}

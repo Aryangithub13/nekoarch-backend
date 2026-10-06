@@ -1,4 +1,5 @@
 import { bimAcceptance } from '../../../test-support/bim-acceptance.js';
+import { structuralAcceptance } from '../../../test-support/structural-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -123,6 +124,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
         return (Array.isArray(revisions) ? revisions : [revisions]).map(r => r.project_id);
       }));
       for (const row of workflowRows.data ?? []) protectedIds.add(row.project_id);
+      // Immutable Phase 24 structural snapshots are protected history in the same way.
+      const structuralRows = await admin.from('project_revision_structural_analyses').select('project_revisions!inner(project_id)');
+      if (structuralRows.error) failures.push('read protected structural projects');
+      for (const row of structuralRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
       if (owned.error) failures.push('read test projects');
       const deletable = (owned.data ?? []).map(p => p.id).filter(id => !protectedIds.has(id));
@@ -391,6 +396,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   bimAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local BIM setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  structuralAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local structural setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

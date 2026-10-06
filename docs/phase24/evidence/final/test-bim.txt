@@ -1,0 +1,37 @@
+npm notice run designflow@0.1.0 test:bim
+npm notice run npm run build && vitest run apps/api/tests/bim.test.ts apps/api/tests/bim.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/bim.integration.test.ts (4 tests) 10115ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > enforces owner-only BIM/IFC downloads and redacted failure envelopes  1043ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses every element page  2068ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses filtered relationships and rejects invalid pagination queries  4669ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > compares revisions while preserving immutable snapshots and project isolation  946ms
+ ✓ apps/api/tests/bim.test.ts (37 tests) 4813ms
+   ✓ Phase 23 semantic BIM > projects v1 without changing historical geometry or hash  389ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  874ms
+   ✓ Phase 23 semantic BIM > projects L without changing historical geometry or hash  378ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  588ms
+
+ Test Files  2 passed (2)
+      Tests  41 passed (41)
+   Start at  15:20:04
+   Duration  17.96s (transform 785ms, setup 0ms, collect 2.55s, tests 14.93s, environment 0ms, prepare 135ms)
+

@@ -3,6 +3,7 @@ import { workflowDatabaseError } from './workflow-repository.js';
 import { costDatabaseError } from './cost-repository.js';
 import { constructionDatabaseError } from './construction-repository.js';
 import { takeoffDatabaseError } from './takeoff-repository.js';
+import { structuralDatabaseError } from './structural-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -35,6 +36,11 @@ export class SupabaseRepository implements Repository {
   async takeoffRpc(name: 'takeoff_read' | 'takeoff_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) takeoffDatabaseError(error);
+    return data as unknown;
+  }
+  async structuralRpc(name: 'structural_read' | 'structural_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) structuralDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {

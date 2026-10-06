@@ -1,0 +1,31 @@
+npm notice run designflow@0.1.0 test:interpretation
+npm notice run npm run build && vitest run apps/api/tests/interpretation.test.ts apps/api/tests/interpretation.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1860ms
+   ✓ Phase 18 on real PostgreSQL and owner RLS > interprets English A and commits native V2 with real QA and Phase 17 identity only on separate generation  309ms
+   ✓ Phase 18 on real PostgreSQL and owner RLS > modifies explicit base requirements through clarification and normal CAS generation without fabricated sizing  364ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 251ms
+
+ Test Files  2 passed (2)
+      Tests  133 passed (133)
+   Start at  15:16:50
+   Duration  4.55s (transform 713ms, setup 0ms, collect 1.99s, tests 2.11s, environment 0ms, prepare 120ms)
+

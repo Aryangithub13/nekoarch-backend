@@ -1,0 +1,37 @@
+npm notice run designflow@0.1.0 test:workflows
+npm notice run npm run build && vitest run apps/api/tests/workflows.test.ts apps/api/tests/workflows.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/workflows.integration.test.ts (19 tests) 7034ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  837ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > reuses revision, QA, takeoff and construction and executes only missing cost  917ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > replays identical keys after newer revisions and conflicts on changed mode, revision and outputs  399ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > preserves upstream artifacts and reports a downstream domain failure precisely  520ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > retains required outputs when optional cost fails and optional 3D is unavailable  542ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > atomically rolls back a revision when its workflow manifest update fails, then resumes without a duplicate  306ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest  866ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > converges concurrent keyed and keyless requests without duplicate revision writes  317ms
+ ✓ apps/api/tests/workflows.test.ts (32 tests) 44ms
+
+ Test Files  2 passed (2)
+      Tests  51 passed (51)
+   Start at  15:16:20
+   Duration  9.21s (transform 728ms, setup 0ms, collect 1.70s, tests 7.08s, environment 0ms, prepare 120ms)
+

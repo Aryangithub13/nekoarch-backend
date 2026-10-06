@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(51);
+select plan(58);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 16, 'exactly sixteen public tables including conversations');
+  where n.nspname = 'public' and c.relkind = 'r'), 17, 'exactly seventeen public tables including structural analyses');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -86,6 +86,11 @@ select throws_ok('insert into public.project_workflow_runs default values', '425
 select throws_ok('update public.project_workflow_runs set status = ''COMPLETED''', '42501', null, 'clients cannot rewrite workflows');
 select throws_ok('delete from public.project_workflow_runs', '42501', null, 'clients cannot delete workflows');
 select throws_ok($$select public.workflow_write('{}')$$, '42501', null, 'unsigned workflow RPC is forbidden');
+select throws_ok('insert into public.project_revision_structural_analyses default values', '42501', null, 'clients cannot forge structural analyses');
+select throws_ok('update public.project_revision_structural_analyses set status = ''VALIDATED''', '42501', null, 'clients cannot rewrite structural analyses');
+select throws_ok('delete from public.project_revision_structural_analyses', '42501', null, 'clients cannot delete structural history');
+select throws_ok($$select public.structural_write('{}')$$, '42501', null, 'unsigned structural RPC is forbidden');
+select throws_ok($$select project_private.structural_summary(null)$$, '42501', null, 'structural helpers are private');
 select throws_ok('update public.project_revisions set generation_identity = null', '42501', null, 'clients cannot rewrite generation identity');
 select throws_ok('update public.project_revisions set normalized_requirements = null', '42501', null, 'clients cannot rewrite generation inputs');
 select throws_ok($$select project_private.canonical_building('{}')$$, '42501', null, 'identity helpers are private');
@@ -95,6 +100,8 @@ select throws_ok('select * from public.project_workflow_runs', '42501', null, 'w
 select throws_ok('select * from public.project_revision_takeoffs', '42501', null, 'takeoffs are never public');
 select throws_ok('select * from public.project_revision_cost_estimates', '42501', null, 'cost reports are never public');
 select throws_ok('select * from public.project_revision_construction_calculations', '42501', null, 'construction reports are never public');
+select throws_ok('select * from public.project_revision_structural_analyses', '42501', null, 'structural analyses are never public');
+select throws_ok($$select public.structural_read('list', gen_random_uuid(), gen_random_uuid())$$, '42501', null, 'anonymous structural reads are forbidden');
 reset role;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);

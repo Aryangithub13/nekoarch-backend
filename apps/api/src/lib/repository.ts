@@ -28,6 +28,7 @@ export interface Repository {
   costRpc?(name: 'cost_read' | 'cost_write', args: Record<string, unknown>): Promise<unknown>;
   constructionRpc?(name: 'construction_read' | 'construction_write', args: Record<string, unknown>): Promise<unknown>;
   takeoffRpc?(name: 'takeoff_read' | 'takeoff_write', args: Record<string, unknown>): Promise<unknown>;
+  structuralRpc?(name: 'structural_read' | 'structural_write', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;

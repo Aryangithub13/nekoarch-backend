@@ -51,7 +51,8 @@ export async function seedTestDatabase(pool: Pool): Promise<void> {
   await pool.query(await readFile(path.join(supabaseDir, 'seed.sql'), 'utf8'));
 }
 
-export async function startTestDatabase(options: { seed?: boolean } = {}) {
+/** `migrations` selects a prefix of the ordered migrations, e.g. to test an upgrade from an earlier schema. */
+export async function startTestDatabase(options: { seed?: boolean; migrations?: (name: string) => boolean } = {}) {
   const port = await availablePort();
   const databaseDir = await mkdtemp(path.join(tmpdir(), 'designflow-postgres-'));
   const password = randomBytes(24).toString('hex');
@@ -88,7 +89,7 @@ export async function startTestDatabase(options: { seed?: boolean } = {}) {
       pendingDisconnects.add(disconnected);
     });
     await pool.query(authBootstrap);
-    const migrations = (await readdir(path.join(supabaseDir, 'migrations'))).filter(name => name.endsWith('.sql')).sort();
+    const migrations = (await readdir(path.join(supabaseDir, 'migrations'))).filter(name => name.endsWith('.sql') && (options.migrations?.(name) ?? true)).sort();
     for (const migration of migrations) {
       const sql = await readFile(path.join(supabaseDir, 'migrations', migration), 'utf8');
       await pool.query(`begin;\n${sql}\ncommit;`);

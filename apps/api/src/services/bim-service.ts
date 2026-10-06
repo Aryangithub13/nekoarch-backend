@@ -19,6 +19,6 @@ export async function readBim(repository: Repository, projectId: string, revisio
       requirementsHash:revision.identity?.requirementsHash ?? null, parameterHash:revision.model.parametricArchitecture ? digest(revision.model.parametricArchitecture) : null };
     const model = projectBim(revision.model,binding), validation = validateBim(model,revision.model,binding);
     if (validation.status === 'INVALID') throw new BimError('BIM_INVALID_MODEL','Independent BIM validation rejected the projection');
-    return { model, validation };
+    return { model, validation, revision };
   } catch (error) { if (error instanceof BimError) throw new ApiError(422,error.code,error.message); throw error; }
 }
