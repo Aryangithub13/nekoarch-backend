@@ -1,0 +1,63 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/hardening.test.ts (30 tests | 1 failed) 285ms
+   × health and lifecycle > reports missing production signing capability through readiness without disabling reads or liveness 103ms
+     → expected 200 to be 503 // Object.is equality
+   ✓ health and lifecycle > keeps liveness independent and readiness recovers from database failure 13ms
+   ✓ health and lifecycle > fails readiness closed when an adapter has no probe 10ms
+   ✓ health and lifecycle > awaits in-flight requests before closing owned resources 10ms
+   ✓ health and lifecycle > deduplicates shutdown and flushes after awaited close 0ms
+   ✓ health and lifecycle > reports cleanup and flush failures without unhandled rejection 0ms
+   ✓ HTTP abuse and browser protections > enforces independent authenticated read quotas with Retry-After 10ms
+   ✓ HTTP abuse and browser protections > uses stricter generation quotas and a separate write quota 26ms
+   ✓ HTTP abuse and browser protections > can disable limits explicitly 8ms
+   ✓ HTTP abuse and browser protections > ignores spoofed forwarded addresses by default and keeps liveness available 9ms
+   ✓ HTTP abuse and browser protections > uses forwarded addresses only through configured proxy peers 9ms
+   ✓ HTTP abuse and browser protections > allows configured CORS origins and idempotency headers, excludes others 8ms
+   ✓ HTTP abuse and browser protections > sets API security headers without local HSTS 6ms
+   ✓ HTTP abuse and browser protections > bounds small JSON on /api/plans/generate with a safe envelope 12ms
+   ✓ HTTP abuse and browser protections > bounds small JSON on /api/estimates with a safe envelope 7ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key  8ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key space key 7ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 10ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key invalid/key 7ms
+   ✓ production configuration and safe diagnostics > strips unused service-role credentials and denies browser origins by default in production 1ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"TRUST_PROXY":"true"} 4ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"TRUST_PROXY":"0.0.0.0/99"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"RATE_LIMIT_ENABLED":"0"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"REQUEST_TIMEOUT_MS":"0"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"CORS_ORIGINS":"*"} 0ms
+   ✓ production configuration and safe diagnostics > preserves exception type and application source locations, stripping messages and raw paths 2ms
+   ✓ production configuration and safe diagnostics > probes the database through the anon client with an abort signal 8ms
+   ✓ production configuration and safe diagnostics > maps Auth network failures to a safe dependency 503 2ms
+   ✓ production configuration and safe diagnostics > bounds readiness transport and composes its cancellation with the upstream deadline 2ms
+   ✓ production configuration and safe diagnostics > never echoes invalid enum configuration values 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/hardening.test.ts > health and lifecycle > reports missing production signing capability through readiness without disabling reads or liveness
+AssertionError: expected 200 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 200
+
+ ❯ apps/api/tests/hardening.test.ts:31:60
+     29|     const app = appWith(settings);
+     30|     expect((await app.inject('/health/live')).statusCode).toBe(200);
+     31|     expect((await app.inject('/health/ready')).statusCode).toBe(503);
+       |                                                            ^
+     32|     expect((await app.inject(`/api/plans/${userId}`)).statusCode).toBe…
+     33|     expect((await appWith({ ...settings, PROJECT_COMMIT_SECRET: 'a'.re…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  23:20:25
+   Duration  1.59s (transform 542ms, setup 0ms, collect 1.14s, tests 285ms, environment 0ms, prepare 44ms)
+

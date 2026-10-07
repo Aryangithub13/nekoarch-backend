@@ -1,0 +1,47 @@
+
+> designflow@0.1.0 test:unit
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run packages/boq-cost/tests packages/construction-calculations/tests packages/quantity-takeoff/tests packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts apps/api/tests/workflows.test.ts apps/api/tests/freshness.test.ts apps/api/tests/interpretation.test.ts apps/api/tests/conversations.test.ts apps/api/tests/ai-orchestration.test.ts apps/api/tests/ai-transport.test.ts apps/api/tests/ai-remote.test.ts apps/api/tests/bim.test.ts
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 4918ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  373ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  505ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  493ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3698ms
+   ✓ bounded adversarial and property corpus > isolates actual parallel worker generations  337ms
+ ✓ apps/api/tests/bim.test.ts (37 tests) 3421ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  536ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  423ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 2306ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  1852ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2312ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  737ms
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 1723ms
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 868ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 641ms

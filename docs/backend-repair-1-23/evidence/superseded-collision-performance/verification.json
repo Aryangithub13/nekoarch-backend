@@ -1,0 +1,38 @@
+[
+  {
+    "command": "python3 scripts/test-phase23-runner.py",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.131,
+    "log": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/backend-repair-1-23/evidence/final/runner-controls.txt",
+    "sourceManifestSha256": "e0d7fdcf1532fa36eaf89ea724a3c1a725828042b2aac3c20577fa43b3b4fa38",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run build",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 15.261,
+    "log": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/backend-repair-1-23/evidence/final/build.txt",
+    "sourceManifestSha256": "e0d7fdcf1532fa36eaf89ea724a3c1a725828042b2aac3c20577fa43b3b4fa38",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run typecheck",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 23.929,
+    "log": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/backend-repair-1-23/evidence/final/typecheck.txt",
+    "sourceManifestSha256": "e0d7fdcf1532fa36eaf89ea724a3c1a725828042b2aac3c20577fa43b3b4fa38",
+    "sourceUnchanged": true
+  },
+  {
+    "command": "npm run lint",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 3.838,
+    "log": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/backend-repair-1-23/evidence/final/lint.txt",
+    "sourceManifestSha256": "e0d7fdcf1532fa36eaf89ea724a3c1a725828042b2aac3c20577fa43b3b4fa38",
+    "sourceUnchanged": true
+  }
+]

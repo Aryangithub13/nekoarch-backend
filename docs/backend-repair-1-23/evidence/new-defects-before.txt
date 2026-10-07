@@ -1,0 +1,90 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts (21 tests | 4 failed) 226ms
+   ✓ repair: physical solid intersections > rejects column penetration at x=500 in both authorities 24ms
+   ✓ repair: physical solid intersections > rejects column penetration at x=750 in both authorities 8ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=1000 base=0 9ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=1100 base=0 5ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=500 base=1000 6ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=500 base=1500 4ms
+   ✓ repair: physical solid intersections > uses absolute elevations across floor IDs 8ms
+   ✓ repair: physical solid intersections > allows an independent column entirely within a hollow column 4ms
+   ✓ repair: physical solid intersections > checks flat-roof against another plate in 3D 9ms
+   ✓ repair: physical solid intersections > checks ceiling against another plate in 3D 9ms
+   ✓ repair: physical solid intersections > checks floor against another plate in 3D 10ms
+   ✓ repair: physical solid intersections > allows a plate contained in another plate void 3ms
+   ✓ repair: floor support includes holes > rejects a void under/across occupied space x=4500 3ms
+   ✓ repair: floor support includes holes > rejects a void under/across occupied space x=3900 2ms
+   ✓ repair: floor support includes holes > allows a void outside or exactly touching space edges 3ms
+   ✓ repair: floor support includes holes > allows the explicitly represented stair flight void and circulation 59ms
+   ✓ repair: floor support includes holes > rejects additional unsupported holes even in a stairwell 41ms
+   × repair: adversarial floor support follow-up > rejects rooms whose only floor top is offset -150 9ms
+     → expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_ELEVATION'
+   × repair: adversarial floor support follow-up > rejects rooms whose only floor top is offset 2500 2ms
+     → expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_ELEVATION'
+   × repair: adversarial floor support follow-up > a small correct-level slab cannot make a floating room floor valid 3ms
+     → expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_OUTSIDE_FLOOR'
+   × repair: adversarial floor support follow-up > allows a space fully supported by a separate infill inside a plate void 2ms
+     → expected [ 'QA_SPACE_FLOOR_VOID', …(1) ] to not include 'QA_SPACE_FLOOR_VOID'
+ ❯ packages/shared/tests/repair-resource.test.ts (1 test | 1 failed) 4226ms
+   × rejects an over-limit simple ring before quadratic topology work 4225ms
+     → expected 4217.936117 to be less than 2000
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: adversarial floor support follow-up > rejects rooms whose only floor top is offset -150
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: adversarial floor support follow-up > rejects rooms whose only floor top is offset 2500
+AssertionError: expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_ELEVATION'
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:89:22
+     87|   it.each([-150, 2500])('rejects rooms whose only floor top is offset …
+     88|     const m = authored(); m.slabs[0]!.topOffsetMm = offset;
+     89|     expect(codes(m)).toContain('QA_SPACE_FLOOR_ELEVATION');
+       |                      ^
+     90|   });
+     91|   it('a small correct-level slab cannot make a floating room floor val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: adversarial floor support follow-up > a small correct-level slab cannot make a floating room floor valid
+AssertionError: expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_OUTSIDE_FLOOR'
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:94:22
+     92|     const m = authored(); m.slabs[0]!.topOffsetMm = 2500;
+     93|     m.slabs.push({ ...m.slabs[0]!, id: 'small-ground', topOffsetMm: 0,…
+     94|     expect(codes(m)).toContain('QA_SPACE_OUTSIDE_FLOOR');
+       |                      ^
+     95|   });
+     96|   it('allows a space fully supported by a separate infill inside a pla…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: adversarial floor support follow-up > allows a space fully supported by a separate infill inside a plate void
+AssertionError: expected [ 'QA_SPACE_FLOOR_VOID', …(1) ] to not include 'QA_SPACE_FLOOR_VOID'
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:101:26
+     99|     const hole = rect(4000,300,3000,5000); m.slabs[0]!.footprint.voids…
+    100|     m.slabs.push({ ...m.slabs[0]!, id: 'infill', footprint: { outer: h…
+    101|     expect(codes(m)).not.toContain('QA_SPACE_FLOOR_VOID');
+       |                          ^
+    102|   });
+    103| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  packages/shared/tests/repair-resource.test.ts > rejects an over-limit simple ring before quadratic topology work
+AssertionError: expected 4217.936117 to be less than 2000
+ ❯ packages/shared/tests/repair-resource.test.ts:11:35
+      9|   const start = performance.now();
+     10|   expect(RingMmSchema.safeParse(ring).success).toBe(false);
+     11|   expect(performance.now()-start).toBeLessThan(2000);
+       |                                   ^
+     12| });
+     13| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  5 failed | 17 passed (22)
+   Start at  09:48:17
+   Duration  5.19s (transform 280ms, setup 0ms, collect 425ms, tests 4.45s, environment 0ms, prepare 92ms)
+

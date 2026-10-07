@@ -1,0 +1,22 @@
+[
+  {
+    "control": "success",
+    "exitCode": 0,
+    "recordedGates": 30
+  },
+  {
+    "control": "failed_gate",
+    "exitCode": 1,
+    "recordedGates": 30
+  },
+  {
+    "control": "source_drift",
+    "exitCode": 1,
+    "recordedGates": 30
+  },
+  {
+    "control": "missing_executable",
+    "exitCode": 1,
+    "recordedGates": 30
+  }
+]

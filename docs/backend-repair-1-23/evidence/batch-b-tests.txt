@@ -1,0 +1,41 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/hardening.test.ts (30 tests) 373ms
+ ✓ apps/api/tests/conversations.integration.test.ts (18 tests) 4340ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  469ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  547ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > persists unresolved relative moves until explicit allocation and accepts native clarification repairs  576ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  853ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1372ms
+ ❯ apps/api/tests/repair-concurrency.integration.test.ts (7 tests | 1 failed) 1094ms
+   ✓ cleans a rejected message and permits retry with the same receipt ID 84ms
+   ✓ cleans planner/provider failure PROVIDER_TIMEOUT 35ms
+   ✓ cleans planner/provider failure REQUEST_CANCELLED 32ms
+   ✓ cleans planner/provider failure invalid-response 25ms
+   ✓ fences stale cancellation and never erases a committed receipt 16ms
+   × reads the revision only after a concurrent project writer completes 62ms
+     → new row for relation "projects" violates check constraint "projects_check1"
+   ✓ upgrade replacement preserves existing rows, grants and RLS 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/repair-concurrency.integration.test.ts > reads the revision only after a concurrent project writer completes
+error: new row for relation "projects" violates check constraint "projects_check1"
+ ❯ node_modules/pg-pool/index.js:45:11
+ ❯ apps/api/tests/repair-concurrency.integration.test.ts:73:3
+     71|   expect(changed.statusCode).toBe(201);
+     72|   const revisionId = changed.json().revision.id as string;
+     73|   await db.pool.query('update projects set current_revision_id=null wh…
+       |   ^
+     74|   const writer = await db.pool.connect();
+     75|   let pending: Promise<unknown> | undefined;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 71 passed (72)
+   Start at  23:22:16
+   Duration  10.85s (transform 770ms, setup 0ms, collect 2.88s, tests 7.18s, environment 1ms, prepare 256ms)
+

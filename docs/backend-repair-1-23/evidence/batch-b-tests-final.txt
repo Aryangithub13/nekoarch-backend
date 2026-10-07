@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/repair-concurrency.integration.test.ts (7 tests) 1095ms
+ ✓ apps/api/tests/conversations.integration.test.ts (18 tests) 4258ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  486ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  561ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > persists unresolved relative moves until explicit allocation and accepts native clarification repairs  469ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  865ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1382ms
+ ✓ apps/api/tests/hardening.test.ts (30 tests) 390ms
+
+ Test Files  4 passed (4)
+      Tests  72 passed (72)
+   Start at  23:22:51
+   Duration  10.79s (transform 765ms, setup 0ms, collect 2.88s, tests 7.12s, environment 1ms, prepare 227ms)
+

@@ -1,0 +1,91 @@
+[
+  {
+    "name": "control",
+    "status": 201,
+    "qa": "PASS",
+    "foreign": 404,
+    "noAuth": 401,
+    "bim": 200
+  },
+  {
+    "name": "floor-hole",
+    "status": 422,
+    "error": {
+      "code": "BLUEPRINT_QA_FAILED",
+      "message": "Independent blueprint QA rejected the revision",
+      "requestId": "a30ef769-72e6-45f1-91ac-d25c77b64b3c",
+      "fieldErrors": {
+        "qaStatus": [
+          "FAIL"
+        ],
+        "errors": [
+          "1"
+        ],
+        "warnings": [
+          "0"
+        ],
+        "findings": [
+          "{\"code\":\"QA_SPACE_FLOOR_VOID\",\"severity\":\"ERROR\",\"message\":\"A floor void removes occupied space support outside a represented stair flight.\",\"entityIds\":[\"floor\",\"studio\"]}"
+        ]
+      }
+    }
+  },
+  {
+    "name": "raised-floor",
+    "status": 201,
+    "qa": "PASS",
+    "foreign": 404,
+    "noAuth": 401,
+    "bim": 200
+  },
+  {
+    "name": "roof-overlap",
+    "status": 400,
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed",
+      "requestId": "9c8d21f2-23d8-423e-a01f-800f935056c1",
+      "fieldErrors": {
+        "model.slabs.2": [
+          "Plate solids must not penetrate one another"
+        ]
+      }
+    }
+  },
+  {
+    "name": "column-overlap",
+    "status": 400,
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed",
+      "requestId": "317b9fca-5f43-43b9-9ea5-fa89d402f2a5",
+      "fieldErrors": {
+        "model.columns.1": [
+          "Column solids must not penetrate one another"
+        ]
+      }
+    }
+  },
+  {
+    "name": "failed-message-lease",
+    "rejectedStatus": 422,
+    "retryStatus": 409,
+    "retryCode": "MESSAGE_IN_PROGRESS"
+  },
+  {
+    "name": "stale-finish-race",
+    "observedWait": true,
+    "revisionStatus": 201,
+    "finishAccepted": true,
+    "conversationBase": null,
+    "currentRevision": "db925e19-5822-49e9-906b-7ee742d80659"
+  },
+  {
+    "name": "unsigned-revision",
+    "sqlstate": "42501"
+  },
+  {
+    "name": "secret-table",
+    "sqlstate": "42501"
+  }
+]

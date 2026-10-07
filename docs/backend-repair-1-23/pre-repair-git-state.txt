@@ -1,0 +1,67 @@
+$ pwd
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+$ git rev-parse --show-toplevel
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+$ git branch --show-current
+codex/phases-1-23-audit-repair
+
+$ git rev-parse HEAD
+ddf08f864521dfdb52428e75950cde09674c9b65
+
+$ git status --short
+
+$ git log --oneline --decorate -20
+ddf08f8 (HEAD -> codex/phases-1-23-audit-repair, main) Backend V1 Phase 23 complete
+da5f3ca (tag: backend-v1-phase23-complete) Implement and verify Phase 23 BIM digital building model
+7086209 (tag: backend-v1-phase22-complete) Backend V1 Phase 22 complete
+f39dbbc (tag: backend-v1-phase21-complete) Backend V1 Phase 21 complete
+18d6f8c (tag: backend-v1-phase20-complete, tag: backend-v1-phase19-verified-20261003) Stabilize and verify backend Phases 19 and 20
+f17a337 (tag: backend-v1-phase19-complete) Backend V1 Phase 19 complete
+094e685 (tag: backend-v1-phase18-complete) Backend V1 Phase 18 complete
+1c60e0e Clarify Phase 17 seed identity evidence
+bf3fa6b (tag: backend-v1-phase17-complete) Backend V1 Phase 17 complete
+7a335ac (tag: backend-v1-phase16-complete) Backend V1 Phase 16 complete
+1de9340 (tag: backend-v1-phase15-complete) Backend V1 Phase 15 complete
+ca0cbc2 (tag: backend-v1-phase14-complete) Backend V1 Phase 14 complete
+cceb01d (tag: backend-v1-phase13-complete) Backend V1 Phase 13 complete
+46f0117 (tag: backend-v1-phase12-complete) Backend V1 Phase 12 complete
+f202a44 (tag: backend-v1-phase11-complete) Backend V1 Phase 11 complete
+875bc45 (tag: backend-v1-phase10-complete) Backend V1 Phase 10 complete
+4d95cf9 (tag: backend-v1-phase9-complete) Backend V1 Phase 9 complete
+908b64d (tag: backend-v1-phase8-complete) Backend V1 Phase 8 complete
+b88902d (tag: backend-v1-phase7-complete) Backend V1 Phase 7 complete
+ecc03ff (tag: backend-v1-phase6-complete) Backend V1 Phase 6 complete
+
+$ git tag --list --sort=-creatordate
+backend-v1-phase23-complete
+backend-v1-phase22-complete
+backend-v1-phase21-complete
+backend-v1-phase19-verified-20261003
+backend-v1-phase20-complete
+backend-v1-phase19-complete
+backend-v1-phase18-complete
+backend-v1-phase17-complete
+backend-v1-phase16-complete
+backend-v1-phase15-complete
+backend-v1-phase14-complete
+backend-v1-phase13-complete
+backend-v1-phase12-complete
+backend-v1-phase11-complete
+backend-v1-phase10-complete
+backend-v1-phase9-complete
+backend-v1-phase8-complete
+backend-v1-phase7-complete
+backend-v1-phase6-complete
+backend-v1-phase5-complete
+
+$ git rev-parse backend-v1-phase23-complete^{commit}
+da5f3ca9c64ba45faaf129250b283cd3931e34ff
+
+$ git rev-parse backend-v1-phase22-complete^{commit}
+7086209efd9e337a2c175b9bed1e562fde54ca68
+
+$ git diff
+
+$ git diff --staged

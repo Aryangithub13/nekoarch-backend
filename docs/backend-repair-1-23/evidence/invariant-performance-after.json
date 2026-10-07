@@ -1,0 +1,57 @@
+[
+  {
+    "columns": 0,
+    "baseline": {
+      "ms": 5.371894999999995,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 3.828029000000015,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 50,
+    "baseline": {
+      "ms": 6.897951999999975,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 5.395709999999951,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 100,
+    "baseline": {
+      "ms": 6.094801000000018,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 7.571551999999997,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 200,
+    "baseline": {
+      "ms": 7.736163000000033,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 10.231797000000029,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 1024,
+    "baseline": {
+      "ms": 31.14648500000004,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 36.965629999999976,
+      "errors": 0
+    }
+  }
+]

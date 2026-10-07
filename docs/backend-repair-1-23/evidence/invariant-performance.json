@@ -1,0 +1,46 @@
+[
+  {
+    "columns": 0,
+    "baseline": {
+      "ms": 5.520521999999971,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 2.553886000000034,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 50,
+    "baseline": {
+      "ms": 6.75667900000002,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 61.415684999999996,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 100,
+    "baseline": {
+      "ms": 3.0276059999999916,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 127.122161,
+      "errors": 0
+    }
+  },
+  {
+    "columns": 200,
+    "baseline": {
+      "ms": 4.582509000000016,
+      "errors": 0
+    },
+    "repair": {
+      "ms": 430.042134,
+      "errors": 0
+    }
+  }
+]

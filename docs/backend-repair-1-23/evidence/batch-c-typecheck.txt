@@ -1,0 +1,33 @@
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+apps/api/tests/repair-conversation.test.ts(21,59): error TS2322: Type '{ type: "bedroom" | "living" | "kitchen" | "dining" | "study" | "bathroom"; count: number; level?: 0 | 1 | undefined; minWidthMm?: number | undefined; minDepthMm?: number | undefined; minAreaMm2?: number | undefined; preferredWidthMm?: number | undefined; preferredDepthMm?: number | undefined; positionPreference?: "...' is not assignable to type '{ type: "bedroom" | "living" | "kitchen" | "dining" | "study" | "bathroom"; count: number; minWidthMm: number; minDepthMm: number; level?: 0 | 1 | undefined; minAreaMm2?: number | undefined; preferredWidthMm?: number | undefined; preferredDepthMm?: number | undefined; positionPreference?: "front" | ... 1 more ... | ...'.
+  Type '{ type: "bedroom" | "living" | "kitchen" | "dining" | "study" | "bathroom"; count: number; level?: 0 | 1 | undefined; minWidthMm?: number | undefined; minDepthMm?: number | undefined; minAreaMm2?: number | undefined; preferredWidthMm?: number | undefined; preferredDepthMm?: number | undefined; positionPreference?: "...' is not assignable to type '{ type: "bedroom" | "living" | "kitchen" | "dining" | "study" | "bathroom"; count: number; minWidthMm: number; minDepthMm: number; level?: 0 | 1 | undefined; minAreaMm2?: number | undefined; preferredWidthMm?: number | undefined; preferredDepthMm?: number | undefined; positionPreference?: "front" | ... 1 more ... | ...'.
+    Types of property 'minWidthMm' are incompatible.
+      Type 'number | undefined' is not assignable to type 'number'.
+        Type 'undefined' is not assignable to type 'number'.

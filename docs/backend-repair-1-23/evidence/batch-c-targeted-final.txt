@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/repair-conversation.test.ts (20 tests) 147ms
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  23:28:46
+   Duration  869ms (transform 357ms, setup 0ms, collect 555ms, tests 147ms, environment 0ms, prepare 47ms)
+

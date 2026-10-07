@@ -1,0 +1,123 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/hardening.test.ts (38 tests | 6 failed) 339ms
+   ✓ health and lifecycle > reports missing production signing capability through readiness without disabling reads or liveness 132ms
+   ✓ health and lifecycle > keeps liveness independent and readiness recovers from database failure 15ms
+   ✓ health and lifecycle > fails readiness closed when an adapter has no probe 7ms
+   ✓ health and lifecycle > awaits in-flight requests before closing owned resources 8ms
+   ✓ health and lifecycle > deduplicates shutdown and flushes after awaited close 0ms
+   ✓ health and lifecycle > reports cleanup and flush failures without unhandled rejection 1ms
+   ✓ HTTP abuse and browser protections > enforces independent authenticated read quotas with Retry-After 9ms
+   ✓ HTTP abuse and browser protections > uses stricter generation quotas and a separate write quota 27ms
+   ✓ HTTP abuse and browser protections > can disable limits explicitly 8ms
+   ✓ HTTP abuse and browser protections > ignores spoofed forwarded addresses by default and keeps liveness available 9ms
+   ✓ HTTP abuse and browser protections > uses forwarded addresses only through configured proxy peers 10ms
+   ✓ HTTP abuse and browser protections > allows configured CORS origins and idempotency headers, excludes others 7ms
+   ✓ HTTP abuse and browser protections > sets API security headers without local HSTS 11ms
+   ✓ HTTP abuse and browser protections > bounds small JSON on /api/plans/generate with a safe envelope 7ms
+   ✓ HTTP abuse and browser protections > bounds small JSON on /api/estimates with a safe envelope 7ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key  7ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key space key 10ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 7ms
+   ✓ HTTP abuse and browser protections > rejects malformed idempotency key invalid/key 7ms
+   ✓ production configuration and safe diagnostics > strips unused service-role credentials and denies browser origins by default in production 1ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"TRUST_PROXY":"true"} 3ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"TRUST_PROXY":"0.0.0.0/99"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"RATE_LIMIT_ENABLED":"0"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"REQUEST_TIMEOUT_MS":"0"} 0ms
+   ✓ production configuration and safe diagnostics > rejects unsafe or malformed configuration {"CORS_ORIGINS":"*"} 0ms
+   ✓ production configuration and safe diagnostics > preserves exception type and application source locations, stripping messages and raw paths 2ms
+   ✓ production configuration and safe diagnostics > probes the database through the anon client with an abort signal 9ms
+   ✓ production configuration and safe diagnostics > maps Auth network failures to a safe dependency 503 2ms
+   ✓ production configuration and safe diagnostics > bounds readiness transport and composes its cancellation with the upstream deadline 6ms
+   ✓ production configuration and safe diagnostics > never echoes invalid enum configuration values 0ms
+   × repair: telemetry coverage and workflow compute quotas > retains every registered route template but never raw identifiers or query strings 7ms
+     → /health/live: expected undefined to be '/health/live' // Object.is equality
+   ✓ repair: telemetry coverage and workflow compute quotas > retains safe shared stack coordinates through both redaction stages 0ms
+   ✓ repair: telemetry coverage and workflow compute quotas > retains safe generator stack coordinates through both redaction stages 0ms
+   × repair: telemetry coverage and workflow compute quotas > retains safe blueprint-qa stack coordinates through both redaction stages 3ms
+     → expected [] to deeply equal [ { …(3) } ]
+   × repair: telemetry coverage and workflow compute quotas > retains safe quantity-takeoff stack coordinates through both redaction stages 1ms
+     → expected [] to deeply equal [ { …(3) } ]
+   × repair: telemetry coverage and workflow compute quotas > retains safe construction-calculations stack coordinates through both redaction stages 1ms
+     → expected [] to deeply equal [ { …(3) } ]
+   × repair: telemetry coverage and workflow compute quotas > retains safe boq-cost stack coordinates through both redaction stages 1ms
+     → expected [] to deeply equal [ { …(3) } ]
+   × repair: telemetry coverage and workflow compute quotas > charges workflow execution to generate quota but keeps workflow and revision reads separate 11ms
+     → expected 400 to be 429 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > retains every registered route template but never raw identifiers or query strings
+AssertionError: /health/live: expected undefined to be '/health/live' // Object.is equality
+
+- Expected: 
+"/health/live"
+
++ Received: 
+undefined
+
+ ❯ apps/api/tests/hardening.test.ts:194:95
+    192|     app.addHook('onRoute', route => { if (route.url !== '*') routes.ad…
+    193|     await app.ready();
+    194|     for (const route of routes) expect(sanitizeEvent({ tags: { route }…
+       |                                                                                               ^
+    195|     for (const route of ['/api/projects/private-user-id', '/api/projec…
+    196|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > retains safe blueprint-qa stack coordinates through both redaction stages
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > retains safe quantity-takeoff stack coordinates through both redaction stages
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > retains safe construction-calculations stack coordinates through both redaction stages
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > retains safe boq-cost stack coordinates through both redaction stages
+AssertionError: expected [] to deeply equal [ { …(3) } ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "colno": 3,
+-     "filename": "packages/blueprint-qa/src/calculate.ts",
+-     "lineno": 12,
+-   },
+- ]
++ []
+
+ ❯ apps/api/tests/hardening.test.ts:201:63
+    199|     const parsed = safeError(error);
+    200|     const result = sanitizeEvent({ exception: { values: [{ type: parse…
+    201|     expect(result.exception?.values?.[0]?.stacktrace?.frames).toEqual(…
+       |                                                               ^
+    202|     expect(JSON.stringify(result)).not.toContain('private');
+    203|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  apps/api/tests/hardening.test.ts > repair: telemetry coverage and workflow compute quotas > charges workflow execution to generate quota but keeps workflow and revision reads separate
+AssertionError: expected 400 to be 429 // Object.is equality
+
+- Expected
++ Received
+
+- 429
++ 400
+
+ ❯ apps/api/tests/hardening.test.ts:209:90
+    207|     // Invalid body still consumes authenticated quota before any comp…
+    208|     expect((await app.inject({ method: 'POST', url, headers, payload: …
+    209|     expect((await app.inject({ method: 'POST', url, headers, payload: …
+       |                                                                                          ^
+    210|     expect((await app.inject({ method: 'GET', url, headers })).statusC…
+    211|     expect((await app.inject({ method: 'GET', url: `/api/projects/${us…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 32 passed (38)
+   Start at  09:45:57
+   Duration  2.02s (transform 710ms, setup 0ms, collect 1.45s, tests 339ms, environment 0ms, prepare 71ms)
+

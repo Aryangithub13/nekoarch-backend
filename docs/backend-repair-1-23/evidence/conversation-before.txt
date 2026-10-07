@@ -1,0 +1,185 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/repair-conversation.test.ts (19 tests | 12 failed) 73ms
+   × retains contradictions through unrelated turns, clearing only explicit resolution 21ms
+     → expected 'AWAITING_APPROVAL' to be 'NEEDS_CLARIFICATION' // Object.is equality
+   × native replacements resolve only their own contradictory fields 5ms
+     → expected [] to deeply equal [ 'floors' ]
+   × clears mixed depth units for correction to mm 8ms
+     → expected 'ft' to be undefined
+   × clears mixed depth units for correction to ft 4ms
+     → expected 'ft' to be undefined
+   × clears mixed depth units for correction to metres 3ms
+     → expected 'ft' to be undefined
+   × clarification units clear the depth override and complete mixed replacements remain explicit 4ms
+     → expected { x: 10000, z: 6096 } to deeply equal { x: 10000, z: 20000 }
+   ✓ normalizes plural room capture bedrooms 3ms
+   ✓ normalizes plural room capture Bedrooms 2ms
+   × normalizes plural room capture BEDROOMS 2ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   ✓ normalizes plural room capture BeDrOoMs 2ms
+   × reduces floors with resolved native room allocation and generates independently accepted geometry 3ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   ✓ does not silently relocate explicit upper-floor rooms 2ms
+   × removes optional room intent: zero study 4ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   × removes optional room intent: no study 2ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   × removes optional room intent: remove study 2ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+   ✓ does not guess which bedroom is a guest room: remove guest room 2ms
+   ✓ does not guess which bedroom is a guest room: no guest room 1ms
+   ✓ does not guess which bedroom is a guest room: zero guest rooms 1ms
+   × zero count removes explicit relationships to that removed room only 2ms
+     → expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > retains contradictions through unrelated turns, clearing only explicit resolution
+AssertionError: expected 'AWAITING_APPROVAL' to be 'NEEDS_CLARIFICATION' // Object.is equality
+
+Expected: "NEEDS_CLARIFICATION"
+Received: "AWAITING_APPROVAL"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:14:47
+     12|   expect(s.intent.contradictions).toContain('floors');
+     13|   for (const text of ['seed Next', 'one study', 'seed Final']) {
+     14|     s = await turn(s, text); expect(s.status).toBe('NEEDS_CLARIFICATIO…
+       |                                               ^
+     15|   }
+     16|   s = await turn(s, 'answer', { answers: [{ field: 'floors', value: 1 …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > native replacements resolve only their own contradictory fields
+AssertionError: expected [] to deeply equal [ 'floors' ]
+
+- Expected
++ Received
+
+- [
+-   "floors",
+- ]
++ []
+
+ ❯ apps/api/tests/repair-conversation.test.ts:22:35
+     20|   let s = await turn(initial(), '10 by 12 m plot, 2 bedrooms and 3 bed…
+     21|   s = await turn(s, 'use these values', { nativeUpdate: { rooms: requi…
+     22|   expect(s.intent.contradictions).toEqual(['floors']);
+       |                                   ^
+     23| });
+     24| it.each(['mm', 'ft', 'metres'])('clears mixed depth units for correcti…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > clears mixed depth units for correction to mm
+ FAIL  apps/api/tests/repair-conversation.test.ts > clears mixed depth units for correction to ft
+ FAIL  apps/api/tests/repair-conversation.test.ts > clears mixed depth units for correction to metres
+AssertionError: expected 'ft' to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+"ft"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:27:44
+     25|   const s = await turn(initial(), '10 m by 20 ft plot, 2 bedrooms');
+     26|   const corrected = await turn(s, `i meant ${unit}`);
+     27|   expect(corrected.intent.site?.depthUnit).toBeUndefined();
+       |                                            ^
+     28|   expect(corrected.intent.site?.unit).toBe(unit === 'metres' ? 'm' : u…
+     29|   // Tiny mm plots correctly remain infeasible; canonical intent is st…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > clarification units clear the depth override and complete mixed replacements remain explicit
+AssertionError: expected { x: 10000, z: 6096 } to deeply equal { x: 10000, z: 20000 }
+
+- Expected
++ Received
+
+  {
+    "x": 10000,
+-   "z": 20000,
++   "z": 6096,
+  }
+
+ ❯ apps/api/tests/repair-conversation.test.ts:35:44
+     33|   let s = await turn(initial(), '10 m by 20 ft plot, 2 bedrooms');
+     34|   s = await turn(s, 'answer', { answers: [{ field: 'site.unit', value:…
+     35|   expect(s.requirements?.site.boundary[2]).toEqual({ x: 10000, z: 2000…
+       |                                            ^
+     36|   s = await turn(s, 'answer', { answers: [{ field: 'site.dimensions', …
+     37|   expect(s.requirements?.site.boundary[2]).toEqual({ x: 9144, z: 12000…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > normalizes plural room capture BEDROOMS
+AssertionError: expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+Expected: "AWAITING_APPROVAL"
+Received: "NEEDS_CLARIFICATION"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:41:20
+     39| it.each(['bedrooms', 'Bedrooms', 'BEDROOMS', 'BeDrOoMs'])('normalizes …
+     40|   const s = await turn(initialConversation(null, normalizeBlueprintReq…
+     41|   expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.r…
+       |                    ^
+     42| });
+     43| it('reduces floors with resolved native room allocation and generates …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > reduces floors with resolved native room allocation and generates independently accepted geometry
+AssertionError: expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+Expected: "AWAITING_APPROVAL"
+Received: "NEEDS_CLARIFICATION"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:46:20
+     44|   const r = normalizeBlueprintRequirements(requirements(2));
+     45|   const s = await turn(initialConversation(null, r, false), 'one floor…
+     46|   expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.s…
+       |                    ^
+     47|   const model = generateBlueprint(s.requirements!).model;
+     48|   expect(model.levels).toHaveLength(1); expect(model.stairs).toHaveLen…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > removes optional room intent: zero study
+ FAIL  apps/api/tests/repair-conversation.test.ts > removes optional room intent: no study
+ FAIL  apps/api/tests/repair-conversation.test.ts > removes optional room intent: remove study
+AssertionError: expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+Expected: "AWAITING_APPROVAL"
+Received: "NEEDS_CLARIFICATION"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:58:20
+     56|   const r = normalizeBlueprintRequirements({ ...requirements(), rooms:…
+     57|   const s = await turn(initialConversation(null, r, false), text);
+     58|   expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.r…
+       |                    ^
+     59|   expect(s.requirements?.rooms.every(room => room.count > 0)).toBe(tru…
+     60| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > zero count removes explicit relationships to that removed room only
+AssertionError: expected 'NEEDS_CLARIFICATION' to be 'AWAITING_APPROVAL' // Object.is equality
+
+Expected: "AWAITING_APPROVAL"
+Received: "NEEDS_CLARIFICATION"
+
+ ❯ apps/api/tests/repair-conversation.test.ts:69:20
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed | 7 passed (19)
+   Start at  23:25:06
+   Duration  792ms (transform 371ms, setup 0ms, collect 564ms, tests 73ms, environment 0ms, prepare 44ms)
+

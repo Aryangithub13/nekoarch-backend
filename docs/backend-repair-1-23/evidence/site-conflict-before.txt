@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ apps/api/tests/repair-conversation.test.ts (21 tests | 1 failed) 205ms
+   ✓ retains contradictions through unrelated turns, clearing only explicit resolution 28ms
+   ✓ native replacements resolve only their own contradictory fields 5ms
+   ✓ clears mixed depth units for correction to mm 11ms
+   ✓ clears mixed depth units for correction to ft 5ms
+   ✓ clears mixed depth units for correction to metres 4ms
+   ✓ clarification units clear the depth override and complete mixed replacements remain explicit 8ms
+   ✓ normalizes plural room capture bedrooms 3ms
+   ✓ normalizes plural room capture Bedrooms 5ms
+   ✓ normalizes plural room capture BEDROOMS 4ms
+   ✓ normalizes plural room capture BeDrOoMs 3ms
+   ✓ reduces floors with resolved native room allocation and generates independently accepted geometry 91ms
+   ✓ does not silently relocate explicit upper-floor rooms 3ms
+   ✓ removes optional room intent: zero study 3ms
+   ✓ removes optional room intent: no study 4ms
+   ✓ removes optional room intent: remove study 2ms
+   ✓ does not guess which bedroom is a guest room: remove guest room 2ms
+   ✓ does not guess which bedroom is a guest room: no guest room 2ms
+   ✓ does not guess which bedroom is a guest room: zero guest rooms 1ms
+   ✓ zero count removes explicit relationships to that removed room only 2ms
+   ✓ complete dimension answers permit width-only and depth-only corrections without stale units 4ms
+   × a unit-only clarification cannot resolve contradictory site dimensions 13ms
+     → expected [] to include 'site'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/api/tests/repair-conversation.test.ts > a unit-only clarification cannot resolve contradictory site dimensions
+AssertionError: expected [] to include 'site'
+ ❯ apps/api/tests/repair-conversation.test.ts:83:40
+     81|   expect(s.intent.contradictions).toContain('site');
+     82|   for (const next of [await turn(s, 'i meant metres'), await turn(s, '…
+     83|     expect(next.intent.contradictions).toContain('site'); expect(next.…
+       |                                        ^
+     84|   }
+     85|   const resolved = await turn(s, 'answer', { answers: [{ field: 'site.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 20 passed (21)
+   Start at  09:49:43
+   Duration  1.15s (transform 480ms, setup 0ms, collect 726ms, tests 205ms, environment 0ms, prepare 69ms)
+

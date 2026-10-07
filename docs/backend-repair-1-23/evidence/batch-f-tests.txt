@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/hardening.test.ts (38 tests) 312ms
+ ✓ apps/api/tests/repair-contracts.test.ts (11 tests) 171ms
+ ✓ apps/api/tests/workflows.test.ts (32 tests) 32ms
+
+ Test Files  3 passed (3)
+      Tests  81 passed (81)
+   Start at  09:46:16
+   Duration  2.43s (transform 595ms, setup 0ms, collect 1.46s, tests 515ms, environment 0ms, prepare 135ms)
+

@@ -1,0 +1,179 @@
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts (17 tests | 11 failed) 174ms
+   × repair: physical solid intersections > rejects column penetration at x=500 in both authorities 16ms
+     → expected true to be false // Object.is equality
+   × repair: physical solid intersections > rejects column penetration at x=750 in both authorities 5ms
+     → expected true to be false // Object.is equality
+   ✓ repair: physical solid intersections > allows column contact/separation x=1000 base=0 14ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=1100 base=0 7ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=500 base=1000 5ms
+   ✓ repair: physical solid intersections > allows column contact/separation x=500 base=1500 7ms
+   × repair: physical solid intersections > uses absolute elevations across floor IDs 2ms
+     → expected true to be false // Object.is equality
+   ✓ repair: physical solid intersections > allows an independent column entirely within a hollow column 4ms
+   × repair: physical solid intersections > checks flat-roof against another plate in 3D 4ms
+     → expected true to be false // Object.is equality
+   × repair: physical solid intersections > checks ceiling against another plate in 3D 2ms
+     → expected true to be false // Object.is equality
+   × repair: physical solid intersections > checks floor against another plate in 3D 6ms
+     → expected false to be true // Object.is equality
+   × repair: physical solid intersections > allows a plate contained in another plate void 1ms
+     → expected false to be true // Object.is equality
+   × repair: floor support includes holes > rejects a void under/across occupied space x=4500 4ms
+     → expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_VOID'
+   × repair: floor support includes holes > rejects a void under/across occupied space x=3900 3ms
+     → expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_VOID'
+   ✓ repair: floor support includes holes > allows a void outside or exactly touching space edges 5ms
+   × repair: floor support includes holes > allows the explicitly represented stair flight void and circulation 55ms
+     → expected 'PASS_WITH_WARNINGS' to be 'PASS' // Object.is equality
+   × repair: floor support includes holes > rejects additional unsupported holes even in a stairwell 31ms
+     → expected [ …(2) ] to include 'QA_SPACE_FLOOR_VOID'
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > rejects column penetration at x=500 in both authorities
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > rejects column penetration at x=750 in both authorities
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:19:69
+     17|   it.each([500, 750])('rejects column penetration at x=%s in both auth…
+     18|     const m = columnPair(x);
+     19|     expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).to…
+       |                                                                     ^
+     20|     expect(codes(m)).toContain('QA_COLUMN_OVERLAP');
+     21|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > uses absolute elevations across floor IDs
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:30:69
+     28|     const m = columnPair(500, -2500, 'upper');
+     29|     m.levels.push({ ...m.levels[0]!, id: 'upper', index: 1, elevationM…
+     30|     expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).to…
+       |                                                                     ^
+     31|     expect(codes(m)).toContain('QA_COLUMN_OVERLAP');
+     32|     m.columns[1]!.baseOffsetMm = 0;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > checks flat-roof against another plate in 3D
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > checks ceiling against another plate in 3D
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:45:69
+     43|     const m = authored();
+     44|     m.slabs.push({ ...structuredClone(m.slabs[0]!), id: 'b', kind, top…
+     45|     expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).to…
+       |                                                                     ^
+     46|     expect(codes(m)).toContain('QA_SLAB_OVERLAP');
+     47|     m.slabs[1]!.topOffsetMm = 150;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > checks floor against another plate in 3D
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:48:69
+     46|     expect(codes(m)).toContain('QA_SLAB_OVERLAP');
+     47|     m.slabs[1]!.topOffsetMm = 150;
+     48|     expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).to…
+       |                                                                     ^
+     49|     expect(codes(m)).not.toContain('QA_SLAB_OVERLAP');
+     50|     m.slabs[1]!.topOffsetMm = 200;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: physical solid intersections > allows a plate contained in another plate void
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:58:69
+     56|     m.slabs[0]!.footprint.voids = [rect(1000, 1000, 2000, 2000)];
+     57|     m.slabs.push({ ...structuredClone(m.slabs[0]!), id: 'infill', foot…
+     58|     expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).to…
+       |                                                                     ^
+     59|     expect(codes(m)).not.toContain('QA_SLAB_OVERLAP');
+     60|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: floor support includes holes > rejects a void under/across occupied space x=4500
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: floor support includes holes > rejects a void under/across occupied space x=3900
+AssertionError: expected [ 'QA_ENTRANCE_NOT_SPECIFIED' ] to include 'QA_SPACE_FLOOR_VOID'
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:66:22
+     64|   it.each([4500, 3900])('rejects a void under/across occupied space x=…
+     65|     const m = authored(); m.slabs[0]!.footprint.voids = [rect(x, 1000,…
+     66|     expect(codes(m)).toContain('QA_SPACE_FLOOR_VOID');
+       |                      ^
+     67|   });
+     68|   it('allows a void outside or exactly touching space edges', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: floor support includes holes > allows the explicitly represented stair flight void and circulation
+AssertionError: expected 'PASS_WITH_WARNINGS' to be 'PASS' // Object.is equality
+
+Expected: "PASS"
+Received: "PASS_WITH_WARNINGS"
+
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:75:49
+     73|   });
+     74|   it('allows the explicitly represented stair flight void and circulat…
+     75|     expect(auditBlueprint(generated(2)).status).toBe('PASS');
+       |                                                 ^
+     76|   });
+     77|   it('rejects additional unsupported holes even in a stairwell', () =>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  packages/blueprint-qa/tests/repair-geometry.test.ts > repair: floor support includes holes > rejects additional unsupported holes even in a stairwell
+AssertionError: expected [ …(2) ] to include 'QA_SPACE_FLOOR_VOID'
+ ❯ packages/blueprint-qa/tests/repair-geometry.test.ts:82:22
+     80|     const x = Math.min(...landing.footprint.map(p => p.x)) + 50, z = M…
+     81|     m.slabs.find(s => s.kind === 'floor' && s.levelId === space.levelI…
+     82|     expect(codes(m)).toContain('QA_SPACE_FLOOR_VOID');
+       |                      ^
+     83|   });
+     84| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed | 6 passed (17)
+   Start at  23:15:45
+   Duration  741ms (transform 270ms, setup 0ms, collect 405ms, tests 174ms, environment 0ms, prepare 52ms)
+

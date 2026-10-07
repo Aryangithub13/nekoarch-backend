@@ -1,0 +1,34 @@
+
+> designflow@0.1.0 typecheck
+> npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+
+
+> @designflow/shared@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> @designflow/generator@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/blueprint-qa@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/quantity-takeoff@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/construction-calculations@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @designflow/boq-cost@0.1.0 build
+> tsc -p tsconfig.json
+
+apps/api/tests/hardening.test.ts(194,54): error TS2345: Argument of type '{ tags: { route: string; }; }' is not assignable to parameter of type 'ErrorEvent'.
+  Property 'type' is missing in type '{ tags: { route: string; }; }' but required in type 'ErrorEvent'.
+apps/api/tests/hardening.test.ts(195,145): error TS2345: Argument of type '{ tags: { route: string; }; }' is not assignable to parameter of type 'ErrorEvent'.
+  Property 'type' is missing in type '{ tags: { route: string; }; }' but required in type 'ErrorEvent'.
+apps/api/tests/hardening.test.ts(200,34): error TS2345: Argument of type '{ exception: { values: { type: string; value: string; stacktrace: { frames: { filename: string; lineno: number; colno: number; }[]; }; }[]; }; }' is not assignable to parameter of type 'ErrorEvent'.
+  Property 'type' is missing in type '{ exception: { values: { type: string; value: string; stacktrace: { frames: { filename: string; lineno: number; colno: number; }[]; }; }[]; }; }' but required in type 'ErrorEvent'.

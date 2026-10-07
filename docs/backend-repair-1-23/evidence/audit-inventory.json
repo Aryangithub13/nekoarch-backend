@@ -1,0 +1,217 @@
+[
+  {
+    "path": "docs/backend-audit-1-23/AUDIT-REPORT.md",
+    "bytes": 18692,
+    "sha256": "a24f5c4e7c1ebc3b81e686536bf606e3e37b256e4e30ec576c55c3b465f38a82"
+  },
+  {
+    "path": "docs/backend-audit-1-23/baseline-raw.txt",
+    "bytes": 4709,
+    "sha256": "bb7524af80233574313900debff8728aab7fdaccc4c6d5401d06a26215bc043b"
+  },
+  {
+    "path": "docs/backend-audit-1-23/baseline.json",
+    "bytes": 3757,
+    "sha256": "ad92bc8941ddf6ae9af3408a43bcbd8b590bb465937b791a70c6cf7f35459655",
+    "jsonType": "dict",
+    "entries": 6
+  },
+  {
+    "path": "docs/backend-audit-1-23/baseline.md",
+    "bytes": 3281,
+    "sha256": "c6fc79e8c01913923e5c45cb21c463c5cbaf7fa4b73e407007aebc45ef3494f0"
+  },
+  {
+    "path": "docs/backend-audit-1-23/conversation-diagnostics.mts",
+    "bytes": 2863,
+    "sha256": "4de9569eb484746251af5f3f3835e7cb10737085baa82670b67febb583acfd4a"
+  },
+  {
+    "path": "docs/backend-audit-1-23/database-diagnostics.mts",
+    "bytes": 6312,
+    "sha256": "7f9d744078b901a2a7e8efef708f1995359420dcf0e3f3e2fa0ea54d143e6c37"
+  },
+  {
+    "path": "docs/backend-audit-1-23/defects.json",
+    "bytes": 10547,
+    "sha256": "6bf7cf4dd9229b69647c33ab8ee403a626c91a57b8c55aa79c76c2fe226c153b",
+    "jsonType": "list",
+    "entries": 21
+  },
+  {
+    "path": "docs/backend-audit-1-23/defects.md",
+    "bytes": 64661,
+    "sha256": "98105967bd92b5ef4176adb71b7a016b0b7e51b20151d1c1aa0cac6e067927dd"
+  },
+  {
+    "path": "docs/backend-audit-1-23/diagnostics.mts",
+    "bytes": 4060,
+    "sha256": "dd9d8557a0258426f0c53d6af02a70ec48f0bd1300470e3982eaa830ecacdf19"
+  },
+  {
+    "path": "docs/backend-audit-1-23/edge-diagnostics.mts",
+    "bytes": 2249,
+    "sha256": "0ee2b289bdde5c73ad2c57e3ed17ae5e9fde8943c542819cf371fcd5b1175701"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/build.log",
+    "bytes": 791,
+    "sha256": "ac634113383c6a11c50b8c66fd92aec6194b4b555c7974695d4dc6ee4edf85cf"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/conversation-diagnostics.json",
+    "bytes": 14186,
+    "sha256": "05b4ae49e54998f1cb88bc783f8cf878f4df5188f877529886037180d3c31c36",
+    "jsonType": "list",
+    "entries": 13
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/conversation-diagnostics.log",
+    "bytes": 8143,
+    "sha256": "bae79b19288c85842f9cf74a6aadd0ba19061e91655fe4fee3b6c11214ec0bd9"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/database-before.json",
+    "bytes": 295263,
+    "sha256": "342a2cae516ce8b48486e8dfdaade78c1bd58274984015a772628707db298ed2",
+    "jsonType": "dict",
+    "entries": 4
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/database-diagnostics.json",
+    "bytes": 1114,
+    "sha256": "208fce319309d19ccb6c18dfd6227b529086f0f19d73fdf85f30b43dd0cd4863",
+    "jsonType": "list",
+    "entries": 9
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/database-diagnostics.log",
+    "bytes": 1115,
+    "sha256": "eb5f8ac2b448424c0e2a35524e1ef23b9111533f40fbd78ac9816fc260be3b4e"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/diagnostics.json",
+    "bytes": 4651,
+    "sha256": "8d016a2dcbb1ba628a7e791ba7de3113c03b6c59016be3ea5969a832ed50ca88",
+    "jsonType": "list",
+    "entries": 10
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/disposable-db-policies.json",
+    "bytes": 7013,
+    "sha256": "b6939c022ee3305eeb8885086f36a46555a2492444904243fa1d4b8421e74505",
+    "jsonType": "list",
+    "entries": 21
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/edge-diagnostics.json",
+    "bytes": 620,
+    "sha256": "a147635b19b84592607e190c4c0cbc5ae561d6f3c1a9f9e61661ded37fda102f",
+    "jsonType": "list",
+    "entries": 6
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/ifc-verification.json",
+    "bytes": 10602,
+    "sha256": "28ebe6e4fcedfefd982917b331bd20432e761872d252b009af666e80681eb2c3",
+    "jsonType": "dict",
+    "entries": 4
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/ifc.log",
+    "bytes": 8933,
+    "sha256": "b40357de35087b4c722c297f39c9569b6757299aed29a1dfce14b654634ad8fb"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/lint.log",
+    "bytes": 37,
+    "sha256": "2f9b0662df2da93e09dfd147aecf0195bda06e3dfc5aac732335d14c8d490ff7"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/resource.json",
+    "bytes": 977,
+    "sha256": "997bd728694a657c74864a3da7999a2a7ac8b7553ff4357760b48689300a60f2",
+    "jsonType": "list",
+    "entries": 4
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/stub-scan.txt",
+    "bytes": 6931,
+    "sha256": "ec7235fa94c0beb77551204b6b6e159296b3aa32c78172abdc9f5e35f3163701"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/test-unrestricted-run.json",
+    "bytes": 196,
+    "sha256": "ed262b971dce7b54e97497f426e1623f09e5c7df292da6eb5d27080965d8dbdb",
+    "jsonType": "dict",
+    "entries": 3
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/test-unrestricted.log",
+    "bytes": 142,
+    "sha256": "e326a6fa52c2798c772292a1bd4caa80a472517e3cc99909d40ba2cd318ec0bf"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/test.log",
+    "bytes": 910,
+    "sha256": "8d915d42a02ccaf302471708bf04601fdd6e4f65cb6906c40e42b194c3bc5a8d"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/typecheck.log",
+    "bytes": 1013,
+    "sha256": "3932083353f54f94a48689dfce1ac11732c31829cf94beca39bae524268721be"
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/vitest-unrestricted.json",
+    "bytes": 665649,
+    "sha256": "0ca66066f02c80c2846ded6675f6283bc74b4bbb8d7e8b196fcdb69cf4ba49fa",
+    "jsonType": "dict",
+    "entries": 13
+  },
+  {
+    "path": "docs/backend-audit-1-23/evidence/vitest.json",
+    "bytes": 659717,
+    "sha256": "bc970b4884dbed9706c754403d1c1adb44efe82e16016c66418e0b990a26abe2",
+    "jsonType": "dict",
+    "entries": 13
+  },
+  {
+    "path": "docs/backend-audit-1-23/generate-manifest.py",
+    "bytes": 1316,
+    "sha256": "b88aa87f78582491769c5564ccd6758075eb5bb61ab7001735bfd5bd765f594e"
+  },
+  {
+    "path": "docs/backend-audit-1-23/rejected-hypotheses.md",
+    "bytes": 9379,
+    "sha256": "4292f8c9212c01529ef76787f1bd3023f5db4614863ad493f8ef7efe9d2f7ac1"
+  },
+  {
+    "path": "docs/backend-audit-1-23/resource-diagnostic.mts",
+    "bytes": 480,
+    "sha256": "4904b83fcf356778396ec2036ae37190b91cce01011214c364b4fff528c4b86e"
+  },
+  {
+    "path": "docs/backend-audit-1-23/snapshot-local-db.py",
+    "bytes": 1532,
+    "sha256": "87c07fddb4b9c8afd6c8b14fba7a6bb55d8f1a2961a2e049abe5362e87623bb6"
+  },
+  {
+    "path": "docs/backend-audit-1-23/source-manifest.json",
+    "bytes": 178076,
+    "sha256": "f829a45f834e85f48b55acf55c20bdfeef7516acf9e64508375cb6a196566455",
+    "jsonType": "dict",
+    "entries": 5
+  },
+  {
+    "path": "docs/backend-audit-1-23/test-results.json",
+    "bytes": 1184,
+    "sha256": "26350d2335393a07aa8522873035149032fefbfa5208ccab8d81836cacbe2707",
+    "jsonType": "dict",
+    "entries": 2
+  },
+  {
+    "path": "docs/backend-audit-1-23/verify-ifc.py",
+    "bytes": 12729,
+    "sha256": "42c7dc25996fad9e727123a0eead301f376d7a1ce65efb31e7232044d48514ab"
+  }
+]

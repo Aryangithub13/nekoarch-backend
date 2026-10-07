@@ -1,0 +1,705 @@
+# Phase 1–23 repair ledger
+
+Findings are revalidated against ddf08f864521dfdb52428e75950cde09674c9b65. Historical audit claims are candidates, not authority. In-progress records do not imply full release verification.
+
+## D01 — Unrelated turn clears contradictions
+
+**severity:** P1
+
+**contract:** Explicit user semantic changes produce valid native proposals; unresolved constraints persist.
+
+**argumentFor:** Patch defaults overwrite persistent contradiction array.
+
+**argumentAgainst:** Explicit field resolution/native replacement must clear only that field; inferred floors are not explicit answers.
+
+**reproduction:** conversation-before.txt contains failing before-repair assertions.
+
+**counterReproduction:** Explicit field resolution/native replacement must clear only that field; inferred floors are not explicit answers.
+
+**rootCause:** Patch defaults overwrite persistent contradiction array.
+
+**repair:** Minimal semantic merge/unit/capture/floor/removal fixes in conversation-planner.ts.
+
+**regression:** 191 subsystem/integration tests plus final 20 targeted tests pass; build/typecheck/lint pass. Guest-room phrases safely require explicit native selection.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 8b3b1da; efb844b (R05)
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## D02 — Mixed site unit correction retains depth unit
+
+**severity:** P1
+
+**contract:** Explicit user semantic changes produce valid native proposals; unresolved constraints persist.
+
+**argumentFor:** Spread copies depthUnit into general unit correction.
+
+**argumentAgainst:** Complete dimension answers may intentionally contain mixed units; native site is a full replacement.
+
+**reproduction:** conversation-before.txt contains failing before-repair assertions.
+
+**counterReproduction:** Complete dimension answers may intentionally contain mixed units; native site is a full replacement.
+
+**rootCause:** Spread copies depthUnit into general unit correction.
+
+**repair:** Minimal semantic merge/unit/capture/floor/removal fixes in conversation-planner.ts.
+
+**regression:** 191 subsystem/integration tests plus final 20 targeted tests pass; build/typecheck/lint pass. Guest-room phrases safely require explicit native selection.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 8b3b1da
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## D03 — Uppercase plural room names change semantics
+
+**severity:** P2
+
+**contract:** Explicit user semantic changes produce valid native proposals; unresolved constraints persist.
+
+**argumentFor:** Regex is case insensitive but plural suffix comparison is not.
+
+**argumentAgainst:** Singular repeated room reference must still require clarification.
+
+**reproduction:** conversation-before.txt contains failing before-repair assertions.
+
+**counterReproduction:** Singular repeated room reference must still require clarification.
+
+**rootCause:** Regex is case insensitive but plural suffix comparison is not.
+
+**repair:** Minimal semantic merge/unit/capture/floor/removal fixes in conversation-planner.ts.
+
+**regression:** 191 subsystem/integration tests plus final 20 targeted tests pass; build/typecheck/lint pass. Guest-room phrases safely require explicit native selection.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 8b3b1da
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## D04 — One-floor change retains stair requirements
+
+**severity:** P2
+
+**contract:** Explicit user semantic changes produce valid native proposals; unresolved constraints persist.
+
+**argumentFor:** Floor count changes without removing obsolete auto stair.
+
+**argumentAgainst:** Upper-floor room allocations must be resolved explicitly, not silently moved.
+
+**reproduction:** conversation-before.txt contains failing before-repair assertions.
+
+**counterReproduction:** Upper-floor room allocations must be resolved explicitly, not silently moved.
+
+**rootCause:** Floor count changes without removing obsolete auto stair.
+
+**repair:** Minimal semantic merge/unit/capture/floor/removal fixes in conversation-planner.ts.
+
+**regression:** 191 subsystem/integration tests plus final 20 targeted tests pass; build/typecheck/lint pass. Guest-room phrases safely require explicit native selection.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 8b3b1da
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## D05 — System Python lacks IfcOpenShell
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 API guide explicitly activates pinned development venv; no production Python.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 API guide explicitly activates pinned development venv; no production Python.
+
+**reproduction:** System Python cannot import IfcOpenShell; see evidence/ifc-environment.json.
+
+**counterReproduction:** Documented /tmp/designflow-phase23-ifc/bin/python imports pinned IfcOpenShell 0.8.5; final verifier uses this interpreter. Python stays outside production.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** ENVIRONMENT / TOOLING ISSUE
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D06 — Landing array reversal changes model hash
+
+**severity:** P2 (original claim)
+
+**contract:** phase17-design.md defines top-level collection sorting and ordered geometry, not geometric isomorphism.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** phase17-design.md defines top-level collection sorting and ordered geometry, not geometric isomorphism.
+
+**reproduction:** Reversal differs, top-level reorder equal, all seven historical fixture hashes preserved.
+
+**counterReproduction:** Top-level wall/space reorder preserves modelHash; nested landing reversal changes it exactly as the ordered geometry contract specifies. Seven stored fixture hashes and database identities remain valid.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** INTENTIONAL DESIGN
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D07 — Omitted spaceIds loses boundaries
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 closure reconstructs native wall-space adjacency.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 closure reconstructs native wall-space adjacency.
+
+**reproduction:** 37 BIM unit tests pass including omitted metadata and independently checked boundary edges.
+
+**counterReproduction:** With and without optional wall labels, geometry-derived space boundaries are retained. Independent IFC specified-material fixture omits labels.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** ALREADY FIXED
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D08 — Overlapping physical columns accepted
+
+**severity:** P1
+
+**contract:** Architectural solids must not penetrate; modeled spaces require physical floor support.
+
+**argumentFor:** Missing pairwise column checks in native invariants and QA.
+
+**argumentAgainst:** Same XY at separated elevations, edge contact, different storeys and hollow column interiors are valid.
+
+**reproduction:** repair-geometry.test.ts failed before repair; raw evidence geometry-before.txt.
+
+**counterReproduction:** Same XY at separated elevations, edge contact, different storeys and hollow column interiors are valid.
+
+**rootCause:** Missing pairwise column checks in native invariants and QA.
+
+**repair:** Independent native/QA interval and footprint checks; QA holes except represented stair flights.
+
+**regression:** Batch A: 1294 tests passed. Build passed; typecheck/lint gate recorded separately.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** b96d3c0; 208d56c (R06)
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## D09 — Occupied space above floor holes accepted
+
+**severity:** P1
+
+**contract:** Architectural solids must not penetrate; modeled spaces require physical floor support.
+
+**argumentFor:** Floor support used only the outer ring.
+
+**argumentAgainst:** Stair flight voids and holes touching but not penetrating space edges must remain valid.
+
+**reproduction:** repair-geometry.test.ts failed before repair; raw evidence geometry-before.txt.
+
+**counterReproduction:** Stair flight voids and holes touching but not penetrating space edges must remain valid.
+
+**rootCause:** Floor support used only the outer ring.
+
+**repair:** Independent native/QA interval and footprint checks; QA holes except represented stair flights.
+
+**regression:** Batch A: 1294 tests passed. Build passed; typecheck/lint gate recorded separately.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** b96d3c0; 1ed5f3a (R04)
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## D10 — BIM rejects columns
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 bounded profile excludes structural frames; native column schema does not imply BIM support.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 bounded profile excludes structural frames; native column schema does not imply BIM support.
+
+**reproduction:** Single valid column passes native QA but BIM rejects explicitly; removal succeeds.
+
+**counterReproduction:** Removing the valid column returns the same model to the supported BIM profile; native QA does not assert structural BIM support.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** DOCUMENTED PRODUCT LIMITATION
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D11 — Failed messages retain lease
+
+**severity:** P2
+
+**contract:** Versioned signed owner-scoped transitions; readiness describes full API capability.
+
+**argumentFor:** No message failure cleanup; existing release invalidates approval state and retains receipt ID.
+
+**argumentAgainst:** Ambiguous finish outcome and stale workers must not erase successful or newer work.
+
+**reproduction:** database-before-repair.txt (D11/D12); d19-before.txt failed readiness assertion.
+
+**counterReproduction:** Ambiguous finish outcome and stale workers must not erase successful or newer work.
+
+**rootCause:** No message failure cleanup; existing release invalidates approval state and retains receipt ID.
+
+**repair:** Signed cancel-message action clears receipt only for the matching pending token; route catches planner/finish failures and checks abort before finish.
+
+**regression:** 72 PostgreSQL/conversation/security/readiness tests passed; build/typecheck/lint passed. Fresh migrations and populated function upgrade checked; concurrent approval/rollback/retry tests included.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 86def96
+
+**sourceReferences:** ["supabase/migrations/0013_conversation_serialization.sql", "apps/api/src/routes/conversations.ts", "apps/api/tests/repair-concurrency.integration.test.ts", "apps/api/tests/conversations.integration.test.ts"]
+
+## D12 — Conversation reads stale project base
+
+**severity:** P2
+
+**contract:** Versioned signed owner-scoped transitions; readiness describes full API capability.
+
+**argumentFor:** Unlocked project snapshot read before waiting on conversation row.
+
+**argumentAgainst:** Project revision CAS already prevented corrupt ancestry; confirmed scope is stale proposal acceptance, not overwritten history.
+
+**reproduction:** database-before-repair.txt (D11/D12); d19-before.txt failed readiness assertion.
+
+**counterReproduction:** Project revision CAS already prevented corrupt ancestry; confirmed scope is stale proposal acceptance, not overwritten history.
+
+**rootCause:** Unlocked project snapshot read before waiting on conversation row.
+
+**repair:** New 0013 locks project before conversation, consistent with delete cascade; keeps every historical migration unchanged.
+
+**regression:** 72 PostgreSQL/conversation/security/readiness tests passed; build/typecheck/lint passed. Fresh migrations and populated function upgrade checked; concurrent approval/rollback/retry tests included.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 86def96
+
+**sourceReferences:** ["supabase/migrations/0013_conversation_serialization.sql", "apps/api/src/routes/conversations.ts", "apps/api/tests/repair-concurrency.integration.test.ts", "apps/api/tests/conversations.integration.test.ts"]
+
+## D13 — Modern routes and engine stack frames removed from Sentry
+
+**severity:** P2
+
+**contract:** Bounded heavy compute quota; redacted yet useful observability.
+
+**argumentFor:** Old route and package allowlists in both safeError and sanitizeEvent.
+
+**argumentAgainst:** Raw paths may leak identity; GET and plan calls do not execute generation.
+
+**reproduction:** batch-f-before.txt: telemetry and execution quota assertions fail; GET route bug confirmed in classifier.
+
+**counterReproduction:** All registered route templates retained; arbitrary paths and queries rejected; GETs not charged to exhausted generation bucket.
+
+**rootCause:** Old route and package allowlists in both safeError and sanitizeEvent.
+
+**repair:** Explicit literal route templates and known engine package paths; messages/locals/request metadata still discarded.
+
+**regression:** 81 hardening/workflow/contract tests passed; build/typecheck/lint passed.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 5e5a452
+
+**sourceReferences:** ["apps/api/src/lib/sentry.ts", "apps/api/src/lib/safe-error.ts", "apps/api/src/lib/http-protection.ts", "apps/api/src/app.ts", "apps/api/tests/hardening.test.ts"]
+
+## D14 — Penetrating plate solids accepted
+
+**severity:** P2
+
+**contract:** Architectural solids must not penetrate; modeled spaces require physical floor support.
+
+**argumentFor:** Same-kind/same-offset predicate missed genuine 3D intersections.
+
+**argumentAgainst:** Exact vertical contact, separation and infill inside holes must remain valid.
+
+**reproduction:** repair-geometry.test.ts failed before repair; raw evidence geometry-before.txt.
+
+**counterReproduction:** Exact vertical contact, separation and infill inside holes must remain valid.
+
+**rootCause:** Same-kind/same-offset predicate missed genuine 3D intersections.
+
+**repair:** Independent native/QA interval and footprint checks; QA holes except represented stair flights.
+
+**regression:** Batch A: 1294 tests passed. Build passed; typecheck/lint gate recorded separately.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** b96d3c0; 208d56c (R06)
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## D15 — Workflow registry omits BIM/IFC
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 design explicitly preserves registry/AI authority and exposes read-only revision services.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 design explicitly preserves registry/AI authority and exposes read-only revision services.
+
+**reproduction:** Capability registry has no BIM/IFC; read-only API acceptance verified separately.
+
+**counterReproduction:** Revision-scoped authenticated BIM APIs remain available; workflow capability/schema deliberately refuses unregistered authority.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** INTENTIONAL DESIGN
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D16 — Workflow execution bypasses generation quota
+
+**severity:** P2
+
+**contract:** Bounded heavy compute quota; redacted yet useful observability.
+
+**argumentFor:** Workflow POST omitted from heavy operation group.
+
+**argumentAgainst:** Raw paths may leak identity; GET and plan calls do not execute generation.
+
+**reproduction:** batch-f-before.txt: telemetry and execution quota assertions fail; GET route bug confirmed in classifier.
+
+**counterReproduction:** All registered route templates retained; arbitrary paths and queries rejected; GETs not charged to exhausted generation bucket.
+
+**rootCause:** Workflow POST omitted from heavy operation group.
+
+**repair:** Include workflow execution POST; planning remains ordinary write quota.
+
+**regression:** 81 hardening/workflow/contract tests passed; build/typecheck/lint passed.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 5e5a452
+
+**sourceReferences:** ["apps/api/src/lib/sentry.ts", "apps/api/src/lib/safe-error.ts", "apps/api/src/lib/http-protection.ts", "apps/api/src/app.ts", "apps/api/tests/hardening.test.ts"]
+
+## D17 — Service openings create access edges
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 closure restricts circulation to floor-level doors/passages.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 closure restricts circulation to floor-level doors/passages.
+
+**reproduction:** Existing BIM tests cover service/other/passage/raised doors; validator rejects fabricated/missing edges.
+
+**counterReproduction:** Floor-level passage/door accesses are retained; window, service, other and raised openings do not fabricate traversal.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** ALREADY FIXED
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D18 — Low quantity decimal precision rejected
+
+**severity:** P2 (original claim)
+
+**contract:** phase14-design.md specifies 6–12 quantity precision. This is serialized calculation evidence, not currency/display formatting. Cost reads finalExact.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** phase14-design.md specifies 6–12 quantity precision. This is serialized calculation evidence, not currency/display formatting. Cost reads finalExact.
+
+**reproduction:** Zero rejected; 6/12 produce identical finalExact. BigInt purchase rounding unchanged.
+
+**counterReproduction:** 6/12 decimal reports preserve identical exact rational quantities. Cost consumes finalExact; per-line procurement uses rational ceil, not serialized decimals.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** INTENTIONAL DESIGN
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D19 — Healthy production lacks mutation signer
+
+**severity:** P2
+
+**contract:** Versioned signed owner-scoped transitions; readiness describes full API capability.
+
+**argumentFor:** Readiness probes only backend connectivity/rates.
+
+**argumentAgainst:** Liveness/read APIs should still work; optional secret useful in development/read-only diagnostics.
+
+**reproduction:** database-before-repair.txt (D11/D12); d19-before.txt failed readiness assertion.
+
+**counterReproduction:** Liveness/read APIs should still work; optional secret useful in development/read-only diagnostics.
+
+**rootCause:** Readiness probes only backend connectivity/rates.
+
+**repair:** Production readiness fails closed for absent secret; liveness and reads preserved without mandatory startup secret.
+
+**regression:** 72 PostgreSQL/conversation/security/readiness tests passed; build/typecheck/lint passed. Fresh migrations and populated function upgrade checked; concurrent approval/rollback/retry tests included.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 86def96
+
+**sourceReferences:** ["apps/api/src/lib/sentry.ts", "apps/api/src/lib/safe-error.ts", "apps/api/src/lib/http-protection.ts", "apps/api/src/app.ts", "apps/api/tests/hardening.test.ts"]
+
+## D20 — BIM rejects T-shaped storeys
+
+**severity:** P2 (original claim)
+
+**contract:** Phase23 supports bounded rectangle/L/setback families; T/cross/freeform outside contract.
+
+**argumentFor:** Original audit observation is reproducible or present in historical source.
+
+**argumentAgainst:** Phase23 supports bounded rectangle/L/setback families; T/cross/freeform outside contract.
+
+**reproduction:** Valid native eight-vertex T envelope passes QA but BIM rejects; seven released families retain coverage.
+
+**counterReproduction:** Rectangle/L/setback fixtures remain supported, while eight-vertex T is explicitly outside the released profile.
+
+**rootCause:** Audit conflated broader native schema/expectations with bounded released contract, or preceded closure.
+
+**repair:** No production change warranted.
+
+**regression:** 48 BIM/contract tests passed; full independent IFC and release gates pending.
+
+**verdict:** DOCUMENTED PRODUCT LIMITATION
+
+**commit:** none
+
+**sourceReferences:** ["apps/api/tests/repair-contracts.test.ts", "apps/api/tests/bim.test.ts", "docs/phase23-design.md", "docs/phase23-api.md", "docs/phase23-review-report.md"]
+
+## D21 — Zero room count violates native schema
+
+**severity:** P2
+
+**contract:** Explicit user semantic changes produce valid native proposals; unresolved constraints persist.
+
+**argumentFor:** Semantic zero persisted as room count rather than removal.
+
+**argumentAgainst:** Guest room is not a separate native type; guessing which bedroom to delete would lose constraints.
+
+**reproduction:** conversation-before.txt contains failing before-repair assertions.
+
+**counterReproduction:** Guest room is not a separate native type; guessing which bedroom to delete would lose constraints.
+
+**rootCause:** Semantic zero persisted as room count rather than removal.
+
+**repair:** Minimal semantic merge/unit/capture/floor/removal fixes in conversation-planner.ts.
+
+**regression:** 191 subsystem/integration tests plus final 20 targeted tests pass; build/typecheck/lint pass. Guest-room phrases safely require explicit native selection.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 8b3b1da
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## R01 — Floating floor slab counted as room support
+
+**severity:** P1
+
+**contract:** Geometric support and unresolved intent must remain truthful; input limits must bound expensive validation.
+
+**argumentFor:** Floor support selected by level ID without requiring top at that level datum.
+
+**argumentAgainst:** Zero-offset slabs support spaces; missing slab remains explicitly unknown; off-level tiny support cannot validate a floating full floor.
+
+**reproduction:** new-defects-before.txt and site-conflict-before.txt contain failing assertions; resource-before.json records 1331 ms for 2048 vertices.
+
+**counterReproduction:** Zero-offset slabs support spaces; missing slab remains explicitly unknown; off-level tiny support cannot validate a floating full floor.
+
+**rootCause:** Floor support selected by level ID without requiring top at that level datum.
+
+**repair:** Use floor top at space level elevation and emit QA_SPACE_FLOOR_ELEVATION when supplied plates provide none.
+
+**regression:** 1299 geometry/shared/generator tests and 21 conversation tests pass; resource-after.json records 13.6 ms for same input. Build/typecheck/lint recorded.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 1ed5f3a
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## R02 — Over-limit polygon triggers quadratic work
+
+**severity:** P1
+
+**contract:** Geometric support and unresolved intent must remain truthful; input limits must bound expensive validation.
+
+**argumentFor:** Zod invokes ring refinement after dirty max-length validation.
+
+**argumentAgainst:** Valid bounded rings still undergo complete topology checks.
+
+**reproduction:** new-defects-before.txt and site-conflict-before.txt contain failing assertions; resource-before.json records 1331 ms for 2048 vertices.
+
+**counterReproduction:** Valid bounded rings still undergo complete topology checks.
+
+**rootCause:** Zod invokes ring refinement after dirty max-length validation.
+
+**repair:** Short-circuit out-of-range ring/void collection lengths before expensive refinement.
+
+**regression:** 1299 geometry/shared/generator tests and 21 conversation tests pass; resource-after.json records 13.6 ms for same input. Build/typecheck/lint recorded.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 1ed5f3a
+
+**sourceReferences:** ["packages/shared/src/building-v2/geometry.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## R03 — GET revision listing consumes generation quota
+
+**severity:** P2
+
+**contract:** Bounded heavy compute quota; redacted yet useful observability.
+
+**argumentFor:** URL-only classifier treats GET and POST on same path alike.
+
+**argumentAgainst:** Raw paths may leak identity; GET and plan calls do not execute generation.
+
+**reproduction:** batch-f-before.txt: telemetry and execution quota assertions fail; GET route bug confirmed in classifier.
+
+**counterReproduction:** All registered route templates retained; arbitrary paths and queries rejected; GETs not charged to exhausted generation bucket.
+
+**rootCause:** URL-only classifier treats GET and POST on same path alike.
+
+**repair:** Require POST before heavy-route classification; GET workflow/revision reads use independent read quota.
+
+**regression:** 81 hardening/workflow/contract tests passed; build/typecheck/lint passed.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 5e5a452
+
+**sourceReferences:** ["apps/api/src/lib/sentry.ts", "apps/api/src/lib/safe-error.ts", "apps/api/src/lib/http-protection.ts", "apps/api/src/app.ts", "apps/api/tests/hardening.test.ts"]
+
+## R04 — New void check rejects valid infill support
+
+**severity:** P2
+
+**contract:** Geometric support and unresolved intent must remain truthful; input limits must bound expensive validation.
+
+**argumentFor:** Initial D09 repair considered each plate void without considering a separate supporting plate.
+
+**argumentAgainst:** Only a fully containing solid plate counts; spanning multiple unsupported plates still does not gain a clean pass.
+
+**reproduction:** new-defects-before.txt and site-conflict-before.txt contain failing assertions; resource-before.json records 1331 ms for 2048 vertices.
+
+**counterReproduction:** Only a fully containing solid plate counts; spanning multiple unsupported plates still does not gain a clean pass.
+
+**rootCause:** Initial D09 repair considered each plate void without considering a separate supporting plate.
+
+**repair:** Accept demonstrated single-plate support before considering other plate voids.
+
+**regression:** 1299 geometry/shared/generator tests and 21 conversation tests pass; resource-after.json records 13.6 ms for same input. Build/typecheck/lint recorded.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 1ed5f3a
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
+
+## R05 — Unit-only answer clears a site-dimension contradiction
+
+**severity:** P1
+
+**contract:** Geometric support and unresolved intent must remain truthful; input limits must bound expensive validation.
+
+**argumentFor:** D01 field-level resolution mistook a unit-only patch for explicit replacement of conflicting dimensions.
+
+**argumentAgainst:** Full site dimension answers/native replacement resolve; unit-only answer must preserve conflicting dimensions.
+
+**reproduction:** new-defects-before.txt and site-conflict-before.txt contain failing assertions; resource-before.json records 1331 ms for 2048 vertices.
+
+**counterReproduction:** Full site dimension answers/native replacement resolve; unit-only answer must preserve conflicting dimensions.
+
+**rootCause:** D01 field-level resolution mistook a unit-only patch for explicit replacement of conflicting dimensions.
+
+**repair:** Retain site contradictions on unit-only correction; anchor the finite unit grammar to avoid discarding other message constraints.
+
+**regression:** 1299 geometry/shared/generator tests and 21 conversation tests pass; resource-after.json records 13.6 ms for same input. Build/typecheck/lint recorded.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** efb844b
+
+**sourceReferences:** ["apps/api/src/ai/conversation-planner.ts", "apps/api/tests/repair-conversation.test.ts", "apps/api/tests/repair-concurrency.integration.test.ts"]
+
+## R06 — New physical collision checks regress large-model validation time
+
+**severity:** P1
+
+**contract:** Collision rejection must remain bounded for supported collections.
+
+**argumentFor:** Measured 200 separated columns at 430 ms after D08, versus about 5 ms at the baseline.
+
+**argumentAgainst:** Exact intersection is required for nearby solids; bounding boxes alone cannot establish overlap.
+
+**reproduction:** invariant-performance.json compares the baseline native invariant function with the initial repair.
+
+**counterReproduction:** 1024 separated columns and 1024 coincident columns are validated within the test budget; exact contact/hollow-section cases remain covered.
+
+**rootCause:** Every pair entered expensive polygon predicates and duplicate collections emitted quadratically many findings.
+
+**repair:** Cache native footprint bounds, reject disjoint boxes before exact intersection, and stop after the first collision per later entity in native invariants and QA.
+
+**regression:** 1300 shared/QA/generator tests passed; build/typecheck/lint passed. After repair: 200 columns 10.2 ms; 1024 columns 37.0 ms versus baseline 31.1 ms. Single-process observations, not latency guarantees.
+
+**verdict:** CONFIRMED — FIXED AND VERIFIED
+
+**commit:** 208d56c
+
+**sourceReferences:** ["packages/shared/src/building-v2/invariants.ts", "packages/blueprint-qa/src/core.ts", "packages/blueprint-qa/tests/repair-geometry.test.ts", "packages/shared/tests/repair-resource.test.ts"]
