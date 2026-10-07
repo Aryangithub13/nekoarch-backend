@@ -10,6 +10,11 @@ export const STRUCTURAL_ANALYSIS_VERSION = 'structural-analysis-v1';
 export const STRUCTURAL_ADAPTER_VERSION = 'structural-adapter-v1';
 export const STRUCTURAL_LIMITS = { inputBytes: 524_288, materials: 32, sections: 64, members: 800, supports: 800, loadCases: 8, loadsPerCase: 1000,
   totalLoads: 2000, combinations: 16, terms: 8, segments: 4000, skylineEntries: 4_000_000, solverMs: 10_000, outputBytes: 9_000_000 } as const;
+/** Distributed loads and self-weight are expanded onto every segment of their member, so this solver-neutral count is derived, not
+ *  bounded by the public per-case limits. One source for the analysis-model schema and the preflight in buildStructuralModel. */
+export const EXPANDED_MEMBER_LOADS = STRUCTURAL_LIMITS.totalLoads + STRUCTURAL_LIMITS.segments;
+/** v1 checked equilibrium only; v2 adds constitutive compatibility, every station, crossings and full section/mass agreement. */
+export const MODEL_VALIDATOR = 'structural-model-validator-v2', RESULT_VALIDATOR = 'structural-result-validator-v2';
 export const STATIONS = [0, 0.25, 0.5, 0.75, 1] as const;
 export const CLAIMS = { designVerification: 'NOT_EVALUATED', codeCompliance: 'NOT_CLAIMED', certification: 'NOT_CLAIMED', constructionSuitability: 'NOT_CLAIMED' } as const;
 export const MODEL_ASSUMPTIONS = ['LINEAR_ELASTIC', 'SMALL_DISPLACEMENT', 'EULER_BERNOULLI_NO_SHEAR_DEFORMATION', 'RIGID_JOINTS', 'NO_RIGID_DIAPHRAGM',
@@ -133,7 +138,7 @@ export const AnalysisModelSchema = z.object({
   restraints: z.array(z.object({ nodeId: ref, dofs: z.tuple([z.boolean(), z.boolean(), z.boolean(), z.boolean(), z.boolean(), z.boolean()]) }).strict()).min(1),
   loadCases: z.array(z.object({ id: ref,
     nodalLoads: z.array(z.object({ nodeId: ref, force: vector3 }).strict()).max(STRUCTURAL_LIMITS.totalLoads),
-    memberLoads: z.array(z.object({ memberId: ref, w: vector3 }).strict()).max(STRUCTURAL_LIMITS.totalLoads + STRUCTURAL_LIMITS.segments) }).strict()).min(1).max(STRUCTURAL_LIMITS.loadCases),
+    memberLoads: z.array(z.object({ memberId: ref, w: vector3 }).strict()).max(EXPANDED_MEMBER_LOADS) }).strict()).min(1).max(STRUCTURAL_LIMITS.loadCases),
 }).strict();
 export type AnalysisModel = z.infer<typeof AnalysisModelSchema>;
 
@@ -152,9 +157,10 @@ export const ResultsSchema = z.object({ units: z.object({ displacement: z.litera
 export type StructuralResults = z.infer<typeof ResultsSchema>;
 export const SolverIdentitySchema = z.object({ name: z.string().min(1).max(100), version: z.string().min(1).max(100), adapterVersion: z.literal(STRUCTURAL_ADAPTER_VERSION) }).strict();
 export const DiagnosticsSchema = z.array(z.object({ code: z.string().max(60), targetId: z.string().max(80).nullable(), message: z.string().max(300), severity: z.enum(['ERROR', 'WARNING', 'INFO']) }).strict()).max(200);
-export const ModelValidationSchema = z.object({ validator: z.literal('structural-model-validator-v1'), status: z.enum(['VALID', 'INVALID']), diagnostics: DiagnosticsSchema }).strict();
+// Historical snapshots keep the validator that certified them; new ones are written with v2 only.
+export const ModelValidationSchema = z.object({ validator: z.enum(['structural-model-validator-v1', MODEL_VALIDATOR]), status: z.enum(['VALID', 'INVALID']), diagnostics: DiagnosticsSchema }).strict();
 export type ModelValidation = z.infer<typeof ModelValidationSchema>;
-export const ResultValidationSchema = z.object({ validator: z.literal('structural-result-validator-v1'), status: z.enum(['VALID', 'INVALID']), diagnostics: DiagnosticsSchema,
+export const ResultValidationSchema = z.object({ validator: z.enum(['structural-result-validator-v1', RESULT_VALIDATOR]), status: z.enum(['VALID', 'INVALID']), diagnostics: DiagnosticsSchema,
   equilibrium: z.array(z.object({ setId: sid, forceResidual: exact('kN'), momentResidual: exact('kN*m'), forceTolerance: exact('kN'), momentTolerance: exact('kN*m') }).strict()) }).strict();
 export type ResultValidation = z.infer<typeof ResultValidationSchema>;
 const ClaimsSchema = z.object({ designVerification: z.literal('NOT_EVALUATED'), codeCompliance: z.literal('NOT_CLAIMED'), certification: z.literal('NOT_CLAIMED'), constructionSuitability: z.literal('NOT_CLAIMED') }).strict();

@@ -1,0 +1,170 @@
+[
+  {
+    "finding": "control",
+    "probe": "baseline reference results",
+    "expected": "VALID",
+    "observed": "VALID",
+    "pass": true
+  },
+  {
+    "finding": "A01",
+    "probe": "free-node uy = 1e12 mm, rx = 1e9 rad",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A01",
+    "probe": "free-node uy + 0.05 mm",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A01",
+    "probe": "beam Iy, Iz × 100 solution relabelled with the true model hash",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A01",
+    "probe": "raw J-end force indices 6–11 = 1e20",
+    "expected": "STRUCTURAL_RESULT_INVALID",
+    "observed": "ACCEPTED",
+    "pass": false
+  },
+  {
+    "finding": "A01",
+    "probe": "counter: restrained displacement corrupted",
+    "expected": "INVALID",
+    "observed": "INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A01",
+    "probe": "counter: raw NaN",
+    "expected": "STRUCTURAL_RESULT_INVALID",
+    "observed": "STRUCTURAL_RESULT_INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A01",
+    "probe": "counter: raw wrong model hash",
+    "expected": "STRUCTURAL_RESULT_INVALID",
+    "observed": "STRUCTURAL_RESULT_INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A01",
+    "probe": "counter: raw wrong units",
+    "expected": "STRUCTURAL_RESULT_INVALID",
+    "observed": "STRUCTURAL_RESULT_INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A01",
+    "probe": "counter: raw missing case",
+    "expected": "STRUCTURAL_RESULT_INVALID",
+    "observed": "STRUCTURAL_RESULT_INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A02",
+    "probe": "station 0.5 components = ±1e12",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A02",
+    "probe": "station 0.25 mz + 0.1 kN·m",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A02",
+    "probe": "station 0.75 mz + 0.1 kN·m",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A02",
+    "probe": "counter: end station mz + 10 kN·m",
+    "expected": "INVALID",
+    "observed": "INVALID",
+    "pass": true
+  },
+  {
+    "finding": "A03",
+    "probe": "unconnected X crossing on an accepted architecture",
+    "expected": "STRUCTURAL_MODEL_INVALID",
+    "observed": "ACCEPTED",
+    "pass": false
+  },
+  {
+    "finding": "A03",
+    "probe": "counter: crossing wall split at the intersection (connected)",
+    "expected": "VALID",
+    "observed": "VALID",
+    "pass": true
+  },
+  {
+    "finding": "A04",
+    "probe": "fixed–fixed 5800 mm beam under 2 kN/m",
+    "expected": "VALID",
+    "observed": "STRUCTURAL_SUPPORT_INVALID",
+    "pass": false
+  },
+  {
+    "finding": "A04",
+    "probe": "counter: pinned–pinned beam (torsion mechanism)",
+    "expected": "STRUCTURAL_SYSTEM_UNSTABLE",
+    "observed": "STRUCTURAL_SYSTEM_UNSTABLE",
+    "pass": true
+  },
+  {
+    "finding": "A05",
+    "probe": "1,000 uniform loads on an eight-segment beam",
+    "expected": "STRUCTURAL_RESOURCE_LIMIT",
+    "observed": "ACCEPTED",
+    "pass": false
+  },
+  {
+    "finding": "A05",
+    "probe": "counter: 10 loads on the same beam",
+    "expected": "ACCEPTED",
+    "observed": "ACCEPTED",
+    "pass": true
+  },
+  {
+    "finding": "A06",
+    "probe": "rectangle width 9999 / depth 1 with original properties",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A06",
+    "probe": "rectangle relabelled GENERIC, dimensions null",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A06",
+    "probe": "evaluated mass relabelled NOT_EVALUATED",
+    "expected": "INVALID",
+    "observed": "VALID",
+    "pass": false
+  },
+  {
+    "finding": "A06",
+    "probe": "counter: section Iz doubled",
+    "expected": "INVALID",
+    "observed": "INVALID",
+    "pass": true
+  }
+]

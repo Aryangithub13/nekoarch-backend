@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 import type { BuildingModelV2 } from '@designflow/shared';
 import { digest, semanticId } from '../bim/core.js';
-import { MEMBER_ASSUMPTIONS, MODEL_ASSUMPTIONS, ModelValidationSchema, ResultValidationSchema, ResultsSchema, STATIONS, STRUCTURAL_ANALYSIS_VERSION, STRUCTURAL_MODEL_VERSION, StructuralModelSchema,
-  type ModelValidation, type ResultValidation, type StructuralBinding, type StructuralInput, type StructuralModel } from './contracts.js';
+import { MEMBER_ASSUMPTIONS, MODEL_ASSUMPTIONS, MODEL_VALIDATOR, ModelValidationSchema, RESULT_VALIDATOR, ResultValidationSchema, ResultsSchema, STATIONS, STRUCTURAL_ANALYSIS_VERSION,
+  STRUCTURAL_MODEL_VERSION, StructuralModelSchema, type ModelValidation, type ResultValidation, type StructuralBinding, type StructuralInput, type StructuralModel } from './contracts.js';
 
 /** Independent verifier. Deliberately imports nothing from model.ts, analysis.ts or the solver; it re-derives every expectation. */
 const SOLVERS: Record<string, string[]> = { 'nekoarch-reference-frame-3d': ['1.0.0'] };
@@ -16,7 +16,7 @@ const close = (a: number, b: number, rel = 1e-12) => Math.abs(a - b) <= rel * Ma
 
 export function validateStructuralModel(candidate: unknown, source: BuildingModelV2, input: StructuralInput, binding: StructuralBinding): ModelValidation {
   const { diagnostics, error } = recorder();
-  const done = () => ModelValidationSchema.parse({ validator: 'structural-model-validator-v1', status: diagnostics.some(d => d.severity === 'ERROR') ? 'INVALID' : 'VALID', diagnostics });
+  const done = () => ModelValidationSchema.parse({ validator: MODEL_VALIDATOR, status: diagnostics.some(d => d.severity === 'ERROR') ? 'INVALID' : 'VALID', diagnostics });
   const parsed = StructuralModelSchema.safeParse(candidate);
   if (!parsed.success) { error('SCHEMA', 'Structural model schema, unit or finite-value violation'); return done(); }
   const m = parsed.data, pid = binding.projectId;
@@ -59,7 +59,8 @@ export function validateStructuralModel(candidate: unknown, source: BuildingMode
     if (section && material) {
       const volume = section.area.value * length / 1e9;
       if (mm.quantities.length.value !== length || mm.quantities.sectionArea.value !== section.area.value || !close(mm.quantities.volume.value, volume)
-        || (material.density.value === null ? mm.quantities.mass.value !== null || mm.quantities.mass.status !== 'NOT_EVALUATED' : !close(mm.quantities.mass.value ?? NaN, material.density.value * volume)))
+        || (material.density.value === null ? mm.quantities.mass.value !== null || mm.quantities.mass.status !== 'NOT_EVALUATED'
+          : mm.quantities.mass.status !== 'EVALUATED' || !close(mm.quantities.mass.value ?? NaN, material.density.value * volume)))
         error('QUANTITY', 'Structural quantity differs from geometry, section and density', mm.id);
       if (material.elasticModulus.value === null || material.poissonRatio.value === null) error('MATERIAL', 'Member material lacks stiffness properties', mm.id);
     }
@@ -86,23 +87,48 @@ export function validateStructuralModel(candidate: unknown, source: BuildingMode
   for (const s of m.segments) { const e = expectedSegments.get(s.id);
     if (e && (s.memberId !== e.member || s.startNodeId !== e.a || s.endNodeId !== e.b || s.length.value !== e.length)) error('TOPOLOGY', 'Segment endpoints or length differ', s.id); }
   for (const mm of m.members) if (!sameSet(mm.segmentIds, [...expectedSegments].filter(([, e]) => e.member === mm.id).map(([id]) => id))) error('TOPOLOGY', 'Member segment list differs', mm.id);
+  // Segments may touch only at a node both of them end at. An X crossing with no node there would carry no load between the
+  // members although nothing in the input says they are separate. Bucketed by shared plane coordinate; each pair meets in one bucket.
+  // ponytail: pairwise within a plane, ≤ 4000 segments (≈ 4M cheap pairs worst case); sweep-line if the segment limit grows.
+  type Seg = { id: string; k: number; a: P; b: P };
+  const planes = new Map<string, Seg[]>();
+  for (const s of m.segments) {
+    if (!nodes.has(s.startNodeId) || !nodes.has(s.endNodeId)) continue;
+    const a = coord(s.startNodeId), b = coord(s.endNodeId), axes = [0, 1, 2].filter(i => a[i] !== b[i]);
+    if (axes.length !== 1) continue;
+    for (const c of [0, 1, 2]) if (c !== axes[0]) { const key = `${c}:${a[c]}`; if (!planes.has(key)) planes.set(key, []); planes.get(key)!.push({ id: s.id, k: axes[0]!, a, b }); }
+  }
+  const within = (s: Seg, v: number) => v >= Math.min(s.a[s.k]!, s.b[s.k]!) && v <= Math.max(s.a[s.k]!, s.b[s.k]!), isEnd = (s: Seg, v: number) => v === s.a[s.k] || v === s.b[s.k];
+  for (const list of planes.values()) for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+    const p = list[i]!, q = list[j]!, alongP = q.a[p.k]!, alongQ = p.a[q.k]!;
+    if (p.k !== q.k && within(p, alongP) && within(q, alongQ) && !(isEnd(p, alongP) && isEnd(q, alongQ))) error('TOPOLOGY', 'Segments intersect away from a shared node', p.id);
+  }
 
   // Materials and sections: exact transcription of user input; derived section properties recomputed.
   for (const im of input.materials) {
     const x = materials.get(sid('material', im.key)), spec = im.architecturalSpecificationId ? source.specifications.find(s => s.id === im.architecturalSpecificationId) : null;
     const prop = (q: { value: number } | null, p: { value: number | null; provenance: string }) => q ? p.value === q.value && p.provenance === 'USER_PROVIDED' : p.value === null && p.provenance === 'NOT_SPECIFIED';
-    if (!x || x.category !== im.category || x.name !== im.name || !prop(im.elasticModulus, x.elasticModulus) || !prop(im.poissonRatio, x.poissonRatio) || !prop(im.density, x.density)
+    if (!x || x.requestKey !== im.key || x.category !== im.category || x.name !== im.name || !prop(im.elasticModulus, x.elasticModulus) || !prop(im.poissonRatio, x.poissonRatio) || !prop(im.density, x.density)
       || x.architecturalSpecificationId !== (spec?.id ?? null) || x.bimMaterialId !== (spec?.material ? semanticId(pid, 'material', spec.id) : null)) error('MATERIAL', 'Material differs from explicit input or invents a property', x?.id ?? null);
   }
   if (m.materials.length !== input.materials.length) error('MATERIAL', 'Unexpected material');
   for (const is of input.sections) {
     const x = sections.get(sid('section', is.key));
     if (!x) { error('SECTION', 'Missing section'); continue; }
-    const want = is.shape === 'GENERIC' ? { A: is.area.value, Iy: is.iy.value, Iz: is.iz.value, J: is.j.value, p: 'USER_PROVIDED' } : (() => {
-      const b = is.width.value, d = is.depth.value, t = Math.min(b, d), h = Math.max(b, d), ratio = t / h;
-      return { A: b * d, Iz: b * d * d * d / 12, Iy: d * b * b * b / 12, J: h * t * t * t * (1 / 3 - 0.21 * ratio * (1 - ratio ** 4 / 12)), p: 'DERIVED_FROM_SECTION_DIMENSIONS' };
-    })();
-    if (!close(x.area.value, want.A) || !close(x.iy.value, want.Iy) || !close(x.iz.value, want.Iz) || !close(x.j.value, want.J, 1e-9) || [x.area, x.iy, x.iz, x.j].some(p => p.provenance !== want.p)) error('SECTION', 'Section property differs from input', x.id);
+    const want = is.shape === 'GENERIC'
+      ? { A: is.area.value, Iy: is.iy.value, Iz: is.iz.value, J: is.j.value, p: 'USER_PROVIDED', methods: [null, null, null, null], dims: null }
+      : (() => {
+        const b = is.width.value, d = is.depth.value, t = Math.min(b, d), h = Math.max(b, d), ratio = t / h;
+        return { A: b * d, Iz: b * d * d * d / 12, Iy: d * b * b * b / 12, J: h * t * t * t * (1 / 3 - 0.21 * ratio * (1 - ratio ** 4 / 12)), p: 'DERIVED_FROM_SECTION_DIMENSIONS',
+          methods: ['exact-rectangle', 'exact-rectangle', 'exact-rectangle', 'roark-rectangle-torsion-approx'], dims: [b, d] };
+      })();
+    // The descriptive fields (shape, dimensions, derivation method) must describe the same section as the numbers: a rectangle cannot
+    // be relabelled GENERIC, nor keep its properties while its dimensions change.
+    const props = [x.area, x.iy, x.iz, x.j];
+    if (!close(x.area.value, want.A) || !close(x.iy.value, want.Iy) || !close(x.iz.value, want.Iz) || !close(x.j.value, want.J, 1e-9) || props.some(p => p.provenance !== want.p)
+      || props.some((p, i) => p.method !== want.methods[i]) || x.shape !== is.shape || x.requestKey !== is.key
+      || (want.dims ? x.dimensions?.width.value !== want.dims[0] || x.dimensions?.depth.value !== want.dims[1] : x.dimensions !== null))
+      error('SECTION', 'Section shape, dimensions, derivation method or property differs from input', x.id);
   }
   if (m.sections.length !== input.sections.length) error('SECTION', 'Unexpected section');
 
@@ -160,7 +186,7 @@ export function validateStructuralModel(candidate: unknown, source: BuildingMode
 export function validateStructuralResults(snapshot: { binding: StructuralBinding; input: StructuralInput; inputHash: string; model: StructuralModel; results: unknown;
   solver: { name: string; version: string; adapterVersion: string; settings: Record<string, string | number> } }, expected: { binding: StructuralBinding }): ResultValidation {
   const { diagnostics, error } = recorder(), equilibrium: ResultValidation['equilibrium'] = [];
-  const done = () => ResultValidationSchema.parse({ validator: 'structural-result-validator-v1', status: diagnostics.some(d => d.severity === 'ERROR') ? 'INVALID' : 'VALID', diagnostics, equilibrium });
+  const done = () => ResultValidationSchema.parse({ validator: RESULT_VALIDATOR, status: diagnostics.some(d => d.severity === 'ERROR') ? 'INVALID' : 'VALID', diagnostics, equilibrium });
   const parsed = ResultsSchema.safeParse(snapshot.results);
   if (!parsed.success) { error('SCHEMA', 'Result schema, unit or finite-value violation'); return done(); }
   const results = parsed.data, m = snapshot.model;
@@ -199,8 +225,14 @@ export function validateStructuralResults(snapshot: { binding: StructuralBinding
   }
   const cross = (r: V, f: V): V => [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
   const segmentIds = m.segments.map(s => s.id), supportIds = m.supports.map(s => s.nodeId), nodeIds = m.nodes.map(n => n.id);
-  const supports = new Map(m.supports.map(s => [s.nodeId, s.restraints]));
+  const supports = new Map(m.supports.map(s => [s.nodeId, s.restraints])), DOF = ['UX', 'UY', 'UZ', 'RX', 'RY', 'RZ'] as const;
+  // Station tolerances come from trusted scales (applied load magnitude and model extent in m), never from the values being checked.
+  const coords = [...nodes.values()], extent = Math.max(1, Math.hypot(...[0, 1, 2].map(i => Math.max(...coords.map(p => p[i]!)) - Math.min(...coords.map(p => p[i]!)))));
   for (const set of results.sets) {
+    const disp = new Map(set.displacements.map(d => [d.nodeId, d]));
+    const stationF = 1e-6 * Math.max(1, applied.get(set.id)!.reduce((sum, p) => sum + Math.hypot(...p.f), 0)), stationM = stationF * extent;
+    for (const r of set.reactions) { const s = supports.get(r.nodeId);
+      if (s && DOF.some((k, i) => !s[k] && [r.fx, r.fy, r.fz, r.mx, r.my, r.mz][i] !== 0)) error('SUPPORT', 'Reaction on an unrestrained degree of freedom', r.nodeId); }
     if (!sameSet(set.displacements.map(d => d.nodeId), nodeIds) || set.displacements.length !== nodeIds.length) error('REFERENCE', 'Displacements do not cover each node exactly once', set.id);
     if (!sameSet(set.reactions.map(r => r.nodeId), supportIds) || set.reactions.length !== supportIds.length) error('REFERENCE', 'Reactions do not cover each support exactly once', set.id);
     if (!sameSet(set.memberForces.map(f => f.segmentId), segmentIds) || set.memberForces.length !== segmentIds.length) error('REFERENCE', 'Member forces do not cover each segment exactly once', set.id);
@@ -233,16 +265,51 @@ export function validateStructuralResults(snapshot: { binding: StructuralBinding
       const zRaw = cross(ex, ref), zn = Math.hypot(...zRaw), ez: V = [zRaw[0] / zn, zRaw[1] / zn, zRaw[2] / zn], ey = cross(ez, ex);
       const w = lineLoads.get(set.id)!.get(s.memberId) ?? [0, 0, 0], dot = (u: V) => u[0] * w[0] + u[1] * w[1] + u[2] * w[2], qx = dot(ex), qy = dot(ey), qz = dot(ez);
       const s0 = mf.stations[0]!, s1 = mf.stations[STATIONS.length - 1]!;
-      const checks: [number, number][] = [[s1.n - s0.n, -qx * L], [s1.vy - s0.vy, -qy * L], [s1.vz - s0.vz, -qz * L], [s1.t - s0.t, 0],
-        [s1.mz - s0.mz, -L * s0.vy + qy * L * L / 2], [s1.my - s0.my, L * s0.vz - qz * L * L / 2]];
-      const scale = Math.max(1, ...mf.stations.flatMap(st => [st.n, st.vy, st.vz, st.t, st.my, st.mz].map(Math.abs)), Math.abs(qx * L), Math.abs(qy * L), Math.abs(qz * L));
-      if (checks.some(([got, want]) => !(Math.abs(got - want) <= 1e-6 * scale * Math.max(1, L)))) error('EQUILIBRIUM', 'Segment station forces are not in equilibrium with the member load', mf.segmentId);
+      // Every station, not only the ends: a cut at x balances [0, x] against the uniform member load (kN, m).
+      for (const st of mf.stations) {
+        const x = st.position * L, f = [st.n - s0.n + qx * x, st.vy - s0.vy + qy * x, st.vz - s0.vz + qz * x];
+        const mo = [st.t - s0.t, st.mz - s0.mz + x * s0.vy - qy * x * x / 2, st.my - s0.my - x * s0.vz + qz * x * x / 2];
+        if (f.some(r => !(Math.abs(r) <= stationF)) || mo.some(r => !(Math.abs(r) <= stationM))) { error('EQUILIBRIUM', 'Station forces are not in equilibrium with the member load', mf.segmentId); break; }
+      }
+      // Constitutive compatibility: integrating the station diagram with the member's own E, G, A, I, J must reproduce the relative end
+      // displacements and rotations. Equilibrium alone cannot see a moved free node or a different stiffness distribution. N, mm, rad.
+      const mem = members.get(s.memberId), mat = mem && materials.get(mem.materialId), sec = mem && sections.get(mem.sectionId), dI = disp.get(s.startNodeId), dJ = disp.get(s.endNodeId);
+      if (!mem || !mat || !sec || !dI || !dJ || mat.elasticModulus.value === null || mat.poissonRatio.value === null) error('REFERENCE', 'Segment lacks stiffness or end displacements', mf.segmentId);
+      else {
+        const E = mat.elasticModulus.value, G = E / (2 * (1 + mat.poissonRatio.value)), EA = E * sec.area.value, GJ = G * sec.j.value, EIy = E * sec.iy.value, EIz = E * sec.iz.value;
+        const l1 = L * 1000, l2 = l1 * l1, l3 = l2 * l1, l4 = l3 * l1, dot3 = (u: V, v: V) => u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+        const uI: V = [dI.ux, dI.uy, dI.uz], rI: V = [dI.rx, dI.ry, dI.rz], uJ: V = [dJ.ux, dJ.uy, dJ.uz], rJ: V = [dJ.rx, dJ.ry, dJ.rz];
+        const N0 = s0.n * 1e3, Vy0 = s0.vy * 1e3, Vz0 = s0.vz * 1e3, T0 = s0.t * 1e6, My0 = s0.my * 1e6, Mz0 = s0.mz * 1e6; // q in kN/m is N/mm
+        // [stiffness × deformation terms, integrated internal-force terms]; each compared relative to its largest single term.
+        const relations: [number[], number[]][] = [
+          [[EA * dot3(ex, uJ), -EA * dot3(ex, uI)], [N0 * l1, -qx * l2 / 2]], //                                    EA·Δu = ∫N
+          [[GJ * dot3(ex, rJ), -GJ * dot3(ex, rI)], [T0 * l1]], //                                                    GJ·Δθx = ∫T
+          [[EIz * dot3(ez, rJ), -EIz * dot3(ez, rI)], [Mz0 * l1, -Vy0 * l2 / 2, qy * l3 / 6]], //                      EIz·Δθz = ∫Mz
+          [[EIz * dot3(ey, uJ), -EIz * dot3(ey, uI), -EIz * dot3(ez, rI) * l1], [Mz0 * l2 / 2, -Vy0 * l3 / 6, qy * l4 / 24]], // EIz·(Δv − θz,I·L) = ∫(L−x)Mz
+          [[EIy * dot3(ey, rJ), -EIy * dot3(ey, rI)], [My0 * l1, Vz0 * l2 / 2, -qz * l3 / 6]], //                      EIy·Δθy = ∫My
+          [[EIy * dot3(ez, uJ), -EIy * dot3(ez, uI), EIy * dot3(ey, rI) * l1], [-My0 * l2 / 2, -Vz0 * l3 / 6, qz * l4 / 24]], // EIy·(Δw + θy,I·L) = −∫(L−x)My
+        ];
+        const sum = (t: number[]) => t.reduce((acc, v) => acc + v, 0);
+        if (relations.some(([k, f]) => !(Math.abs(sum(k) - sum(f)) <= 1e-6 * Math.max(1, ...k.map(Math.abs), ...f.map(Math.abs)))))
+          error('CONSTITUTIVE', 'Displacements are not compatible with the member forces and stiffness', mf.segmentId);
+      }
       // Node-on-member actions: start = −internal(0), end = +internal(1), rotated to global axes.
       const global = (x: number, y: number, z: number): V => [ex[0] * x + ey[0] * y + ez[0] * z, ex[1] * x + ey[1] * y + ez[1] * z, ex[2] * x + ey[2] * y + ez[2] * z];
       atJoint(s.startNodeId, global(-s0.n, -s0.vy, -s0.vz), global(-s0.t, -s0.my, -s0.mz));
       atJoint(s.endNodeId, global(s1.n, s1.vy, s1.vz), global(s1.t, s1.my, s1.mz));
     }
     for (const [nodeId, j] of joint) if (!(Math.hypot(...j.f) <= 1e-6 * Math.max(1, j.scale)) || !(Math.hypot(...j.m) <= 1e-6 * Math.max(1, j.scale))) error('EQUILIBRIUM', 'Joint is not in equilibrium', nodeId);
+  }
+  // Combinations must equal the declared linear superposition of their load-case sets, value by value.
+  const byId = new Map(results.sets.map(s => [s.id, { d: new Map(s.displacements.map(x => [x.nodeId, x])), r: new Map(s.reactions.map(x => [x.nodeId, x])), f: new Map(s.memberForces.map(x => [x.segmentId, x])) }]));
+  const superposed = (got: number, parts: number[]) => Math.abs(got - parts.reduce((a, v) => a + v, 0)) <= 1e-9 * parts.reduce((a, v) => a + Math.abs(v), 0);
+  for (const combo of m.combinations) {
+    const set = results.sets.find(s => s.id === combo.id)!, terms = combo.terms.map(t => ({ k: t.factor, s: byId.get(t.loadCaseId)! }));
+    const ok = (['ux', 'uy', 'uz', 'rx', 'ry', 'rz'] as const).every(k => set.displacements.every(d => superposed(d[k], terms.map(t => t.k * (t.s.d.get(d.nodeId)?.[k] ?? NaN)))))
+      && (['fx', 'fy', 'fz', 'mx', 'my', 'mz'] as const).every(k => set.reactions.every(r => superposed(r[k], terms.map(t => t.k * (t.s.r.get(r.nodeId)?.[k] ?? NaN)))))
+      && set.memberForces.every(mf => mf.stations.every((st, i) => (['n', 'vy', 'vz', 't', 'my', 'mz'] as const).every(k =>
+        superposed(st[k], terms.map(t => t.k * (t.s.f.get(mf.segmentId)?.stations[i]?.[k] ?? NaN))))));
+    if (!ok) error('COMBINATION', 'Combination results are not the superposition of their load cases', combo.id);
   }
   return done();
 }

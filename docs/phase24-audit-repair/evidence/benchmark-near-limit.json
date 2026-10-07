@@ -1,0 +1,97 @@
+{
+  "note": "Audit limits.mts near-limit grids (8 load cases, 16 combinations, self-weight), single in-process samples on the development host; observations, not SLOs.",
+  "baselineD93aaa9": [
+    {
+      "grid": 8,
+      "walls": 119,
+      "inputBytes": 175768,
+      "nodes": 140,
+      "members": 189,
+      "resultSets": 24,
+      "solverMs": 36.15779199999997,
+      "modelValidationMs": 102.79875700000002,
+      "resultValidationMs": 87.75346300000001,
+      "outputBytes": 6010261,
+      "totalMs": 555.885146,
+      "validation": "VALID",
+      "passesAppOutputLimit": true
+    },
+    {
+      "grid": 9,
+      "walls": 151,
+      "inputBytes": 220634,
+      "nodes": 174,
+      "members": 238,
+      "resultSets": 24,
+      "solverMs": 54.24912100000006,
+      "modelValidationMs": 129.25859300000002,
+      "resultValidationMs": 110.2609950000001,
+      "outputBytes": 7554169,
+      "totalMs": 663.1837150000001,
+      "validation": "VALID",
+      "passesAppOutputLimit": true
+    },
+    {
+      "grid": 10,
+      "walls": 187,
+      "inputBytes": 271092,
+      "nodes": 212,
+      "members": 293,
+      "resultSets": 24,
+      "solverMs": 41.90427999999997,
+      "modelValidationMs": 180.60647000000017,
+      "resultValidationMs": 130.7145310000003,
+      "outputBytes": 9278457,
+      "totalMs": 812.4775089999998,
+      "validation": "VALID",
+      "passesAppOutputLimit": false
+    }
+  ],
+  "repaired": [
+    {
+      "grid": 8,
+      "walls": 119,
+      "inputBytes": 175768,
+      "nodes": 140,
+      "members": 189,
+      "resultSets": 24,
+      "solverMs": 44.90097900000001,
+      "modelValidationMs": 95.07093100000003,
+      "resultValidationMs": 182.40626999999995,
+      "outputBytes": 6010261,
+      "totalMs": 674.556251,
+      "validation": "VALID",
+      "passesAppOutputLimit": true
+    },
+    {
+      "grid": 9,
+      "walls": 151,
+      "inputBytes": 220634,
+      "nodes": 174,
+      "members": 238,
+      "resultSets": 24,
+      "solverMs": 54.143211000000065,
+      "modelValidationMs": 134.670883,
+      "resultValidationMs": 234.574977,
+      "outputBytes": 7554170,
+      "totalMs": 817.266838,
+      "validation": "VALID",
+      "passesAppOutputLimit": true
+    },
+    {
+      "grid": 10,
+      "walls": 187,
+      "inputBytes": 271092,
+      "nodes": 212,
+      "members": 293,
+      "resultSets": 24,
+      "solverMs": 45.982420000000275,
+      "modelValidationMs": 192.21164599999997,
+      "resultValidationMs": 315.88119400000005,
+      "outputBytes": 9278458,
+      "totalMs": 1048.327591,
+      "validation": "VALID",
+      "passesAppOutputLimit": false
+    }
+  ]
+}

@@ -94,7 +94,8 @@ function analyze(model: AnalysisModel, { deadline }: { deadline: number }) {
   for (const r of model.restraints) r.dofs.forEach((fixed, d) => { if (fixed) restrained[index.get(r.nodeId)! * 6 + d] = 1; });
   const eq = new Int32Array(count * 6).fill(-1); let n = 0;
   for (const node of order) for (let d = 0; d < 6; d++) if (!restrained[node * 6 + d]) eq[node * 6 + d] = n++;
-  if (n === 0) throw new StructuralError('STRUCTURAL_SUPPORT_INVALID', 'Every degree of freedom is restrained');
+  // n === 0 is a fully restrained system, not a mechanism: U stays zero, element forces reduce to the fixed-end actions and reactions
+  // to their resultants. Instability is detected only by the pivot test below, which has meaning only once a free DOF exists.
   const dofsOf = (e: (typeof elements)[number]) => Array.from({ length: 12 }, (_, p) => (p < 6 ? e.i : e.j) * 6 + p % 6);
   const top = Int32Array.from({ length: n }, (_, j) => j);
   for (const e of elements) {

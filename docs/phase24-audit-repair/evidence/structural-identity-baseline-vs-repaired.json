@@ -1,0 +1,106 @@
+{
+  "note": "frameInput on each native fixture; digests computed by apps/api/src/bim/core.ts digest(); baseline = git archive d93aaa9",
+  "identical": true,
+  "baseline": {
+    "v1": {
+      "modelHash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+      "structuralModel": "f987175fae22cfa9840fc24220dd1f23c3d8d51409f0dd03d0151906f32dd4e8",
+      "inputHash": "aa9979addfe833b3081def0b5e91fb7d70e82131a407c6770c843dbabc07bdf7",
+      "analysisModelHash": "2abcfde117fdeab129303ae21d69c3c888a8a166756a2e17093484c1cd5db0a5",
+      "results": "718f4a446f22ba9ae4d9a62e89207bcc9e0c179e73b2c405a43627855cdfaa32"
+    },
+    "v2": {
+      "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+      "structuralModel": "390368015ef0e372e2f5d6791225e640911ca5ae2141b595a4cc5de7fbe61542",
+      "inputHash": "6d790de70a4e2ce64a1b02224dbcd85ce0dc4fb830a4472c3a919ecb8a4d3e33",
+      "analysisModelHash": "dd442ceb2200ac07a5e0b811e5fee82ece5c79535a7cb7e115c02f9ed1bb9367",
+      "results": "6daf9b0d59d0e4966ddd8f40cfbb4048f783423e207330e0ec4b91d51a073a82"
+    },
+    "L": {
+      "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+      "structuralModel": "ac0ab628b31c163c53e93f74b45f00a807a4be53f226481ed401d941bf073fa8",
+      "inputHash": "4374a1a09ae2f4559d59b263d643247a9701f7d503e2b9ca21d2bcbc55971264",
+      "analysisModelHash": "c28c460a1933ebd1351eb746078121be986ce4dbb9e607b16ac79e48ce743ae9",
+      "results": "ef6b4998543acd7adc2a3bac05baaf477cb1b7864bdc1f869f2827066622bdaf"
+    },
+    "setback": {
+      "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c",
+      "structuralModel": "42106d487bcd64def5882098465d85994ec0ed57c8831360bfb93962626355dd",
+      "inputHash": "9fb6b4126cafac1f4c1c308342cbc3cdfe7bf7326eb4f6df065e395e998fa049",
+      "analysisModelHash": "2e16acbc95c3a5dad0d61c3403d9f0397b0bb9c3960daa99606db33f884e8cae",
+      "results": "a60b3085368ca0b8f8398140ec39075b7d53c3d8b16b84d31122d890f68004e4"
+    },
+    "maximum-24": {
+      "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92",
+      "structuralModel": "e64f33b47d5f2e3740dc451b813bb96851dda47320c7d8375036e984c85c418a",
+      "inputHash": "0f03ba178462b8ad4e1b9cf732ef9aee9d39e1aa16acef23826e6644ee4ec4c0",
+      "analysisModelHash": "735f13550d019d688dec8621c6e8162ef8a3afafa26a8609abbb0ed586780126",
+      "results": "b053aa3df811f78b5225c5d9b945d62a515b7e9d8d7ba27b3829f860ee7aac78"
+    },
+    "west-wing-edit": {
+      "modelHash": "c5a5feb4f14b04caf8314cf86da982c245d171edc836962f991e1a964759376f",
+      "structuralModel": "65b1e4f23ffc15d81f50bf1df2a20b9557e61fbab99781d586ccabad9ee7fd76",
+      "inputHash": "fb30ce5c268177c375adec5ad97a6dcce428141bb293ebbb768e0d21ceabc7e7",
+      "analysisModelHash": "d72ae0358c25ef234f7aced8653870e385c517d47cd2c38e02bf40886b612ae4",
+      "results": "7465f63861cb787624edffa80eba04518a94fe67bd3a098f249918c193651cd5"
+    },
+    "authored": {
+      "modelHash": "9b54cee3699fb4b07da03e6a176725553cd0f501b0c52937fa9f1b512a06efea",
+      "structuralModel": "3e24547dbe71760cc2e0f60a41a25541b7fb7fc702a585f9bdb0674cb7d43b0b",
+      "inputHash": "eaeb92cf56265c4a8d1db95aa9675ed6f5f5842245a1f1e74b09672aaa3fc17b",
+      "analysisModelHash": "2eaf729994e147d67be125b144df671364cd4ce7565395eb5814592989d1780a",
+      "results": "2a07912d22fc0e47bc6da45aca695d56954dd88a1b596e8b7ff00837d74f8e71"
+    }
+  },
+  "repaired": {
+    "v1": {
+      "modelHash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20",
+      "structuralModel": "f987175fae22cfa9840fc24220dd1f23c3d8d51409f0dd03d0151906f32dd4e8",
+      "inputHash": "aa9979addfe833b3081def0b5e91fb7d70e82131a407c6770c843dbabc07bdf7",
+      "analysisModelHash": "2abcfde117fdeab129303ae21d69c3c888a8a166756a2e17093484c1cd5db0a5",
+      "results": "718f4a446f22ba9ae4d9a62e89207bcc9e0c179e73b2c405a43627855cdfaa32"
+    },
+    "v2": {
+      "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72",
+      "structuralModel": "390368015ef0e372e2f5d6791225e640911ca5ae2141b595a4cc5de7fbe61542",
+      "inputHash": "6d790de70a4e2ce64a1b02224dbcd85ce0dc4fb830a4472c3a919ecb8a4d3e33",
+      "analysisModelHash": "dd442ceb2200ac07a5e0b811e5fee82ece5c79535a7cb7e115c02f9ed1bb9367",
+      "results": "6daf9b0d59d0e4966ddd8f40cfbb4048f783423e207330e0ec4b91d51a073a82"
+    },
+    "L": {
+      "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+      "structuralModel": "ac0ab628b31c163c53e93f74b45f00a807a4be53f226481ed401d941bf073fa8",
+      "inputHash": "4374a1a09ae2f4559d59b263d643247a9701f7d503e2b9ca21d2bcbc55971264",
+      "analysisModelHash": "c28c460a1933ebd1351eb746078121be986ce4dbb9e607b16ac79e48ce743ae9",
+      "results": "ef6b4998543acd7adc2a3bac05baaf477cb1b7864bdc1f869f2827066622bdaf"
+    },
+    "setback": {
+      "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c",
+      "structuralModel": "42106d487bcd64def5882098465d85994ec0ed57c8831360bfb93962626355dd",
+      "inputHash": "9fb6b4126cafac1f4c1c308342cbc3cdfe7bf7326eb4f6df065e395e998fa049",
+      "analysisModelHash": "2e16acbc95c3a5dad0d61c3403d9f0397b0bb9c3960daa99606db33f884e8cae",
+      "results": "a60b3085368ca0b8f8398140ec39075b7d53c3d8b16b84d31122d890f68004e4"
+    },
+    "maximum-24": {
+      "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92",
+      "structuralModel": "e64f33b47d5f2e3740dc451b813bb96851dda47320c7d8375036e984c85c418a",
+      "inputHash": "0f03ba178462b8ad4e1b9cf732ef9aee9d39e1aa16acef23826e6644ee4ec4c0",
+      "analysisModelHash": "735f13550d019d688dec8621c6e8162ef8a3afafa26a8609abbb0ed586780126",
+      "results": "b053aa3df811f78b5225c5d9b945d62a515b7e9d8d7ba27b3829f860ee7aac78"
+    },
+    "west-wing-edit": {
+      "modelHash": "c5a5feb4f14b04caf8314cf86da982c245d171edc836962f991e1a964759376f",
+      "structuralModel": "65b1e4f23ffc15d81f50bf1df2a20b9557e61fbab99781d586ccabad9ee7fd76",
+      "inputHash": "fb30ce5c268177c375adec5ad97a6dcce428141bb293ebbb768e0d21ceabc7e7",
+      "analysisModelHash": "d72ae0358c25ef234f7aced8653870e385c517d47cd2c38e02bf40886b612ae4",
+      "results": "7465f63861cb787624edffa80eba04518a94fe67bd3a098f249918c193651cd5"
+    },
+    "authored": {
+      "modelHash": "9b54cee3699fb4b07da03e6a176725553cd0f501b0c52937fa9f1b512a06efea",
+      "structuralModel": "3e24547dbe71760cc2e0f60a41a25541b7fb7fc702a585f9bdb0674cb7d43b0b",
+      "inputHash": "eaeb92cf56265c4a8d1db95aa9675ed6f5f5842245a1f1e74b09672aaa3fc17b",
+      "analysisModelHash": "2eaf729994e147d67be125b144df671364cd4ce7565395eb5814592989d1780a",
+      "results": "2a07912d22fc0e47bc6da45aca695d56954dd88a1b596e8b7ff00837d74f8e71"
+    }
+  }
+}

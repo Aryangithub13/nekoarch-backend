@@ -6,7 +6,7 @@ import { asPrincipal, createTestUser, startTestDatabase } from '../../../test-su
 import { createPgBackend } from '../../../test-support/pg-backend.js';
 import { structuralAcceptance } from '../../../test-support/structural-acceptance.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
-import { frameInput } from '../../../test-support/structural-fixtures.js';
+import { CROSSING_WALLS, STUB_WALLS, frameInput, segmentedBeamInput, withPartitions } from '../../../test-support/structural-fixtures.js';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
@@ -14,6 +14,7 @@ import { signProjectCommit } from '../src/services/project-service.js';
 import { STRUCTURAL_ANALYSIS_OPERATION, validateStructural } from '../src/services/structural-service.js';
 import { bimRepository } from '../../../test-support/bim-repository.js';
 import { StructuralInputSchema } from '../src/structural/contracts.js';
+import { REFERENCE_FRAME_SOLVER } from '../src/structural/frame-solver.js';
 
 const env = (secret?: string, extra: Record<string, string> = {}) => parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent',
   RATE_LIMIT_ENABLED: 'false', ...(secret ? { PROJECT_COMMIT_SECRET: secret } : {}), ...extra });
@@ -127,6 +128,59 @@ describe('Phase 24 structural persistence on PostgreSQL', () => {
       expect(response.statusCode).toBe(503); expect(response.json().error.code).toBe('STRUCTURAL_UNAVAILABLE');
       expect((await unsigned.inject({ method: 'POST', url: url.replace('/analyses', '/validate'), headers: owner, payload: input })).statusCode).toBe(200);
     } finally { await unsigned.close(); }
+  });
+
+  // Phase 24 audit repair: every rejection is a typed, redacted 4xx that persists nothing.
+  async function revisionOf(model: unknown, title: string) {
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner, payload: { title } });
+    const r = await app.inject({ method: 'POST', url: `/api/projects/${p.json().id}/revisions`, headers: owner, payload: { model } });
+    expect(r.statusCode, r.body.slice(0, 300)).toBe(201);
+    return { revisionId: r.json().revision.id as string, base: `/api/projects/${p.json().id}/revisions/${r.json().revision.id}/structural` };
+  }
+  const rejected = (response: { statusCode: number; json(): { error: { code: string; message: string } }; body: string }, code: string) => {
+    expect(response.statusCode, response.body.slice(0, 300)).toBe(422); expect(response.json().error.code).toBe(code); expect(response.body).not.toMatch(/ZodError|stack|too_big/);
+  };
+
+  it('A01: forged solver displacement is rejected before signing or persistence', async () => {
+    const { revision, url } = await setup('Phase 24 A01 forged output'), before = await rows(revision.id), real = REFERENCE_FRAME_SOLVER.analyze;
+    REFERENCE_FRAME_SOLVER.analyze = (am, o) => {
+      const raw = real(am, o) as { cases: { displacements: number[][] }[] }, restrained = new Set(am.restraints.map(r => r.nodeId));
+      raw.cases[0]!.displacements[am.nodes.findIndex(n => !restrained.has(n.id))]![1]! += 0.05; return raw;
+    };
+    try { rejected(await app.inject({ method: 'POST', url, headers: owner, payload: frameInput(revision.model, { lineLoadKnPerM: -17 }) }), 'STRUCTURAL_RESULT_INVALID'); }
+    finally { REFERENCE_FRAME_SOLVER.analyze = real; }
+    expect(await rows(revision.id)).toBe(before);
+  });
+
+  it('A03: an accepted revision with an unconnected beam crossing is rejected by /validate and /analyses', async () => {
+    const { revisionId, base } = await revisionOf(withPartitions(authored(), CROSSING_WALLS), 'Phase 24 A03 crossing');
+    const input = { ...frameInput(authored(), { selfWeight: false }), autoSupports: null, combinations: [],
+      members: ['cross-x', 'cross-z'].map(wallId => ({ key: wallId, rule: 'BEAM_ALONG_WALL', wallId, material: 'test-concrete', section: 'beam' })),
+      supports: ['cross-x', 'cross-z'].map(member => ({ key: member, at: { member, end: 'start' }, type: 'FIXED' })),
+      loadCases: [{ key: 'q', category: 'USER_DEFINED', loads: [{ key: 'q', application: 'MEMBER_DISTRIBUTED', target: { member: 'cross-x' }, direction: 'GLOBAL_Y', magnitude: { value: -5, unit: 'kN/m' } }] }] };
+    for (const suffix of ['/validate', '/analyses']) rejected(await app.inject({ method: 'POST', url: base + suffix, headers: owner, payload: input }), 'STRUCTURAL_MODEL_INVALID');
+    expect(await rows(revisionId)).toBe(0);
+  });
+
+  it('A04: a fixed–fixed beam is analysed and persisted with fixed-end reactions', async () => {
+    const { revision, url } = await setup('Phase 24 A04 fixed beam');
+    const input = { ...frameInput(revision.model, { selfWeight: false }), autoSupports: null, combinations: [], members: [{ key: 'b', rule: 'BEAM_ALONG_WALL', wallId: 'west', material: 'test-concrete', section: 'beam' }],
+      supports: ['start', 'end'].map(end => ({ key: end, at: { member: 'b', end }, type: 'FIXED' })),
+      loadCases: [{ key: 'q', category: 'USER_DEFINED', loads: [{ key: 'q', application: 'MEMBER_DISTRIBUTED', target: { member: 'b' }, direction: 'GLOBAL_Y', magnitude: { value: -2, unit: 'kN/m' } }] }] };
+    const created = await app.inject({ method: 'POST', url, headers: owner, payload: input });
+    expect(created.statusCode, created.body.slice(0, 300)).toBe(201);
+    const set = created.json().snapshot.results.sets[0];
+    for (const r of set.reactions) { expect(r.fy).toBeCloseTo(5.8, 9); expect(Math.abs(r.mx)).toBeCloseTo(2 * 5.8 ** 2 / 12, 9); }
+    expect(created.json().snapshot.validation.results).toMatchObject({ validator: 'structural-result-validator-v2', status: 'VALID' });
+  });
+
+  it('A05: supported-size input that expands past the analysis limit is a typed 422 on both routes; the limit itself analyses', async () => {
+    const { revisionId, base } = await revisionOf(withPartitions(authored(), [CROSSING_WALLS[0]!, ...STUB_WALLS]), 'Phase 24 A05 expansion');
+    for (const suffix of ['/validate', '/analyses']) rejected(await app.inject({ method: 'POST', url: base + suffix, headers: owner, payload: segmentedBeamInput(1000) }), 'STRUCTURAL_RESOURCE_LIMIT');
+    rejected(await app.inject({ method: 'POST', url: `${base}/analyses`, headers: owner, payload: segmentedBeamInput(749, true) }), 'STRUCTURAL_RESOURCE_LIMIT');
+    expect(await rows(revisionId)).toBe(0);
+    expect((await app.inject({ method: 'POST', url: `${base}/analyses`, headers: owner, payload: segmentedBeamInput(750) })).statusCode).toBe(201);
+    expect(await rows(revisionId)).toBe(1);
   });
 
   it('charges validation and analysis to the generation quota and reads to the read quota', async () => {

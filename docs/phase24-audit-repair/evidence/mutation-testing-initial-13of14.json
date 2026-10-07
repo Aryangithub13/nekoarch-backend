@@ -1,0 +1,193 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 128,
+    "failed": 0
+  },
+  {
+    "mutation": "A01 fabricated displacement: translation relations dropped",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 8,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 structural persistence on PostgreSQL A01: forged solver displacement is rejected before signing or persistence",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node ux in set 0",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node ux in set 2",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node uy in set 0",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node uy in set 2",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node uz in set 0",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a fabricated free-node uz in set 2",
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a combination that is not the superposition of its load cases, even when its own displacement is moved"
+    ]
+  },
+  {
+    "mutation": "A01 fabricated rotation: rotation relations dropped",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 0,
+    "killed": false,
+    "restored": true,
+    "failingTests": []
+  },
+  {
+    "mutation": "A01 fabricated endpoint force: raw J-end statics removed",
+    "file": "apps/api/src/structural/analysis.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects raw J-end values that violate element statics although results are built from the I end"
+    ]
+  },
+  {
+    "mutation": "A01 reaction on unrestrained DOF accepted",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a reaction on an unrestrained degree of freedom (pinned end moment)"
+    ]
+  },
+  {
+    "mutation": "A01 combination superposition removed",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A01 results must be the elastic solution, not merely in equilibrium rejects a combination that is not the superposition of its load cases, even when its own displacement is moved"
+    ]
+  },
+  {
+    "mutation": "A02 fabricated interior stations: only end stations checked",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A02 every reported station is checked against the member load rejects any fabricated component at stations 0.25, 0.5 and 0.75 in load-case and combination sets",
+      "Phase 24 audit repair (A01\u2013A06) A02 every reported station is checked against the member load rejects a curve that matches both ends but not the load (linear instead of parabolic moment)"
+    ]
+  },
+  {
+    "mutation": "A02 wrong force curve in production result recovery",
+    "file": "apps/api/src/structural/analysis.ts",
+    "tests": 128,
+    "failed": 30,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 structural persistence on PostgreSQL Phase 24 structural acceptance analyses revision A, then a real west-wing edit makes A stale for revision B without rewriting it",
+      "Phase 24 structural persistence on PostgreSQL Phase 24 structural acceptance enforces ownership, revision association and redacted structural error envelopes",
+      "Phase 24 structural persistence on PostgreSQL Phase 24 structural acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 24 structural persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 24 structural persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 24 structural persistence on PostgreSQL reports revisions outside the bounded BIM profile as unsupported structural sources",
+      "Phase 24 structural persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 24 structural persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 24 structural persistence on PostgreSQL A01: forged solver displacement is rejected before signing or persistence",
+      "Phase 24 structural persistence on PostgreSQL A04: a fixed\u2013fixed beam is analysed and persisted with fixed-end reactions",
+      "Phase 24 structural persistence on PostgreSQL A05: supported-size input that expands past the analysis limit is a typed 422 on both routes; the limit itself analyses",
+      "Phase 24 structural persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota"
+    ]
+  },
+  {
+    "mutation": "A03 missing crossing connection: builder accepts unconnected crossing",
+    "file": "apps/api/src/structural/model.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A03 same-plane crossings are connected through a node or rejected rejects an X crossing with no node, whatever the member order or direction"
+    ]
+  },
+  {
+    "mutation": "A03 missing crossing connection: validator crossing check removed",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A03 same-plane crossings are connected through a node or rejected independently rejects a model that leaves the crossing unconnected, and one that fabricates a connection"
+    ]
+  },
+  {
+    "mutation": "A03 fabricated crossing connection: builder silently inserts a joint",
+    "file": "apps/api/src/structural/model.ts",
+    "tests": 128,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 structural persistence on PostgreSQL A03: an accepted revision with an unconnected beam crossing is rejected by /validate and /analyses",
+      "Phase 24 audit repair (A01\u2013A06) A03 same-plane crossings are connected through a node or rejected rejects an X crossing with no node, whatever the member order or direction"
+    ]
+  },
+  {
+    "mutation": "A04 valid fully restrained system rejected again",
+    "file": "apps/api/src/structural/frame-solver.ts",
+    "tests": 128,
+    "failed": 3,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 structural persistence on PostgreSQL A04: a fixed\u2013fixed beam is analysed and persisted with fixed-end reactions",
+      "Phase 24 audit repair (A01\u2013A06) A04 fully restrained systems are analysed, mechanisms still rejected fixed\u2013fixed beam: zero displacement, wL/2 reactions and wL\u00b2/12 end moments in every direction, with combinations",
+      "Phase 24 audit repair (A01\u2013A06) A04 fully restrained systems are analysed, mechanisms still rejected all-fixed frame with a point load on a restrained node: the load goes straight to that reaction"
+    ]
+  },
+  {
+    "mutation": "A05 derived resource expansion not preflighted",
+    "file": "apps/api/src/structural/model.ts",
+    "tests": 128,
+    "failed": 3,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 structural persistence on PostgreSQL A05: supported-size input that expands past the analysis limit is a typed 422 on both routes; the limit itself analyses",
+      "Phase 24 audit repair (A01\u2013A06) A05 derived load expansion is preflighted as a typed resource limit analyses exactly the limit and rejects one segment load past it, with and without self-weight",
+      "Phase 24 audit repair (A01\u2013A06) A05 derived load expansion is preflighted as a typed resource limit rejects the audit request (1,000 loads \u00d7 8 segments) in the builder, so /validate and /analyses agree"
+    ]
+  },
+  {
+    "mutation": "A06 contradictory mass status accepted",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: evaluated mass relabelled NOT_EVALUATED"
+    ]
+  },
+  {
+    "mutation": "A06 contradictory section description accepted",
+    "file": "apps/api/src/structural/validate.ts",
+    "tests": 128,
+    "failed": 6,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: rectangle dimensions changed, properties kept",
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: rectangle relabelled GENERIC without dimensions",
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: derivation method relabelled",
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: derivation method removed",
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values rejects: section request key relabelled",
+      "Phase 24 audit repair (A01\u2013A06) A06 descriptive section and mass fields must agree with the structured values keeps legitimate GENERIC sections and density-free NOT_EVALUATED mass valid, and rejects their contradictions"
+    ]
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 128,
+    "failed": 0
+  }
+]

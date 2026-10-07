@@ -57,6 +57,20 @@ export function validateRawOutput(raw: unknown, analysisModel: AnalysisModel, ad
   if (out.cases.length !== analysisModel.loadCases.length || out.cases.some((c, i) => c.loadCaseId !== analysisModel.loadCases[i]!.id)) invalid('Solver output load cases differ from the analysis model');
   for (const c of out.cases) if (c.displacements.length !== analysisModel.nodes.length || c.memberEndForces.length !== analysisModel.members.length || c.reactions.length !== analysisModel.restraints.length)
     invalid('Solver output entity counts differ from the analysis model');
+  // Element statics: the J-end half of each 12-vector is fixed by the I-end half and the uniform member load. Results are built from
+  // the I end only, so without this the J end is unchecked. Forces (N) and moments (N·mm) get separate scales.
+  const nodeById = new Map(analysisModel.nodes.map(n => [n.id, n]));
+  for (const [ci, c] of out.cases.entries()) {
+    const q = new Map<string, [number, number, number]>();
+    for (const l of analysisModel.loadCases[ci]!.memberLoads) { const s = q.get(l.memberId) ?? [0, 0, 0]; q.set(l.memberId, [s[0] + l.w[0], s[1] + l.w[1], s[2] + l.w[2]]); }
+    for (const [mi, mem] of analysisModel.members.entries()) {
+      const a = nodeById.get(mem.nodeI)!, b = nodeById.get(mem.nodeJ)!, L = Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z), R = localAxes(b.x - a.x, b.y - a.y, b.z - a.z);
+      const w = q.get(mem.id) ?? [0, 0, 0], [qx, qy, qz] = [0, 1, 2].map(r => R[r]![0] * w[0] + R[r]![1] * w[1] + R[r]![2] * w[2]) as [number, number, number], f = c.memberEndForces[mi]!;
+      const fScale = Math.max(1, ...[0, 1, 2, 6, 7, 8].map(i => Math.abs(f[i]!)), Math.hypot(qx, qy, qz) * L), mScale = Math.max(fScale * L, ...[3, 4, 5, 9, 10, 11].map(i => Math.abs(f[i]!)));
+      const forces = [f[0]! + f[6]! + qx * L, f[1]! + f[7]! + qy * L, f[2]! + f[8]! + qz * L], moments = [f[3]! + f[9]!, f[5]! + f[11]! + L * f[7]! + qy * L * L / 2, f[4]! + f[10]! - L * f[8]! - qz * L * L / 2];
+      if (forces.some(r => !(Math.abs(r) <= 1e-6 * fScale)) || moments.some(r => !(Math.abs(r) <= 1e-6 * mScale))) invalid('Solver member end forces violate element statics');
+    }
+  }
   return out;
 }
 

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { BimModel } from '../bim/contracts.js';
 import { semanticId } from '../bim/core.js';
-import { CLAIMS, DOFS, MEMBER_ASSUMPTIONS, MODEL_ASSUMPTIONS, STRUCTURAL_LIMITS, STRUCTURAL_MODEL_VERSION, StructuralError, StructuralModelSchema,
+import { CLAIMS, DOFS, EXPANDED_MEMBER_LOADS, MEMBER_ASSUMPTIONS, MODEL_ASSUMPTIONS, STRUCTURAL_LIMITS, STRUCTURAL_MODEL_VERSION, StructuralError, StructuralModelSchema,
   type StructuralErrorCode, type StructuralInput, type StructuralModel } from './contracts.js';
 import { STANDARD_GRAVITY, convert, massFromDensity } from './units.js';
 
@@ -91,6 +91,19 @@ export function buildStructuralModel(bim: BimModel, input: StructuralInput): Mod
     const axis = k[0] as 'x' | 'y' | 'z', spans = list.map(m => [Math.min(m.start[axis], m.end[axis]), Math.max(m.start[axis], m.end[axis])] as const).sort((a, b) => a[0] - b[0]);
     for (let i = 1; i < spans.length; i++) if (spans[i]![0] < spans[i - 1]![1]) fail('STRUCTURAL_MODEL_INVALID', 'Overlapping collinear members');
   }
+  // Two members on different axes whose axes meet strictly inside both spans are joined only if a node already exists there (an
+  // endpoint of a third member, which the splitting below then shares). Otherwise the crossing could be a rigid joint or a pass-by;
+  // structural-model-v1 has no input to say which, so it is rejected rather than guessed. Endpoint-on-member (T) junctions are
+  // unaffected: the endpoint is a node and splitting connects it, as before.
+  // ponytail: O(members²) pair scan, bounded by 800 members; bucket by plane if that limit grows.
+  const strictlyInside = (v: number, m: (typeof members)[number], a: 'x' | 'y' | 'z') => v > Math.min(m.start[a], m.end[a]) && v < Math.max(m.start[a], m.end[a]);
+  for (let i = 0; i < members.length; i++) for (let j = i + 1; j < members.length; j++) {
+    const p = members[i]!, q = members[j]!, pa = axisOf(p), qa = axisOf(q);
+    if (pa === qa) continue;
+    const plane = (['x', 'y', 'z'] as const).find(a => a !== pa && a !== qa)!, at: Point = { ...p.start, [pa]: q.start[pa] };
+    if (p.start[plane] === q.start[plane] && strictlyInside(at[pa], p, pa) && strictlyInside(at[qa], q, qa) && !nodes.has(`${at.x},${at.y},${at.z}`))
+      fail('STRUCTURAL_MODEL_INVALID', 'Members cross without a shared node; split a wall at the crossing to connect them, or map only one of them');
+  }
   // ponytail: O(members × nodes) interior-node scan; bounded by 800 members × 1600 nodes, index by line if limits grow.
   const segments: Model['segments'] = [], splitMemberIds: string[] = [], memberSegments = new Map<string, string[]>();
   for (const m of members) {
@@ -140,6 +153,14 @@ export function buildStructuralModel(bim: BimModel, input: StructuralInput): Mod
           magnitude: { value: l.magnitude.value, unit: 'kN/m' as const }, provenance: 'USER_PROVIDED' as const };
       }) };
   });
+  // Preflight the derived analysis-model size: distributed loads and self-weight expand onto every segment of their member, a
+  // product the public per-case limits do not bound. Rejecting here, before any solver work, keeps a request inside the documented
+  // limits a typed resource error (and /validate in agreement with /analyses) instead of an internal schema failure.
+  for (const c of loadCases) {
+    const expanded = c.loads.reduce((n, l) => n + (l.application === 'MEMBER_DISTRIBUTED' ? memberSegments.get(l.memberId)!.length : 0), 0)
+      + (c.selfWeight === 'INCLUDED' ? segments.length : 0);
+    if (expanded > EXPANDED_MEMBER_LOADS) fail('STRUCTURAL_RESOURCE_LIMIT', `A load case expands to ${expanded} segment loads; the analysis limit is ${EXPANDED_MEMBER_LOADS}`);
+  }
   const caseOf = new Map(input.loadCases.map((c, i) => [c.key, loadCases[i]!.id]));
   const combinations: Model['combinations'] = input.combinations.map(c => {
     unique(c.terms, t => t.loadCase, 'STRUCTURAL_LOAD_INVALID', 'combination term');

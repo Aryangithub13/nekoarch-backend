@@ -38,7 +38,7 @@ Rules: every value is user provided with a literal unit; `null` material propert
 
 ## `POST /validate` → 200
 
-`{ binding, readiness: "ANALYSIS_READY", model: <structural-model-v1>, validation: { validator: "structural-model-validator-v1", status: "VALID", diagnostics }, claims, limitations }`
+`{ binding, readiness: "ANALYSIS_READY", model: <structural-model-v1>, validation: { validator: "structural-model-validator-v2", status: "VALID", diagnostics }, claims, limitations }`
 
 ## `POST /analyses` → 201
 
@@ -73,3 +73,7 @@ Result set: `{ id, kind: LOAD_CASE|COMBINATION, displacements[{nodeId, ux,uy,uz 
 | 422 | `REVISION_NOT_ACCEPTED`, `STRUCTURAL_SOURCE_UNSUPPORTED`, `STRUCTURAL_MODEL_INVALID`, `STRUCTURAL_MATERIAL_MISSING`, `STRUCTURAL_LOAD_INVALID`, `STRUCTURAL_SUPPORT_INVALID`, `STRUCTURAL_SYSTEM_DISCONNECTED`, `STRUCTURAL_SYSTEM_UNSTABLE`, `STRUCTURAL_SOLVER_FAILED`, `STRUCTURAL_ANALYSIS_TIMEOUT`, `STRUCTURAL_RESULT_INVALID`, `STRUCTURAL_RESOURCE_LIMIT` | Domain failures; nothing persisted |
 | 429 | `RATE_LIMITED` | Quota |
 | 503 | `STRUCTURAL_UNAVAILABLE` | Analysis persistence not configured (signing secret absent) |
+
+## Audit repair amendments
+
+New snapshots record `structural-model-validator-v2` / `structural-result-validator-v2`; historical snapshots keep the v1 label they were certified with and remain readable. Newly rejected with 422 (nothing persisted): unconnected same-plane member crossings (`STRUCTURAL_MODEL_INVALID`, on `/validate` and `/analyses`), load cases whose per-segment expansion exceeds 6000 (`STRUCTURAL_RESOURCE_LIMIT`, on both routes, previously a 500 on `/analyses`), and solver output that fails constitutive, station, J-end statics, free-DOF reaction or superposition checks (`STRUCTURAL_RESULT_INVALID`). Fully restrained systems, previously `STRUCTURAL_SUPPORT_INVALID`, are now analysed (201). Details: `docs/phase24-audit-repair/REPAIR-REPORT.md`.

@@ -6,13 +6,14 @@ import { generateBlueprint, generateBlueprintV2, generateParametricBlueprint, mo
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { solverInput } from '../../../test-support/solver-v2-fixtures.js';
-import { TEST_CONCRETE, frameInput } from '../../../test-support/structural-fixtures.js';
+import { CROSSING_WALLS, STUB_WALLS, TEST_CONCRETE, frameInput, segmentedBeamInput, withPartitions } from '../../../test-support/structural-fixtures.js';
 import { modelHash } from '../src/lib/generation-identity.js';
 import { projectBim } from '../src/bim/project.js';
 import { exportIfc } from '../src/bim/ifc.js';
 import { digest, semanticId } from '../src/bim/core.js';
-import { AnalysisModelSchema, STRUCTURAL_LIMITS, StructuralError, StructuralInputSchema, type AnalysisModel, type StructuralInput, type StructuralModel } from '../src/structural/contracts.js';
-import { buildStructuralModel, rectangleProperties } from '../src/structural/model.js';
+import type { BimModel } from '../src/bim/contracts.js';
+import { AnalysisModelSchema, EXPANDED_MEMBER_LOADS, STRUCTURAL_LIMITS, StructuralError, StructuralInputSchema, type AnalysisModel, type StructuralInput, type StructuralModel } from '../src/structural/contracts.js';
+import { buildStructuralModel, rectangleProperties, structuralId } from '../src/structural/model.js';
 import { buildResults, runStructuralAnalysis, structuralInputHash, validateRawOutput } from '../src/structural/analysis.js';
 import { REFERENCE_FRAME_SOLVER, type StructuralSolverAdapter } from '../src/structural/frame-solver.js';
 import { validateStructuralModel, validateStructuralResults } from '../src/structural/validate.js';
@@ -361,7 +362,7 @@ describe('Phase 24 solver adapter and untrusted output', () => {
 describe('Phase 24 independent validators', () => {
   const m = authored(), { snapshot, model, input, bim } = analyzed(m);
   it('accepts the projected model and validated results with recorded equilibrium residuals', () => {
-    expect(validateStructuralModel(model, bim.geometry, input, model.binding)).toEqual({ validator: 'structural-model-validator-v1', status: 'VALID', diagnostics: [] });
+    expect(validateStructuralModel(model, bim.geometry, input, model.binding)).toEqual({ validator: 'structural-model-validator-v2', status: 'VALID', diagnostics: [] });
     const v = validateStructuralResults(snapshot, { binding: model.binding });
     expect(v.status).toBe('VALID'); expect(v.equilibrium).toHaveLength(4);
     for (const e of v.equilibrium) { expect(e.forceResidual.value).toBeLessThanOrEqual(e.forceTolerance.value); expect(e.forceResidual.unit).toBe('kN'); }
@@ -425,5 +426,255 @@ describe('Phase 24 native NekoArch fixtures', () => {
     const ma = prepared(a).model, mb = prepared(b, parse(frameInput(b)), '66666666-6666-4666-8666-666666666666').model;
     expect(mb.binding.modelHash).not.toBe(ma.binding.modelHash);
     expect(validateStructuralModel(ma, b, parse(frameInput(a)), mb.binding).status).toBe('INVALID');
+  });
+});
+
+// ---------------------------------------------------------------- Phase 24 audit repair: each test reproduces an audit finding (A01–A06)
+describe('Phase 24 audit repair (A01–A06)', () => {
+  type Loads = StructuralInput['loadCases'][number]['loads'];
+  type Dir = 'GLOBAL_X' | 'GLOBAL_Y' | 'GLOBAL_Z';
+  const beam = (key: string, wallId: string) => ({ key, rule: 'BEAM_ALONG_WALL' as const, wallId, material: 'test-concrete', section: 'beam' });
+  const column = (key: string, wallId: string, end: 'start' | 'end' = 'start') => ({ key, rule: 'COLUMN_AT_WALL_END' as const, wallId, end, material: 'test-concrete', section: 'col' });
+  const udl = (key: string, member: string, value: number, direction: Dir = 'GLOBAL_Y') => ({ key, application: 'MEMBER_DISTRIBUTED' as const, target: { member }, direction, magnitude: { value, unit: 'kN/m' as const } });
+  const point = (key: string, member: string, end: 'start' | 'end', value: number, direction: Dir = 'GLOBAL_Y') => ({ key, application: 'POINT' as const, target: { member, end }, direction, magnitude: { value, unit: 'kN' as const } });
+  const custom = (members: StructuralInput['members'], supports: [string, 'start' | 'end', 'FIXED' | 'PINNED' | 'ROLLER'][], cases: Loads[], combinations: StructuralInput['combinations'] = []) =>
+    parse({ ...frameInput(authored()), members, autoSupports: null, supports: supports.map(([member, end, type]) => ({ key: `${member}-${end}`, at: { member, end }, type })),
+      loadCases: cases.map((loads, i) => ({ key: `c${i}`, category: 'USER_DEFINED', selfWeight: false, loads })), combinations });
+  const authoredBim = () => { const m = authored(); return projectBim(m, binding(m)); };
+  // Extra walls added to the BIM geometry directly (as the overlap test does), so the builder sees them without architectural QA.
+  const withWalls = (walls: { id: string; start: { x: number; z: number }; end: { x: number; z: number } }[]) => {
+    const b = structuredClone(authoredBim()), west = b.geometry.walls.find(w => w.id === 'west')!;
+    for (const w of walls) b.geometry.walls.push({ ...structuredClone(west), id: w.id, path: { start: w.start, end: w.end } });
+    return b;
+  };
+  const run = (bim: BimModel, input: StructuralInput, adapter: StructuralSolverAdapter = REFERENCE_FRAME_SOLVER) => {
+    const model = buildStructuralModel(bim, input), r = runStructuralAnalysis(model, adapter);
+    return { model, run: r, snapshot: { binding: model.binding, input, inputHash: structuralInputHash(model.binding, input), model, results: r.results, solver: r.solver } };
+  };
+  const check = (s: ReturnType<typeof run>['snapshot']) => validateStructuralResults(s, { binding: s.model.binding });
+  const codes = (v: { diagnostics: { code: string }[] }) => [...new Set(v.diagnostics.map(d => d.code))];
+  const DISP = ['ux', 'uy', 'uz', 'rx', 'ry', 'rz'] as const, FORCES = ['n', 'vy', 'vz', 't', 'my', 'mz'] as const;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const wrap = (mutate: (raw: any) => void): StructuralSolverAdapter => ({ ...REFERENCE_FRAME_SOLVER, analyze: (am, o) => { const raw = REFERENCE_FRAME_SOLVER.analyze(am, o) as any; mutate(raw); return raw; } });
+
+  describe('A01 results must be the elastic solution, not merely in equilibrium', () => {
+    const { snapshot, model } = run(authoredBim(), parse(frameInput(authored())));
+    const freeNodes = (s: typeof snapshot, set = 0) => s.results.sets[set]!.displacements.filter(d => !s.model.supports.some(x => x.nodeId === d.nodeId));
+    it('accepts the reference solution (counter-control)', () => { expect(check(snapshot)).toMatchObject({ validator: 'structural-result-validator-v2', status: 'VALID', diagnostics: [] }); });
+    it.each(DISP.flatMap(k => [[k, 0], [k, 2]] as const))('rejects a fabricated free-node %s in set %i', (k, set) => {
+      const s = structuredClone(snapshot); freeNodes(s, set)[0]![k] += k.startsWith('r') ? 1e-4 : 0.05;
+      const v = check(s); expect(v.status).toBe('INVALID'); expect(codes(v)).toContain('CONSTITUTIVE');
+    });
+    it('rejects a fabricated rotation at every free node, including nodes that only end segments (cantilever tip)', () => {
+      for (const node of freeNodes(snapshot)) for (const k of ['rx', 'ry', 'rz'] as const) {
+        const s = structuredClone(snapshot); s.results.sets[0]!.displacements.find(d => d.nodeId === node.nodeId)![k] += 1e-4;
+        expect(check(s).status, `${node.nodeId} ${k}`).toBe('INVALID');
+      }
+      const c = run(authoredBim(), custom([beam('b', 'west')], [['b', 'start', 'FIXED']], [[udl('q', 'b', -2)]]));
+      const tip = c.snapshot.results.sets[0]!.displacements.find(d => d.nodeId === c.model.members[0]!.endNodeId)!, EIz = 30000 * 230 * 450 ** 3 / 12;
+      // Independent closed forms for the 5800 mm cantilever under 2 N/mm: tip deflection wL⁴/8EI, tip rotation wL³/6EI (about global X here).
+      expect(tip.uy).toBeCloseTo(-2 * 5800 ** 4 / (8 * EIz), 9); expect(Math.abs(tip.rx)).toBeCloseTo(2 * 5800 ** 3 / (6 * EIz), 12);
+      expect(check(c.snapshot).status).toBe('VALID');
+      for (const k of ['rx', 'ry', 'rz'] as const) {
+        const s = structuredClone(c.snapshot); s.results.sets[0]!.displacements.find(d => d.nodeId === tip.nodeId)![k] += 1e-4;
+        expect(codes(check(s)), k).toEqual(['CONSTITUTIVE']);
+      }
+    });
+    it('rejects the audit probe (uy = 1e12 mm, rx = 1e9 rad), swapped free-node rows and a uniformly scaled displacement field', () => {
+      const huge = structuredClone(snapshot); Object.assign(freeNodes(huge)[0]!, { uy: 1e12, rx: 1e9 }); expect(check(huge).status).toBe('INVALID');
+      const swapped = structuredClone(snapshot), [a, b] = freeNodes(swapped);
+      for (const k of DISP) [a![k], b![k]] = [b![k], a![k]];
+      expect(check(swapped).status).toBe('INVALID');
+      const scaled = structuredClone(snapshot); for (const d of scaled.results.sets[0]!.displacements) for (const k of DISP) d[k] *= 2;
+      expect(codes(check(scaled))).toContain('CONSTITUTIVE');
+    });
+    it('rejects an equilibrium-consistent solution of a different stiffness distribution (beam I × 100, relabelled hash)', () => {
+      const beams = new Set(model.members.filter(x => x.kind === 'BEAM').flatMap(x => x.segmentIds));
+      const forged: StructuralSolverAdapter = { ...REFERENCE_FRAME_SOLVER, analyze: (am, o) => {
+        const stiff = structuredClone(am); for (const x of stiff.members) if (beams.has(x.id)) { x.Iy *= 100; x.Iz *= 100; }
+        const raw = REFERENCE_FRAME_SOLVER.analyze(stiff, o) as { analysisModelHash: string }; raw.analysisModelHash = digest(am); return raw;
+      } };
+      const r = runStructuralAnalysis(model, forged); // element statics and counts are self-consistent, so the raw boundary admits it
+      const v = check({ ...snapshot, results: r.results });
+      expect(v.status).toBe('INVALID'); expect(codes(v)).toEqual(['CONSTITUTIVE']);
+      // Equilibrium alone is satisfied: the reason the v1 validator certified it.
+      for (const e of v.equilibrium) { expect(e.forceResidual.value).toBeLessThanOrEqual(e.forceTolerance.value); expect(e.momentResidual.value).toBeLessThanOrEqual(e.momentTolerance.value); }
+      expect(Math.max(...r.results.sets[0]!.reactions.map((x, i) => Math.abs(x.fy - snapshot.results.sets[0]!.reactions[i]!.fy)))).toBeGreaterThan(0.1);
+    });
+    it('rejects raw J-end values that violate element statics although results are built from the I end', () => {
+      for (const p of [6, 7, 8, 9, 10, 11]) expect(codeOf(() => runStructuralAnalysis(model, wrap(raw => {
+        const f: number[] = raw.cases[0].memberEndForces[3]; f[p]! += 0.01 * Math.max(...f.map(Math.abs));
+      }))), `index ${p}`).toBe('STRUCTURAL_RESULT_INVALID');
+      expect(codeOf(() => runStructuralAnalysis(model, wrap(raw => { for (const c of raw.cases) for (const f of c.memberEndForces) for (let i = 6; i < 12; i++) f[i] = 1e20; })))).toBe('STRUCTURAL_RESULT_INVALID');
+    });
+    it('rejects a statics-preserving end-moment pair: raw statics hold, but the joints and the curvature do not', () => {
+      const r = runStructuralAnalysis(model, wrap(raw => { const f: number[] = raw.cases[0].memberEndForces[3]; f[5]! += 5e6; f[11]! -= 5e6; }));
+      expect(check({ ...snapshot, results: r.results }).status).toBe('INVALID');
+    });
+    it('rejects a combination that is not the superposition of its load cases, even when its own displacement is moved', () => {
+      const s = structuredClone(snapshot); s.results.sets[3]!.reactions[0]!.fy += 0.5;
+      expect(codes(check(s))).toContain('COMBINATION');
+      const d = structuredClone(snapshot); freeNodes(d, 3)[0]!.uy += 0.05; expect(codes(check(d))).toEqual(expect.arrayContaining(['CONSTITUTIVE', 'COMBINATION']));
+    });
+    it('rejects a reaction on an unrestrained degree of freedom (pinned end moment)', () => {
+      const p = run(authoredBim(), custom([beam('b', 'west')], [['b', 'start', 'FIXED'], ['b', 'end', 'PINNED']], [[udl('q', 'b', -2)]]));
+      expect(check(p.snapshot).status).toBe('VALID');
+      const pinned = p.model.supports.find(x => x.type === 'PINNED')!.nodeId, s = structuredClone(p.snapshot);
+      s.results.sets[0]!.reactions.find(x => x.nodeId === pinned)!.mx = 1;
+      expect(codes(check(s))).toContain('SUPPORT');
+      // Propped cantilever closed forms, wL = 11.6 kN: 3wL/8 at the pin, 5wL/8 and wL²/8 at the fixed end.
+      const reactions = p.snapshot.results.sets[0]!.reactions, at = (id: string) => reactions.find(x => x.nodeId === id)!;
+      expect(at(pinned).fy).toBeCloseTo(3 * 11.6 / 8, 9); expect(reactions.find(x => x.nodeId !== pinned)!.fy).toBeCloseTo(5 * 11.6 / 8, 9);
+      expect(Math.abs(reactions.find(x => x.nodeId !== pinned)!.mx)).toBeCloseTo(2 * 5.8 ** 2 / 8, 9);
+    });
+  });
+
+  describe('A02 every reported station is checked against the member load', () => {
+    const { snapshot } = run(authoredBim(), parse(frameInput(authored())));
+    it('rejects any fabricated component at stations 0.25, 0.5 and 0.75 in load-case and combination sets', () => {
+      for (const set of [0, 1, 2, 3]) for (const station of [1, 2, 3]) for (const k of FORCES) {
+        const s = structuredClone(snapshot); s.results.sets[set]!.memberForces[0]!.stations[station]![k] += 0.1;
+        const v = check(s); expect(v.status, `${set}/${station}/${k}`).toBe('INVALID'); expect(codes(v), `${set}/${station}/${k}`).toContain('EQUILIBRIUM');
+      }
+      const audit = structuredClone(snapshot); Object.assign(audit.results.sets[0]!.memberForces[0]!.stations[2]!, { n: 1e12, vy: -1e12, vz: 1e12, t: -1e12, my: 1e12, mz: 1e12 });
+      expect(check(audit).status).toBe('INVALID');
+    });
+    it('rejects a curve that matches both ends but not the load (linear instead of parabolic moment)', () => {
+      const s = structuredClone(snapshot), beams = new Set(s.model.members.filter(x => x.kind === 'BEAM').flatMap(x => x.segmentIds));
+      const mf = s.results.sets[0]!.memberForces.find(f => beams.has(f.segmentId))!, a = { ...mf.stations[0]! }, b = { ...mf.stations[4]! };
+      for (const st of mf.stations) for (const k of FORCES) st[k] = a[k] + (b[k] - a[k]) * st.position;
+      expect(codes(check(s))).toContain('EQUILIBRIUM');
+    });
+  });
+
+  describe('A03 same-plane crossings are connected through a node or rejected', () => {
+    const [X, Z] = CROSSING_WALLS as [typeof CROSSING_WALLS[number], typeof CROSSING_WALLS[number]];
+    const twoBeams = custom([beam('x', 'cross-x'), beam('z', 'cross-z')], [['x', 'start', 'FIXED'], ['z', 'start', 'FIXED']], [[udl('q', 'x', -5)]]);
+    it('rejects an X crossing with no node, whatever the member order or direction', () => {
+      for (const walls of [[X, Z], [Z, X], [X, { ...Z, start: Z.end, end: Z.start }], [{ ...X, start: X.end, end: X.start }, Z]])
+        expect(codeOf(() => buildStructuralModel(withWalls(walls), twoBeams))).toBe('STRUCTURAL_MODEL_INVALID');
+    });
+    it('keeps T and corner junctions connected through the shared endpoint', () => {
+      const t = run(withWalls([X, { ...Z, start: { x: 6000, z: 3000 } }]), twoBeams);
+      expect(t.model.topology).toMatchObject({ components: 1, splitMemberIds: [t.model.members.find(x => x.requestKey === 'x')!.id] });
+      const corner = run(withWalls([X, { ...Z, start: { x: 7500, z: 3000 }, end: { x: 7500, z: 4500 } }]), twoBeams);
+      expect(corner.model.topology.components).toBe(1);
+      for (const r of [t, corner]) expect(check(r.snapshot).status).toBe('VALID');
+    });
+    it('connects a crossing where a third member ends, and splitting the wall reproduces the audit counter-control reactions', () => {
+      const stub = { id: 'stub', start: { x: 6000, z: 3000 }, end: { x: 6000, z: 3300 } };
+      const resolved = run(withWalls([X, Z, stub]), custom([beam('x', 'cross-x'), beam('z', 'cross-z'), column('c', 'stub')], [['x', 'start', 'FIXED'], ['z', 'start', 'FIXED'], ['c', 'start', 'FIXED']], [[udl('q', 'x', -5)]]));
+      expect(resolved.model.topology.components).toBe(1); expect(resolved.model.topology.splitMemberIds).toHaveLength(2); expect(check(resolved.snapshot).status).toBe('VALID');
+      const split = run(withWalls([{ ...X, end: { x: 6000, z: 3000 } }, { id: 'cross-x2', start: { x: 6000, z: 3000 }, end: X.end }, Z]),
+        custom([beam('x', 'cross-x'), beam('x2', 'cross-x2'), beam('z', 'cross-z')], [['x', 'start', 'FIXED'], ['z', 'start', 'FIXED']], [[udl('q', 'x', -5), udl('q2', 'x2', -5)]]));
+      const fy = split.run.results.sets[0]!.reactions.map(r => r.fy).sort();
+      expect(fy[0]).toBeCloseTo(7.192733544086128, 9); expect(fy[1]).toBeCloseTo(7.807266455913869, 9); expect(fy[0]! + fy[1]!).toBeCloseTo(15, 12);
+      expect(check(split.snapshot).status).toBe('VALID');
+    });
+    it('independently rejects a model that leaves the crossing unconnected, and one that fabricates a connection', () => {
+      const stub = { id: 'stub', start: { x: 6000, z: 3000 }, end: { x: 6000, z: 3300 } }, bim = withWalls([X, Z, stub]);
+      const withColumn = buildStructuralModel(bim, custom([beam('x', 'cross-x'), beam('z', 'cross-z'), column('c', 'stub')], [['x', 'start', 'FIXED'], ['z', 'start', 'FIXED'], ['c', 'start', 'FIXED']], [[udl('q', 'x', -5)]]));
+      const col = withColumn.members.find(x => x.requestKey === 'c')!;
+      // The Phase 24 output for the two-beam input: beams unsplit, no node at the crossing, two components.
+      const unconnected = structuredClone(withColumn);
+      unconnected.members = unconnected.members.filter(x => x.id !== col.id);
+      unconnected.nodes = unconnected.nodes.filter(n => n.id !== col.startNodeId && n.id !== col.endNodeId);
+      unconnected.supports = unconnected.supports.filter(x => x.nodeId !== col.startNodeId);
+      const seg = (x: StructuralModel['members'][number]) => structuralId(projectId, 'segment', x.id, x.startNodeId, x.endNodeId);
+      unconnected.segments = unconnected.members.map(x => ({ id: seg(x), memberId: x.id, startNodeId: x.startNodeId, endNodeId: x.endNodeId, length: { ...x.quantities.length } }));
+      for (const x of unconnected.members) x.segmentIds = [seg(x)];
+      unconnected.topology = { components: 2, danglingNodeIds: unconnected.members.map(x => x.endNodeId).sort(), splitMemberIds: [] };
+      const v = validateStructuralModel(unconnected, bim.geometry, twoBeams, unconnected.binding);
+      expect(v.diagnostics.map(d => [d.code, d.message])).toEqual([['TOPOLOGY', 'Segments intersect away from a shared node']]);
+      // A crossing node and splits that no input member supports.
+      const fabricated = structuredClone(withColumn);
+      fabricated.members = fabricated.members.filter(x => x.id !== col.id);
+      fabricated.nodes = fabricated.nodes.filter(n => n.id !== col.startNodeId); fabricated.supports = fabricated.supports.filter(x => x.nodeId !== col.startNodeId);
+      fabricated.segments = fabricated.segments.filter(x => x.memberId !== col.id);
+      expect(validateStructuralModel(fabricated, bim.geometry, twoBeams, fabricated.binding).status).toBe('INVALID');
+    });
+    it('leaves members at separated elevations unconnected (storey-to-storey plan crossings on the setback fixture)', () => {
+      const m = generateParametricBlueprint(parametricInput(true)).model, { model, bim, input } = prepared(m);
+      const at = new Map(model.nodes.map(n => [n.id, n.coordinates])), ends = model.members.filter(x => x.kind === 'BEAM').map(x => [at.get(x.startNodeId)!, at.get(x.endNodeId)!] as const);
+      const inside = (v: number, a: number, b: number) => v > Math.min(a, b) && v < Math.max(a, b);
+      const planCrossings = ends.flatMap(([a, b], i) => ends.slice(i + 1).filter(([c, d]) => a.y !== c.y && a.x !== b.x && c.z !== d.z && inside(c.x, a.x, b.x) && inside(a.z, c.z, d.z)));
+      expect(planCrossings.length).toBeGreaterThan(0);
+      expect(validateStructuralModel(model, bim.geometry, input, model.binding).status).toBe('VALID');
+    });
+  });
+
+  describe('A04 fully restrained systems are analysed, mechanisms still rejected', () => {
+    const wL = 2 * 5.8, wL2 = 2 * 5.8 ** 2;
+    it('fixed–fixed beam: zero displacement, wL/2 reactions and wL²/12 end moments in every direction, with combinations', () => {
+      const input = custom([beam('b', 'west')], [['b', 'start', 'FIXED'], ['b', 'end', 'FIXED']],
+        [[udl('q', 'b', -2)], [udl('h', 'b', 3, 'GLOBAL_X'), udl('a', 'b', 4, 'GLOBAL_Z')]],
+        [{ key: 'combo', profile: 'PROJECT_DEFINED', terms: [{ loadCase: 'c0', factor: 1.5 }, { loadCase: 'c1', factor: -1 }] }]);
+      const { snapshot, model } = run(authoredBim(), input);
+      expect(validateStructuralModel(model, authored(), input, model.binding).status).toBe('VALID'); expect(check(snapshot).status).toBe('VALID');
+      for (const set of snapshot.results.sets) for (const d of set.displacements) for (const k of DISP) expect(Math.abs(d[k])).toBe(0);
+      const set = (key: string) => snapshot.results.sets.find(x => x.id === (model.loadCases.find(c => c.requestKey === key) ?? model.combinations.find(c => c.requestKey === key))!.id)!;
+      const gravity = set('c0'), lateral = set('c1'), combo = set('combo');
+      for (const r of gravity.reactions) { expect(r.fy).toBeCloseTo(wL / 2, 12); expect(Math.abs(r.mx)).toBeCloseTo(wL2 / 12, 12); }
+      expect(gravity.reactions[0]!.mx).toBeCloseTo(-gravity.reactions[1]!.mx, 12);
+      for (const r of lateral.reactions) { expect(r.fx).toBeCloseTo(-3 * 5.8 / 2, 12); expect(r.fz).toBeCloseTo(-4 * 5.8 / 2, 12); expect(Math.abs(r.my)).toBeCloseTo(3 * 5.8 ** 2 / 12, 12); }
+      for (const [i, r] of combo.reactions.entries()) expect(r.fy).toBeCloseTo(1.5 * gravity.reactions[i]!.fy - lateral.reactions[i]!.fy, 12);
+    });
+    it('all-fixed frame with a point load on a restrained node: the load goes straight to that reaction', () => {
+      const input = custom([column('c', 'west'), beam('b', 'west')], [['c', 'start', 'FIXED'], ['b', 'start', 'FIXED'], ['b', 'end', 'FIXED']], [[point('p', 'b', 'start', -7), udl('q', 'b', -2)]]);
+      const { snapshot, model } = run(authoredBim(), input), top = model.members.find(x => x.kind === 'BEAM')!.startNodeId;
+      expect(check(snapshot).status).toBe('VALID');
+      expect(snapshot.results.sets[0]!.reactions.find(r => r.nodeId === top)!.fy).toBeCloseTo(7 + wL / 2, 12);
+      for (const st of snapshot.results.sets[0]!.memberForces.find(f => f.memberId !== model.members.find(x => x.kind === 'BEAM')!.id)!.stations) for (const k of FORCES) expect(Math.abs(st[k])).toBe(0);
+    });
+    it('a beam pinned at both ends still twists freely and is rejected as a mechanism', () => {
+      expect(codeOf(() => run(authoredBim(), custom([beam('b', 'west')], [['b', 'start', 'PINNED'], ['b', 'end', 'PINNED']], [[udl('q', 'b', -2)]])))).toBe('STRUCTURAL_SYSTEM_UNSTABLE');
+    });
+  });
+
+  describe('A05 derived load expansion is preflighted as a typed resource limit', () => {
+    const m = withPartitions(authored(), [CROSSING_WALLS[0]!, ...STUB_WALLS]), bim = projectBim(m, binding(m));
+    const build = (loads: number, selfWeight = false) => buildStructuralModel(bim, parse(segmentedBeamInput(loads, selfWeight)));
+    it('analyses exactly the limit and rejects one segment load past it, with and without self-weight', () => {
+      expect(build(10).members.find(x => x.kind === 'BEAM')!.segmentIds).toHaveLength(8);
+      expect(EXPANDED_MEMBER_LOADS).toBe(6000);
+      const atLimit = runStructuralAnalysis(build(750)); // 750 × 8 = 6000
+      expect(atLimit.analysisModel.loadCases[0]!.memberLoads).toHaveLength(6000);
+      expect(codeOf(() => build(751))).toBe('STRUCTURAL_RESOURCE_LIMIT'); // 6008
+      expect(runStructuralAnalysis(build(748, true)).analysisModel.loadCases[0]!.memberLoads).toHaveLength(5999); // 5984 + 15 segments
+      expect(codeOf(() => build(749, true))).toBe('STRUCTURAL_RESOURCE_LIMIT'); // 5992 + 15
+    });
+    it('rejects the audit request (1,000 loads × 8 segments) in the builder, so /validate and /analyses agree', () => {
+      const input = segmentedBeamInput(1000);
+      expect(Buffer.byteLength(JSON.stringify(input))).toBeLessThan(STRUCTURAL_LIMITS.inputBytes);
+      expect(codeOf(() => parse(input))).toBe('none');
+      expect(codeOf(() => build(1000))).toBe('STRUCTURAL_RESOURCE_LIMIT');
+    });
+  });
+
+  describe('A06 descriptive section and mass fields must agree with the structured values', () => {
+    const bim = authoredBim(), input = parse(frameInput(authored())), model = buildStructuralModel(bim, input);
+    const rect = (x: StructuralModel) => x.sections.find(s => s.shape === 'RECTANGLE')!;
+    const mutations: [string, (x: StructuralModel) => void][] = [
+      ['rectangle dimensions changed, properties kept', x => { rect(x).dimensions = { width: { value: 9999, unit: 'mm' }, depth: { value: 1, unit: 'mm' } }; }],
+      ['rectangle relabelled GENERIC without dimensions', x => { Object.assign(rect(x), { shape: 'GENERIC', dimensions: null }); }],
+      ['derivation method relabelled', x => { rect(x).j.method = 'exact-rectangle'; }],
+      ['derivation method removed', x => { rect(x).area.method = null; }],
+      ['section request key relabelled', x => { rect(x).requestKey = 'other'; }],
+      ['material request key relabelled', x => { x.materials[0]!.requestKey = 'other'; }],
+      ['evaluated mass relabelled NOT_EVALUATED', x => { x.members[0]!.quantities.mass.status = 'NOT_EVALUATED'; }],
+      ['evaluated mass value removed', x => { x.members[0]!.quantities.mass.value = null; }],
+    ];
+    it.each(mutations)('rejects: %s', (_name, mutate) => { const x = structuredClone(model); mutate(x); expect(validateStructuralModel(x, bim.geometry, input, model.binding).status).toBe('INVALID'); });
+    it('keeps legitimate GENERIC sections and density-free NOT_EVALUATED mass valid, and rejects their contradictions', () => {
+      const generic = parse({ ...frameInput(authored(), { selfWeight: false }), materials: [{ ...TEST_CONCRETE, density: null }],
+        sections: [{ key: 'col', shape: 'GENERIC', area: { value: 90000, unit: 'mm2' }, iy: { value: 6.75e8, unit: 'mm4' }, iz: { value: 6.75e8, unit: 'mm4' }, j: { value: 1.1e9, unit: 'mm4' } },
+          { key: 'beam', shape: 'RECTANGLE', width: { value: 230, unit: 'mm' }, depth: { value: 450, unit: 'mm' } }] });
+      const g = buildStructuralModel(bim, generic), valid = (x: StructuralModel) => validateStructuralModel(x, bim.geometry, generic, g.binding).status;
+      expect(valid(g)).toBe('VALID'); expect(g.members.every(x => x.quantities.mass.status === 'NOT_EVALUATED' && x.quantities.mass.value === null)).toBe(true);
+      const gen = (x: StructuralModel) => x.sections.find(s => s.shape === 'GENERIC')!;
+      const relabelled = structuredClone(g); Object.assign(gen(relabelled), { shape: 'RECTANGLE', dimensions: { width: { value: 300, unit: 'mm' }, depth: { value: 300, unit: 'mm' } } });
+      const invented = structuredClone(g); invented.members[0]!.quantities.mass = { value: 1, unit: 'kg', status: 'EVALUATED' };
+      for (const x of [relabelled, invented]) expect(valid(x)).toBe('INVALID');
+    });
   });
 });
