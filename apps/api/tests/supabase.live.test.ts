@@ -1,5 +1,6 @@
 import { bimAcceptance } from '../../../test-support/bim-acceptance.js';
 import { structuralAcceptance } from '../../../test-support/structural-acceptance.js';
+import { environmentalAcceptance } from '../../../test-support/environmental-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -128,6 +129,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const structuralRows = await admin.from('project_revision_structural_analyses').select('project_revisions!inner(project_id)');
       if (structuralRows.error) failures.push('read protected structural projects');
       for (const row of structuralRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Immutable Phase 25 environmental snapshots likewise.
+      const environmentalRows = await admin.from('project_revision_environmental_analyses').select('project_revisions!inner(project_id)');
+      if (environmentalRows.error) failures.push('read protected environmental projects');
+      for (const row of environmentalRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
       if (owned.error) failures.push('read test projects');
       const deletable = (owned.data ?? []).map(p => p.id).filter(id => !protectedIds.has(id));
@@ -400,6 +405,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   structuralAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local structural setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  environmentalAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local environmental setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

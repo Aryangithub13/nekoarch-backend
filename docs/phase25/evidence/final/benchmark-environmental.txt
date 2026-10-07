@@ -1,0 +1,31 @@
+npm notice run designflow@0.1.0 benchmark:environmental
+npm notice run npm run build && node --import tsx scripts/benchmark-environmental.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+┌─────────┬────────────────────────────┬──────────┬─────────┬──────────┬────────┬────────────┬────────┐
+│ (index) │ name                       │ surfaces │ samples │ instants │ calcMs │ validateMs │ bytes  │
+├─────────┼────────────────────────────┼──────────┼─────────┼──────────┼────────┼────────────┼────────┤
+│ 0       │ 'v1'                       │ 19       │ 651     │ 3        │ 5      │ 9          │ 44357  │
+│ 1       │ 'v2'                       │ 19       │ 603     │ 3        │ 2      │ 6          │ 44208  │
+│ 2       │ 'L'                        │ 17       │ 526     │ 3        │ 3      │ 8          │ 40986  │
+│ 3       │ 'setback'                  │ 34       │ 964     │ 3        │ 8      │ 15         │ 71986  │
+│ 4       │ 'maximum-24'               │ 48       │ 1099    │ 3        │ 7      │ 15         │ 108778 │
+│ 5       │ 'west-wing-edit'           │ 34       │ 992     │ 3        │ 6      │ 9          │ 71998  │
+│ 6       │ 'authored'                 │ 9        │ 371     │ 3        │ 1      │ 1          │ 24219  │
+│ 7       │ 'maximum-24 × 24 instants' │ 48       │ 1099    │ 24       │ 11     │ 31         │ 368250 │
+│ 8       │ 'setback × 8760 h weather' │ 34       │ 964     │ 0        │ 12     │ 16         │ 928134 │
+└─────────┴────────────────────────────┴──────────┴─────────┴──────────┴────────┴────────────┴────────┘

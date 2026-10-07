@@ -1,0 +1,343 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 112,
+    "failed": 0
+  },
+  {
+    "mutation": "flipped north orientation",
+    "file": "apps/api/src/environmental/solar.ts",
+    "tests": 112,
+    "failed": 24,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 orientation agrees with the tested generator cardinal rule at 0",
+      "Phase 25 orientation agrees with the tested generator cardinal rule at 180000"
+    ]
+  },
+  {
+    "mutation": "east/west solar azimuth sign",
+    "file": "apps/api/src/environmental/solar.ts",
+    "tests": 112,
+    "failed": 25,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 solar position (independent references) matches the NREL SPA reference case after removing its refraction and parallax",
+      "Phase 25 solar position (independent references) puts the sun east in the morning, west in the afternoon, south at noon in the north and north at noon in the south"
+    ]
+  },
+  {
+    "mutation": "DST fold or gap accepted",
+    "file": "apps/api/src/environmental/solar.ts",
+    "tests": 112,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 solar position (independent references) converts local civil time explicitly and refuses DST gaps and folds"
+    ]
+  },
+  {
+    "mutation": "reversed surface normal",
+    "file": "apps/api/src/environmental/model.ts",
+    "tests": 10,
+    "failed": 10,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies"
+    ]
+  },
+  {
+    "mutation": "omitted window",
+    "file": "apps/api/src/environmental/model.ts",
+    "tests": 112,
+    "failed": 24,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture v2: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "duplicate surface",
+    "file": "apps/api/src/environmental/model.ts",
+    "tests": 112,
+    "failed": 20,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture v2: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "mm2 to m2 error",
+    "file": "apps/api/src/environmental/units.ts",
+    "tests": 112,
+    "failed": 22,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture v2: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "Celsius/Kelvin offset in a difference",
+    "file": "apps/api/src/environmental/units.ts",
+    "tests": 112,
+    "failed": 27,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 units treats absolute Celsius as an offset and temperature differences as kelvin",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "wrong energy integration factor",
+    "file": "apps/api/src/environmental/units.ts",
+    "tests": 112,
+    "failed": 22,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 units separates power and energy: energy needs a duration",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "irradiance x1000",
+    "file": "apps/api/src/environmental/analysis.ts",
+    "tests": 112,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 direct-sun exposure reports sun below the horizon at night and direct-beam irradiance only from supplied DNI",
+      "Phase 25 independent validators reject adversarial output rejects irradiance \u00d71000 and a fabricated calculator, and maps failures to typed errors"
+    ]
+  },
+  {
+    "mutation": "ground temperature confused with outdoor",
+    "file": "apps/api/src/environmental/analysis.ts",
+    "tests": 112,
+    "failed": 26,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture v2: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "grazing and back faces counted as facing",
+    "file": "apps/api/src/environmental/analysis.ts",
+    "tests": 112,
+    "failed": 21,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture v1: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture v2: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "antimeridian longitude not wrapped",
+    "file": "apps/api/src/environmental/analysis.ts",
+    "tests": 112,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 weather trust boundary requires a location to match a dataset and accepts the clean synthetic set"
+    ]
+  },
+  {
+    "mutation": "malformed calculator output accepted",
+    "file": "apps/api/src/environmental/analysis.ts",
+    "tests": 112,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 independent validators reject adversarial output rejects irradiance \u00d71000 and a fabricated calculator, and maps failures to typed errors"
+    ]
+  },
+  {
+    "mutation": "orientation-only heuristic instead of ray casting",
+    "file": "apps/api/src/environmental/shading.ts",
+    "tests": 112,
+    "failed": 19,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 25 environmental persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 25 environmental persistence on PostgreSQL recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims",
+      "Phase 25 environmental persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 25 environmental persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 environmental persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 25 migration upgrade from the 0014 schema applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies",
+      "Phase 25 environmental model on native architecture L: zones, envelope, independent validation and analysis",
+      "Phase 25 environmental model on native architecture setback: zones, envelope, independent validation and analysis"
+    ]
+  },
+  {
+    "mutation": "stale result served as current",
+    "file": "apps/api/src/services/environmental-service.ts",
+    "tests": 112,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL Phase 25 environmental acceptance analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B"
+    ]
+  },
+  {
+    "mutation": "validator solar comparison disabled",
+    "file": "apps/api/src/environmental/validate.ts",
+    "tests": 112,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 independent validators reject adversarial output rejects a self-consistent sun from the wrong clock (one hour off) through the independent PSA comparison alone"
+    ]
+  },
+  {
+    "mutation": "validator independent ray recount disabled",
+    "file": "apps/api/src/environmental/validate.ts",
+    "tests": 112,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 independent validators reject adversarial output result validator rejects shaded surface reported lit",
+      "Phase 25 independent validators reject adversarial output rejects irradiance \u00d71000 and a fabricated calculator, and maps failures to typed errors"
+    ]
+  },
+  {
+    "mutation": "validator heat-flow recomputation disabled",
+    "file": "apps/api/src/environmental/validate.ts",
+    "tests": 112,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 25 environmental persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 25 independent validators reject adversarial output result validator rejects heat flow \u00d72"
+    ]
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 112,
+    "failed": 0
+  }
+]

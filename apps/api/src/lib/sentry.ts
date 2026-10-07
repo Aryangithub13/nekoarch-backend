@@ -17,7 +17,7 @@ const safeRoutes = new Set([
   takeoff, `${takeoff}/:takeoffId`, construction, `${construction}/:calculationId`,
   `${construction}/:calculationId/cost-estimates`, `${revision}/cost-estimates`, `${revision}/cost-estimates/:costEstimateId`,
   ...['', '/validation', '/elements', '/elements/:elementId', '/relationships', '/diff/:otherRevisionId', '/export.json', '/export.ifc'].map(suffix => `${revision}/bim${suffix}`),
-  ...['/validate', '/analyses', '/analyses/:analysisId', '/status'].map(suffix => `${revision}/structural${suffix}`),
+  ...['/validate', '/analyses', '/analyses/:analysisId', '/status'].flatMap(suffix => [`${revision}/structural${suffix}`, `${revision}/environmental${suffix}`]),
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
