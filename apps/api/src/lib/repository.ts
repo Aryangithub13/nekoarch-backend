@@ -30,6 +30,7 @@ export interface Repository {
   takeoffRpc?(name: 'takeoff_read' | 'takeoff_write', args: Record<string, unknown>): Promise<unknown>;
   structuralRpc?(name: 'structural_read' | 'structural_write', args: Record<string, unknown>): Promise<unknown>;
   environmentalRpc?(name: 'environmental_read' | 'environmental_write', args: Record<string, unknown>): Promise<unknown>;
+  systemsRpc?(name: 'systems_read' | 'systems_write', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;

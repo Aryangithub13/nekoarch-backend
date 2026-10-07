@@ -1,0 +1,34 @@
+npm notice run designflow@0.1.0 test:ai-orchestration
+npm notice run npm run build && vitest run apps/api/tests/ai-orchestration.test.ts apps/api/tests/ai-orchestration.integration.test.ts apps/api/tests/ai-transport.test.ts apps/api/tests/ai-remote.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/ai-orchestration.integration.test.ts (8 tests) 1919ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > local protocol provider → strict intent → exact approval → V2 solver → real QA → signed immutable revision  545ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > preferred provider offline → bounded deterministic fallback → correct signed revision  350ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > LOCAL_ONLY with configured remote prevents all remote calls and completes the same request  334ms
+ ✓ apps/api/tests/ai-transport.test.ts (13 tests) 142ms
+ ✓ apps/api/tests/ai-orchestration.test.ts (86 tests) 99ms
+ ✓ apps/api/tests/ai-remote.test.ts (13 tests) 17ms
+
+ Test Files  4 passed (4)
+      Tests  120 passed (120)
+   Start at  19:50:02
+   Duration  4.70s (transform 797ms, setup 0ms, collect 1.80s, tests 2.18s, environment 1ms, prepare 170ms)
+

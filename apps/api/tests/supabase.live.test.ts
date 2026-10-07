@@ -1,6 +1,7 @@
 import { bimAcceptance } from '../../../test-support/bim-acceptance.js';
 import { structuralAcceptance } from '../../../test-support/structural-acceptance.js';
 import { environmentalAcceptance } from '../../../test-support/environmental-acceptance.js';
+import { systemsAcceptance } from '../../../test-support/systems-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -116,9 +117,14 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       // Removing plans also removes their generation logs via ON DELETE CASCADE.
       // Immutable takeoff history intentionally survives account deletion. Keep
       // only those test projects; local db reset purges the disposable test stack.
-      const protectedRows = await admin.from('project_revision_takeoffs').select('project_revisions!inner(project_id)');
+      // Scope protected reads to this run's projects: PostgREST max_rows (1000)
+      // otherwise truncates them once the local stack accumulates history.
+      const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
+      if (owned.error) failures.push('read test projects');
+      const ownedIds = (owned.data ?? []).map(p => p.id);
+      const protectedRows = await admin.from('project_revision_takeoffs').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (protectedRows.error) failures.push('read protected takeoff projects');
-      const workflowRows = await admin.from('project_workflow_runs').select('project_id');
+      const workflowRows = await admin.from('project_workflow_runs').select('project_id').in('project_id', ownedIds);
       if (workflowRows.error) failures.push('read protected workflow projects');
       const protectedIds = new Set((protectedRows.data ?? []).flatMap(row => {
         const revisions = row.project_revisions;
@@ -126,16 +132,18 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       }));
       for (const row of workflowRows.data ?? []) protectedIds.add(row.project_id);
       // Immutable Phase 24 structural snapshots are protected history in the same way.
-      const structuralRows = await admin.from('project_revision_structural_analyses').select('project_revisions!inner(project_id)');
+      const structuralRows = await admin.from('project_revision_structural_analyses').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (structuralRows.error) failures.push('read protected structural projects');
       for (const row of structuralRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       // Immutable Phase 25 environmental snapshots likewise.
-      const environmentalRows = await admin.from('project_revision_environmental_analyses').select('project_revisions!inner(project_id)');
+      const environmentalRows = await admin.from('project_revision_environmental_analyses').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (environmentalRows.error) failures.push('read protected environmental projects');
       for (const row of environmentalRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
-      const owned = await admin.from('projects').select('id').in('owner_id',createdUserIds);
-      if (owned.error) failures.push('read test projects');
-      const deletable = (owned.data ?? []).map(p => p.id).filter(id => !protectedIds.has(id));
+      // Immutable Phase 26 building-systems snapshots likewise.
+      const systemsRows = await admin.from('project_revision_building_systems_analyses').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+      if (systemsRows.error) failures.push('read protected building-systems projects');
+      for (const row of systemsRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
         if (projectsCleanup.error) failures.push('delete test projects');
@@ -409,6 +417,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   environmentalAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local environmental setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  systemsAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local building-systems setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

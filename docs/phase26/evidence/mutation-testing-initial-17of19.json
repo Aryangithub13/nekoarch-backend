@@ -1,0 +1,287 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 47,
+    "failed": 0
+  },
+  {
+    "mutation": "reversed plumbing slope",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 15,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "validator uphill check disabled",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 0,
+    "killed": false,
+    "restored": true,
+    "failingTests": []
+  },
+  {
+    "mutation": "omitted terminal",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 20,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "disconnected route accepted",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 independent validators reject forged output rejects a wrong route length, an omitted terminal and a disconnected route"
+    ]
+  },
+  {
+    "mutation": "wrong electrical load sum",
+    "file": "apps/api/src/systems/analysis.ts",
+    "tests": 47,
+    "failed": 17,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "demand factor ignored",
+    "file": "apps/api/src/systems/analysis.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 electrical coordination computes demand only from explicit factors (0.9\u00b71000 + 0.5\u00b7500 + 1\u00b7250 = 1400 W) and keeps decimals exact"
+    ]
+  },
+  {
+    "mutation": "wrong Q/A airflow velocity",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 17,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "unit factor error (L/s to m3/s)",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 17,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "egress edge removed",
+    "file": "apps/api/src/systems/egress.ts",
+    "tests": 47,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 life-safety geometry (independent egress graph) counts node-disjoint routes honestly where two exits exist: a shared corridor is one independent route"
+    ]
+  },
+  {
+    "mutation": "stale result served current",
+    "file": "apps/api/src/services/systems-service.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B"
+    ]
+  },
+  {
+    "mutation": "structural clash ignored",
+    "file": "apps/api/src/systems/clash.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 coordination clashes and structural absence reports MEP_STRUCTURE_CLASH and DUCT_PIPE_CLEARANCE with exact references and spatial evidence for crossing fixed routes"
+    ]
+  },
+  {
+    "mutation": "shaft vertical misalignment accepted",
+    "file": "apps/api/src/systems/vertical.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 vertical transport proposals rejects a fixed shaft through a bound structural column and one that is not inside every served level"
+    ]
+  },
+  {
+    "mutation": "router clearance ignored",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid"
+    ]
+  },
+  {
+    "mutation": "wall penetration not proposed",
+    "file": "apps/api/src/systems/routing.ts",
+    "tests": 47,
+    "failed": 16,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance enforces ownership and revision association, reports typed errors and never computes on reads",
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance replays idempotent analysis commands and rejects key reuse with a different input",
+      "Phase 26 building-systems persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads",
+      "Phase 26 building-systems persistence on PostgreSQL recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing",
+      "Phase 26 building-systems persistence on PostgreSQL serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct",
+      "Phase 26 building-systems persistence on PostgreSQL rolls back the analysis together with a failed receipt and fails closed without a signer",
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 building-systems persistence on PostgreSQL charges validation and analysis to the generation quota and reads to the read quota",
+      "Phase 26 plumbing and drainage connects every explicit fixture, stacks upper fixtures, drains downhill at the declared slope and is independently valid",
+      "Phase 26 plumbing and drainage refuses an impossible gravity route with a typed failure: no uphill run, no pressurised drainage, no 500"
+    ]
+  },
+  {
+    "mutation": "structural envelope halved",
+    "file": "apps/api/src/systems/model.ts",
+    "tests": 47,
+    "failed": 3,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL Phase 26 building-systems acceptance binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts",
+      "Phase 26 contracts, binding and the semantic model rejects upstream analyses bound to a different architecture and validates the bound structural envelope inventory",
+      "Phase 26 coordination clashes and structural absence reports MEP_STRUCTURE_CLASH and DUCT_PIPE_CLEARANCE with exact references and spatial evidence for crossing fixed routes"
+    ]
+  },
+  {
+    "mutation": "validator clash recomputation disabled",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 0,
+    "killed": false,
+    "restored": true,
+    "failingTests": []
+  },
+  {
+    "mutation": "validator egress recomputation disabled",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 independent validators reject forged output rejects edited egress distances, broken egress chains, removed penetrations, a flipped elevator and an evaluated \"not evaluated\""
+    ]
+  },
+  {
+    "mutation": "validator electrical recomputation disabled",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 2,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 building-systems persistence on PostgreSQL rejects a fabricated calculator result before signing or persistence",
+      "Phase 26 independent validators reject forged output rejects wrong load sums, ignored demand factors, and wrong airflow or velocity"
+    ]
+  },
+  {
+    "mutation": "validator penetration recomputation disabled",
+    "file": "apps/api/src/systems/validate.ts",
+    "tests": 47,
+    "failed": 1,
+    "killed": true,
+    "restored": true,
+    "failingTests": [
+      "Phase 26 independent validators reject forged output rejects edited egress distances, broken egress chains, removed penetrations, a flipped elevator and an evaluated \"not evaluated\""
+    ]
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 47,
+    "failed": 0
+  }
+]

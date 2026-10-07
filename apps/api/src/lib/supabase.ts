@@ -5,6 +5,7 @@ import { constructionDatabaseError } from './construction-repository.js';
 import { takeoffDatabaseError } from './takeoff-repository.js';
 import { structuralDatabaseError } from './structural-repository.js';
 import { environmentalDatabaseError } from './environmental-repository.js';
+import { systemsDatabaseError } from './systems-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -47,6 +48,11 @@ export class SupabaseRepository implements Repository {
   async environmentalRpc(name: 'environmental_read' | 'environmental_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) environmentalDatabaseError(error);
+    return data as unknown;
+  }
+  async systemsRpc(name: 'systems_read' | 'systems_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) systemsDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {

@@ -1,0 +1,30 @@
+npm notice run designflow@0.1.0 benchmark:systems
+npm notice run npm run build && node --import tsx scripts/benchmark-systems.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+┌─────────┬───────────────────────────────────────────────────────────┬───────────┬────────┬────────┬─────────┬────────┬────────┬────────────┬─────┐
+│ (index) │ name                                                      │ terminals │ routed │ states │ clashes │ egress │ calcMs │ validateMs │ kb  │
+├─────────┼───────────────────────────────────────────────────────────┼───────────┼────────┼────────┼─────────┼────────┼────────┼────────────┼─────┤
+│ 0       │ 'small 1-storey (v2)'                                     │ 20        │ '5/5'  │ 4052   │ 0       │ 51     │ 27     │ 8          │ 39  │
+│ 1       │ 'L-shaped'                                                │ 18        │ '5/5'  │ 4191   │ 0       │ 42     │ 18     │ 2          │ 38  │
+│ 2       │ 'parametric setback'                                      │ 16        │ '6/6'  │ 19154  │ 0       │ 149    │ 116    │ 7          │ 46  │
+│ 3       │ 'maximum-24-room'                                         │ 52        │ '4/5'  │ 28189  │ 0       │ 202    │ 131    │ 9          │ 104 │
+│ 4       │ 'typical 2-storey (wet)'                                  │ 30        │ '8/8'  │ 46997  │ 0       │ 163    │ 145    │ 7          │ 63  │
+│ 5       │ 'wet + structure'                                         │ 30        │ '8/8'  │ 54285  │ 0       │ 163    │ 174    │ 8          │ 64  │
+│ 6       │ 'wet + environmental'                                     │ 30        │ '8/8'  │ 46997  │ 0       │ 163    │ 142    │ 7          │ 64  │
+│ 7       │ 'multi-discipline full (wet + structure + environmental)' │ 30        │ '8/8'  │ 54285  │ 0       │ 163    │ 148    │ 6          │ 65  │
+└─────────┴───────────────────────────────────────────────────────────┴───────────┴────────┴────────┴─────────┴────────┴────────┴────────────┴─────┘
