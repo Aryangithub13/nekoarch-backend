@@ -21,7 +21,8 @@ function boundedJson(value: unknown): void {
   const seen = new Set<object>();
   const visit = (v: unknown, depth: number): void => {
     if (++nodes > OPTIMIZATION_LIMITS.inputNodes || depth > OPTIMIZATION_LIMITS.inputDepth) throw new OptimizationError('OPTIMIZATION_RESOURCE_LIMIT', 'Optimization input size/depth budget exceeded', { limit: 'inputNodes' });
-    if (typeof v === 'number' && !Number.isFinite(v)) throw invalid('Non-finite number');
+    // Hashed inputs carry only safe integers (decimals are strings), so JS costHash and SQL cost_hash agree byte-for-byte.
+    if (typeof v === 'number' && !Number.isSafeInteger(v)) throw invalid('Numbers must be safe integers; send decimals as strings');
     if (!v || typeof v !== 'object') return;
     const proto = Object.getPrototypeOf(v);
     if (seen.has(v) || (!Array.isArray(v) && proto !== Object.prototype && proto !== null)) throw invalid('Expected plain acyclic data');
@@ -200,7 +201,7 @@ export function runOptimizationStudy(source: OptimizationSource, raw: unknown, d
   if (snapshotBytes > OPTIMIZATION_LIMITS.snapshotBytes) throw new OptimizationError('OPTIMIZATION_RESOURCE_LIMIT', 'Optimization study exceeds the snapshot budget', { limit: 'snapshotBytes', value: String(snapshotBytes) });
   const owner = (e: Entry) => (e.primary ? entries.get(e.primary)! : e);
   const evidence = new Map<string, CandidateEvidence>([...entries.values()].map(e => [e.id, { model: e.built.model, qa: e.built.qaReport, takeoff: owner(e).takeoff, cost: owner(e).cost?.report ?? null }]));
-  const verdict = validateOptimizationStudy(study, { source, evidence }), validatedAt = now();
+  const verdict = validateOptimizationStudy(study, { source, evidence, generate: ctx.generate }), validatedAt = now();
   if (verdict.status !== 'VALID') throw new OptimizationError('OPTIMIZATION_VALIDATION_FAILED', 'Independent validation rejected the optimization study', { issue: verdict.issues[0] ?? '' });
   return { study, evidence, diagnostics: { snapshotBytes, timingsMs: { ...ctx.timings, scoring: scoredAt - searchedAt, validation: validatedAt - scoredAt, total: validatedAt - started } } };
 }

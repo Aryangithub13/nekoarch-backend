@@ -1,0 +1,17 @@
+npm notice run designflow@0.1.0 test:blueprint
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && vitest run packages/generator/tests/blueprint.test.ts
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28
+
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 6281ms
+   ✓ bounded adversarial and property corpus > isolates actual parallel worker generations  436ms
+
+ Test Files  1 passed (1)
+      Tests  137 passed (137)
+   Start at  17:37:35
+   Duration  7.12s (transform 311ms, setup 0ms, collect 460ms, tests 6.28s, environment 0ms, prepare 95ms)
+

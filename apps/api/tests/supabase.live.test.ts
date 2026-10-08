@@ -3,6 +3,7 @@ import { structuralAcceptance } from '../../../test-support/structural-acceptanc
 import { environmentalAcceptance } from '../../../test-support/environmental-acceptance.js';
 import { systemsAcceptance } from '../../../test-support/systems-acceptance.js';
 import { knowledgeAcceptance } from '../../../test-support/knowledge-acceptance.js';
+import { optimizationAcceptance } from '../../../test-support/optimization-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -148,6 +149,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const knowledgeRows = await admin.from('project_revision_specialized_knowledge_analyses').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (knowledgeRows.error) failures.push('read protected knowledge projects');
       for (const row of knowledgeRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Immutable Phase 28 optimization studies likewise.
+      const optimizationRows = await admin.from('project_revision_optimization_studies').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+      if (optimizationRows.error) failures.push('read protected optimization projects');
+      for (const row of optimizationRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
@@ -430,6 +435,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   knowledgeAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local knowledge setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  optimizationAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local optimization setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

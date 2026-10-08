@@ -458,6 +458,18 @@ describe('Phase 28 independent validator', () => {
     evidence.set(weighted.study.candidates[1]!.candidateId, evidence.get(weighted.study.candidates[2]!.candidateId)!);
     expect(validateOptimizationStudy(weighted.study, { source: ONE, evidence }).issues.some(i => i.startsWith('MODEL:'))).toBe(true);
   });
+  it('re-derives every pre-QA rejection: forged normalization, generation and schema codes are rejected (§26 option A)', () => {
+    const gated = run(input({ variables: [width(values(9000, 9500, 18000, 21500))] }));
+    expect(validateOptimizationStudy(gated.study, { source: ONE, evidence: gated.evidence })).toEqual({ status: 'VALID', issues: [] });
+    for (const [w, code] of [[9000, 'SETBACK_VIOLATION'], [9500, 'IMPOSSIBLE_LAYOUT'], [21500, 'PARAMETERS_INVALID']] as const) {
+      const forged = tamper(gated.study, t => { t.candidates.find(c => c.parameters[0] === w)!.rejection!.code = code; });
+      expect(validateOptimizationStudy(forged, { source: ONE, evidence: gated.evidence }).issues.some(i => i.startsWith('GATE_REDERIVED:'))).toBe(true);
+    }
+    const schema = when(20000, m => { m.slabs = []; }), modelGate = run(input({ variables: [width(values(18000, 20000))] }), ONE, { generate: schema });
+    expect(validateOptimizationStudy(modelGate.study, { source: ONE, evidence: modelGate.evidence, generate: schema }).status).toBe('VALID');
+    const forgedModel = tamper(modelGate.study, t => { t.candidates.find(c => c.parameters[0] === 20000)!.rejection!.details = ['slabs: forged']; });
+    expect(validateOptimizationStudy(forgedModel, { source: ONE, evidence: modelGate.evidence, generate: schema }).issues.some(i => i.startsWith('GATE_REDERIVED:'))).toBe(true);
+  });
   it('stays independent of the optimizer modules (static gate)', () => {
     const dir = new URL('../src/optimization/', import.meta.url), validator = readFileSync(new URL('validate.ts', dir), 'utf8');
     for (const forbidden of ['domain', 'candidate', 'rank', 'study']) expect(validator).not.toMatch(new RegExp(`from '\\./${forbidden}\\.js'`));

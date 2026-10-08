@@ -1,0 +1,1 @@
+{"compiledStructural":"PASS","nodes":48,"members":58,"segments":64,"resultSets":2,"claims":{"designVerification":"NOT_EVALUATED","codeCompliance":"NOT_CLAIMED","certification":"NOT_CLAIMED","constructionSuitability":"NOT_CLAIMED"},"cantileverTipMm":-11.249999999999993,"expectedMm":-11.25}

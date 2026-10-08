@@ -1,0 +1,1 @@
+Production container: non-root, liveness 200, failed-dependency readiness 503, SIGTERM exit 0.

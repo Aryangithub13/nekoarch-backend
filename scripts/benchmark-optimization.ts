@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
-import { performance } from 'node:perf_hooks';
+import { monitorEventLoopDelay, performance } from 'node:perf_hooks';
 import { normalizeParametricRequirements, type ParametricRequirements } from '@designflow/generator';
 import { auditBlueprint } from '@designflow/blueprint-qa';
 import { sampleCostingPolicy } from '@designflow/boq-cost';
@@ -12,7 +12,8 @@ import { parametricQaOptions } from '../apps/api/src/services/parametric-qa.js';
 import { OPTIMIZATION_LIMITS, OptimizationError, type OptimizationSource } from '../apps/api/src/optimization/contracts.js';
 import { generateWithEngine, type Generate } from '../apps/api/src/optimization/candidate.js';
 import { vectorOf } from '../apps/api/src/optimization/domain.js';
-import { runOptimizationStudy } from '../apps/api/src/optimization/study.js';
+import { resolveSource, runOptimizationStudy, validateOptimizationInput } from '../apps/api/src/optimization/study.js';
+import { OptimizationPool, OptimizationPoolError, POOL_DEFAULTS } from '../apps/api/src/optimization/pool.js';
 
 /** Phase 28 parallel-core benchmark. Studies are synchronous: total ms == main-thread blocking time. */
 function source(requirements: ParametricRequirements): OptimizationSource {
@@ -80,5 +81,45 @@ for (const c of cases) {
   console.log(`${c.name.padEnd(24)} ${String(row.outcome).padEnd(28)} ${String(row.totalMs).padStart(9)} ms` +
     ('evaluatedAssignments' in row ? `  eval ${row.evaluatedAssignments}  valid ${row.valid}  rej ${row.rejected}  dedup ${row.deduplicated}  ${row.msPerEvaluatedAssignment} ms/assignment  ${row.snapshotBytes} B` : ''));
 }
+// ---- Worker pool (production execution model, §30): the main thread only prechecks and awaits; studies run in workers. ----
+const maximumSource = cases.find(c => c.name === 'maximum-24-rooms')!.source;
+const max128 = study({ variables: [variable('w0', 0, 'widthMm', 51500, 59000, 500), variable('d0', 0, 'depthMm', 52000, 59000, 1000)] });
+const byName = (name: string) => cases.find(c => c.name === name)!;
+async function observed<T>(fn: () => Promise<T>) {
+  const loop = monitorEventLoopDelay({ resolution: 10 }); loop.enable();
+  const heap = process.memoryUsage(), started = performance.now();
+  try { return { value: await fn(), totalMs: round(performance.now() - started), loopMaxMs: round(loop.max / 1e6), loopP99Ms: round(loop.percentile(99) / 1e6),
+    rssDeltaMb: round((process.memoryUsage().rss - heap.rss) / 1048576), heapDeltaMb: round((process.memoryUsage().heapUsed - heap.heapUsed) / 1048576) }; }
+  finally { loop.disable(); }
+}
+const pool: Record<string, unknown> = { defaults: POOL_DEFAULTS, cpus: (await import('node:os')).availableParallelism() };
+const precheck = (source: typeof one, input: unknown) => { const t = performance.now(); validateOptimizationInput(JSON.parse(JSON.stringify(input)), source, resolveSource(source)); return round(performance.now() - t); };
+pool.mainThreadPrecheckMs = { typical: precheck(one, byName('weighted-128').input), maximum24Rooms: precheck(maximumSource, max128) };
+const runner = new OptimizationPool({ size: 2, queueLimit: 4 });
+try {
+  await runner.run(one, byName('1-variable').input); // spawn + warm one worker
+  const single = async (name: string, source: typeof one, input: unknown) => {
+    const o = await observed(() => runner.run(source, JSON.parse(JSON.stringify(input))));
+    return { name, status: o.value.study.status, candidates: o.value.study.search.evaluatedAssignments, latencyMs: o.totalMs, queueMs: round(o.value.queueMs), workerMs: round(o.value.workerMs),
+      loopMaxMs: o.loopMaxMs, loopP99Ms: o.loopP99Ms, snapshotBytes: Buffer.byteLength(JSON.stringify(o.value.study)), mainRssDeltaMb: o.rssDeltaMb };
+  };
+  pool.single = [await single('weighted-128', one, byName('weighted-128').input), await single('pareto-128', one, byName('pareto-128').input),
+    await single('8-variable-local-search', two, byName('8-variable-local-search').input), await single('costed-128', one, byName('costed-128').input),
+    await single('maximum-24-rooms-128', maximumSource, max128)];
+  const refusal = await observed(() => runner.run(one, byName('candidate-space-refusal').input).catch((e: Error & { code?: string }) => e.code));
+  pool.refusal = { code: refusal.value, latencyMs: refusal.totalMs };
+  const concurrent = await observed(() => Promise.all([0, 1].map(() => runner.run(one, byName('weighted-128').input))));
+  pool.concurrentAtCapacity = { studies: 2, wallMs: concurrent.totalMs, throughputStudiesPerMin: round(120000 / concurrent.totalMs), loopMaxMs: concurrent.loopMaxMs,
+    queueMs: concurrent.value.map(r => round(r.queueMs)), workerMs: concurrent.value.map(r => round(r.workerMs)), mainRssDeltaMb: concurrent.rssDeltaMb };
+  const saturation = await observed(async () => {
+    const submitted = Array.from({ length: 8 }, () => { const t = performance.now();
+      return runner.run(one, byName('2-variables').input).then(r => ({ ok: true, ms: performance.now() - t, queueMs: r.queueMs }), (e: OptimizationPoolError) => ({ ok: false, code: e.code, ms: performance.now() - t })); });
+    return Promise.all(submitted);
+  });
+  pool.queueSaturation = { submitted: 8, accepted: saturation.value.filter(r => r.ok).length, refused: saturation.value.filter(r => !r.ok).map(r => (r as { code: string }).code),
+    refusalLatencyMs: saturation.value.filter(r => !r.ok).map(r => round(r.ms)), maxQueueWaitMs: round(Math.max(...saturation.value.filter(r => r.ok).map(r => (r as { queueMs: number }).queueMs))),
+    wallMs: saturation.totalMs, loopMaxMs: saturation.loopMaxMs };
+} finally { await runner.close(); }
+console.log(JSON.stringify(pool, null, 2));
 await mkdir('docs/phase28/evidence', { recursive: true });
-await writeFile('docs/phase28/evidence/benchmark.json', `${JSON.stringify({ generatedBy: 'scripts/benchmark-optimization.ts', node: process.version, limits: OPTIMIZATION_LIMITS, results }, null, 2)}\n`);
+await writeFile('docs/phase28/evidence/benchmark.json', `${JSON.stringify({ generatedBy: 'scripts/benchmark-optimization.ts', node: process.version, limits: OPTIMIZATION_LIMITS, results, pool }, null, 2)}\n`);

@@ -1,0 +1,51 @@
+npm notice run designflow@0.1.0 test:optimization
+npm notice run npm run build && vitest run apps/api/tests/optimization.test.ts apps/api/tests/optimization-pool.test.ts apps/api/tests/optimization.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28
+
+ ✓ apps/api/tests/optimization.test.ts (62 tests) 11238ms
+   ✓ Phase 28 source eligibility and baseline protection > never mutates the source revision  473ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > MINIMIZE and MAXIMIZE rank in opposite directions  482ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > CANDIDATE_RANGE records bounds; degenerate ranges tie and break canonically  424ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > weight 0 is REPORT_ONLY and leaves scores unchanged  487ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > candidateId is deterministic and independent of objectives  467ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > identical reruns are byte-identical; declaration order does not matter; timings are not hashed  685ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > adoption edits reproduce candidate parameters and models  357ms
+   ✓ Phase 28 deterministic local search > climbs from the baseline to a local optimum, deterministically  474ms
+   ✓ Phase 28 deterministic local search > 8-variable local search on a two-storey revision stays within its budget  1307ms
+ ✓ apps/api/tests/optimization.integration.test.ts (15 tests) 7584ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > validates without computing or persisting, then runs and persists an advisory study  655ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > paginates studies stably  396ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > adoption goes only through the existing revision path and reproduces the candidate model; studies then become STALE  747ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > hashes inputs and results identically in TypeScript and SQL  406ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > accepts a signed recomputing variant; denies direct writes, unsigned, forged or foreign RPCs and foreign/anonymous reads  454ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > rejects forged binding, input, result and candidate identities with P2803 and stores nothing  643ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > refuses studies that claim more than the bounded result, even with recomputed hashes  527ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > keeps rows immutable, converges concurrent identical writes and refuses a different result for an identical input  538ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > worker pool failures over HTTP store nothing > timeout → 503 OPTIMIZATION_WORKER_TIMEOUT; overflow → 503 OPTIMIZATION_QUEUE_FULL  1610ms
+ ✓ apps/api/tests/optimization-pool.test.ts (9 tests) 5186ms
+   ✓ Phase 28 optimization worker pool > a worker produces the byte-identical study the in-process core produces, on every worker  987ms
+   ✓ Phase 28 optimization worker pool > bounds the queue: overflow is refused immediately, never started  318ms
+   ✓ Phase 28 optimization worker pool > keeps the main event loop responsive while a heavy study runs  3235ms
+
+ Test Files  3 passed (3)
+      Tests  86 passed (86)
+   Start at  17:06:58
+   Duration  26.99s (transform 1.04s, setup 0ms, collect 2.38s, tests 24.01s, environment 1ms, prepare 165ms)
+

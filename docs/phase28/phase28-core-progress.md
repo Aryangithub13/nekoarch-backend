@@ -2,6 +2,8 @@
 
 **Classification: PHASE 28 PARALLEL CORE IMPLEMENTED — INTEGRATION DEFERRED** (2026-10-08)
 
+> Superseded: integration completed and released — see [phase28-report.md](phase28-report.md) (**PHASE 28 FULLY IMPLEMENTED AND VERIFIED WITHIN BOUNDED SCOPE**). §5 option A (worker pool) and the §8 items are done; §7 (`PHASE27_INTEGRATION_DEFERRED`) and the §9 validator boundary are updated there (§26 option A).
+
 Phase 27 is not released (no `backend-v1-phase27-complete`). This core lives on `phase28/optimization-v1` in the separate worktree `designflow-phase28` (base `backend-v1-phase26-complete`, `4d1f431`). Nothing is committed, tagged, pushed or deployed. No migration 0018, route, `app.ts`, repository, Supabase, Sentry, pgTAP or Phase 27 file was created or modified.
 
 Design approvals D1–D5 are applied as approved. D6 is approved for the core only: synchronous, ≤ 128 evaluated candidates. **PHASE28_EXECUTION_MODEL_INTEGRATION_DECISION_PENDING** (§5).

@@ -1,0 +1,10 @@
+npm notice run designflow@0.1.0 db:test
+npm notice run supabase test db
+Connecting to local database...
+psql:/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28/supabase/tests/rls.sql:4: NOTICE:  extension "pgtap" already exists, skipping
+/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28/supabase/tests/rls.sql .. ok
+All tests successful.
+Files=1, Tests=86,  0 wallclock secs ( 0.02 usr +  0.01 sys =  0.03 CPU)
+Result: PASS
+A new version of Supabase CLI is available: v2.120.0 (currently installed v2.117.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

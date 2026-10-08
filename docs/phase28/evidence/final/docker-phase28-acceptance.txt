@@ -1,0 +1,1 @@
+{"compiledOptimization":"PASS","candidates":5,"resultHash":"dc5e6fb0f7e4ffe4acf9aafdd307a0fbb841c962176e0bd847a46fa6a558c6fe","worker":"dist/optimization/worker.js","workerMs":531,"claims":"all 11 NOT_CLAIMED","runtime":"v22.23.3"}

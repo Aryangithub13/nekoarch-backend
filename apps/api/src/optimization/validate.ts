@@ -1,6 +1,6 @@
 import { costHash, BoqCostReportSchema } from '@designflow/boq-cost';
 import { BlueprintQaReportSchema } from '@designflow/blueprint-qa';
-import { normalizeParametricRequirements } from '@designflow/generator';
+import { BlueprintError, generateParametricBlueprint, normalizeParametricRequirements, type NormalizedParametricRequirements } from '@designflow/generator';
 import { QuantityTakeoffReportSchema, type QuantityTakeoffReport } from '@designflow/quantity-takeoff';
 import { ArchitecturalBuildingModelV2Schema } from '@designflow/shared';
 import { modelHash } from '../lib/generation-identity.js';
@@ -10,8 +10,9 @@ import { OPTIMIZATION_CANDIDATE_VERSION, OPTIMIZATION_LIMITS, StudySchema, metri
 /**
  * Independent study validator. It deliberately re-implements its arithmetic, enumeration, metric
  * extraction, scoring, Pareto and local-search replay; it must not import domain/candidate/rank/study.
- * It verifies every recorded number it can reach from in-memory evidence. Generator/model-stage
- * rejection codes are trusted as recorded (rejected candidates are never ranked).
+ * It verifies every recorded number it can reach from in-memory evidence, and re-derives every pre-QA rejection
+ * (normalization, generation, schema) through the same deterministic engines with its own code mapping. It does not
+ * re-implement those engines: their correctness is covered by the generator and QA suites (documented trust boundary).
  */
 type Q = [bigint, bigint];
 const g = (a: bigint, b: bigint): bigint => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, b] = [b, a % b]; return a; };
@@ -54,12 +55,30 @@ function itemMetric(t: QuantityTakeoffReport | null, m: Exclude<BaseMetricRef, {
   if (bad) return { status: 'INPUT_INCOMPLETE', stage: 'A', unit, value: null, reason: `TAKEOFF_${m.kind === 'SPACE_FLOOR_AREA' ? bad.status : 'PARTIAL'}` };
   return { status: 'EVALUATED', stage: 'A', unit, value: items.reduce<Q>((s, i) => qAdd(s, dec(i.quantity.value)), [0n, 1n]), reason: null };
 }
+type Generate = (requirements: NormalizedParametricRequirements, execution: { timeoutMs: number }) => { model: unknown };
+const NORMAL: Record<string, string> = { UNSUPPORTED_PARAMETRIC_CAPABILITY: 'UNSUPPORTED_GEOMETRY', PROGRAM_DOES_NOT_FIT: 'SITE_CONTAINMENT' };
+/** Independently re-derives a pre-QA gate outcome through the same deterministic engines (its own code mapping; §26 option A). */
+function rederive(raw: unknown, generate: Generate): { stage: string; code?: string; details?: string[] } {
+  let r: NormalizedParametricRequirements;
+  try { r = normalizeParametricRequirements(raw); } catch (e) {
+    if (!(e instanceof BlueprintError)) return { stage: 'UNKNOWN' };
+    return { stage: 'NORMALIZATION', code: e.code === 'PROGRAM_DOES_NOT_FIT' && 'boundaryEdgeStart' in e.diagnostics ? 'SETBACK_VIOLATION' : NORMAL[e.code] ?? 'PARAMETERS_INVALID', details: [e.code] };
+  }
+  let model: unknown;
+  try { model = generate(r, { timeoutMs: OPTIMIZATION_LIMITS.generatorTimeoutMs }).model; } catch (e) {
+    if (!(e instanceof BlueprintError)) return { stage: 'UNKNOWN' };
+    return { stage: 'GENERATION', code: e.code === 'SEARCH_LIMIT_EXHAUSTED' ? 'GENERATOR_SEARCH_LIMIT' : e.code, details: [e.code] };
+  }
+  const parsed = ArchitecturalBuildingModelV2Schema.safeParse(model);
+  if (!parsed.success) return { stage: 'MODEL', code: 'MODEL_INVARIANT_FAILED', details: parsed.error.issues.slice(0, 3).map(i => `${i.path.join('.')}: ${i.message}`.slice(0, 200)) };
+  return { stage: 'PASSES_PRE_QA_GATES' };
+}
 function signature(c: ReturnType<typeof BoqCostReportSchema.parse>) {
   const codes = (priced: boolean) => [...new Set(c.boqLines.filter(l => (l.status === 'PRICED') === priced).map(l => l.lineCode))].sort();
   return costHash({ currency: c.currency, coverage: c.coverage, upstreamStatus: c.source.upstreamStatus, excludedScopes: [...c.excludedScopes].sort(), pricedLineCodes: codes(true), unpricedLineCodes: codes(false) });
 }
 
-export function validateOptimizationStudy(raw: unknown, ctx: { source: OptimizationSource; evidence: Map<string, CandidateEvidence> }): { status: 'VALID' | 'INVALID'; issues: string[] } {
+export function validateOptimizationStudy(raw: unknown, ctx: { source: OptimizationSource; evidence: Map<string, CandidateEvidence>; generate?: Generate }): { status: 'VALID' | 'INVALID'; issues: string[] } {
   const issues: string[] = [], fail = (m: string) => { issues.push(m); };
   const parsed = StudySchema.safeParse(raw);
   if (!parsed.success) return { status: 'INVALID', issues: ['SCHEMA:' + parsed.error.issues.slice(0, 3).map(i => i.path.join('.')).join(',')] };
@@ -124,10 +143,10 @@ export function validateOptimizationStudy(raw: unknown, ctx: { source: Optimizat
     const ev = evidence.get(c.candidateId), tag = c.candidateId.slice(0, 12), stage = c.rejection?.stage;
     if (stage && stage !== 'CONSTRAINT') {
       if (c.status !== 'REJECTED' || c.modelHash !== null || Object.keys(c.metrics).length || c.constraints.length || c.score || c.rank !== null) fail(`GATE_SHAPE:${tag}`);
-      if (stage === 'NORMALIZATION') {
+      if (stage === 'NORMALIZATION' || stage === 'GENERATION' || stage === 'MODEL') {
         const a = structuredClone(arch); a.floors.forEach(f => PARAMS.forEach(p => { f[p] = c.parameters[slotOf(f.level, p)]!; }));
-        let threw = false; try { normalizeParametricRequirements({ ...structuredClone(req), parametricArchitecture: a }); } catch { threw = true; }
-        if (!threw) fail(`NORMALIZATION_GATE:${tag}`);
+        const derived = rederive({ ...structuredClone(req), parametricArchitecture: a }, ctx.generate ?? generateParametricBlueprint);
+        if (!same(derived, { stage, code: c.rejection!.code, details: c.rejection!.details })) fail(`GATE_REDERIVED:${tag}`);
       }
       if (stage === 'QA') {
         const r = BlueprintQaReportSchema.safeParse(ev?.qa);

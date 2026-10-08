@@ -1,6 +1,6 @@
 # Phase 28 design — optimization & autonomous design iteration V1
 
-Status: **PHASE 28 DESIGN COMPLETE**. D1–D5 approved; D6 approved for the isolated core only (PHASE28_EXECUTION_MODEL_INTEGRATION_DECISION_PENDING). Implementation amendments (dedup before QA, measured limits) are recorded in [phase28-core-progress.md](phase28-core-progress.md) §2 and §5 and supersede §15/§21 where they differ.
+Status: **PHASE 28 DESIGN COMPLETE**. D1–D5 approved; D6 resolved: bounded `worker_threads` pool for the HTTP API. Released — see [phase28-report.md](phase28-report.md). Implementation amendments (dedup before QA, measured limits) are recorded in [phase28-core-progress.md](phase28-core-progress.md) §2 and §5 and supersede §15/§21 where they differ.
 Mode: parallel-safe. Phase 27 is unreleased. Nothing here touches Phase 27, shared wiring or migrations.
 Source facts: [phase28-source-audit.md](phase28-source-audit.md).
 

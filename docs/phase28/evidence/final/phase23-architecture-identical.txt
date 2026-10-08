@@ -1,0 +1,58 @@
+[
+  {
+    "fixture": "L",
+    "ifcSha256": "e786e618057f318796beb96b1ccad49f753cf68ebb4432a005d6869349fcf825",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5"
+  },
+  {
+    "fixture": "maximum-24",
+    "ifcSha256": "8557f4418a39e980a369dff7ecc66ab760e85c41bac226adf44066d4674a33b8",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "6cb317e65d17b4a7439dcef8c4012ae0253d0c59e92c1bb02138a14103307a92"
+  },
+  {
+    "fixture": "modified",
+    "ifcSha256": "c7bb2033ef06871ed3c42336e62967717025f4ee3b4d30497054eb4e4e950039",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "c5a5feb4f14b04caf8314cf86da982c245d171edc836962f991e1a964759376f"
+  },
+  {
+    "fixture": "setback",
+    "ifcSha256": "a972dfef990a54b8942472d331b76b554ae0af94cc587d8fedca3a56bd26f1c2",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "d33defd82ef5cbf1f7f06b6e9e25d4cadfe67c30b8a5bf86e3e3a62ff56c8b6c"
+  },
+  {
+    "fixture": "specified-material",
+    "ifcSha256": "4ed8089b3c35250c0739f3ece56276cbef6e18d45f6558096f4cc88853c27633",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "6b50c9555937b01b35f82c56e6fb9cdec896f163a03e1e7df98d74e4ce42577e"
+  },
+  {
+    "fixture": "v1",
+    "ifcSha256": "012787c386ba5bad40c92448e3006d6babb7c76cddf909d85ca386fed18c4aa3",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "0cf2e88d17b02af3d67fb6187d16fe1c47470a4c09bac2d04cc47eb07a3bed20"
+  },
+  {
+    "fixture": "v2",
+    "ifcSha256": "ba08962196f6f8d29dd0779aaad62db01b3f9d8a192ec4c6f72b4e46e973a063",
+    "ifcByteIdentical": true,
+    "modelIdentical": true,
+    "bimIdentical": true,
+    "modelHash": "dbbd4da055655a09f11dd5dc4fee93aa8603cba6ab15a4e6272b96de19684f72"
+  }
+]

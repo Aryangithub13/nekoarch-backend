@@ -1,0 +1,38 @@
+M01 skip candidate KILLED intended restored
+M02 duplicate candidate KILLED intended restored
+M03 alter candidate identity KILLED intended restored
+M04 bypass hard constraint KILLED intended restored
+M05 reverse MINIMIZE comparison KILLED intended restored
+M06 reverse MAXIMIZE comparison KILLED intended restored
+M07 corrupt target distance KILLED intended restored
+M08 ignore objective weight KILLED intended restored
+M09 alter normalization KILLED intended restored
+M10 select dominated Pareto candidate KILLED intended restored
+M11 drop non-dominated candidate KILLED intended restored
+M12 trust invalid geometry (skip schema) KILLED intended restored
+M13 skip QA KILLED intended restored
+M14 ignore unsupported metric KILLED intended restored
+M15 treat missing cost as zero KILLED intended restored
+M16 accept candidate-space overflow KILLED intended restored
+M17 alter deterministic ordering KILLED intended restored
+M18 bypass deduplication KILLED intended restored
+M19 validator trusts optimizer score KILLED intended restored
+M20 mutate accepted revision KILLED intended restored
+M21 lose provenance (adoption edits) KILLED intended restored
+M22 change claims KILLED intended restored
+M23 worker bypass (study on the request thread) KILLED intended restored
+M24 queue overflow bypass KILLED intended restored
+M25 timeout bypass KILLED intended restored
+M26 failed worker still yields a result KILLED intended restored
+M27 malformed worker study accepted KILLED intended restored
+M28 RLS owner-read bypass (policy opened to every authenticated user) KILLED intended restored
+M29 write binding bypass (seed) KILLED intended restored
+M30 result-hash forgery accepted KILLED intended restored
+M31 candidate identity recompute bypass KILLED intended restored
+M32 stale-check bypass KILLED intended restored
+M33 nondeterministic result accepted for an identical input KILLED intended restored
+M34 architecture-mutation guard removed KILLED intended restored
+M35 validator imports optimizer arithmetic (independence) KILLED intended restored
+M36 validator gate re-derivation bypass KILLED intended restored
+M37 malformed input mapped to 422 instead of 400 KILLED intended restored
+{"mutants": 37, "problems": [], "controlsPass": true, "ok": true}

@@ -1,0 +1,40 @@
+npm notice run designflow@0.1.0 test:structural
+npm notice run npm run build && vitest run apps/api/tests/structural.test.ts apps/api/tests/structural.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28
+
+ ✓ apps/api/tests/structural.integration.test.ts (14 tests) 9742ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > analyses revision A, then a real west-wing edit makes A stale for revision B without rewriting it  1894ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > enforces ownership, revision association and redacted structural error envelopes  886ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > replays idempotent analysis commands and rejects key reuse with a different input  428ms
+   ✓ Phase 24 structural persistence on PostgreSQL > recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims  419ms
+   ✓ Phase 24 structural persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  529ms
+   ✓ Phase 24 structural persistence on PostgreSQL > rolls back the analysis together with a failed receipt and fails closed without a signer  331ms
+   ✓ Phase 24 structural persistence on PostgreSQL > A05: supported-size input that expands past the analysis limit is a typed 422 on both routes; the limit itself analyses  1124ms
+   ✓ Phase 24 migration upgrade from the 0013 schema > applies 0014 over a populated database without changing existing rows, RLS or policies  1950ms
+ ✓ apps/api/tests/structural.test.ts (115 tests) 4013ms
+   ✓ Phase 24 identity, mapping and Phase 23 preservation > never mutates architecture, BIM or IFC output  662ms
+   ✓ Phase 24 native NekoArch fixtures > v2 maps, validates, analyses and passes independent equilibrium  475ms
+   ✓ Phase 24 native NekoArch fixtures > maximum-24 maps, validates, analyses and passes independent equilibrium  434ms
+
+ Test Files  2 passed (2)
+      Tests  129 passed (129)
+   Start at  17:47:08
+   Duration  17.65s (transform 1.67s, setup 0ms, collect 3.32s, tests 13.76s, environment 0ms, prepare 170ms)
+

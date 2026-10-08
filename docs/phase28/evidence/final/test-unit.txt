@@ -1,0 +1,124 @@
+npm notice run designflow@0.1.0 test:unit
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run packages/boq-cost/tests packages/construction-calculations/tests packages/quantity-takeoff/tests packages/blueprint-qa/tests packages/shared/tests packages/generator/tests apps/api/tests/estimate-service.test.ts apps/api/tests/foundation.test.ts apps/api/tests/supabase-adapter.test.ts apps/api/tests/generation.test.ts apps/api/tests/hardening.test.ts apps/api/tests/workflows.test.ts apps/api/tests/freshness.test.ts apps/api/tests/interpretation.test.ts apps/api/tests/conversations.test.ts apps/api/tests/ai-orchestration.test.ts apps/api/tests/ai-transport.test.ts apps/api/tests/ai-remote.test.ts apps/api/tests/bim.test.ts apps/api/tests/structural.test.ts apps/api/tests/environmental.test.ts apps/api/tests/systems.test.ts apps/api/tests/knowledge.test.ts apps/api/tests/optimization.test.ts apps/api/tests/optimization-pool.test.ts
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28
+
+ ✓ apps/api/tests/optimization.test.ts (62 tests) 14008ms
+   ✓ Phase 28 domains, enumeration and preflight > VALUES domains and multiple variables enumerate the product in slot order  342ms
+   ✓ Phase 28 domains, enumeration and preflight > all eight variables on a two-storey revision  328ms
+   ✓ Phase 28 source eligibility and baseline protection > baseline rebuild reproduces the accepted modelHash  332ms
+   ✓ Phase 28 source eligibility and baseline protection > never mutates the source revision  592ms
+   ✓ Phase 28 hard gates > accepts QA warnings unless QA_NO_WARNINGS is required  301ms
+   ✓ Phase 28 metrics, constraints and cost > exact takeoff metrics and ratios  309ms
+   ✓ Phase 28 metrics, constraints and cost > unpriced lines are INPUT_INCOMPLETE, never zero  303ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > MINIMIZE and MAXIMIZE rank in opposite directions  602ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > CANDIDATE_RANGE records bounds; degenerate ranges tie and break canonically  514ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > weight 0 is REPORT_ONLY and leaves scores unchanged  615ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > candidateId is deterministic and independent of objectives  577ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > identical reruns are byte-identical; declaration order does not matter; timings are not hashed  876ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > adoption edits reproduce candidate parameters and models  455ms
+   ✓ Phase 28 deterministic local search > climbs from the baseline to a local optimum, deterministically  567ms
+   ✓ Phase 28 deterministic local search > 8-variable local search on a two-storey revision stays within its budget  1660ms
+   ✓ Phase 28 independent validator > re-derives every pre-QA rejection: forged normalization, generation and schema codes are rejected (§26 option A)  329ms
+ ✓ apps/api/tests/optimization-pool.test.ts (9 tests) 7685ms
+   ✓ Phase 28 optimization worker pool > a worker produces the byte-identical study the in-process core produces, on every worker  1087ms
+   ✓ Phase 28 optimization worker pool > bounds the queue: overflow is refused immediately, never started  319ms
+   ✓ Phase 28 optimization worker pool > keeps the main event loop responsive while a heavy study runs  5595ms
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 6033ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  468ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real L site output  320ms
+   ✓ Precision Solver V2 geometry and independent evidence > reconciles explicit buildable regions with rectangular setbacks and preserves translated survey origin  300ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-z  325ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-z  316ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-x  311ms
+   ✓ Precision Solver V2 geometry and independent evidence > models conceptual parking and explicitly excludes construction quantities  336ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  608ms
+   ✓ Precision Solver V2 geometry and independent evidence > applies exact north conversions without assuming climate or unsupported angles  328ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  609ms
+   ✓ Precision Solver V2 geometry and independent evidence > independently rejects forbidden private transit rather than assuming corridor access  319ms
+ ✓ apps/api/tests/environmental.test.ts (102 tests) 6044ms
+   ✓ Phase 25 orientation > assigns wall azimuths that rotate with the stated north  310ms
+   ✓ Phase 25 environmental model on native architecture > v2: zones, envelope, independent validation and analysis  430ms
+   ✓ Phase 25 environmental model on native architecture > maximum-24: zones, envelope, independent validation and analysis  382ms
+   ✓ Phase 25 environmental model on native architecture > leaves Phase 23 BIM and IFC output untouched  410ms
+   ✓ Phase 25 direct-sun exposure > shades the L inner corner and the setback lower roofs in the low western sun, and agrees with the independent caster  302ms
+   ✓ Phase 25 steady-state heat flow and energy (closed forms) > maximum-24: total Q = Σ U·A·ΔT from the source geometry  314ms
+   ✓ Phase 25 identity, determinism and limits > preflights exposure rows and the ray budget before any computation  366ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 4373ms
+ ✓ apps/api/tests/bim.test.ts (37 tests) 4042ms
+   ✓ Phase 23 semantic BIM > projects v1 without changing historical geometry or hash  326ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  663ms
+   ✓ Phase 23 semantic BIM > projects L without changing historical geometry or hash  305ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  501ms
+ ✓ apps/api/tests/systems.test.ts (36 tests) 3553ms
+   ✓ Phase 26 plumbing and drainage > known answer: a 10 m run at 2 % falls exactly 200 mm  406ms
+   ✓ Phase 26 life-safety geometry (independent egress graph) > counts node-disjoint routes honestly where two exits exist: a shared corridor is one independent route  367ms
+   ✓ Phase 26 independent validators reject forged output > rejects malformed, misidentified or foreign calculator output before validation  723ms
+ ✓ apps/api/tests/structural.test.ts (115 tests) 3305ms
+   ✓ Phase 24 identity, mapping and Phase 23 preservation > never mutates architecture, BIM or IFC output  529ms
+   ✓ Phase 24 native NekoArch fixtures > v2 maps, validates, analyses and passes independent equilibrium  386ms
+   ✓ Phase 24 native NekoArch fixtures > maximum-24 maps, validates, analyses and passes independent equilibrium  386ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 3046ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  2428ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2744ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  864ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 8 BHK prompts with required open-kitchen adjacency  329ms
+ ✓ apps/api/tests/knowledge.test.ts (23 tests) 2884ms
+   ✓ Phase 27 facts and provenance (project-facts-v1) > extracts nothing from an unbound source and rejects inconsistent transitive upstream bindings  912ms
+   ✓ Phase 27 golden G1 (design §22) and independent result validation > G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate  934ms
+   ✓ Phase 27 resource limits, claims and snapshot schema > rejects rule, result and conflict-pair budgets with a typed resource-limit error, for the intended reason  336ms
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 2313ms
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 1051ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 851ms
+ ✓ packages/blueprint-qa/tests/geometry-coverage.test.ts (17 tests) 477ms
+   ✓ general V2 geometry and honest coverage > bounds a dense adversarial duplicate-wall report and declares truncation  398ms
+ ✓ apps/api/tests/generation.test.ts (36 tests) 430ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 433ms
+(node:495663) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ apps/api/tests/foundation.test.ts (30 tests) 427ms
+ ✓ packages/shared/tests/building-v2-model.test.ts (82 tests) 455ms
+ ✓ apps/api/tests/hardening.test.ts (38 tests) 381ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 454ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 361ms
+ ✓ apps/api/tests/conversations.test.ts (34 tests) 274ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 323ms
+ ✓ packages/blueprint-qa/tests/audit.test.ts (57 tests) 383ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 248ms
+ ✓ packages/blueprint-qa/tests/repair-geometry.test.ts (21 tests) 249ms
+ ✓ packages/shared/tests/repair-resource.test.ts (2 tests) 292ms
+ ✓ apps/api/tests/supabase-adapter.test.ts (36 tests) 241ms
+ ✓ apps/api/tests/ai-transport.test.ts (13 tests) 182ms
+ ✓ apps/api/tests/freshness.test.ts (7 tests) 192ms
+ ✓ apps/api/tests/ai-orchestration.test.ts (86 tests) 144ms
+ ✓ packages/blueprint-qa/tests/rules.test.ts (15 tests) 163ms
+ ✓ packages/generator/tests/parametric-quantities.test.ts (1 test) 157ms
+ ✓ packages/blueprint-qa/tests/boundary.test.ts (1 test) 171ms
+ ✓ packages/shared/tests/contracts.test.ts (411 tests) 79ms
+ ✓ apps/api/tests/estimate-service.test.ts (29 tests) 81ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 64ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 53ms
+ ✓ apps/api/tests/workflows.test.ts (32 tests) 45ms
+ ✓ packages/shared/tests/building-v2-adapter.test.ts (16 tests) 39ms
+ ✓ apps/api/tests/ai-remote.test.ts (13 tests) 32ms
+ ✓ packages/shared/tests/building-v2-precision.test.ts (65 tests) 25ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 22ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 8ms
+
+ Test Files  45 passed (45)
+      Tests  2222 passed (2222)
+   Start at  17:35:25
+   Duration  93.25s (transform 2.22s, setup 0ms, collect 14.37s, tests 68.82s, environment 9ms, prepare 2.98s)
+

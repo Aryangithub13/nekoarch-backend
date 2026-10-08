@@ -1,0 +1,139 @@
+npm notice run designflow@0.1.0 benchmark:optimization
+npm notice run npm run build && node --import tsx scripts/benchmark-optimization.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+1-variable               COMPLETED                        261.7 ms  eval 5  valid 5  rej 0  dedup 0  52.34 ms/assignment  7895 B
+2-variables              COMPLETED                        977.4 ms  eval 20  valid 20  rej 0  dedup 0  48.87 ms/assignment  24186 B
+4-variables              COMPLETED                      3919.05 ms  eval 81  valid 81  rej 0  dedup 0  48.38 ms/assignment  95657 B
+8-variable-local-search  BUDGET_EXHAUSTED               6098.97 ms  eval 128  valid 108  rej 20  dedup 0  47.65 ms/assignment  153898 B
+maximum-24-rooms         COMPLETED                      2683.99 ms  eval 15  valid 15  rej 0  dedup 0  178.93 ms/assignment  18771 B
+L-two-storey             COMPLETED                       2479.5 ms  eval 45  valid 45  rej 0  dedup 0  55.1 ms/assignment  50931 B
+setback-site             COMPLETED                       483.95 ms  eval 15  valid 11  rej 4  dedup 0  32.26 ms/assignment  16881 B
+heavy-deduplication      COMPLETED                       720.17 ms  eval 23  valid 1  rej 0  dedup 22  31.31 ms/assignment  6975 B
+pareto-128               COMPLETED                      5248.66 ms  eval 128  valid 128  rej 0  dedup 0  41.01 ms/assignment  198486 B
+weighted-128             COMPLETED                      5260.85 ms  eval 128  valid 128  rej 0  dedup 0  41.1 ms/assignment  237273 B
+costed-128               COMPLETED                      6539.74 ms  eval 128  valid 128  rej 0  dedup 0  51.09 ms/assignment  210033 B
+candidate-space-refusal  OPTIMIZATION_RESOURCE_LIMIT       1.04 ms
+{
+  "defaults": {
+    "size": 2,
+    "queueLimit": 4,
+    "timeoutMs": 60000,
+    "maxOldGenerationSizeMb": 512
+  },
+  "cpus": 12,
+  "mainThreadPrecheckMs": {
+    "typical": 0.69,
+    "maximum24Rooms": 1.4
+  },
+  "single": [
+    {
+      "name": "weighted-128",
+      "status": "COMPLETED",
+      "candidates": 128,
+      "latencyMs": 5838.21,
+      "queueMs": 0.02,
+      "workerMs": 5834.45,
+      "loopMaxMs": 12.03,
+      "loopP99Ms": 11.17,
+      "snapshotBytes": 237273,
+      "mainRssDeltaMb": 65.41
+    },
+    {
+      "name": "pareto-128",
+      "status": "COMPLETED",
+      "candidates": 128,
+      "latencyMs": 5694.47,
+      "queueMs": 0.01,
+      "workerMs": 5690.69,
+      "loopMaxMs": 11.89,
+      "loopP99Ms": 11.03,
+      "snapshotBytes": 198486,
+      "mainRssDeltaMb": 1.13
+    },
+    {
+      "name": "8-variable-local-search",
+      "status": "BUDGET_EXHAUSTED",
+      "candidates": 128,
+      "latencyMs": 6038.79,
+      "queueMs": 0.02,
+      "workerMs": 6036.21,
+      "loopMaxMs": 11.17,
+      "loopP99Ms": 10.92,
+      "snapshotBytes": 153898,
+      "mainRssDeltaMb": 4.13
+    },
+    {
+      "name": "costed-128",
+      "status": "COMPLETED",
+      "candidates": 128,
+      "latencyMs": 6947.54,
+      "queueMs": 0.01,
+      "workerMs": 6943.14,
+      "loopMaxMs": 11.21,
+      "loopP99Ms": 11,
+      "snapshotBytes": 210033,
+      "mainRssDeltaMb": -57.41
+    },
+    {
+      "name": "maximum-24-rooms-128",
+      "status": "COMPLETED",
+      "candidates": 128,
+      "latencyMs": 24316.64,
+      "queueMs": 0.01,
+      "workerMs": 24314.3,
+      "loopMaxMs": 12.21,
+      "loopP99Ms": 10.99,
+      "snapshotBytes": 139271,
+      "mainRssDeltaMb": 99.59
+    }
+  ],
+  "refusal": {
+    "code": "OPTIMIZATION_RESOURCE_LIMIT",
+    "latencyMs": 2.44
+  },
+  "concurrentAtCapacity": {
+    "studies": 2,
+    "wallMs": 7035.92,
+    "throughputStudiesPerMin": 17.06,
+    "loopMaxMs": 14.03,
+    "queueMs": [
+      0.01,
+      0.87
+    ],
+    "workerMs": [
+      6505.19,
+      7030.96
+    ],
+    "mainRssDeltaMb": 104.41
+  },
+  "queueSaturation": {
+    "submitted": 8,
+    "accepted": 6,
+    "refused": [
+      "OPTIMIZATION_QUEUE_FULL",
+      "OPTIMIZATION_QUEUE_FULL"
+    ],
+    "refusalLatencyMs": [
+      0.21,
+      0.05
+    ],
+    "maxQueueWaitMs": 2170.31,
+    "wallMs": 3250.7,
+    "loopMaxMs": 12.42
+  }
+}

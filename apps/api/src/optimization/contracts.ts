@@ -185,3 +185,14 @@ export type Study = z.infer<typeof StudySchema>;
 
 /** In-memory evidence for the independent validator; never persisted. */
 export interface CandidateEvidence { model: BuildingModelV2 | null; qa: unknown; takeoff: unknown; cost: unknown }
+
+/** Persisted study rows (migration 0018) as returned by optimization_read / optimization_write. */
+const uuid = z.string().uuid();
+export const OptimizationSummarySchema = z.object({ id: uuid, projectRevisionId: uuid, acceptanceQaId: uuid, studyVersion: z.literal(OPTIMIZATION_STUDY_VERSION),
+  optimizerVersion: z.literal(OPTIMIZER_VERSION), modelHash: hash, inputHash: hash, resultHash: hash, strategy: z.enum(['GRID', 'DETERMINISTIC_LOCAL_SEARCH']),
+  mode: z.enum(['WEIGHTED_SCORE', 'PARETO']), status: z.enum(['COMPLETED', 'NO_VALID_CANDIDATE', 'BUDGET_EXHAUSTED']), candidateCount: z.number().int().min(1).max(128),
+  validCount: z.number().int().nonnegative(), searchResult: z.enum(['BEST_IN_EVALUATED_SEARCH_SPACE', 'BEST_FOUND', 'NONE']), recommendedCandidates: z.array(hash).max(128),
+  createdAt: z.string().datetime({ offset: true }) }).strict();
+export const OptimizationDetailSchema = OptimizationSummarySchema.extend({ snapshot: StudySchema });
+export const OptimizationCursorSchema = z.object({ createdAt: z.string().datetime({ offset: true }), id: uuid }).strict();
+export const OptimizationReadQuerySchema = z.object({ require: z.literal('current').optional() }).strict();
