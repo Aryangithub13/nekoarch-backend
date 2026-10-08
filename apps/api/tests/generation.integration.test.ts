@@ -118,7 +118,9 @@ describe('Phase 7 generation with PostgreSQL ownership, audit and downstream ope
     const request = { method: 'POST' as const, url: '/api/estimates', headers: ownerHeaders, payload: { ...fixtureEstimate(), planId } };
     expect((await app.inject(request)).statusCode).toBe(200);
     const historic = (await database.pool.query('select * from cost_estimates where plan_id=$1', [planId])).rows[0];
-    const version = (await database.pool.query("insert into rate_table_versions(version_label,effective_date) values ('phase7-provenance',current_date) returning id")).rows[0].id;
+    // Explicit date: newer than the 2026-09-01 seed and effective on every clock. Postgres current_date is DB-local
+    // while rate selection uses the UTC date, so current_date was "future" between 00:00 and 05:30 IST.
+    const version = (await database.pool.query("insert into rate_table_versions(version_label,effective_date) values ('phase7-provenance',date '2026-09-02') returning id")).rows[0].id;
     await database.pool.query(`insert into rate_table_entries(version_id,region,building_type,tier,rate_per_sqft_min,rate_per_sqft_max,category_breakdown)
       select $1,region,building_type,tier,rate_per_sqft_min * 1.1,rate_per_sqft_max * 1.1,category_breakdown from rate_table_entries where version_id=$2`, [version, historic.rate_table_version]);
     const current = await app.inject(request); expect(current.statusCode).toBe(200);

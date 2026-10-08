@@ -6,6 +6,7 @@ import { takeoffDatabaseError } from '../apps/api/src/lib/takeoff-repository.js'
 import { structuralDatabaseError } from '../apps/api/src/lib/structural-repository.js';
 import { environmentalDatabaseError } from '../apps/api/src/lib/environmental-repository.js';
 import { systemsDatabaseError } from '../apps/api/src/lib/systems-repository.js';
+import { knowledgeDatabaseError } from '../apps/api/src/lib/knowledge-repository.js';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import { projectDatabaseError } from '../apps/api/src/lib/project-repository.js';
@@ -128,6 +129,19 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
             return result.rows[0].response;
           } catch (error) {
             systemsDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
+        async knowledgeRpc(name, args) {
+          const keys = name === 'knowledge_write' ? ['p_input','p_context','p_envelope','p_signature']
+            : ['p_action','p_project_id','p_revision_id','p_analysis_id','p_limit','p_cursor'];
+          const values = keys.map(key => args[key] ?? (key === 'p_limit' ? 20 : null));
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}(${values.map((_, i) => `$${i + 1}`).join(',')}) response`,
+              values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            knowledgeDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
           }
         },
         async projectRpc(name, args) {

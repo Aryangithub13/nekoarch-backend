@@ -1,0 +1,925 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 34,
+    "failed": 0
+  },
+  {
+    "id": "M01",
+    "mutation": "evaluator GTE >= becomes >",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 14,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table",
+      "primitives at their boundaries"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery"
+    ]
+  },
+  {
+    "id": "M02",
+    "mutation": "evaluator LTE <= becomes <",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 13,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table",
+      "primitives at their boundaries"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M03",
+    "mutation": "literal unit conversion skipped",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 15,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table",
+      "primitives at their boundaries"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery"
+    ]
+  },
+  {
+    "id": "M04",
+    "mutation": "missing fact treated as pass",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 13,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M05",
+    "mutation": "NOT_APPLICABLE treated as pass",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 10,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M06",
+    "mutation": "applicability skipped",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M07",
+    "mutation": "one selected rule ignored",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 17,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table",
+      "rejects every forgery"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery"
+    ]
+  },
+  {
+    "id": "M08",
+    "mutation": "bundled pack checksum altered",
+    "file": "apps/api/src/knowledge/packs.ts",
+    "tests": 11,
+    "failed": 10,
+    "killed": true,
+    "killedForReason": false,
+    "expected": [
+      "registers exactly two"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "SUITE:/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/apps/api/tests/knowledge.test.ts"
+    ]
+  },
+  {
+    "id": "M09",
+    "mutation": "evidence link dropped",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 15,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "explanations, evidence",
+      "rejects every forgery"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M10",
+    "mutation": "conflict detection bypassed",
+    "file": "apps/api/src/knowledge/conflicts.ts",
+    "tests": 34,
+    "failed": 15,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery"
+    ]
+  },
+  {
+    "id": "M11",
+    "mutation": "cross-revision upstream source allowed (SQL)",
+    "file": "supabase/migrations/0017_specialized_knowledge_analyses.sql",
+    "tests": 34,
+    "failed": 1,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "recomputes revision binding"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL"
+    ]
+  },
+  {
+    "id": "M12",
+    "mutation": "stale check bypassed",
+    "file": "apps/api/src/services/knowledge-service.ts",
+    "tests": 34,
+    "failed": 1,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "STALE (never reused)"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances"
+    ]
+  },
+  {
+    "id": "M13",
+    "mutation": "evaluator trusted without independent recomputation",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 34,
+    "failed": 2,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "rejects every forgery"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery"
+    ]
+  },
+  {
+    "id": "M14",
+    "mutation": "exact ratio arithmetic replaced by floats",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 11,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table",
+      "explanations, evidence"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M15",
+    "mutation": "canonical result order lost",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 13,
+    "killed": true,
+    "killedForReason": false,
+    "expected": [
+      "reproduces the hand-computed table",
+      "deterministic"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M16",
+    "mutation": "unsupported rule returns success",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 10,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M17",
+    "mutation": "NOT_CLAIMED claim dropped",
+    "file": "apps/api/src/knowledge/contracts.ts",
+    "tests": 34,
+    "failed": 10,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "every claim NOT_CLAIMED",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 resource limits, claims and snapshot schema keeps every claim NOT_CLAIMED and the snapshot schema rejects any other value"
+    ]
+  },
+  {
+    "id": "M18",
+    "mutation": "result budget exceeded without rejection",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 1,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "resource-limit"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 resource limits, claims and snapshot schema rejects rule, result and conflict-pair budgets with a typed resource-limit error, for the intended reason"
+    ]
+  },
+  {
+    "id": "M19",
+    "mutation": "observed fact value forged",
+    "file": "apps/api/src/knowledge/facts.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "extracts typed facts",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 facts and provenance (project-facts-v1) extracts typed facts with exact values, precision classes and source pointers",
+      "Phase 27 facts and provenance (project-facts-v1) the model validator re-derives every fact and rejects forged values, precision and provenance",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M20",
+    "mutation": "validator GTE >= becomes >",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "rejects every forgery",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M21",
+    "mutation": "ALL turns an unknown into T",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 15,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "status algebra",
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 status algebra (\u00a78) evaluator tables and validator algebra agree on every combination",
+      "Phase 27 status algebra (\u00a78) Amendment 1: ANY(c\u2026) \u2261 NOT(ALL(NOT c\u2026)) exhaustively, in both implementations",
+      "Phase 27 status algebra (\u00a78) is commutative, associative, has the identities and never turns an unknown into T inside ALL"
+    ]
+  },
+  {
+    "id": "M22",
+    "mutation": "NOT(INPUT_INCOMPLETE) becomes T",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 14,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "status algebra",
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 status algebra (\u00a78) evaluator tables and validator algebra agree on every combination",
+      "Phase 27 status algebra (\u00a78) Amendment 1: ANY(c\u2026) \u2261 NOT(ALL(NOT c\u2026)) exhaustively, in both implementations",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly"
+    ]
+  },
+  {
+    "id": "M23",
+    "mutation": "label near-match silently out of scope",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 2,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "Amendment 3"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) Amendment 3: exact labels evaluate, near-matches need review, different labels are out of scope; the source label is untouched"
+    ]
+  },
+  {
+    "id": "M24",
+    "mutation": "UPSTREAM_FLOAT provenance mislabelled",
+    "file": "apps/api/src/knowledge/facts.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "extracts typed facts",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 facts and provenance (project-facts-v1) extracts typed facts with exact values, precision classes and source pointers",
+      "Phase 27 facts and provenance (project-facts-v1) the model validator re-derives every fact and rejects forged values, precision and provenance",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M25",
+    "mutation": "validator conflict recomputation skipped",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "rejects every forgery",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M26",
+    "mutation": "evaluator decimal parser drops a fractional digit",
+    "file": "apps/api/src/knowledge/units.ts",
+    "tests": 34,
+    "failed": 20,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "parses, normalises",
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) parses, normalises and prints exact numbers identically in evaluator and validator code",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) computes binary64 spacing exactly and identically",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) applies the 16-ulp ambiguity band at exactly the specified width (\u00a710.1 known answers)"
+    ]
+  },
+  {
+    "id": "M27",
+    "mutation": "SQL pack checksum recompute removed",
+    "file": "supabase/migrations/0017_specialized_knowledge_analyses.sql",
+    "tests": 34,
+    "failed": 1,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "recomputes revision binding"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL"
+    ]
+  },
+  {
+    "id": "M28",
+    "mutation": "validator kW factor wrong",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 34,
+    "failed": 11,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "parses, normalises",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) parses, normalises and prints exact numbers identically in evaluator and validator code",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M29",
+    "mutation": "fact pointer drops the array index",
+    "file": "apps/api/src/knowledge/facts.ts",
+    "tests": 34,
+    "failed": 10,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "model validator re-derives",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance enforces ownership, typed errors and resource limits, and never computes on reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 facts and provenance (project-facts-v1) the model validator re-derives every fact and rejects forged values, precision and provenance"
+    ]
+  },
+  {
+    "id": "M30",
+    "mutation": "float ambiguity check removed",
+    "file": "apps/api/src/knowledge/units.ts",
+    "tests": 34,
+    "failed": 12,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "16-ulp ambiguity band",
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) applies the 16-ulp ambiguity band at exactly the specified width (\u00a710.1 known answers)",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) applies \u00a710.1 to stored values 14.9 and 17.1 ulp from the threshold in both implementations"
+    ]
+  },
+  {
+    "id": "M31",
+    "mutation": "float ambiguity check reversed",
+    "file": "apps/api/src/knowledge/units.ts",
+    "tests": 34,
+    "failed": 14,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "16-ulp ambiguity band",
+      "reproduces the hand-computed table"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) applies the 16-ulp ambiguity band at exactly the specified width (\u00a710.1 known answers)",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation reproduces the hand-computed table exactly",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate"
+    ]
+  },
+  {
+    "id": "M32",
+    "mutation": "float ambiguity band widened (K=32)",
+    "file": "apps/api/src/knowledge/units.ts",
+    "tests": 34,
+    "failed": 13,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "16-ulp ambiguity band",
+      "14.9 and 17.1 ulp"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) applies the 16-ulp ambiguity band at exactly the specified width (\u00a710.1 known answers)",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M33",
+    "mutation": "float ambiguity band narrowed (K=8)",
+    "file": "apps/api/src/knowledge/units.ts",
+    "tests": 34,
+    "failed": 13,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "16-ulp ambiguity band",
+      "14.9 and 17.1 ulp"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 exact arithmetic, units and the float boundary policy (both implementations) applies the 16-ulp ambiguity band at exactly the specified width (\u00a710.1 known answers)",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation records exact explanations, evidence, precision and review metadata",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently"
+    ]
+  },
+  {
+    "id": "M34",
+    "mutation": "validator float band removed",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 34,
+    "failed": 9,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "14.9 and 17.1 ulp",
+      "G1: catalog, validation"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL converges idempotent replays and concurrent identical writes on one immutable row and pages stably",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL returns 503 when the signer is not configured",
+      "Phase 27 golden G1 (design \u00a722) and independent result validation the independent result validator accepts the evaluator output and rejects every forgery",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) evaluates every primitive at equality, one unit under and one unit over, and validates independently",
+      "Phase 27 primitives at their boundaries (synthetic test-only packs) applies \u00a710.1 to stored values 14.9 and 17.1 ulp from the threshold in both implementations"
+    ]
+  },
+  {
+    "id": "M35",
+    "mutation": "transitive upstream consistency skipped",
+    "file": "apps/api/src/services/knowledge-service.ts",
+    "tests": 34,
+    "failed": 2,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "G6\u2013G8"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G1: catalog, validation and the golden evaluation over real Phase 23\u201326 artifacts; replay converges",
+      "Phase 27 specialized-knowledge persistence on PostgreSQL Phase 27 specialized-knowledge acceptance G6\u2013G8: never \"latest\", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422"
+    ]
+  },
+  {
+    "id": "M36",
+    "mutation": "ANY propagation wrong (R or F = F)",
+    "file": "apps/api/src/knowledge/evaluate.ts",
+    "tests": 34,
+    "failed": 3,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "Amendment 1",
+      "status algebra"
+    ],
+    "restored": true,
+    "failingTests": [
+      "Phase 27 status algebra (\u00a78) evaluator tables and validator algebra agree on every combination",
+      "Phase 27 status algebra (\u00a78) Amendment 1: ANY(c\u2026) \u2261 NOT(ALL(NOT c\u2026)) exhaustively, in both implementations",
+      "Phase 27 status algebra (\u00a78) is commutative, associative, has the identities and never turns an unknown into T inside ALL"
+    ]
+  },
+  {
+    "id": "M37",
+    "mutation": "validator imports evaluator arithmetic (G-indep)",
+    "file": "apps/api/src/knowledge/validate.ts",
+    "tests": 1,
+    "failed": 1,
+    "killed": true,
+    "killedForReason": true,
+    "expected": [
+      "GATE:validator-independence"
+    ],
+    "restored": true,
+    "failingTests": [
+      "GATE:validator-independence"
+    ]
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 34,
+    "failed": 1
+  }
+]

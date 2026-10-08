@@ -1,0 +1,40 @@
+npm notice run designflow@0.1.0 test:knowledge
+npm notice run npm run build && vitest run apps/api/tests/knowledge.test.ts apps/api/tests/knowledge.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/knowledge.integration.test.ts (11 tests) 19149ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G1: catalog, validation and the golden evaluation over real Phase 23–26 artifacts; replay converges  1015ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules  792ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G6–G8: never "latest", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422  2264ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > enforces ownership, typed errors and resource limits, and never computes on reads  412ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances  713ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads  1297ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL  6917ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > converges idempotent replays and concurrent identical writes on one immutable row and pages stably  2718ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > returns 503 when the signer is not configured  1206ms
+ ✓ apps/api/tests/knowledge.test.ts (23 tests) 1987ms
+   ✓ Phase 27 facts and provenance (project-facts-v1) > extracts nothing from an unbound source and rejects inconsistent transitive upstream bindings  614ms
+   ✓ Phase 27 golden G1 (design §22) and independent result validation > G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate  600ms
+
+ Test Files  2 passed (2)
+      Tests  34 passed (34)
+   Start at  00:28:07
+   Duration  23.55s (transform 827ms, setup 0ms, collect 2.06s, tests 21.14s, environment 0ms, prepare 91ms)
+

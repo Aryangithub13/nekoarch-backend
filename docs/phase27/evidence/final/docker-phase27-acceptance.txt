@@ -1,0 +1,1 @@
+{"compiledKnowledge":"PASS","facts":213,"rules":30,"results":61,"byStatus":{"CONFLICTING_RULES":10,"DOES_NOT_MEET_RULE":5,"INPUT_INCOMPLETE":3,"MEETS_RULE":27,"NOT_APPLICABLE":10,"NOT_EVALUATED":3,"REVIEW_REQUIRED":1,"UNSUPPORTED":2},"conflicts":1,"validation":"VALID","claims":"all 13 NOT_CLAIMED","runtime":"v22.23.3"}

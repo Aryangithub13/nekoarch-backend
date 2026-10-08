@@ -1,0 +1,29 @@
+npm notice run designflow@0.1.0 test:interpretation
+npm notice run npm run build && vitest run apps/api/tests/interpretation.test.ts apps/api/tests/interpretation.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow
+
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1420ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 167ms
+
+ Test Files  2 passed (2)
+      Tests  133 passed (133)
+   Start at  11:07:12
+   Duration  3.98s (transform 813ms, setup 0ms, collect 1.82s, tests 1.59s, environment 0ms, prepare 90ms)
+
