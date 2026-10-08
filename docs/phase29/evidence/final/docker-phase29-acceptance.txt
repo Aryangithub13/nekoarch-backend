@@ -1,0 +1,1 @@
+{"compiledScene":"PASS","objects":48,"triangles":992,"glbSha256":"6e8a27b01c02b0ac82447d8d925ecd16385b8d580fe929e965c24990791c8ce3","worker":"dist/scene3d/worker.js","workerMs":359,"validation":"VALID","runtime":"v22.23.3"}

@@ -1,0 +1,32 @@
+M01 remove a wall opening KILLED intended restored
+M02 alter door width KILLED intended restored
+M03 alter window sill elevation KILLED intended restored
+M04 alter wall thickness KILLED intended restored
+M05 shift floor Y coordinate KILLED intended restored
+M06 fill a slab void KILLED intended restored
+M07 omit a stair KILLED intended restored
+M08 reverse mesh triangle winding KILLED intended restored
+M09 corrupt a mesh index KILLED intended restored
+M10 drop semantic source ID KILLED intended restored
+M11 change scene scale KILLED intended restored
+M12 alter (accept forged) model hash KILLED intended restored
+M13 alter GLB bytes without updating checksum (validator accepts) KILLED intended restored
+M14 bypass independent validation KILLED intended restored
+M15 change material/provenance status KILLED intended restored
+M16 skip an architectural entity KILLED intended restored
+M17 break camera target KILLED intended restored
+M18 corrupt room-to-scene mapping KILLED intended restored
+M19 disable node/resource limit KILLED intended restored
+M20 leak foreign artifact access (read RPC ownership) KILLED intended restored
+M21 bypass owner-only storage (blob table readable) KILLED intended restored
+M22 serve incomplete artifact as READY (row without bytes) KILLED intended restored
+M23 bypass stale check KILLED intended restored
+M24 nondeterministic serialization order KILLED intended restored
+M25 validator imports the compiler (independence) KILLED intended restored
+M26 validator aperture probe disabled KILLED intended restored
+M27 worker bypass (compile on the request thread) KILLED intended restored
+M28 pool accepts unvalidated worker output KILLED intended restored
+M29 SQL binary hash check removed (forged artifact hash accepted) KILLED intended restored
+M30 SQL coverage check bypass KILLED intended restored
+M31 RLS owner-read bypass (policy opened to every authenticated user) KILLED intended restored
+{"mutants": 31, "problems": [], "controlsPass": true, "ok": true}

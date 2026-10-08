@@ -1,0 +1,2945 @@
+{
+ "version": "scene-manifest-v1",
+ "compilerVersion": "scene-compiler-v1",
+ "source": {
+  "projectId": "11111111-1111-4111-8111-111111111111",
+  "revisionId": "22222222-2222-4222-8222-222222222222",
+  "modelHash": "182f70be65bb40a1d9c13b8a7761ad02e0f6a8a49f2ff4b776e35f76238220e5",
+  "generatorVersion": "parametric-architecture-v1",
+  "parameterHash": "8879ecb2f1ce0a4e1ad922e09aacbb84a6901d304f04230dbd6260cf083d30fc"
+ },
+ "inputHash": "01cb40299e45954d022f908202dcc1a77fd95f180d6eb891be3979584ca3dee5",
+ "units": {
+  "manifest": "mm",
+  "glb": "m",
+  "glbMetresPerUnit": "1",
+  "modelMillimetresPerGlbMetre": 1000
+ },
+ "frame": {
+  "coordinateSystem": "x-right-y-up-z-depth",
+  "gltfAxisMapping": "identity",
+  "originMm": {
+   "x": 1000,
+   "y": 0,
+   "z": 1000
+  },
+  "rootTranslationIsOrigin": true,
+  "vertexGridMm": "0.5"
+ },
+ "precision": {
+  "positionComponent": "float32",
+  "maxLocalExtentMm": 18000,
+  "maxFloat32ErrorNm": 1073,
+  "validatorToleranceNm": 50000
+ },
+ "bounds": {
+  "min": {
+   "x": 1000,
+   "y": -150,
+   "z": 1000
+  },
+  "max": {
+   "x": 19000,
+   "y": 3000,
+   "z": 19000
+  }
+ },
+ "levels": [
+  {
+   "levelId": "level-0",
+   "bimElementId": "bim-597622c2236c5d87d7036c39882caa27be157fdd",
+   "name": "Floor 1",
+   "index": 0,
+   "elevationMm": 0,
+   "nodeName": "level:level-0",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": -150,
+     "z": 1000
+    },
+    "max": {
+     "x": 19000,
+     "y": 3000,
+     "z": 19000
+    }
+   }
+  }
+ ],
+ "layers": [
+  {
+   "id": "EXTERIOR_SHELL",
+   "visibleByDefault": true,
+   "objects": 20
+  },
+  {
+   "id": "INTERIOR_WALLS",
+   "visibleByDefault": true,
+   "objects": 12
+  },
+  {
+   "id": "FLOORS",
+   "visibleByDefault": true,
+   "objects": 1
+  },
+  {
+   "id": "CEILINGS",
+   "visibleByDefault": true,
+   "objects": 0
+  },
+  {
+   "id": "ROOFS",
+   "visibleByDefault": true,
+   "objects": 1
+  },
+  {
+   "id": "STAIRS",
+   "visibleByDefault": true,
+   "objects": 0
+  },
+  {
+   "id": "DOORS",
+   "visibleByDefault": true,
+   "objects": 5
+  },
+  {
+   "id": "WINDOWS",
+   "visibleByDefault": true,
+   "objects": 4
+  },
+  {
+   "id": "ROOM_VOLUMES",
+   "visibleByDefault": false,
+   "objects": 5
+  },
+  {
+   "id": "SEMANTIC_HELPERS",
+   "visibleByDefault": false,
+   "objects": 0
+  }
+ ],
+ "materials": [
+  {
+   "id": "exterior-wall",
+   "rgbaThousandths": [
+    835,
+    812,
+    776,
+    1000
+   ],
+   "roughnessThousandths": 900,
+   "alphaMode": "OPAQUE",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "interior-wall",
+   "rgbaThousandths": [
+    930,
+    925,
+    912,
+    1000
+   ],
+   "roughnessThousandths": 900,
+   "alphaMode": "OPAQUE",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "slab",
+   "rgbaThousandths": [
+    690,
+    690,
+    680,
+    1000
+   ],
+   "roughnessThousandths": 950,
+   "alphaMode": "OPAQUE",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "roof",
+   "rgbaThousandths": [
+    470,
+    480,
+    490,
+    1000
+   ],
+   "roughnessThousandths": 950,
+   "alphaMode": "OPAQUE",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "door-placeholder",
+   "rgbaThousandths": [
+    560,
+    420,
+    300,
+    1000
+   ],
+   "roughnessThousandths": 700,
+   "alphaMode": "OPAQUE",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "glass-placeholder",
+   "rgbaThousandths": [
+    600,
+    760,
+    860,
+    350
+   ],
+   "roughnessThousandths": 100,
+   "alphaMode": "BLEND",
+   "provenance": "VISUAL_PLACEHOLDER"
+  },
+  {
+   "id": "room-volume",
+   "rgbaThousandths": [
+    300,
+    560,
+    900,
+    120
+   ],
+   "roughnessThousandths": 1000,
+   "alphaMode": "BLEND",
+   "provenance": "VISUAL_PLACEHOLDER"
+  }
+ ],
+ "objects": [
+  {
+   "sceneObjectId": "wall-junction:level-0@1100,1100",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@1100,1100",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": 0,
+     "z": 1000
+    },
+    "max": {
+     "x": 1200,
+     "y": 2850,
+     "z": 1200
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@1100,18900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@1100,18900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": 0,
+     "z": 18800
+    },
+    "max": {
+     "x": 1200,
+     "y": 2850,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@12900,8900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@12900,8900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12850,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 12950,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@15900,8900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@15900,8900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15850,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 15950,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@18900,1100",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@18900,1100",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 18800,
+     "y": 0,
+     "z": 1000
+    },
+    "max": {
+     "x": 19000,
+     "y": 2850,
+     "z": 1200
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@18900,2450",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@18900,2450",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 18800,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 19000,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@18900,8900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@18900,8900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 18800,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 19000,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@2450,18900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@2450,18900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2400,
+     "y": 0,
+     "z": 18800
+    },
+    "max": {
+     "x": 2500,
+     "y": 2850,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@9900,18900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@9900,18900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9800,
+     "y": 0,
+     "z": 18800
+    },
+    "max": {
+     "x": 10000,
+     "y": 2850,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@9900,8900",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@9900,8900",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9800,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 10000,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-1100-1100-1100-18900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-1100-1100-1100-18900",
+   "bimElementId": "bim-ed2af02fef731892e395d172004e9e6757f61dfb",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": 0,
+     "z": 1100
+    },
+    "max": {
+     "x": 1200,
+     "y": 2850,
+     "z": 18900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-1100-1100-18900-1100",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-1100-1100-18900-1100",
+   "bimElementId": "bim-80e49dc752f2411558e1826dc58ce151a0be002b",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1100,
+     "y": 0,
+     "z": 1000
+    },
+    "max": {
+     "x": 18900,
+     "y": 2850,
+     "z": 1200
+    }
+   },
+   "primitives": 1,
+   "triangles": 44,
+   "vertices": 88,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-1100-18900-2450-18900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-1100-18900-2450-18900",
+   "bimElementId": "bim-5a28de4ff759bf8d0c0e6d4fceeb7f516aaa828a",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1100,
+     "y": 0,
+     "z": 18800
+    },
+    "max": {
+     "x": 2450,
+     "y": 2850,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-12900-8900-15900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-12900-8900-15900-8900",
+   "bimElementId": "bim-013fa01a02649c6e6e3bffae2e1db0d84f04ebe2",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12900,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 15900,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 64,
+   "vertices": 128,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-15900-8900-18900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-15900-8900-18900-8900",
+   "bimElementId": "bim-8b48d982ad447d313037869b654b63a2a26b1795",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15900,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 18900,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 64,
+   "vertices": 128,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-18900-1100-18900-2450",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-18900-1100-18900-2450",
+   "bimElementId": "bim-479e9a28c81c4e5a0d1f47c4594ab85f9da9ee91",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 18800,
+     "y": 0,
+     "z": 1100
+    },
+    "max": {
+     "x": 19000,
+     "y": 2850,
+     "z": 2450
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-18900-2450-18900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-18900-2450-18900-8900",
+   "bimElementId": "bim-2589df6d71f02f96f40d31d9c358428e04ea40ae",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 18800,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 19000,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-2450-18900-9900-18900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-2450-18900-9900-18900",
+   "bimElementId": "bim-68e9b513c6c88a5c50d25aed2ea2863ffabe3609",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2450,
+     "y": 0,
+     "z": 18800
+    },
+    "max": {
+     "x": 9900,
+     "y": 2850,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 64,
+   "vertices": 128,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-9900-8900-12900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-9900-8900-12900-8900",
+   "bimElementId": "bim-12264a3fb1858b43018f2c6be75d7f7d7e021c5c",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9900,
+     "y": 0,
+     "z": 8800
+    },
+    "max": {
+     "x": 12900,
+     "y": 2850,
+     "z": 9000
+    }
+   },
+   "primitives": 1,
+   "triangles": 64,
+   "vertices": 128,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-9900-8900-9900-18900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-9900-8900-9900-18900",
+   "bimElementId": "bim-2c879cca31d35e6ac40acb3c49ada9b32f303fa2",
+   "levelId": "level-0",
+   "layer": "EXTERIOR_SHELL",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "exterior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9800,
+     "y": 0,
+     "z": 8900
+    },
+    "max": {
+     "x": 10000,
+     "y": 2850,
+     "z": 18900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@12900,2450",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@12900,2450",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12850,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 12950,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@15900,2450",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@15900,2450",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15850,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 15950,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@2450,2450",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@2450,2450",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2400,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 2500,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 2 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall-junction:level-0@9900,2450",
+   "sourceEntityType": "junction",
+   "sourceEntityId": "level-0@9900,2450",
+   "bimElementId": null,
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall-junction",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9850,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 9950,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "BUTT_END_CORNER_FILL for 3 walls; not a quantity."
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-12900-2450-12900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-12900-2450-12900-8900",
+   "bimElementId": "bim-877b36ba843031179603d4210bdf6468e9c1dc96",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12850,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 12950,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-12900-2450-15900-2450",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-12900-2450-15900-2450",
+   "bimElementId": "bim-2a5586a85f073fbd19d103db3c7e61e50ec792a1",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12900,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 15900,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 44,
+   "vertices": 88,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-15900-2450-15900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-15900-2450-15900-8900",
+   "bimElementId": "bim-0900dfb13bce39b859132bf9a1460493c088ec85",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15850,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 15950,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-15900-2450-18900-2450",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-15900-2450-18900-2450",
+   "bimElementId": "bim-b0dceb83dcf6c00ca2b8820e2493194fa414576f",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15900,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 18900,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 44,
+   "vertices": 88,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-2450-2450-2450-18900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-2450-2450-2450-18900",
+   "bimElementId": "bim-b798ca0f7c1df946ccace38cea2933f3b4afdc0e",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2400,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 2500,
+     "y": 2850,
+     "z": 18900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-2450-2450-9900-2450",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-2450-2450-9900-2450",
+   "bimElementId": "bim-55601ed5343a9d42527742f1c2d797fde0cd28e3",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2450,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 9900,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 44,
+   "vertices": 88,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-9900-2450-12900-2450",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-9900-2450-12900-2450",
+   "bimElementId": "bim-b24c0e3242ccc8ba0eaf5f159271fca0e5cb95bd",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9900,
+     "y": 0,
+     "z": 2400
+    },
+    "max": {
+     "x": 12900,
+     "y": 2850,
+     "z": 2500
+    }
+   },
+   "primitives": 1,
+   "triangles": 44,
+   "vertices": 88,
+   "note": null
+  },
+  {
+   "sceneObjectId": "wall:wall-level-0-9900-2450-9900-8900",
+   "sourceEntityType": "wall",
+   "sourceEntityId": "wall-level-0-9900-2450-9900-8900",
+   "bimElementId": "bim-ccbac83d90fff2a9c876dddbbb8d716451a20731",
+   "levelId": "level-0",
+   "layer": "INTERIOR_WALLS",
+   "geometryRole": "wall",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "interior-wall",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9850,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 9950,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": null
+  },
+  {
+   "sceneObjectId": "slab:slab-0",
+   "sourceEntityType": "slab",
+   "sourceEntityId": "slab-0",
+   "bimElementId": "bim-d710f751ce16eea1ba9225d4f81ca05dc8bec565",
+   "levelId": "level-0",
+   "layer": "FLOORS",
+   "geometryRole": "slab",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "slab",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": -150,
+     "z": 1000
+    },
+    "max": {
+     "x": 19000,
+     "y": 0,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 28,
+   "vertices": 56,
+   "note": null
+  },
+  {
+   "sceneObjectId": "slab:roof",
+   "sourceEntityType": "slab",
+   "sourceEntityId": "roof",
+   "bimElementId": "bim-e142e357bafb763e7720c6662bd1d144ec144ade",
+   "levelId": "level-0",
+   "layer": "ROOFS",
+   "geometryRole": "slab",
+   "fidelity": "FULL_GEOMETRY",
+   "material": "roof",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1000,
+     "y": 2850,
+     "z": 1000
+    },
+    "max": {
+     "x": 19000,
+     "y": 3000,
+     "z": 19000
+    }
+   },
+   "primitives": 1,
+   "triangles": 28,
+   "vertices": 56,
+   "note": null
+  },
+  {
+   "sceneObjectId": "door-leaf:door-wall-level-0-1100-1100-18900-1100-8450-900",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "door-wall-level-0-1100-1100-18900-1100-8450-900",
+   "bimElementId": "bim-af79708ea9a28de6f03175cd5f655a7e84cb95e5",
+   "levelId": "level-0",
+   "layer": "DOORS",
+   "geometryRole": "door-leaf",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "door-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9550,
+     "y": 0,
+     "z": 1080
+    },
+    "max": {
+     "x": 10450,
+     "y": 2100,
+     "z": 1120
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "door-leaf:door-wall-level-0-12900-2450-15900-2450-1050-900",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "door-wall-level-0-12900-2450-15900-2450-1050-900",
+   "bimElementId": "bim-0d63e4ee3a238ddd0e17b79ce3893d2eeb582e8e",
+   "levelId": "level-0",
+   "layer": "DOORS",
+   "geometryRole": "door-leaf",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "door-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 13950,
+     "y": 0,
+     "z": 2430
+    },
+    "max": {
+     "x": 14850,
+     "y": 2100,
+     "z": 2470
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "door-leaf:door-wall-level-0-15900-2450-18900-2450-1050-900",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "door-wall-level-0-15900-2450-18900-2450-1050-900",
+   "bimElementId": "bim-7916396c1102e90f6eff7af31ab389e3eafe8680",
+   "levelId": "level-0",
+   "layer": "DOORS",
+   "geometryRole": "door-leaf",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "door-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 16950,
+     "y": 0,
+     "z": 2430
+    },
+    "max": {
+     "x": 17850,
+     "y": 2100,
+     "z": 2470
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "door-leaf:door-wall-level-0-2450-2450-9900-2450-3275-900",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "door-wall-level-0-2450-2450-9900-2450-3275-900",
+   "bimElementId": "bim-8ddecb388eb984cf31030efdd8fca2c11b8259a5",
+   "levelId": "level-0",
+   "layer": "DOORS",
+   "geometryRole": "door-leaf",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "door-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 5725,
+     "y": 0,
+     "z": 2430
+    },
+    "max": {
+     "x": 6625,
+     "y": 2100,
+     "z": 2470
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "door-leaf:door-wall-level-0-9900-2450-12900-2450-1050-900",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "door-wall-level-0-9900-2450-12900-2450-1050-900",
+   "bimElementId": "bim-c1a5cef9635010470c4846401d2a02408a0396d6",
+   "levelId": "level-0",
+   "layer": "DOORS",
+   "geometryRole": "door-leaf",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "door-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 10950,
+     "y": 0,
+     "z": 2430
+    },
+    "max": {
+     "x": 11850,
+     "y": 2100,
+     "z": 2470
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "window-pane:window-wall-level-0-12900-8900-15900-8900-900-1200",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "window-wall-level-0-12900-8900-15900-8900-900-1200",
+   "bimElementId": "bim-fbe011e26e723d0391c3238e67f17d3dd0364e33",
+   "levelId": "level-0",
+   "layer": "WINDOWS",
+   "geometryRole": "window-pane",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "glass-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 13800,
+     "y": 900,
+     "z": 8895
+    },
+    "max": {
+     "x": 15000,
+     "y": 2100,
+     "z": 8905
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "window-pane:window-wall-level-0-15900-8900-18900-8900-900-1200",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "window-wall-level-0-15900-8900-18900-8900-900-1200",
+   "bimElementId": "bim-83f16409dfb8a0f18226a317e2d1f957057ddab5",
+   "levelId": "level-0",
+   "layer": "WINDOWS",
+   "geometryRole": "window-pane",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "glass-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 16800,
+     "y": 900,
+     "z": 8895
+    },
+    "max": {
+     "x": 18000,
+     "y": 2100,
+     "z": 8905
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "window-pane:window-wall-level-0-2450-18900-9900-18900-3125-1200",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "window-wall-level-0-2450-18900-9900-18900-3125-1200",
+   "bimElementId": "bim-6eae06477d2b0e2a47a9bf14e7c345c69e610419",
+   "levelId": "level-0",
+   "layer": "WINDOWS",
+   "geometryRole": "window-pane",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "glass-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 5575,
+     "y": 900,
+     "z": 18895
+    },
+    "max": {
+     "x": 6775,
+     "y": 2100,
+     "z": 18905
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "window-pane:window-wall-level-0-9900-8900-12900-8900-900-1200",
+   "sourceEntityType": "opening",
+   "sourceEntityId": "window-wall-level-0-9900-8900-12900-8900-900-1200",
+   "bimElementId": "bim-f85f1f8c24b1d0f55dde5d18f51209ff0c565fd2",
+   "levelId": "level-0",
+   "layer": "WINDOWS",
+   "geometryRole": "window-pane",
+   "fidelity": "VISUAL_PLACEHOLDER",
+   "material": "glass-placeholder",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 10800,
+     "y": 900,
+     "z": 8895
+    },
+    "max": {
+     "x": 12000,
+     "y": 2100,
+     "z": 8905
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Generic component filling the exact aperture; no product, glazing, thermal or fire property."
+  },
+  {
+   "sceneObjectId": "room-volume:space-bedroom-1",
+   "sourceEntityType": "space",
+   "sourceEntityId": "space-bedroom-1",
+   "bimElementId": "bim-bf6c5a3e8f24c38cbe045ee542e96b793fc4194b",
+   "levelId": "level-0",
+   "layer": "ROOM_VOLUMES",
+   "geometryRole": "room-volume",
+   "fidelity": "SEMANTIC_ONLY",
+   "material": "room-volume",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 2450,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 9900,
+     "y": 2850,
+     "z": 18900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Selection helper on wall centerlines; not a net or usable area claim."
+  },
+  {
+   "sceneObjectId": "room-volume:space-bedroom-2",
+   "sourceEntityType": "space",
+   "sourceEntityId": "space-bedroom-2",
+   "bimElementId": "bim-aeb4e9100f73397f098b4172235e07b540e63f30",
+   "levelId": "level-0",
+   "layer": "ROOM_VOLUMES",
+   "geometryRole": "room-volume",
+   "fidelity": "SEMANTIC_ONLY",
+   "material": "room-volume",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 9900,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 12900,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Selection helper on wall centerlines; not a net or usable area claim."
+  },
+  {
+   "sceneObjectId": "room-volume:space-corridor-0",
+   "sourceEntityType": "space",
+   "sourceEntityId": "space-corridor-0",
+   "bimElementId": "bim-5c2fd3233112b39fc66510f247d200b18b87034b",
+   "levelId": "level-0",
+   "layer": "ROOM_VOLUMES",
+   "geometryRole": "room-volume",
+   "fidelity": "SEMANTIC_ONLY",
+   "material": "room-volume",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 1100,
+     "y": 0,
+     "z": 1100
+    },
+    "max": {
+     "x": 18900,
+     "y": 2850,
+     "z": 18900
+    }
+   },
+   "primitives": 1,
+   "triangles": 28,
+   "vertices": 56,
+   "note": "Selection helper on wall centerlines; not a net or usable area claim."
+  },
+  {
+   "sceneObjectId": "room-volume:space-kitchen-1",
+   "sourceEntityType": "space",
+   "sourceEntityId": "space-kitchen-1",
+   "bimElementId": "bim-92ad4a705e41e6af8acdc07b3a57f652ee33d8b2",
+   "levelId": "level-0",
+   "layer": "ROOM_VOLUMES",
+   "geometryRole": "room-volume",
+   "fidelity": "SEMANTIC_ONLY",
+   "material": "room-volume",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 15900,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 18900,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Selection helper on wall centerlines; not a net or usable area claim."
+  },
+  {
+   "sceneObjectId": "room-volume:space-living-1",
+   "sourceEntityType": "space",
+   "sourceEntityId": "space-living-1",
+   "bimElementId": "bim-c6f442dfb61487ad737914076bfbe6127b1b4121",
+   "levelId": "level-0",
+   "layer": "ROOM_VOLUMES",
+   "geometryRole": "room-volume",
+   "fidelity": "SEMANTIC_ONLY",
+   "material": "room-volume",
+   "specification": null,
+   "appearance": "VISUAL_PLACEHOLDER",
+   "bounds": {
+    "min": {
+     "x": 12900,
+     "y": 0,
+     "z": 2450
+    },
+    "max": {
+     "x": 15900,
+     "y": 2850,
+     "z": 8900
+    }
+   },
+   "primitives": 1,
+   "triangles": 12,
+   "vertices": 24,
+   "note": "Selection helper on wall centerlines; not a net or usable area claim."
+  }
+ ],
+ "rooms": [
+  {
+   "spaceId": "space-bedroom-1",
+   "sceneObjectId": "room-volume:space-bedroom-1",
+   "bimElementId": "bim-bf6c5a3e8f24c38cbe045ee542e96b793fc4194b",
+   "levelId": "level-0",
+   "name": "bedroom-1",
+   "classification": "bedroom",
+   "boundary": [
+    {
+     "x": 2450,
+     "z": 2450
+    },
+    {
+     "x": 9900,
+     "z": 2450
+    },
+    {
+     "x": 9900,
+     "z": 18900
+    },
+    {
+     "x": 2450,
+     "z": 18900
+    }
+   ],
+   "floorElevationMm": 0,
+   "heightMm": 2850,
+   "interiorPoint": {
+    "x": 6175,
+    "y": 0,
+    "z": 10675
+   },
+   "areaMm2": "122552500",
+   "openingIds": [
+    "door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "window-wall-level-0-2450-18900-9900-18900-3125-1200"
+   ],
+   "connectedSpaceIds": [
+    "space-corridor-0"
+   ]
+  },
+  {
+   "spaceId": "space-bedroom-2",
+   "sceneObjectId": "room-volume:space-bedroom-2",
+   "bimElementId": "bim-aeb4e9100f73397f098b4172235e07b540e63f30",
+   "levelId": "level-0",
+   "name": "bedroom-2",
+   "classification": "bedroom",
+   "boundary": [
+    {
+     "x": 9900,
+     "z": 2450
+    },
+    {
+     "x": 12900,
+     "z": 2450
+    },
+    {
+     "x": 12900,
+     "z": 8900
+    },
+    {
+     "x": 9900,
+     "z": 8900
+    }
+   ],
+   "floorElevationMm": 0,
+   "heightMm": 2850,
+   "interiorPoint": {
+    "x": 11400,
+    "y": 0,
+    "z": 5675
+   },
+   "areaMm2": "19350000",
+   "openingIds": [
+    "door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "window-wall-level-0-9900-8900-12900-8900-900-1200"
+   ],
+   "connectedSpaceIds": [
+    "space-corridor-0"
+   ]
+  },
+  {
+   "spaceId": "space-corridor-0",
+   "sceneObjectId": "room-volume:space-corridor-0",
+   "bimElementId": "bim-5c2fd3233112b39fc66510f247d200b18b87034b",
+   "levelId": "level-0",
+   "name": "corridor-0",
+   "classification": "circulation",
+   "boundary": [
+    {
+     "x": 1100,
+     "z": 1100
+    },
+    {
+     "x": 18900,
+     "z": 1100
+    },
+    {
+     "x": 18900,
+     "z": 2450
+    },
+    {
+     "x": 2450,
+     "z": 2450
+    },
+    {
+     "x": 2450,
+     "z": 18900
+    },
+    {
+     "x": 1100,
+     "z": 18900
+    }
+   ],
+   "floorElevationMm": 0,
+   "heightMm": 2850,
+   "interiorPoint": {
+    "x": 1775,
+    "y": 0,
+    "z": 10675
+   },
+   "areaMm2": "46237500",
+   "openingIds": [
+    "door-wall-level-0-1100-1100-18900-1100-8450-900",
+    "door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "door-wall-level-0-9900-2450-12900-2450-1050-900"
+   ],
+   "connectedSpaceIds": [
+    "space-bedroom-1",
+    "space-bedroom-2",
+    "space-kitchen-1",
+    "space-living-1"
+   ]
+  },
+  {
+   "spaceId": "space-kitchen-1",
+   "sceneObjectId": "room-volume:space-kitchen-1",
+   "bimElementId": "bim-92ad4a705e41e6af8acdc07b3a57f652ee33d8b2",
+   "levelId": "level-0",
+   "name": "kitchen-1",
+   "classification": "kitchen",
+   "boundary": [
+    {
+     "x": 15900,
+     "z": 2450
+    },
+    {
+     "x": 18900,
+     "z": 2450
+    },
+    {
+     "x": 18900,
+     "z": 8900
+    },
+    {
+     "x": 15900,
+     "z": 8900
+    }
+   ],
+   "floorElevationMm": 0,
+   "heightMm": 2850,
+   "interiorPoint": {
+    "x": 17400,
+    "y": 0,
+    "z": 5675
+   },
+   "areaMm2": "19350000",
+   "openingIds": [
+    "door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "window-wall-level-0-15900-8900-18900-8900-900-1200"
+   ],
+   "connectedSpaceIds": [
+    "space-corridor-0"
+   ]
+  },
+  {
+   "spaceId": "space-living-1",
+   "sceneObjectId": "room-volume:space-living-1",
+   "bimElementId": "bim-c6f442dfb61487ad737914076bfbe6127b1b4121",
+   "levelId": "level-0",
+   "name": "living-1",
+   "classification": "living",
+   "boundary": [
+    {
+     "x": 12900,
+     "z": 2450
+    },
+    {
+     "x": 15900,
+     "z": 2450
+    },
+    {
+     "x": 15900,
+     "z": 8900
+    },
+    {
+     "x": 12900,
+     "z": 8900
+    }
+   ],
+   "floorElevationMm": 0,
+   "heightMm": 2850,
+   "interiorPoint": {
+    "x": 14400,
+    "y": 0,
+    "z": 5675
+   },
+   "areaMm2": "19350000",
+   "openingIds": [
+    "door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "window-wall-level-0-12900-8900-15900-8900-900-1200"
+   ],
+   "connectedSpaceIds": [
+    "space-corridor-0"
+   ]
+  }
+ ],
+ "navigation": {
+  "source": "blueprint-qa-circulation",
+  "eyeHeightMm": 1600,
+  "nodes": [
+   {
+    "id": "opening:door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "kind": "opening",
+    "sourceEntityId": "door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "levelId": "level-0",
+    "position": {
+     "x": 14400,
+     "y": 0,
+     "z": 2450
+    }
+   },
+   {
+    "id": "opening:door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "kind": "opening",
+    "sourceEntityId": "door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "levelId": "level-0",
+    "position": {
+     "x": 17400,
+     "y": 0,
+     "z": 2450
+    }
+   },
+   {
+    "id": "opening:door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "kind": "opening",
+    "sourceEntityId": "door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "levelId": "level-0",
+    "position": {
+     "x": 6175,
+     "y": 0,
+     "z": 2450
+    }
+   },
+   {
+    "id": "opening:door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "kind": "opening",
+    "sourceEntityId": "door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "levelId": "level-0",
+    "position": {
+     "x": 11400,
+     "y": 0,
+     "z": 2450
+    }
+   },
+   {
+    "id": "room:space-bedroom-1",
+    "kind": "room",
+    "sourceEntityId": "space-bedroom-1",
+    "levelId": "level-0",
+    "position": {
+     "x": 6175,
+     "y": 0,
+     "z": 10675
+    }
+   },
+   {
+    "id": "room:space-bedroom-2",
+    "kind": "room",
+    "sourceEntityId": "space-bedroom-2",
+    "levelId": "level-0",
+    "position": {
+     "x": 11400,
+     "y": 0,
+     "z": 5675
+    }
+   },
+   {
+    "id": "room:space-corridor-0",
+    "kind": "room",
+    "sourceEntityId": "space-corridor-0",
+    "levelId": "level-0",
+    "position": {
+     "x": 1775,
+     "y": 0,
+     "z": 10675
+    }
+   },
+   {
+    "id": "room:space-kitchen-1",
+    "kind": "room",
+    "sourceEntityId": "space-kitchen-1",
+    "levelId": "level-0",
+    "position": {
+     "x": 17400,
+     "y": 0,
+     "z": 5675
+    }
+   },
+   {
+    "id": "room:space-living-1",
+    "kind": "room",
+    "sourceEntityId": "space-living-1",
+    "levelId": "level-0",
+    "position": {
+     "x": 14400,
+     "y": 0,
+     "z": 5675
+    }
+   }
+  ],
+  "edges": [
+   {
+    "from": "opening:door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "to": "room:space-living-1",
+    "via": "door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 3225
+   },
+   {
+    "from": "opening:door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "to": "room:space-kitchen-1",
+    "via": "door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 3225
+   },
+   {
+    "from": "opening:door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "to": "room:space-corridor-0",
+    "via": "door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "kind": "door",
+    "lengthMm": 9327
+   },
+   {
+    "from": "opening:door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "to": "room:space-corridor-0",
+    "via": "door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 12660
+   },
+   {
+    "from": "room:space-bedroom-1",
+    "to": "opening:door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "via": "door-wall-level-0-2450-2450-9900-2450-3275-900",
+    "kind": "door",
+    "lengthMm": 8225
+   },
+   {
+    "from": "room:space-bedroom-2",
+    "to": "opening:door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "via": "door-wall-level-0-9900-2450-12900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 3225
+   },
+   {
+    "from": "room:space-corridor-0",
+    "to": "opening:door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "via": "door-wall-level-0-12900-2450-15900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 15067
+   },
+   {
+    "from": "room:space-corridor-0",
+    "to": "opening:door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "via": "door-wall-level-0-15900-2450-18900-2450-1050-900",
+    "kind": "door",
+    "lengthMm": 17657
+   }
+  ],
+  "claims": {
+   "egress": "NOT_CLAIMED",
+   "accessibility": "NOT_CLAIMED",
+   "collisionFreePath": "NOT_CLAIMED"
+  }
+ },
+ "cameras": [
+  {
+   "id": "overview",
+   "kind": "overview",
+   "position": {
+    "x": 10000,
+    "y": 12225,
+    "z": 38800
+   },
+   "target": {
+    "x": 10000,
+    "y": 1425,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": null
+  },
+  {
+   "id": "three-quarter",
+   "kind": "three-quarter",
+   "position": {
+    "x": 26200,
+    "y": 14025,
+    "z": 26200
+   },
+   "target": {
+    "x": 10000,
+    "y": 1425,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": null
+  },
+  {
+   "id": "top-down",
+   "kind": "top-down",
+   "position": {
+    "x": 10000,
+    "y": 24600,
+    "z": 10000
+   },
+   "target": {
+    "x": 10000,
+    "y": 1425,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": null
+  },
+  {
+   "id": "exterior-orbit",
+   "kind": "exterior-orbit",
+   "position": {
+    "x": 46000,
+    "y": 10425,
+    "z": 10000
+   },
+   "target": {
+    "x": 10000,
+    "y": 1425,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": 36000,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": null
+  },
+  {
+   "id": "interior-roof-hidden",
+   "kind": "interior-roof-hidden",
+   "position": {
+    "x": 22600,
+    "y": 19425,
+    "z": 22600
+   },
+   "target": {
+    "x": 10000,
+    "y": 1425,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": null
+  },
+  {
+   "id": "floor:level-0",
+   "kind": "floor",
+   "position": {
+    "x": 24400,
+    "y": 15600,
+    "z": 24400
+   },
+   "target": {
+    "x": 10000,
+    "y": 1200,
+    "z": 10000
+   },
+   "up": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "level-0"
+  },
+  {
+   "id": "room:space-bedroom-1",
+   "kind": "room",
+   "position": {
+    "x": 6175,
+    "y": 36900,
+    "z": 10675
+   },
+   "target": {
+    "x": 6175,
+    "y": 1000,
+    "z": 10675
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "space-bedroom-1"
+  },
+  {
+   "id": "room:space-bedroom-2",
+   "kind": "room",
+   "position": {
+    "x": 11400,
+    "y": 16900,
+    "z": 5675
+   },
+   "target": {
+    "x": 11400,
+    "y": 1000,
+    "z": 5675
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "space-bedroom-2"
+  },
+  {
+   "id": "room:space-corridor-0",
+   "kind": "room",
+   "position": {
+    "x": 1775,
+    "y": 39600,
+    "z": 10675
+   },
+   "target": {
+    "x": 1775,
+    "y": 1000,
+    "z": 10675
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "space-corridor-0"
+  },
+  {
+   "id": "room:space-kitchen-1",
+   "kind": "room",
+   "position": {
+    "x": 17400,
+    "y": 16900,
+    "z": 5675
+   },
+   "target": {
+    "x": 17400,
+    "y": 1000,
+    "z": 5675
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "space-kitchen-1"
+  },
+  {
+   "id": "room:space-living-1",
+   "kind": "room",
+   "position": {
+    "x": 14400,
+    "y": 16900,
+    "z": 5675
+   },
+   "target": {
+    "x": 14400,
+    "y": 1000,
+    "z": 5675
+   },
+   "up": {
+    "x": 0,
+    "y": 0,
+    "z": -1
+   },
+   "verticalFovMilliDegrees": 50000,
+   "orbitRadiusMm": null,
+   "visibleLevelIds": [
+    "level-0"
+   ],
+   "hiddenLayers": [
+    "ROOFS",
+    "ROOM_VOLUMES",
+    "SEMANTIC_HELPERS"
+   ],
+   "transition": {
+    "interpolation": "linear",
+    "durationMs": 1200
+   },
+   "focusSourceEntityId": "space-living-1"
+  }
+ ],
+ "coverage": [
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-0",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-1",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-10",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-11",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-12",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-13",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-14",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-15",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-16",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-17",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-18",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-19",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-2",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-20",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-21",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-22",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-23",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-24",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-25",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-26",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-27",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-3",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-4",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-5",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-6",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-7",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-8",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "dimension",
+   "entityId": "dimension-9",
+   "status": "NOT_EVALUATED",
+   "reason": "ANNOTATION_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "level",
+   "entityId": "level-0",
+   "status": "SEMANTIC_ONLY",
+   "reason": "LEVEL_GROUP_NODE",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "opening",
+   "entityId": "door-wall-level-0-1100-1100-18900-1100-8450-900",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-1100-1100-18900-1100",
+    "door-leaf:door-wall-level-0-1100-1100-18900-1100-8450-900"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "door-wall-level-0-12900-2450-15900-2450-1050-900",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-12900-2450-15900-2450",
+    "door-leaf:door-wall-level-0-12900-2450-15900-2450-1050-900"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "door-wall-level-0-15900-2450-18900-2450-1050-900",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-15900-2450-18900-2450",
+    "door-leaf:door-wall-level-0-15900-2450-18900-2450-1050-900"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "door-wall-level-0-2450-2450-9900-2450-3275-900",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-2450-2450-9900-2450",
+    "door-leaf:door-wall-level-0-2450-2450-9900-2450-3275-900"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "door-wall-level-0-9900-2450-12900-2450-1050-900",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-2450-12900-2450",
+    "door-leaf:door-wall-level-0-9900-2450-12900-2450-1050-900"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "window-wall-level-0-12900-8900-15900-8900-900-1200",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-12900-8900-15900-8900",
+    "window-pane:window-wall-level-0-12900-8900-15900-8900-900-1200"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "window-wall-level-0-15900-8900-18900-8900-900-1200",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-15900-8900-18900-8900",
+    "window-pane:window-wall-level-0-15900-8900-18900-8900-900-1200"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "window-wall-level-0-2450-18900-9900-18900-3125-1200",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-2450-18900-9900-18900",
+    "window-pane:window-wall-level-0-2450-18900-9900-18900-3125-1200"
+   ]
+  },
+  {
+   "entityType": "opening",
+   "entityId": "window-wall-level-0-9900-8900-12900-8900-900-1200",
+   "status": "FULL_GEOMETRY",
+   "reason": "APERTURE_CUT_IN_HOST_WALL",
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-8900-12900-8900",
+    "window-pane:window-wall-level-0-9900-8900-12900-8900-900-1200"
+   ]
+  },
+  {
+   "entityType": "site",
+   "entityId": "site",
+   "status": "NOT_EVALUATED",
+   "reason": "SITE_NOT_IN_SCENE_V1",
+   "sceneObjectIds": []
+  },
+  {
+   "entityType": "slab",
+   "entityId": "roof",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "slab:roof"
+   ]
+  },
+  {
+   "entityType": "slab",
+   "entityId": "slab-0",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "slab:slab-0"
+   ]
+  },
+  {
+   "entityType": "space",
+   "entityId": "space-bedroom-1",
+   "status": "SEMANTIC_ONLY",
+   "reason": "SELECTION_HELPER_VOLUME",
+   "sceneObjectIds": [
+    "room-volume:space-bedroom-1"
+   ]
+  },
+  {
+   "entityType": "space",
+   "entityId": "space-bedroom-2",
+   "status": "SEMANTIC_ONLY",
+   "reason": "SELECTION_HELPER_VOLUME",
+   "sceneObjectIds": [
+    "room-volume:space-bedroom-2"
+   ]
+  },
+  {
+   "entityType": "space",
+   "entityId": "space-corridor-0",
+   "status": "SEMANTIC_ONLY",
+   "reason": "SELECTION_HELPER_VOLUME",
+   "sceneObjectIds": [
+    "room-volume:space-corridor-0"
+   ]
+  },
+  {
+   "entityType": "space",
+   "entityId": "space-kitchen-1",
+   "status": "SEMANTIC_ONLY",
+   "reason": "SELECTION_HELPER_VOLUME",
+   "sceneObjectIds": [
+    "room-volume:space-kitchen-1"
+   ]
+  },
+  {
+   "entityType": "space",
+   "entityId": "space-living-1",
+   "status": "SEMANTIC_ONLY",
+   "reason": "SELECTION_HELPER_VOLUME",
+   "sceneObjectIds": [
+    "room-volume:space-living-1"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-1100-1100-1100-18900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-1100-1100-1100-18900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-1100-1100-18900-1100",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-1100-1100-18900-1100"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-1100-18900-2450-18900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-1100-18900-2450-18900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-12900-2450-12900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-12900-2450-12900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-12900-2450-15900-2450",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-12900-2450-15900-2450"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-12900-8900-15900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-12900-8900-15900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-15900-2450-15900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-15900-2450-15900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-15900-2450-18900-2450",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-15900-2450-18900-2450"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-15900-8900-18900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-15900-8900-18900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-18900-1100-18900-2450",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-18900-1100-18900-2450"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-18900-2450-18900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-18900-2450-18900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-2450-18900-9900-18900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-2450-18900-9900-18900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-2450-2450-2450-18900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-2450-2450-2450-18900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-2450-2450-9900-2450",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-2450-2450-9900-2450"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-9900-2450-12900-2450",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-2450-12900-2450"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-9900-2450-9900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-2450-9900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-9900-8900-12900-8900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-8900-12900-8900"
+   ]
+  },
+  {
+   "entityType": "wall",
+   "entityId": "wall-level-0-9900-8900-9900-18900",
+   "status": "FULL_GEOMETRY",
+   "reason": null,
+   "sceneObjectIds": [
+    "wall:wall-level-0-9900-8900-9900-18900"
+   ]
+  }
+ ],
+ "overlays": [
+  {
+   "kind": "structural",
+   "status": "NOT_EVALUATED",
+   "reason": "OVERLAY_NOT_IN_SCENE_V1"
+  },
+  {
+   "kind": "environmental",
+   "status": "NOT_EVALUATED",
+   "reason": "OVERLAY_NOT_IN_SCENE_V1"
+  },
+  {
+   "kind": "systems",
+   "status": "NOT_EVALUATED",
+   "reason": "OVERLAY_NOT_IN_SCENE_V1"
+  },
+  {
+   "kind": "knowledge",
+   "status": "NOT_EVALUATED",
+   "reason": "OVERLAY_NOT_IN_SCENE_V1"
+  }
+ ],
+ "claims": {
+  "photorealism": "NOT_CLAIMED",
+  "structuralCompliance": "NOT_CLAIMED",
+  "fireCodeCompliance": "NOT_CLAIMED",
+  "egress": "NOT_CLAIMED",
+  "accessibility": "NOT_CLAIMED",
+  "materialPerformance": "NOT_CLAIMED",
+  "constructionReadiness": "NOT_CLAIMED"
+ },
+ "limitations": [
+  "Supported input is the Phase 23 bounded orthogonal profile: at most two storeys, one straight stair, no columns.",
+  "Wall solids are butt-ended prisms (model convention); corner notches are closed by VISUAL_PLACEHOLDER junction fills that are not quantities.",
+  "Door leaves and window panes are generic VISUAL_PLACEHOLDER components; no product, glazing, thermal or fire property is asserted.",
+  "Stair undersides are a mass fill to the source level because the soffit is not modeled; landings are walking surfaces without modeled thickness.",
+  "Colours are VISUAL_PLACEHOLDER appearance only; specification labels are reported as given, never as performance.",
+  "Navigation edges are Blueprint QA circulation facts; they are not egress, accessibility or collision-free path claims.",
+  "Engineering overlays (structural, environmental, systems, knowledge) are NOT_EVALUATED in scene V1.",
+  "The scene is not photorealistic rendering and does not assert construction readiness."
+ ],
+ "statistics": {
+  "objects": 48,
+  "nodes": 57,
+  "meshes": 48,
+  "primitives": 48,
+  "triangles": 992,
+  "vertices": 1984,
+  "materials": 7
+ },
+ "binary": {
+  "format": "glb",
+  "mimeType": "model/gltf-binary",
+  "sha256": "6e8a27b01c02b0ac82447d8d925ecd16385b8d580fe929e965c24990791c8ce3",
+  "bytes": 112320
+ }
+}

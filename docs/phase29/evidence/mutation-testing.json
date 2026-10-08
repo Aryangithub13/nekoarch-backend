@@ -1,0 +1,623 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 39,
+    "failed": 0,
+    "failingTests": [],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M01",
+    "plan": "remove a wall opening",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 9,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism rejects reversed winding, corrupted indices and malformed containers without throwing",
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M02",
+    "plan": "alter door width",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M03",
+    "plan": "alter window sill elevation",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M04",
+    "plan": "alter wall thickness",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "places every wall at its centerline",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 10,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism rejects reversed winding, corrupted indices and malformed containers without throwing",
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity places every wall at its centerline, thickness, height and base offset (one-storey, L, two-storey)",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M05",
+    "plan": "shift floor Y coordinate",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M06",
+    "plan": "fill a slab void",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M07",
+    "plan": "omit a stair",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 5,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M08",
+    "plan": "reverse mesh triangle winding",
+    "file": "apps/api/src/scene3d/mesh.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 8,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M09",
+    "plan": "corrupt a mesh index",
+    "file": "apps/api/src/scene3d/mesh.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 8,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M10",
+    "plan": "drop semantic source ID",
+    "file": "apps/api/src/scene3d/gltf.ts",
+    "suite": "core",
+    "intendedKiller": "traceable source and BIM identities",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 11,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism rejects reversed winding, corrupted indices and malformed containers without throwing",
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity reports every source entity in coverage and never silently omits one",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras builds root \u2192 level \u2192 layer \u2192 object nodes with traceable source and BIM identities",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M11",
+    "plan": "change scene scale",
+    "file": "apps/api/src/scene3d/gltf.ts",
+    "suite": "core",
+    "intendedKiller": "independent glTF implementation",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 10,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism parses with an independent glTF implementation into the manifest scene in metres",
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism rejects reversed winding, corrupted indices and malformed containers without throwing",
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening",
+      "Phase 29 scene compiler \u2014 geometry fidelity detects altered wall thickness and shifted floor elevation in the binary",
+      "Phase 29 scene compiler \u2014 geometry fidelity keeps slab voids open, stair flights exact and lower exposed roofs as their own plates",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras derives navigation only from validated Blueprint QA circulation edges and claims no egress or accessibility",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras rejects dropped source ids, corrupted room mapping and broken camera targets"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M12",
+    "plan": "alter (accept forged) model hash",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "mismatched bindings",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals refuses unsupported models, mismatched bindings and non-empty inputs with typed codes"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M13",
+    "plan": "alter GLB bytes without updating checksum (validator accepts)",
+    "file": "apps/api/src/scene3d/validate.ts",
+    "suite": "core",
+    "intendedKiller": "binds manifest, binary and source",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism binds manifest, binary and source: forged hashes, scale and model identity are rejected"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M14",
+    "plan": "bypass independent validation",
+    "file": "apps/api/src/scene3d/job.ts",
+    "suite": "core",
+    "intendedKiller": "never returns a scene the independent validator rejects",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M15",
+    "plan": "change material/provenance status",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "visual placeholder",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 4,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras labels every appearance a visual placeholder and every engineering overlay NOT_EVALUATED"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M16",
+    "plan": "skip an architectural entity",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "never silently omits",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 6,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity places every wall at its centerline, thickness, height and base offset (one-storey, L, two-storey)",
+      "Phase 29 scene compiler \u2014 geometry fidelity reports every source entity in coverage and never silently omits one",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)",
+      "Phase 29 scene compiler \u2014 semantics, navigation, cameras builds root \u2192 level \u2192 layer \u2192 object nodes with traceable source and BIM identities"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M17",
+    "plan": "break camera target",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M18",
+    "plan": "corrupt room-to-scene mapping",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "compiles every supported fixture to a scene the independent validator accepts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 3,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals never returns a scene the independent validator rejects",
+      "Phase 29 scene compiler \u2014 geometry fidelity compiles every supported fixture to a scene the independent validator accepts",
+      "Phase 29 scene compiler \u2014 geometry fidelity round-trips far-from-origin buildings on the 0.5 mm grid (float32 precision budget)"
+    ],
+    "failuresMentioningValidation": 1,
+    "suiteError": []
+  },
+  {
+    "id": "M19",
+    "plan": "disable node/resource limit",
+    "file": "apps/api/src/scene3d/compile.ts",
+    "suite": "core",
+    "intendedKiller": "enforces object, triangle",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals enforces object, triangle, vertex, byte, extent and navigation budgets"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M20",
+    "plan": "leak foreign artifact access (read RPC ownership)",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "another owner's scene",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 2,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL Phase 29 scene acceptance never serves another owner's scene, manifest or bytes",
+      "Phase 29 scene persistence on PostgreSQL keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M21",
+    "plan": "bypass owner-only storage (blob table readable)",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "unreachable except through the owner-scoped RPC",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M22",
+    "plan": "serve incomplete artifact as READY (row without bytes)",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "persists an immutable READY artifact",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 4,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL Phase 29 scene acceptance keeps artifacts immutable and marks them STALE once the project moves to a new revision",
+      "Phase 29 scene persistence on PostgreSQL Phase 29 scene acceptance validates without compiling, then compiles, validates and persists an immutable READY artifact",
+      "Phase 29 scene persistence on PostgreSQL keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC",
+      "Phase 29 scene persistence on PostgreSQL replays a signed genuine write onto the same artifact; denies unsigned, forged-signature and foreign writes"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M23",
+    "plan": "bypass stale check",
+    "file": "apps/api/src/services/scene-service.ts",
+    "suite": "integration",
+    "intendedKiller": "marks them STALE",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL Phase 29 scene acceptance keeps artifacts immutable and marks them STALE once the project moves to a new revision"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M24",
+    "plan": "nondeterministic serialization order",
+    "file": "apps/api/src/scene3d/gltf.ts",
+    "suite": "core",
+    "intendedKiller": "byte-identical across repeated compiles",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 GLB export \u2014 interoperability, identity, determinism is byte-identical across repeated compiles and source array order"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M25",
+    "plan": "validator imports the compiler (independence)",
+    "file": "apps/api/src/scene3d/validate.ts",
+    "suite": "core",
+    "intendedKiller": "validator independent",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 bounded refusals keeps the validator independent of the compiler, mesh builder and GLB writer"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M26",
+    "plan": "validator aperture probe disabled",
+    "file": "apps/api/src/scene3d/validate.ts",
+    "suite": "core",
+    "intendedKiller": "real door and window apertures",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 23,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene compiler \u2014 geometry fidelity cuts real door and window apertures: a wrong width or sill is rejected at the exact opening"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M27",
+    "plan": "worker bypass (compile on the request thread)",
+    "file": "apps/api/src/services/scene-service.ts",
+    "suite": "integration",
+    "intendedKiller": "stores nothing when the worker",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL stores nothing when the worker crashes, times out, returns unvalidated output or the queue is full"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M28",
+    "plan": "pool accepts unvalidated worker output",
+    "file": "apps/api/src/scene3d/pool.ts",
+    "suite": "integration",
+    "intendedKiller": "unvalidated and tampered",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene worker pool passes typed refusals through and reports crashes, garbage, unvalidated and tampered output as worker failures"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M29",
+    "plan": "SQL binary hash check removed (forged artifact hash accepted)",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "forged artifact hash",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL rejects forged model hash, forged artifact hash, tampered bytes, missing coverage and unvalidated scenes in SQL"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M30",
+    "plan": "SQL coverage check bypass",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "rejects missing coverage on a revision with no artifact",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL rejects missing coverage on a revision with no artifact yet, then accepts the genuine scene (positive control)"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "id": "M31",
+    "plan": "RLS owner-read bypass (policy opened to every authenticated user)",
+    "file": "supabase/migrations/0019_scene_artifacts.sql",
+    "suite": "integration",
+    "intendedKiller": "unreachable except through the owner-scoped RPC",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 16,
+    "failed": 1,
+    "failingTests": [
+      "Phase 29 scene persistence on PostgreSQL keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC"
+    ],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 39,
+    "failed": 0,
+    "failingTests": [],
+    "failuresMentioningValidation": 0,
+    "suiteError": []
+  }
+]

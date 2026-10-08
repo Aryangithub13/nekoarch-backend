@@ -8,6 +8,7 @@ import { environmentalDatabaseError } from './environmental-repository.js';
 import { systemsDatabaseError } from './systems-repository.js';
 import { knowledgeDatabaseError } from './knowledge-repository.js';
 import { optimizationDatabaseError } from './optimization-repository.js';
+import { sceneDatabaseError } from './scene-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -65,6 +66,11 @@ export class SupabaseRepository implements Repository {
   async optimizationRpc(name: 'optimization_read' | 'optimization_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) optimizationDatabaseError(error);
+    return data as unknown;
+  }
+  async sceneRpc(name: 'scene_read' | 'scene_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) sceneDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {

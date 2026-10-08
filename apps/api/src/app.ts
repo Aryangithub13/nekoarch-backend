@@ -5,6 +5,8 @@ import { systemsRoutes } from './routes/systems.js';
 import { knowledgeRoutes } from './routes/knowledge.js';
 import { optimizationRoutes } from './routes/optimization.js';
 import type { OptimizationPool } from './optimization/pool.js';
+import { sceneRoutes } from './routes/scene.js';
+import type { ScenePool } from './scene3d/pool.js';
 import { conversationsRoutes } from './routes/conversations.js';
 import type { ConversationProvider } from './ai/conversation-provider.js';
 import { requirementInterpretationRoutes } from './routes/requirement-interpretation.js';
@@ -31,7 +33,7 @@ import { plansRoutes } from './routes/plans.js';
 import { estimatesRoutes } from './routes/estimates.js';
 import { regionsRoutes } from './routes/regions.js';
 
-export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool }) {
+export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool; scenePool?: ScenePool }) {
   const backend = options.backend ?? createSupabaseBackend(options.env);
   const capture = options.captureError ?? reportError;
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger(options.env);
@@ -98,6 +100,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     systemsRoutes(scope, backend, options.env);
     knowledgeRoutes(scope, backend, options.env);
     optimizationRoutes(scope, backend, options.env, options.optimizationPool);
+    sceneRoutes(scope, backend, options.env, options.scenePool);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

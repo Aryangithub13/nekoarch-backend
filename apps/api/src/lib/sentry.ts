@@ -20,6 +20,7 @@ const safeRoutes = new Set([
   ...['/validate', '/analyses', '/analyses/:analysisId', '/status'].flatMap(suffix => [`${revision}/structural${suffix}`, `${revision}/environmental${suffix}`, `${revision}/systems${suffix}`]),
   ...['/packs', '/validate', '/analyses', '/analyses/:analysisId', '/status'].map(suffix => `${revision}/knowledge${suffix}`),
   ...['/validate', '/studies', '/studies/:studyId', '/status'].map(suffix => `${revision}/optimization${suffix}`),
+  ...['/validate', '/artifacts', '/artifacts/:artifactId', '/artifacts/:artifactId/manifest', '/artifacts/:artifactId/glb', '/status'].map(suffix => `${revision}/scene${suffix}`),
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.

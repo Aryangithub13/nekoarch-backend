@@ -4,6 +4,7 @@ import { environmentalAcceptance } from '../../../test-support/environmental-acc
 import { systemsAcceptance } from '../../../test-support/systems-acceptance.js';
 import { knowledgeAcceptance } from '../../../test-support/knowledge-acceptance.js';
 import { optimizationAcceptance } from '../../../test-support/optimization-acceptance.js';
+import { sceneAcceptance } from '../../../test-support/scene-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -153,6 +154,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const optimizationRows = await admin.from('project_revision_optimization_studies').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (optimizationRows.error) failures.push('read protected optimization projects');
       for (const row of optimizationRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Immutable Phase 29 scene artifacts likewise.
+      const sceneRows = await admin.from('project_revision_scene_artifacts').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+      if (sceneRows.error) failures.push('read protected scene projects');
+      for (const row of sceneRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
@@ -439,6 +444,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
   });
   optimizationAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local optimization setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  sceneAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local scene setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
   projectAcceptance(() => {

@@ -1,0 +1,52 @@
+npm notice run designflow@0.1.0 test:generator
+npm notice run npm run build -w @designflow/shared && vitest run packages/generator/tests
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 12551ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  940ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real non-square site output  648ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real L site output  651ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real U site output  587ms
+   ✓ Precision Solver V2 geometry and independent evidence > canonicalizes both permitted winding directions, cyclic origins, room order and relationship direction without mutating input  504ms
+   ✓ Precision Solver V2 geometry and independent evidence > reconciles explicit buildable regions with rectangular setbacks and preserves translated survey origin  644ms
+   ✓ Precision Solver V2 geometry and independent evidence > coordinates exact stair rise, landings, upper slab void and actual upper access  405ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-z  713ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-z  700ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for min-x  612ms
+   ✓ Precision Solver V2 geometry and independent evidence > validates entry approach for max-x  669ms
+   ✓ Precision Solver V2 geometry and independent evidence > models conceptual parking and explicitly excludes construction quantities  726ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  1353ms
+   ✓ Precision Solver V2 geometry and independent evidence > applies exact north conversions without assuming climate or unsupported angles  600ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  1175ms
+   ✓ Precision Solver V2 geometry and independent evidence > independently rejects forbidden private transit rather than assuming corridor access  665ms
+   ✓ Precision Solver V2 geometry and independent evidence > repeats deterministically across independent concurrent calls and hashes version/seed correctly  369ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 8622ms
+   ✓ blueprint golden fixtures > one-bedroom  301ms
+   ✓ bounded adversarial and property corpus > supports 24 rooms within the maximum envelope  357ms
+   ✓ bounded adversarial and property corpus > isolates concurrent mixed calls  363ms
+   ✓ bounded adversarial and property corpus > isolates actual parallel worker generations  443ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 5602ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  1663ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 4 BHK prompts with required open-kitchen adjacency  326ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 5 BHK prompts with required open-kitchen adjacency  383ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 6 BHK prompts with required open-kitchen adjacency  499ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 7 BHK prompts with required open-kitchen adjacency  458ms
+   ✓ furniture through the public generation pipeline > furnishes normalized 8 BHK prompts with required open-kitchen adjacency  713ms
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 1950ms
+   ✓ Phase 22 parametric architecture > places rooms in both connected wings, exact slabs and nested floors (false)  306ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 492ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 557ms
+ ✓ packages/generator/tests/parametric-quantities.test.ts (1 test) 263ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 118ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 110ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 55ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 15ms
+
+ Test Files  11 passed (11)
+      Tests  526 passed (526)
+   Start at  22:58:27
+   Duration  38.31s (transform 1.47s, setup 0ms, collect 3.70s, tests 30.34s, environment 4ms, prepare 1.29s)
+

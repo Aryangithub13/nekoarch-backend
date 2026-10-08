@@ -1,0 +1,44 @@
+npm notice run designflow@0.1.0 test:scene3d
+npm notice run npm run build && vitest run apps/api/tests/scene3d.test.ts apps/api/tests/scene-pool.test.ts apps/api/tests/scene.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/scene.integration.test.ts (11 tests) 10258ms
+   ✓ Phase 29 scene persistence on PostgreSQL > Phase 29 scene acceptance > validates without compiling, then compiles, validates and persists an immutable READY artifact  745ms
+   ✓ Phase 29 scene persistence on PostgreSQL > Phase 29 scene acceptance > is idempotent, converges identical compiles and never compiles on GET  747ms
+   ✓ Phase 29 scene persistence on PostgreSQL > hashes the manifest identically in TypeScript and SQL  565ms
+   ✓ Phase 29 scene persistence on PostgreSQL > replays a signed genuine write onto the same artifact; denies unsigned, forged-signature and foreign writes  650ms
+   ✓ Phase 29 scene persistence on PostgreSQL > rejects forged model hash, forged artifact hash, tampered bytes, missing coverage and unvalidated scenes in SQL  1431ms
+   ✓ Phase 29 scene persistence on PostgreSQL > rejects missing coverage on a revision with no artifact yet, then accepts the genuine scene (positive control)  1105ms
+   ✓ Phase 29 scene persistence on PostgreSQL > keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC  512ms
+   ✓ Phase 29 scene persistence on PostgreSQL > stores nothing when the worker crashes, times out, returns unvalidated output or the queue is full  3168ms
+ ✓ apps/api/tests/scene3d.test.ts (23 tests) 3549ms
+   ✓ Phase 29 scene compiler — geometry fidelity > compiles every supported fixture to a scene the independent validator accepts  369ms
+   ✓ Phase 29 scene compiler — geometry fidelity > cuts real door and window apertures: a wrong width or sill is rejected at the exact opening  301ms
+   ✓ Phase 29 scene compiler — bounded refusals > enforces object, triangle, vertex, byte, extent and navigation budgets  579ms
+ ✓ apps/api/tests/scene-pool.test.ts (5 tests) 1296ms
+   ✓ Phase 29 scene worker pool > compiles in a real worker byte-identically to the in-process compiler, off the request thread  466ms
+   ✓ Phase 29 scene worker pool > terminates a timed-out worker and refuses queue overflow immediately  405ms
+   ✓ Phase 29 scene worker pool > drains on close: queued jobs are refused, running jobs finish, later jobs are unavailable  317ms
+
+ Test Files  3 passed (3)
+      Tests  39 passed (39)
+   Start at  23:11:13
+   Duration  19.20s (transform 1.09s, setup 0ms, collect 3.52s, tests 15.10s, environment 0ms, prepare 158ms)
+

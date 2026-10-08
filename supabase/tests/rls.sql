@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(86);
+select plan(96);
 
 insert into auth.users (id, is_anonymous) values
   ('10000000-0000-4000-8000-000000000001', true),
@@ -13,7 +13,7 @@ select is((select count(*)::integer from public.profiles where id in (
   '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')), 2,
   'anonymous Supabase users get profiles');
 select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid = c.relnamespace
-  where n.nspname = 'public' and c.relkind = 'r'), 21, 'exactly twenty-one public tables including structural, environmental, building-systems, knowledge and optimization studies');
+  where n.nspname = 'public' and c.relkind = 'r'), 23, 'exactly twenty-three public tables including structural, environmental, building-systems, knowledge, optimization studies and scene artifacts/blobs');
 select ok((select bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid = c.relnamespace
   where n.nspname = 'public' and c.relkind = 'r'), 'all public tables have RLS');
 
@@ -111,6 +111,13 @@ select throws_ok('update public.project_revision_optimization_studies set status
 select throws_ok('delete from public.project_revision_optimization_studies', '42501', null, 'clients cannot delete optimization history');
 select throws_ok($$select public.optimization_write('{}')$$, '42501', null, 'unsigned optimization RPC is forbidden');
 select throws_ok($$select project_private.optimization_summary(null)$$, '42501', null, 'optimization helpers are private');
+select throws_ok('insert into public.project_revision_scene_artifacts default values', '42501', null, 'clients cannot forge scene artifacts');
+select throws_ok('update public.project_revision_scene_artifacts set status = ''READY''', '42501', null, 'clients cannot rewrite scene artifacts');
+select throws_ok('delete from public.project_revision_scene_artifacts', '42501', null, 'clients cannot delete scene history');
+select throws_ok('select glb from public.project_revision_scene_blobs', '42501', null, 'owners never read scene bytes except through the RPC');
+select throws_ok('insert into public.project_revision_scene_blobs default values', '42501', null, 'clients cannot plant scene bytes');
+select throws_ok($$select public.scene_write('{}', '')$$, '42501', null, 'unsigned scene RPC is forbidden');
+select throws_ok($$select project_private.scene_summary(null)$$, '42501', null, 'scene helpers are private');
 select throws_ok('update public.project_revisions set generation_identity = null', '42501', null, 'clients cannot rewrite generation identity');
 select throws_ok('update public.project_revisions set normalized_requirements = null', '42501', null, 'clients cannot rewrite generation inputs');
 select throws_ok($$select project_private.canonical_building('{}')$$, '42501', null, 'identity helpers are private');
@@ -130,6 +137,9 @@ select throws_ok('select * from public.project_revision_specialized_knowledge_an
 select throws_ok($$select public.knowledge_read('list', gen_random_uuid(), gen_random_uuid())$$, '42501', null, 'anonymous knowledge reads are forbidden');
 select throws_ok('select * from public.project_revision_optimization_studies', '42501', null, 'optimization studies are never public');
 select throws_ok($$select public.optimization_read('list', gen_random_uuid(), gen_random_uuid())$$, '42501', null, 'anonymous optimization reads are forbidden');
+select throws_ok('select * from public.project_revision_scene_artifacts', '42501', null, 'scene artifacts are never public');
+select throws_ok('select * from public.project_revision_scene_blobs', '42501', null, 'scene bytes are never public');
+select throws_ok($$select public.scene_read('glb', gen_random_uuid(), gen_random_uuid(), gen_random_uuid())$$, '42501', null, 'anonymous scene downloads are forbidden');
 reset role;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
