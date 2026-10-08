@@ -1,0 +1,572 @@
+[
+  {
+    "command": "git rev-parse 'backend-v1-phase24-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.025,
+    "log": "docs/phase27/evidence/final/phase24-tag.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git rev-parse 'backend-v1-phase25-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.026,
+    "log": "docs/phase27/evidence/final/phase25-tag.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git rev-parse 'backend-v1-phase26-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.025,
+    "log": "docs/phase27/evidence/final/phase26-tag.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git merge-base --is-ancestor 4d1f431b4eabcf7fdd3b9f88c3c4a5cdc3f3c7e7 HEAD",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.024,
+    "log": "docs/phase27/evidence/final/phase26-baseline-ancestor.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "node --import tsx docs/phase24-audit-repair/reproduce-audit.mts",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.386,
+    "log": "docs/phase27/evidence/final/phase24-audit-reproductions.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "python3 scripts/test-phase23-runner.py",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.136,
+    "log": "docs/phase27/evidence/final/runner-controls.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run build",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 16.821,
+    "log": "docs/phase27/evidence/final/build.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run typecheck",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 23.082,
+    "log": "docs/phase27/evidence/final/typecheck.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run lint",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 4.947,
+    "log": "docs/phase27/evidence/final/lint.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:unit",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 58.909,
+    "log": "docs/phase27/evidence/final/test-unit.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:generator",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 16.168,
+    "log": "docs/phase27/evidence/final/test-generator.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:blueprint",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 7.451,
+    "log": "docs/phase27/evidence/final/test-blueprint.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:blueprint-qa",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 13.815,
+    "log": "docs/phase27/evidence/final/test-blueprint-qa.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:solver-v2",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 29.447,
+    "log": "docs/phase27/evidence/final/test-solver-v2.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:parametric",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 22.584,
+    "log": "docs/phase27/evidence/final/test-parametric.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:projects",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 22.333,
+    "log": "docs/phase27/evidence/final/test-projects.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:takeoff",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 24.086,
+    "log": "docs/phase27/evidence/final/test-takeoff.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:construction",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 22.183,
+    "log": "docs/phase27/evidence/final/test-construction.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:cost",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 24.887,
+    "log": "docs/phase27/evidence/final/test-cost.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:workflows",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 25.289,
+    "log": "docs/phase27/evidence/final/test-workflows.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:interpretation",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 20.778,
+    "log": "docs/phase27/evidence/final/test-interpretation.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:conversations",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 22.985,
+    "log": "docs/phase27/evidence/final/test-conversations.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:ai-orchestration",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 22.933,
+    "log": "docs/phase27/evidence/final/test-ai-orchestration.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:integration",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 119.135,
+    "log": "docs/phase27/evidence/final/test-integration.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:bim",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 30.449,
+    "log": "docs/phase27/evidence/final/test-bim.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:structural",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 28.797,
+    "log": "docs/phase27/evidence/final/test-structural.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:environmental",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 33.856,
+    "log": "docs/phase27/evidence/final/test-environmental.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:systems",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 36.564,
+    "log": "docs/phase27/evidence/final/test-systems.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:knowledge",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 42.377,
+    "log": "docs/phase27/evidence/final/test-knowledge.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run test:supabase",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 106.61,
+    "log": "docs/phase27/evidence/final/test-supabase.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run db:test",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 3.093,
+    "log": "docs/phase27/evidence/final/db-test.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run check",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 261.33,
+    "log": "docs/phase27/evidence/final/check.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "npm run benchmark:knowledge",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 21.231,
+    "log": "docs/phase27/evidence/final/benchmark-knowledge.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "python3 docs/phase27/mutation-test.py",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 627.448,
+    "log": "docs/phase27/evidence/final/mutation-testing.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "node --import tsx --input-type=module -e 'process.chdir(\"/tmp/designflow-phase27-verification-_xselt2x\"); await import(\"file:///home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/scripts/benchmark-bim.ts\");'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 2.242,
+    "log": "docs/phase27/evidence/final/phase23-bim-fixtures.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "/tmp/designflow-phase23-ifc/bin/python /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/scripts/verify-ifc.py",
+    "cwd": "/tmp/designflow-phase27-verification-_xselt2x",
+    "exitCode": 0,
+    "seconds": 59.561,
+    "log": "docs/phase27/evidence/final/ifc-roundtrip.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "/tmp/designflow-phase23-ifc/bin/python /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow/docs/phase23-evidence/verify-ifc-profiles.py",
+    "cwd": "/tmp/designflow-phase27-verification-_xselt2x",
+    "exitCode": 0,
+    "seconds": 0.688,
+    "log": "docs/phase27/evidence/final/ifc-profiles.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "python3 docs/phase27/verify-phase27.py --architecture /tmp/designflow-phase27-verification-_xselt2x",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.189,
+    "log": "docs/phase27/evidence/final/phase23-architecture-identical.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c 'git diff --exit-code 4d1f431b4eabcf7fdd3b9f88c3c4a5cdc3f3c7e7 -- supabase/migrations/0001_core_tables.sql supabase/migrations/0002_rate_tables.sql supabase/migrations/0003_estimates_and_logs.sql supabase/migrations/0004_rls_policies.sql supabase/migrations/0005_idempotency.sql supabase/migrations/0006_projects.sql supabase/migrations/0007_quantity_takeoffs.sql supabase/migrations/0008_construction_calculations.sql supabase/migrations/0009_boq_costs.sql supabase/migrations/0010_workflows.sql supabase/migrations/0011_generation_freshness.sql supabase/migrations/0012_conversations.sql supabase/migrations/0013_conversation_serialization.sql supabase/migrations/0014_structural_analyses.sql supabase/migrations/0015_environmental_analyses.sql supabase/migrations/0016_building_systems_analyses.sql docs/phase23-evidence docs/phase24 docs/phase24-audit-repair docs/phase25 docs/phase26 docs/backend-repair-1-23 && test \"$(git ls-files --others --exclude-standard supabase/migrations)\" = supabase/migrations/0017_specialized_knowledge_analyses.sql'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.032,
+    "log": "docs/phase27/evidence/final/historical-artifacts-unchanged.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -rnE \"from '\"'\"'\\.\\./(ai|workflows)/\" apps/api/src/structural apps/api/src/services/structural-service.ts apps/api/src/routes/structural.ts apps/api/src/environmental apps/api/src/services/environmental-service.ts apps/api/src/routes/environmental.ts apps/api/src/lib/environmental-repository.ts apps/api/src/systems apps/api/src/services/systems-service.ts apps/api/src/routes/systems.ts apps/api/src/lib/systems-repository.ts apps/api/src/knowledge apps/api/src/services/knowledge-service.ts apps/api/src/routes/knowledge.ts apps/api/src/lib/knowledge-repository.ts'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.026,
+    "log": "docs/phase27/evidence/final/ai-boundary.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -rnE \"node:(http|https|net|dgram|child_process|fs|worker_threads)|fetch\\(|XMLHttpRequest|process\\.env\" apps/api/src/environmental'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.026,
+    "log": "docs/phase27/evidence/final/environmental-offline-no-io.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -rnE \"node:(http|https|net|dgram|child_process|fs|worker_threads)|fetch\\(|XMLHttpRequest|process\\.env|Math\\.random|Date\\.now\" apps/api/src/systems'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.028,
+    "log": "docs/phase27/evidence/final/systems-offline-no-io-no-clock.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -nE \"from '\"'\"'\\./(model|solar|shading|analysis)\\.js'\"'\"'\" apps/api/src/environmental/validate.ts'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.026,
+    "log": "docs/phase27/evidence/final/validator-independence.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -nE \"from '\"'\"'\\./(model|routing|egress|vertical|clash|analysis|units)\\.js'\"'\"'\" apps/api/src/systems/validate.ts'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.028,
+    "log": "docs/phase27/evidence/final/systems-validator-independence.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "sh -c '! grep -rnE \"node:(http|https|net|dgram|child_process|fs|worker_threads)|fetch\\(|XMLHttpRequest|process\\.env|Math\\.random|Date\\.now\" apps/api/src/knowledge'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.026,
+    "log": "docs/phase27/evidence/final/knowledge-offline-no-io-no-clock.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "node docs/phase27/validator-independence.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.087,
+    "log": "docs/phase27/evidence/final/knowledge-validator-independence.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker build -t designflow-api:phase27 .",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 76.443,
+    "log": "docs/phase27/evidence/final/docker-build.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "node scripts/smoke-container.mjs designflow-api:phase27",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 1.491,
+    "log": "docs/phase27/evidence/final/docker-smoke.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm --network none --entrypoint sh designflow-api:phase27 -c 'test \"$(id -u)\" != 0 && test -f apps/api/dist/structural/frame-solver.js && test -f apps/api/dist/structural/validate.js && test -f apps/api/dist/routes/structural.js && test -f apps/api/dist/bim/ifc.js && test -f apps/api/dist/environmental/solar.js && test -f apps/api/dist/environmental/validate.js && test -f apps/api/dist/routes/environmental.js && test -f apps/api/dist/systems/routing.js && test -f apps/api/dist/systems/validate.js && test -f apps/api/dist/routes/systems.js && test -f apps/api/dist/knowledge/evaluate.js && test -f apps/api/dist/knowledge/validate.js && test -f apps/api/dist/routes/knowledge.js && grep -q specialized-knowledge-result-validator-v1 apps/api/dist/knowledge/contracts.js && grep -q structural-result-validator-v2 apps/api/dist/structural/contracts.js && test ! -e node_modules/vitest && test ! -e node_modules/tsx && test ! -e node_modules/embedded-postgres && echo non-root-compiled-bim-structural-environmental-systems-knowledge-no-dev-deps'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.338,
+    "log": "docs/phase27/evidence/final/docker-runtime-contents.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase27 node --input-type=module < docs/phase23-evidence/compiled-acceptance.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.989,
+    "log": "docs/phase27/evidence/final/docker-phase23-acceptance.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase27 node --input-type=module < docs/phase24/compiled-acceptance.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.638,
+    "log": "docs/phase27/evidence/final/docker-phase24-acceptance.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase27 node --input-type=module < docs/phase25/compiled-acceptance.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.638,
+    "log": "docs/phase27/evidence/final/docker-phase25-acceptance.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase27 node --input-type=module < docs/phase26/compiled-acceptance.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.79,
+    "log": "docs/phase27/evidence/final/docker-phase26-acceptance.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "docker run --rm -i --network none designflow-api:phase27 node --input-type=module < docs/phase27/compiled-acceptance.mjs",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.84,
+    "log": "docs/phase27/evidence/final/docker-phase27-acceptance.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "python3 docs/phase27/snapshot-local-db.py database-after-verification",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 3.594,
+    "log": "docs/phase27/evidence/final/database-snapshot.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "python3 docs/phase27/verify-phase27.py --preserved",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.087,
+    "log": "docs/phase27/evidence/final/database-preservation.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git diff --check",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow",
+    "exitCode": 0,
+    "seconds": 0.032,
+    "log": "docs/phase27/evidence/final/diff-check.txt",
+    "sourceManifestSha256": "638c25948f6c5ca9003bb66b437bdb2fc23cd73840c77b33d21caecde852e792",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  }
+]

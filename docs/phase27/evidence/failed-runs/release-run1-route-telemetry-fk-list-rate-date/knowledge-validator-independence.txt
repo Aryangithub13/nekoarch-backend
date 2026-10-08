@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "reached": [
+    "apps/api/src/bim/contracts.ts",
+    "apps/api/src/environmental/contracts.ts",
+    "apps/api/src/knowledge/contracts.ts",
+    "apps/api/src/knowledge/validate.ts",
+    "apps/api/src/structural/contracts.ts",
+    "apps/api/src/structural/units.ts",
+    "apps/api/src/systems/contracts.ts"
+  ],
+  "violations": []
+}
