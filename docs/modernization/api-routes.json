@@ -1,0 +1,407 @@
+[
+ {
+  "method": "GET",
+  "url": "/api/capabilities",
+  "anonymous": 200
+ },
+ {
+  "method": "POST",
+  "url": "/api/estimates",
+  "anonymous": 400
+ },
+ {
+  "method": "POST",
+  "url": "/api/plans",
+  "anonymous": 400
+ },
+ {
+  "method": "GET",
+  "url": "/api/plans/:id",
+  "anonymous": 404
+ },
+ {
+  "method": "PATCH",
+  "url": "/api/plans/:id",
+  "anonymous": 400
+ },
+ {
+  "method": "POST",
+  "url": "/api/plans/generate",
+  "anonymous": 400
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId",
+  "anonymous": 401
+ },
+ {
+  "method": "PATCH",
+  "url": "/api/projects/:projectId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/conversations",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/conversations",
+  "anonymous": 401
+ },
+ {
+  "method": "DELETE",
+  "url": "/api/projects/:projectId/conversations/:conversationId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/conversations/:conversationId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/messages",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/proposals/approve",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/tools",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/public",
+  "anonymous": 404
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/requirements/interpret",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/diff/:otherRevisionId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/elements",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/elements/:elementId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/export.ifc",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/export.json",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/relationships",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/bim/validation",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/cost-estimates",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/cost-estimates/:costEstimateId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/environmental/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/environmental/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/environmental/analyses/:analysisId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/environmental/status",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/environmental/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/analyses/:analysisId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/packs",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/status",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/optimization/status",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/optimization/studies",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/optimization/studies",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/optimization/studies/:studyId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/optimization/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/overview",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts/:artifactId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts/:artifactId/glb",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts/:artifactId/manifest",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/status",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/structural/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/structural/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/structural/analyses/:analysisId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/structural/status",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/structural/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/systems/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/systems/analyses",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/systems/analyses/:analysisId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/systems/status",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/systems/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs/:takeoffId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs/:takeoffId/construction-calculations",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs/:takeoffId/construction-calculations",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs/:takeoffId/construction-calculations/:calculationId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/takeoffs/:takeoffId/construction-calculations/:calculationId/cost-estimates",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/generate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/workflows",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/workflows",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/workflows/:workflowRunId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/workflows/plan",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/regions",
+  "anonymous": 404
+ },
+ {
+  "method": "GET",
+  "url": "/health/live",
+  "anonymous": 200
+ },
+ {
+  "method": "GET",
+  "url": "/health/ready",
+  "anonymous": 200
+ }
+]

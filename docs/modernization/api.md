@@ -1,0 +1,59 @@
+# Modernization API changes (Phases 1–29)
+
+All changes are additive. No route was removed or renamed, and no request schema was tightened. Existing response fields keep their values. The complete route list is [api-routes.json](api-routes.json), generated from the live Fastify route table. `apps/api/tests/modernization.test.ts` fails if a route is added or removed without regenerating it (`UPDATE_ROUTE_CATALOG=1`).
+
+## `GET /api/capabilities` — discovery v2 (additive)
+
+The Phase 16 fields `workflowVersion`, `modes` and `capabilities` are unchanged; a test enforces deep equality. New fields:
+
+| Field | Content |
+|---|---|
+| `discoveryVersion` | `capability-discovery-v2` |
+| `services[]` | `{ serviceId, version, persistence, route, workflowCapability, status: 'AVAILABLE' }` for the 11 revision-bound engines that exist as endpoints: building model, BIM, takeoff, construction, BOQ cost, structural, environmental, building systems, specialized knowledge, optimization, 3D scene. `version` is the engine's source constant. `workflowCapability` is `null` when the engine is not a Phase 16 workflow step. |
+| `media[]` | `{ media, status: AVAILABLE \| PARTIAL \| UNSUPPORTED, serviceId, mimeType, provider, reason }`:<br>• `INTERACTIVE_3D_MODEL`: AVAILABLE (GLB from the deterministic scene compiler).<br>• `CAMERA_NAVIGATION_HINTS`: PARTIAL.<br>• `EXTERIOR_RENDER`, `INTERIOR_RENDER`, `PANORAMA_360`, `RENDERED_WALKTHROUGH_VIDEO`: UNSUPPORTED (`NO_RENDER_PROVIDER`). |
+| `aiCapabilities[]` | The Phase 21 AI capability registry. Only `ARCHITECTURAL_INTENT_EXTRACTION` is AVAILABLE; all entries are advisory. |
+
+**Why:** the Phase 16 registry still lists `SCENE_3D` as a `PLANNED` *workflow step*. That is true: the scene compiler is not wired into workflow execution. But a frontend reading only `capabilities` would conclude that 3D is unavailable. The `services` field is what makes the Phase 29 engine discoverable.
+
+The conversation tool `CHECK_CAPABILITIES` now also returns optional `services` and `media` arrays, with the same truth.
+
+## `GET /api/projects/:projectId/revisions/:revisionId/overview` — project overview v1
+
+Owner-only and read-only: it never compiles, analyzes or persists. Errors:
+
+| Status | When |
+|---|---|
+| 401 | No session |
+| 404 | Foreign or missing project/revision (enforced by RLS) |
+| 400 | Any query parameter |
+
+```text
+{ overviewVersion: 'project-overview-v1', projectId, revisionId, revisionNumber, parentRevisionId,
+  projectCurrentRevisionId, revisionCurrency: CURRENT | HISTORICAL,
+  revision: { sourceMode, generatorVersion, createdAt, modelHash, identityConsistent, identity, qa{id,qaVersion,status,summary}, levels, spaces, walls, openings },
+  outputs: [{ output, version, status: AVAILABLE | NOT_GENERATED | DERIVED_ON_READ, artifacts: [{id, createdAt}],
+              otherRevisionArtifacts, truncated, href }],
+  unsupported: [{ output, reason }],
+  claims: { engineeringReview: 'NOT_CLAIMED', structural, environmental, systems, knowledge, optimization } }
+```
+
+- **`outputs`** covers 11 engines: BUILDING_MODEL, BIM, QUANTITY_TAKEOFF, CONSTRUCTION_CALCULATION, BOQ_COST, STRUCTURAL_ANALYSIS, ENVIRONMENTAL_ANALYSIS, BUILDING_SYSTEMS_ANALYSIS, SPECIALIZED_KNOWLEDGE, DESIGN_OPTIMIZATION and SCENE_3D.
+- **`artifacts`** are only artifacts bound to *this* revision.
+- **`otherRevisionArtifacts`** counts artifacts bound to other revisions of the project. They are stale for this revision and are never listed as its outputs.
+- **`truncated`** is true when a list exceeds 20.
+- **`href`** resolves to the existing list/status endpoint for this revision.
+- **`unsupported`** lists the planned workflow outputs (`PROFESSIONAL_2D`, `INTERIOR_DESIGN`, `EXTERIOR_DESIGN`, `HOLOGRAPHIC_MODEL`) and the unsupported media.
+
+## Scene asset delivery (Phase 29 routes, behaviour extended)
+
+`GET …/scene/artifacts/:artifactId/glb` and `…/manifest`:
+
+| Behaviour | Detail |
+|---|---|
+| Compression | `Accept-Encoding` containing `gzip` (q > 0) → `Content-Encoding: gzip`, `Vary: Accept-Encoding`. Measured 10–12× smaller ([delivery-benchmark.json](evidence/delivery-benchmark.json)). |
+| Identity ETag | Unchanged: the GLB SHA-256 or the scene hash. |
+| Gzip ETag | The identity ETag with a `-gzip` suffix, so each encoding has its own strong validator. |
+| GLB revalidation | `If-None-Match` matching either GLB ETag → `304` with an empty body. Authorization runs first, so a foreign user still gets 404 and an anonymous caller 401. |
+| Manifest revalidation | Never answered with 304: the body carries `currency`, which changes when the project advances while the scene hash does not. |
+| Caching policy | `Cache-Control: private, no-store` is unchanged. Revalidation helps clients that keep their own copy, e.g. a frontend IndexedDB cache. |
+| CORS | Now allows the `If-None-Match` request header and exposes `ETag`. |

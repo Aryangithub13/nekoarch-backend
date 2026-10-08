@@ -1,6 +1,8 @@
 import { performance } from 'node:perf_hooks';
+import { promisify } from 'node:util';
+import { gzip } from 'node:zlib';
 import { z } from 'zod';
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { Backend } from '../lib/repository.js';
 import type { Env } from '../config/env.js';
 import { requestContext } from '../lib/auth.js';
@@ -13,6 +15,19 @@ import { SCENE_ARTIFACT_OPERATION, SCENE_ROOT, createSceneArtifact, listSceneArt
 
 const ArtifactParams = RevisionParamsSchema.extend({ artifactId: z.string().uuid() });
 const ReadQuery = z.object({ require: z.literal('current').optional() }).strict();
+const gzipAsync = promisify(gzip);
+const acceptsGzip = (header: unknown) => String(header ?? '').split(',').some(part => {
+  const [name, ...params] = part.split(';').map(s => s.trim().toLowerCase()), q = params.find(p => p.startsWith('q='));
+  return name === 'gzip' && (!q || Number(q.slice(2)) > 0);
+});
+/** Scene assets compress 10–12× (Phase 29 fixtures, docs/modernization). Each encoding has its own strong ETag; a 304 is only sent for immutable bytes and only after authorization. */
+async function sendAsset(request: FastifyRequest, reply: FastifyReply, etag: string, body: Buffer | string, immutable: boolean) {
+  const gz = acceptsGzip(request.headers['accept-encoding']), tag = gz ? `"${etag}-gzip"` : `"${etag}"`;
+  reply.header('Vary', 'Accept-Encoding').header('ETag', tag);
+  const match = String(request.headers['if-none-match'] ?? '').split(',').map(t => t.trim().replace(/^W\//, ''));
+  if (immutable && (match.includes(`"${etag}"`) || match.includes(`"${etag}-gzip"`))) return reply.code(304).send();
+  return gz ? reply.header('Content-Encoding', 'gzip').send(await gzipAsync(body)) : reply.send(body);
+}
 
 /** Compiles run in a bounded worker pool created on first use and drained on close; GET routes never compile. */
 export function sceneRoutes(app: FastifyInstance, backend: Backend, env: Env, provided?: ScenePool) {
@@ -59,16 +74,18 @@ export function sceneRoutes(app: FastifyInstance, backend: Backend, env: Env, pr
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId, artifactId } = parseRequest(ArtifactParams, request.params);
     const detail = await readSceneArtifact(repository, projectId, revisionId, artifactId, parseRequest(ReadQuery, request.query).require === 'current');
-    reply.header('Cache-Control', 'private, no-store').header('ETag', `"${detail.sceneHash}"`);
-    return { artifactId: detail.id, sceneHash: detail.sceneHash, currency: detail.currency, manifest: detail.manifest };
+    // `currency` changes when the project advances, so this response is never answered with 304.
+    reply.header('Cache-Control', 'private, no-store').type('application/json; charset=utf-8');
+    return sendAsset(request, reply, detail.sceneHash, JSON.stringify({ artifactId: detail.id, sceneHash: detail.sceneHash, currency: detail.currency, manifest: detail.manifest }), false);
   });
   app.get(`${SCENE_ARTIFACT_OPERATION}/:artifactId/glb`, async (request, reply) => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId, artifactId } = parseRequest(ArtifactParams, request.params);
     const { summary, glb } = await readSceneBinary(repository, projectId, revisionId, artifactId, parseRequest(ReadQuery, request.query).require === 'current');
     // Private, uncached, fixed filename (uuid only): no untrusted name reaches a header or a path.
-    return reply.header('Content-Type', 'model/gltf-binary').header('Cache-Control', 'private, no-store').header('ETag', `"${summary.binarySha256}"`)
-      .header('Content-Disposition', `attachment; filename="scene-${summary.id}.glb"`).header('X-Content-Type-Options', 'nosniff').send(glb);
+    reply.header('Content-Type', 'model/gltf-binary').header('Cache-Control', 'private, no-store')
+      .header('Content-Disposition', `attachment; filename="scene-${summary.id}.glb"`).header('X-Content-Type-Options', 'nosniff');
+    return sendAsset(request, reply, summary.binarySha256, glb, true);
   });
   app.get(`${SCENE_ROOT}/status`, async request => {
     const { repository } = await requestContext(request, backend, true);

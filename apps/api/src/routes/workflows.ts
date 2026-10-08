@@ -12,9 +12,10 @@ import { WorkflowRequestSchema, WorkflowRunSchema, WORKFLOW_VERSION } from '../c
 import { CAPABILITIES, MODES, validateRegistry } from '../workflows/registry.js';
 import { resolveWorkflow } from '../workflows/sources.js';
 import { executeWorkflow, workflowFingerprint } from '../services/workflow-service.js';
+import { discovery } from '../services/overview-service.js';
 export function workflowsRoutes(app: FastifyInstance, backend: Backend, env: Env) {
   validateRegistry(CAPABILITIES);
-  app.get('/api/capabilities',async()=>({workflowVersion:WORKFLOW_VERSION,modes:MODES,capabilities:CAPABILITIES}));
+  app.get('/api/capabilities',async()=>({workflowVersion:WORKFLOW_VERSION,modes:MODES,capabilities:CAPABILITIES,...discovery()}));
   app.post(`${WORKFLOW_OPERATION}/plan`,{bodyLimit:Math.min(env.BODY_LIMIT_BYTES,131072)},async request=>{
     const {repository}=await requestContext(request,backend,true), {projectId}=parseRequest(ProjectParamsSchema,request.params);
     const input=parseRequest(WorkflowRequestSchema,request.body);

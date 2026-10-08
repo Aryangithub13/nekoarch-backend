@@ -44,7 +44,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     trustProxy: options.env.TRUST_PROXY ? options.env.TRUST_PROXY.split(',').map(value => value.trim()) : false,
     exposeHeadRoutes: false });
   app.register(cors, { origin: options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'], exposedHeaders: ['x-request-id'] });
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'If-None-Match'], exposedHeaders: ['x-request-id', 'ETag'] });
   app.register(helmet, { contentSecurityPolicy: false, crossOriginEmbedderPolicy: false,
     strictTransportSecurity: options.env.NODE_ENV === 'production' && options.env.HSTS_ENABLED ? { maxAge: 31_536_000 } : false,
     referrerPolicy: { policy: 'no-referrer' } });

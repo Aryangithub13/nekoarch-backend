@@ -1,0 +1,110 @@
+import type { Repository } from '../lib/repository.js';
+import { ProjectRepository } from '../lib/project-repository.js';
+import { TakeoffRepository } from '../lib/takeoff-repository.js';
+import { ConstructionRepository } from '../lib/construction-repository.js';
+import { CostRepository } from '../lib/cost-repository.js';
+import { ProjectRevisionDetailSchema } from '../contracts/projects.js';
+import { modelHash } from '../lib/generation-identity.js';
+import { AI_CAPABILITIES } from '../ai/orchestration/registry.js';
+import { CAPABILITIES } from '../workflows/registry.js';
+import { BIM_VERSION } from '../bim/contracts.js';
+import { TAKEOFF_ENGINE_VERSION } from '@designflow/quantity-takeoff';
+import { CONSTRUCTION_ENGINE_VERSION } from '@designflow/construction-calculations';
+import { COST_ENGINE_VERSION } from '@designflow/boq-cost';
+import { STRUCTURAL_ANALYSIS_VERSION } from '../structural/contracts.js';
+import { ENVIRONMENTAL_ANALYSIS_VERSION } from '../environmental/contracts.js';
+import { SYSTEMS_ANALYSIS_VERSION } from '../systems/contracts.js';
+import { KNOWLEDGE_ANALYSIS_VERSION } from '../knowledge/contracts.js';
+import { OPTIMIZER_VERSION } from '../optimization/contracts.js';
+import { SCENE_COMPILER_VERSION } from '../scene3d/contracts.js';
+import { TAKEOFF_OPERATION } from './takeoff-service.js';
+import { CONSTRUCTION_OPERATION } from './construction-service.js';
+import { COST_COLLECTION } from './cost-service.js';
+import { STRUCTURAL_ROOT, structuralStatus } from './structural-service.js';
+import { ENVIRONMENTAL_ROOT, environmentalStatus } from './environmental-service.js';
+import { SYSTEMS_ROOT, systemsStatus } from './systems-service.js';
+import { KNOWLEDGE_ROOT, knowledgeStatus } from './knowledge-service.js';
+import { OPTIMIZATION_ROOT, optimizationStatus } from './optimization-service.js';
+import { SCENE_ROOT, sceneStatus } from './scene-service.js';
+
+export const DISCOVERY_VERSION = 'capability-discovery-v2';
+export const OVERVIEW_VERSION = 'project-overview-v1';
+const REVISION = '/api/projects/:projectId/revisions/:revisionId';
+
+/** Revision-bound services that exist as standalone endpoints. `workflowCapability` names the Phase 16 workflow step, if any (scene and analyses are not workflow steps yet). */
+export const SERVICES = Object.freeze([
+  { serviceId: 'BUILDING_MODEL', version: 'project-revision-v1', persistence: 'IMMUTABLE_REVISION', route: REVISION, workflowCapability: 'REVISION_PERSISTENCE' },
+  { serviceId: 'BIM', version: BIM_VERSION, persistence: 'DERIVED_ON_READ', route: `${REVISION}/bim`, workflowCapability: null },
+  { serviceId: 'QUANTITY_TAKEOFF', version: TAKEOFF_ENGINE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: TAKEOFF_OPERATION, workflowCapability: 'QUANTITY_TAKEOFF' },
+  { serviceId: 'CONSTRUCTION_CALCULATION', version: CONSTRUCTION_ENGINE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: CONSTRUCTION_OPERATION, workflowCapability: 'CONSTRUCTION_CALCULATION' },
+  { serviceId: 'BOQ_COST', version: COST_ENGINE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: COST_COLLECTION, workflowCapability: 'BOQ_COST' },
+  { serviceId: 'STRUCTURAL_ANALYSIS', version: STRUCTURAL_ANALYSIS_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: STRUCTURAL_ROOT, workflowCapability: null },
+  { serviceId: 'ENVIRONMENTAL_ANALYSIS', version: ENVIRONMENTAL_ANALYSIS_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: ENVIRONMENTAL_ROOT, workflowCapability: null },
+  { serviceId: 'BUILDING_SYSTEMS_ANALYSIS', version: SYSTEMS_ANALYSIS_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: SYSTEMS_ROOT, workflowCapability: null },
+  { serviceId: 'SPECIALIZED_KNOWLEDGE', version: KNOWLEDGE_ANALYSIS_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: KNOWLEDGE_ROOT, workflowCapability: null },
+  { serviceId: 'DESIGN_OPTIMIZATION', version: OPTIMIZER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: OPTIMIZATION_ROOT, workflowCapability: null },
+  { serviceId: 'SCENE_3D', version: SCENE_COMPILER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: SCENE_ROOT, workflowCapability: null },
+].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
+
+/** Media types the frontend may ask for; a static render is never offered as an interactive model. */
+export const MEDIA = Object.freeze([
+  { media: 'INTERACTIVE_3D_MODEL', status: 'AVAILABLE', serviceId: 'SCENE_3D', mimeType: 'model/gltf-binary', provider: 'deterministic-scene-compiler', reason: null },
+  { media: 'CAMERA_NAVIGATION_HINTS', status: 'PARTIAL', serviceId: 'SCENE_3D', mimeType: 'application/json', provider: 'deterministic-scene-compiler',
+    reason: 'Camera presets, linear transitions and the QA circulation graph only; no authored camera path or collision-free route' },
+  { media: 'EXTERIOR_RENDER', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER: EXTERIOR_VISUALIZATION is not implemented' },
+  { media: 'INTERIOR_RENDER', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER: INTERIOR_VISUALIZATION is not implemented' },
+  { media: 'PANORAMA_360', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER' },
+  { media: 'RENDERED_WALKTHROUGH_VIDEO', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER' },
+].map(m => Object.freeze(m)));
+
+export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES });
+
+type Item = { id: string; createdAt: string };
+const href = (route: string, projectId: string, revisionId: string) => route.replace(':projectId', projectId).replace(':revisionId', revisionId);
+const entry = (serviceId: string, projectId: string, revisionId: string, items: Item[], others: number, truncated = false, route?: string) => {
+  const s = SERVICES.find(s => s.serviceId === serviceId)!;
+  return { output: serviceId, version: s.version, status: items.length ? 'AVAILABLE' as const : 'NOT_GENERATED' as const,
+    artifacts: items.map(i => ({ id: i.id, createdAt: i.createdAt })), otherRevisionArtifacts: others, truncated, href: href(route ?? s.route, projectId, revisionId) };
+};
+
+/** Read-only first-version project manifest for one revision. Every reference is bound to this revision; nothing is computed, compiled or fabricated. */
+export async function projectOverview(repository: Repository, projectId: string, revisionId: string) {
+  // Ownership is established by this read (RLS) before any other lookup.
+  const revision = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
+  const [takeoffs, costs, structural, environmental, systems, knowledge, optimization, scene] = await Promise.all([
+    new TakeoffRepository(repository).list(projectId, revisionId, { limit: 20 }), new CostRepository(repository).list(projectId, revisionId, { limit: 20 }),
+    structuralStatus(repository, projectId, revisionId), environmentalStatus(repository, projectId, revisionId), systemsStatus(repository, projectId, revisionId),
+    knowledgeStatus(repository, projectId, revisionId), optimizationStatus(repository, projectId, revisionId), sceneStatus(repository, projectId, revisionId)]);
+  // ponytail: one list call per listed takeoff (≤ 20); a revision-wide construction listing would make this a single call.
+  const construction = await Promise.all(takeoffs.items.map(t => new ConstructionRepository(repository).list(projectId, revisionId, t.id, { limit: 20 })));
+  const current = scene.projectCurrentRevisionId, hash = modelHash(revision.model);
+  return {
+    overviewVersion: OVERVIEW_VERSION, projectId, revisionId, revisionNumber: revision.revisionNumber, parentRevisionId: revision.parentRevisionId,
+    projectCurrentRevisionId: current, revisionCurrency: revisionId === current ? 'CURRENT' as const : 'HISTORICAL' as const,
+    revision: { sourceMode: revision.sourceMode, generatorVersion: revision.generatorVersion, createdAt: revision.createdAt, modelHash: hash,
+      identityConsistent: !revision.identity || revision.identity.modelHash === hash, identity: revision.identity ?? null,
+      qa: { id: revision.qa.id, qaVersion: revision.qa.qaVersion, status: revision.qa.status, summary: revision.qa.summary },
+      levels: revision.model.levels.length, spaces: revision.model.spaces.length, walls: revision.model.walls.length, openings: revision.model.openings.length },
+    outputs: [
+      entry('BUILDING_MODEL', projectId, revisionId, [{ id: revision.id, createdAt: revision.createdAt }], 0),
+      { ...entry('BIM', projectId, revisionId, [], 0), status: 'DERIVED_ON_READ' as const },
+      entry('QUANTITY_TAKEOFF', projectId, revisionId, takeoffs.items, 0, takeoffs.nextCursor !== null),
+      entry('CONSTRUCTION_CALCULATION', projectId, revisionId, construction.flatMap(c => c.items), 0,
+        takeoffs.nextCursor !== null || construction.some(c => c.nextCursor !== null), `${REVISION}/takeoffs`),
+      entry('BOQ_COST', projectId, revisionId, costs.items, 0, costs.nextCursor !== null),
+      entry('STRUCTURAL_ANALYSIS', projectId, revisionId, structural.analyses, structural.staleAnalyses.length),
+      entry('ENVIRONMENTAL_ANALYSIS', projectId, revisionId, environmental.analyses, environmental.staleAnalyses.length),
+      entry('BUILDING_SYSTEMS_ANALYSIS', projectId, revisionId, systems.analyses, systems.staleAnalyses.length),
+      entry('SPECIALIZED_KNOWLEDGE', projectId, revisionId, knowledge.analyses, knowledge.staleAnalyses.length),
+      entry('DESIGN_OPTIMIZATION', projectId, revisionId, optimization.studies, optimization.staleStudies.length),
+      entry('SCENE_3D', projectId, revisionId, scene.artifacts, scene.staleArtifacts.length),
+    ],
+    unsupported: [
+      ...CAPABILITIES.filter(c => c.implementationStatus !== 'AVAILABLE' && ['PROFESSIONAL_2D', 'INTERIOR_DESIGN', 'EXTERIOR_DESIGN', 'HOLOGRAPHIC_MODEL'].includes(c.capabilityId))
+        .map(c => ({ output: c.capabilityId, reason: 'CAPABILITY_NOT_IMPLEMENTED' })),
+      ...MEDIA.filter(m => m.status === 'UNSUPPORTED').map(m => ({ output: m.media, reason: m.reason! })),
+    ],
+    claims: { engineeringReview: 'NOT_CLAIMED' as const, structural: structural.claims, environmental: environmental.claims, systems: systems.claims,
+      knowledge: knowledge.claims, optimization: optimization.claims },
+  };
+}
