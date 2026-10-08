@@ -52,6 +52,8 @@
     "benchmark:environmental": "npm run build && node --import tsx scripts/benchmark-environmental.ts",
     "test:systems": "npm run build && vitest run apps/api/tests/systems.test.ts apps/api/tests/systems.integration.test.ts",
     "benchmark:systems": "npm run build && node --import tsx scripts/benchmark-systems.ts",
+    "test:optimization": "npm run build && vitest run apps/api/tests/optimization.test.ts",
+    "benchmark:optimization": "npm run build && node --import tsx scripts/benchmark-optimization.ts",
     "test:ifc": "python3 scripts/verify-ifc.py"
   },
   "devDependencies": {
