@@ -8,10 +8,16 @@ import type { Backend, Repository } from '../src/lib/repository.js';
 import { CAPABILITIES, MODES } from '../src/workflows/registry.js';
 import { AI_CAPABILITIES } from '../src/ai/orchestration/registry.js';
 import { DISCOVERY_VERSION, MEDIA, SERVICES } from '../src/services/overview-service.js';
-import { SCENE_COMPILER_VERSION } from '../src/scene3d/contracts.js';
+import { SCENE_COMPILER_VERSION, SceneInputSchema } from '../src/scene3d/contracts.js';
+import { CreateProjectRequestSchema, GenerateRevisionRequestSchema } from '../src/contracts/projects.js';
+import { WorkflowRequestSchema } from '../src/contracts/workflows.js';
+import { CONTRACTS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
+import { parametricInput } from '../../../test-support/parametric-fixtures.js';
+// Test-only: Ajv 6 (draft-07) is already in the lockfile through the lint toolchain; it independently checks the exported JSON Schema.
+import Ajv from 'ajv';
 
 /** Source-derived route catalog (docs/modernization/api-routes.json). Regenerate with UPDATE_ROUTE_CATALOG=1 after an intentional API change. */
-const CATALOG = new URL('../../../docs/modernization/api-routes.json', import.meta.url);
+const CATALOG = new URL('../../../docs/modernization/api-routes.json', import.meta.url), OPENAPI = new URL('../../../docs/modernization/openapi.json', import.meta.url);
 const notFound = () => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); };
 const repository = new Proxy({}, { get: () => async () => notFound() }) as Repository;
 const backend: Backend = { authenticate: async () => ({ id: randomUUID() }), repository: () => repository, ready: async () => undefined };
@@ -30,7 +36,10 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
       const res = await app.inject({ method: r.method as 'GET', url: concrete(r.url), ...(r.method === 'GET' ? {} : { payload: {} }) });
       catalog.push({ ...r, anonymous: res.statusCode });
     }
-    if (process.env.UPDATE_ROUTE_CATALOG === '1') writeFileSync(CATALOG, JSON.stringify(catalog, null, 1) + '\n');
+    if (process.env.UPDATE_ROUTE_CATALOG === '1') {
+      writeFileSync(CATALOG, JSON.stringify(catalog, null, 1) + '\n');
+      writeFileSync(OPENAPI, JSON.stringify(openApiDocument(catalog), null, 1) + '\n');
+    }
   });
   afterAll(async () => { await app.close(); });
 
@@ -62,5 +71,27 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     expect(MEDIA.filter(m => m.status === 'AVAILABLE').map(m => m.media)).toEqual(['INTERACTIVE_3D_MODEL']);
     for (const m of MEDIA.filter(m => m.status === 'UNSUPPORTED')) expect([m.serviceId, m.provider, m.mimeType, typeof m.reason]).toEqual([null, null, null, 'string']);
     expect(AI_CAPABILITIES.filter(c => c.status === 'AVAILABLE').map(c => c.capability)).toEqual(['ARCHITECTURAL_INTENT_EXTRACTION']);
+  });
+
+  it('R01-G3: the OpenAPI document is regenerated from the live routes and Zod contracts without drift, and the mapping is complete and not stale', () => {
+    expect(openApiDocument(catalog)).toEqual(JSON.parse(readFileSync(OPENAPI, 'utf8')));
+    const keys = new Set(catalog.map(r => `${r.method} ${r.url}`));
+    expect(Object.keys(CONTRACTS).filter(k => !keys.has(k))).toEqual([]);
+    expect([...keys].filter(k => !(k in CONTRACTS))).toEqual([]);
+    expect(catalog.filter(r => ['POST', 'PATCH'].includes(r.method) && !CONTRACTS[`${r.method} ${r.url}`]!.body).map(r => r.url)).toEqual([]);
+  });
+  it('R01-G3: the exported JSON Schema accepts and rejects the same payloads as the Zod contracts', () => {
+    const ajv = new Ajv({ allErrors: true });
+    const cases: [import('zod').ZodTypeAny, unknown[]][] = [
+      [GenerateRevisionRequestSchema, [{ requirements: parametricInput(true) }, { requirements: parametricInput(true), extra: 1 }, { requirements: { ...parametricInput(true), floors: 9 } }, {}]],
+      [CreateProjectRequestSchema, [{ title: 'Villa' }, { title: '' }, { title: 'Villa', owner: 'x' }]],
+      [WorkflowRequestSchema, [{ mode: 'BLUEPRINT_ONLY', source: { kind: 'REVISION', sourceRevisionId: randomUUID() } }, { mode: 'BLUEPRINT_ONLY', source: { kind: 'REVISION', sourceRevisionId: 'nope' } },
+        { mode: 'TELEPORT', source: { kind: 'REVISION', sourceRevisionId: randomUUID() } }]],
+      [SceneInputSchema, [{}, { lod: 3 }]],
+    ];
+    for (const [schema, samples] of cases) {
+      const validate = ajv.compile(jsonSchema(schema, 'jsonSchema7'));
+      for (const sample of samples) expect(validate(sample), JSON.stringify(sample).slice(0, 120)).toBe(schema.safeParse(sample).success);
+    }
   });
 });

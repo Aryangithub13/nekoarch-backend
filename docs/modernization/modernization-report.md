@@ -32,7 +32,7 @@ The evidence column names the source and the tests that execute it. The status i
 
 | Ph | Implemented capability (from source) | Evidence | Status | Modernization finding / future |
 |---|---|---|---|---|
-| 1 | Workspaces, Zod contracts (`packages/shared`), typed `ApiErrorResponse` | `shared/tests/contracts.test.ts`, `foundation.test.ts` | implemented_verified | No OpenAPI/JSON-Schema export: zod 3.25 v3 schemas, no converter installed. Route catalog added (G5); schema export remains R01-G3. |
+| 1 | Workspaces, Zod contracts (`packages/shared`), typed `ApiErrorResponse` | `shared/tests/contracts.test.ts`, `foundation.test.ts` | implemented_verified | R01-G3 closed: a source-derived OpenAPI 3.0.3 document ([openapi.json](openapi.json)) is generated from the live routes and the Zod contracts via `zod-to-json-schema` (dev-only, chosen by the user). See section C. |
 | 2 | Integer-mm geometry and precision rules | `generator/tests/geometry.test.ts`, `building-v2-precision.test.ts` | implemented_verified | — |
 | 3 | Walls, storeys, invariants | `generator/tests/invariants.test.ts`, `building-v2-model.test.ts` | implemented_verified | — |
 | 4 | Topology, adjacency, circulation | `blueprint-qa/tests/circulation-stairs.test.ts` | implemented_verified | Phases 1–4 have no individual tags; their source is in the root commit `6670abe` (tagged Phase 5). |
@@ -73,7 +73,7 @@ The evidence column names the source and the tests that execute it. The status i
 
 | WS | Result | Code | Tests |
 |---|---|---|---|
-| R01 API/contracts | G1 discovery v2; G5 route catalog. **Open:** JSON-Schema/OpenAPI export (R01-G3, needs a dependency decision), engines as workflow steps (R01-G2). | `services/overview-service.ts`, `routes/workflows.ts` | `modernization.test.ts` |
+| R01 API/contracts | G1 discovery v2; G5 route catalog.<br>**R01-G3 (follow-up, done):** OpenAPI 3.0.3 export:<br>• 81 operations, bearer security marked from the measured 401 inventory<br>• 30/30 POST/PATCH request bodies typed<br>• 52/81 success responses typed; the other 29 (status/list/BIM/overview/capabilities) are labelled *schema not exported yet*<br>• 25 named components; 817 KB<br>Tests: no drift from regeneration, no stale or missing route mapping, and Zod and ajv (draft-07) agree on 12 accept/reject samples.<br>**R01-G2 deferred to Phase 30/32 by user decision.** | `services/overview-service.ts`, `routes/workflows.ts`, `test-support/openapi.ts` (dev-only) | `modernization.test.ts` |
 | R02 Revision safety | Re-verified, no change needed:<br>• immutability, ancestry, optimistic concurrency, accepted-only pointer, idempotency<br>• revision-pinned artifacts never rewritten (Test 10)<br>• the stale base is refused with `REVISION_CONFLICT`<br>• `?require=current` → `SCENE_ARTIFACT_STALE` | — | `modernization.integration` Tests 2/9/10 |
 | R03 Dependencies/freshness | G2 overview. Artifacts are revision-bound, so changed geometry makes every engine's output stale by construction. The overview exposes this per engine (`otherRevisionArtifacts`, `revisionCurrency`). | `services/overview-service.ts`, `routes/projects.ts` | Test 8 |
 | R04 AI/providers | G1 `aiCapabilities`; G4 assistant tool truth. Privacy/cost/fallback/provenance re-verified by the existing suite. | `contracts/conversations.ts`, `routes/conversations.ts` | R04 test |
@@ -174,8 +174,9 @@ The evidence column names the source and the tests that execute it. The status i
 |---|---|
 | Baseline `npm run check` on untouched `c7e4bc0` (worktree `designflow-phase29`) | exit 0; 73 files / 2 556 tests + 133 + 52 |
 | Modernized `npm run check` run 1 ([evidence/check-run1-failed.txt](evidence/check-run1-failed.txt)) | **exit 1.** 1/2 566 failed: the Phase 8 telemetry guard (`hardening.test.ts`) caught that the new overview route template was not on the Sentry safe-route allowlist, so error reports would have dropped its route tag. Fixed in `lib/sentry.ts`. |
-| Modernized `npm run check` run 2, final ([evidence/check.txt](evidence/check.txt)) | **exit 0**: build, typecheck, lint, then 75 files / 2 566 tests + 133 + 52 (baseline + 2 files / 10 tests) |
-| New unit tests `modernization.test.ts` | 4/4 |
+| Modernized `npm run check` run 2 (checkpoint `7ce84fc`) | **exit 0**: build, typecheck, lint, then 75 files / 2 566 tests + 133 + 52 |
+| Modernized `npm run check` after follow-ups, final ([evidence/check.txt](evidence/check.txt)) | **exit 0**: 75 files / 2 568 tests + 133 + 52 (baseline + 2 files / 12 tests) |
+| New unit tests `modernization.test.ts` | 6/6 (incl. OpenAPI drift/completeness and Zod↔ajv conformance) |
 | New PostgreSQL tests `modernization.integration.test.ts` | 6/6 |
 | Mutants against new tests | 3/3 killed |
 | `test:ifc` (IfcOpenShell) | **Not re-run.** No BIM/IFC code changed, and the script overwrites historical Phase 23 evidence (`docs/phase23-evidence/ifc-verification.json`). Phase 29's run recorded it passing. |
@@ -215,8 +216,8 @@ This assessment does **not** authorize Phase 30.
 
 | Item | Phase |
 |---|---|
-| R01-G3: JSON-Schema/OpenAPI export from Zod. Decide between adding `zod-to-json-schema` and migrating to Zod v4 `toJSONSchema`. | modernization follow-up / B45 |
-| R01-G2: scene and analysis engines as workflow steps | modernization follow-up, or B30/B32 |
+| Typed success schemas for the remaining 29 operations (status/list/BIM/overview/capabilities need named Zod response schemas) | B45 |
+| R01-G2: scene and analysis engines as workflow steps (deferred by user decision) | B30/B32 |
 | Candidate revisions, locks, scoped regeneration, approval, restore-as-new-revision, before/after comparison | B30 |
 | Uploads/reference artifacts, object storage, signed URLs, streaming | B31 |
 | Durable jobs, progress, cancellation, budgets | B32 |
