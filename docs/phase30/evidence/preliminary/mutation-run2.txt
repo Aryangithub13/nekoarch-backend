@@ -1,0 +1,24 @@
+M01 protected wall moved (geometry BIN check removed) KILLED intended restored
+M02 material override on a protected object accepted KILLED intended restored
+M03 BIM element id swap accepted KILLED intended restored
+M04 incorrect candidate binding accepted KILLED intended restored
+M05 validator imports the appearance pass (independence lost) KILLED intended restored
+M06 finish applied beyond the exterior shell (interior walls selected) SURVIVED NOT-intended restored
+M07 façade orientation inverted KILLED intended restored
+M08 validator bypass in the worker job KILLED intended restored
+M09 lock conflicts ignored by the planner KILLED intended restored
+M10 appearance falsely invalidates engineering results KILLED intended restored
+M11 interior finish silently accepted KILLED intended restored
+M12 stale engineering output marked newly verified KILLED intended restored
+M13 candidate presented as accepted KILLED intended restored
+M14 semantic model lock removed at approval (SQL) KILLED intended restored
+M15 stale approval allowed (SQL base check removed) KILLED intended restored
+M16 cross-user read allowed (read RPC ownership removed) KILLED intended restored
+M17 forged candidate binding accepted (SQL) KILLED intended restored
+M18 state machine opened (transition trigger) KILLED intended restored
+M19 RLS owner policy opened KILLED intended restored
+M20 unvalidated candidate accepted by the SQL function KILLED intended restored
+M21 approval of a different candidate than reviewed KILLED intended restored
+M22 duplicate commit allowed (already-committed check removed in SQL) KILLED intended restored
+{"mutants": 22, "problems": ["M06"], "controlsPass": true, "ok": false}
+exit=1

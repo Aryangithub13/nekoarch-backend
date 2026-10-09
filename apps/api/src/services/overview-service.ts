@@ -17,6 +17,8 @@ import { SYSTEMS_ANALYSIS_VERSION } from '../systems/contracts.js';
 import { KNOWLEDGE_ANALYSIS_VERSION } from '../knowledge/contracts.js';
 import { OPTIMIZER_VERSION } from '../optimization/contracts.js';
 import { SCENE_COMPILER_VERSION } from '../scene3d/contracts.js';
+import { REVISION_OPERATION_VERSION } from '../revision/contracts.js';
+import { RevisionRepository } from '../lib/revision-repository.js';
 import { TAKEOFF_OPERATION } from './takeoff-service.js';
 import { CONSTRUCTION_OPERATION } from './construction-service.js';
 import { COST_COLLECTION } from './cost-service.js';
@@ -44,11 +46,14 @@ export const SERVICES = Object.freeze([
   { serviceId: 'SPECIALIZED_KNOWLEDGE', version: KNOWLEDGE_ANALYSIS_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: KNOWLEDGE_ROOT, workflowCapability: null },
   { serviceId: 'DESIGN_OPTIMIZATION', version: OPTIMIZER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: OPTIMIZATION_ROOT, workflowCapability: null },
   { serviceId: 'SCENE_3D', version: SCENE_COMPILER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: SCENE_ROOT, workflowCapability: null },
+  { serviceId: 'SELECTIVE_REVISION', version: REVISION_OPERATION_VERSION, persistence: 'CANDIDATE_THEN_IMMUTABLE_REVISION', route: '/api/projects/:projectId/revision-operations', workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */
 export const MEDIA = Object.freeze([
   { media: 'INTERACTIVE_3D_MODEL', status: 'AVAILABLE', serviceId: 'SCENE_3D', mimeType: 'model/gltf-binary', provider: 'deterministic-scene-compiler', reason: null },
+  { media: 'APPEARANCE_VARIANT_3D_MODEL', status: 'AVAILABLE', serviceId: 'SELECTIVE_REVISION', mimeType: 'model/gltf-binary', provider: 'deterministic-appearance-compiler',
+    reason: 'Exterior wall finish presets over the unchanged scene geometry; visual appearance only' },
   { media: 'CAMERA_NAVIGATION_HINTS', status: 'PARTIAL', serviceId: 'SCENE_3D', mimeType: 'application/json', provider: 'deterministic-scene-compiler',
     reason: 'Camera presets, linear transitions and the QA circulation graph only; no authored camera path or collision-free route' },
   { media: 'EXTERIOR_RENDER', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER: EXTERIOR_VISUALIZATION is not implemented' },
@@ -77,6 +82,8 @@ export async function projectOverview(repository: Repository, projectId: string,
     knowledgeStatus(repository, projectId, revisionId), optimizationStatus(repository, projectId, revisionId), sceneStatus(repository, projectId, revisionId)]);
   // ponytail: one list call per listed takeoff (≤ 20); a revision-wide construction listing would make this a single call.
   const construction = await Promise.all(takeoffs.items.map(t => new ConstructionRepository(repository).list(projectId, revisionId, t.id, { limit: 20 })));
+  const revisions = repository.revisionRpc ? new RevisionRepository(repository) : null;
+  const [appearance, lineage] = revisions ? await Promise.all([revisions.appearance(projectId, revisionId), revisions.lineage(projectId, revisionId)]) : [null, null];
   const current = scene.projectCurrentRevisionId, hash = modelHash(revision.model);
   return {
     overviewVersion: OVERVIEW_VERSION, projectId, revisionId, revisionNumber: revision.revisionNumber, parentRevisionId: revision.parentRevisionId,
@@ -99,6 +106,11 @@ export async function projectOverview(repository: Repository, projectId: string,
       entry('DESIGN_OPTIMIZATION', projectId, revisionId, optimization.studies, optimization.staleStudies.length),
       entry('SCENE_3D', projectId, revisionId, scene.artifacts, scene.staleArtifacts.length),
     ],
+    appearance: { status: appearance?.appearance ? 'APPEARANCE_VARIANT' as const : 'DEFAULT_PLACEHOLDER' as const, appearanceHash: appearance?.appearanceHash ?? null,
+      artifactId: appearance?.artifact?.id ?? null, href: href(`${REVISION}/appearance`, projectId, revisionId) },
+    // An appearance-only or model-identical restore revision keeps its base geometry: base engineering results are source-equivalent (not recomputed).
+    lineage: lineage?.operation ? { operationId: lineage.operation.id, kind: lineage.operation.kind, baseRevisionId: lineage.operation.baseRevisionId,
+      modelEquivalentToBase: lineage.modelEquivalentToBase } : null,
     unsupported: [
       ...CAPABILITIES.filter(c => c.implementationStatus !== 'AVAILABLE' && ['PROFESSIONAL_2D', 'INTERIOR_DESIGN', 'EXTERIOR_DESIGN', 'HOLOGRAPHIC_MODEL'].includes(c.capabilityId))
         .map(c => ({ output: c.capabilityId, reason: 'CAPABILITY_NOT_IMPLEMENTED' })),

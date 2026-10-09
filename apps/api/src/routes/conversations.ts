@@ -1,4 +1,5 @@
 import { resolveWorkflow } from '../workflows/sources.js';
+import { planPreflight } from '../services/revision-service.js';
 import { MEDIA, SERVICES } from '../services/overview-service.js';
 import { WorkflowPlanSchema } from '../contracts/workflows.js';
 import { createHash, randomUUID } from 'node:crypto';
@@ -109,6 +110,8 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
         case 'PLAN_EXISTING_WORKFLOW': return {name:action.name,plan:WorkflowPlanSchema.parse((await resolveWorkflow(repository,params.projectId,action.input)).plan)};
         case 'READ_CURRENT_REVISION': return {name:action.name,revisionId:project.currentRevisionId,identity:project.currentRevision?.identity ?? null};
         case 'CHECK_CAPABILITIES': return {name:action.name,capabilities:z.array(CapabilitySchema).max(32).parse(CAPABILITIES),services:SERVICES,media:MEDIA};
+        case 'PLAN_REVISION': return {name:action.name,baseRevisionId:project.currentRevisionId,persisted:false as const,
+          preflight:project.currentRevisionId ? await planPreflight(repository,params.projectId,project.currentRevisionId,{text:action.input.text}) : null};
         case 'COMPARE_REQUIREMENTS': return {name:action.name,proposal:conversation.state.proposal};
         case 'EXPLAIN_QA_RESULT': return {name:action.name,qa:project.currentRevision?.qa ?? null,explanation:project.currentRevision ? 'This is the persisted independent QA summary for the current revision. It is not structural certification.' : 'No accepted revision or QA evidence is available.'};
       }

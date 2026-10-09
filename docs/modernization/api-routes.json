@@ -96,6 +96,61 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revision-operations",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations/:operationId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/approve",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/cancel",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/candidate/glb",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/candidate/manifest",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/comparison",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/execute",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/reject",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revision-operations/:operationId/validation",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions",
   "anonymous": 401
  },
@@ -107,6 +162,16 @@
  {
   "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/appearance",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/appearance/glb",
   "anonymous": 401
  },
  {

@@ -34,6 +34,7 @@ export interface Repository {
   knowledgeRpc?(name: 'knowledge_read' | 'knowledge_write', args: Record<string, unknown>): Promise<unknown>;
   optimizationRpc?(name: 'optimization_read' | 'optimization_write', args: Record<string, unknown>): Promise<unknown>;
   sceneRpc?(name: 'scene_read' | 'scene_write', args: Record<string, unknown>): Promise<unknown>;
+  revisionRpc?(name: 'revision_operation_read' | 'revision_operation_write', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;

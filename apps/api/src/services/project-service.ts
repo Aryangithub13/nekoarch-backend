@@ -24,6 +24,17 @@ export function signProjectCommit(secret: string, userId: string, operation: str
   const envelope = JSON.stringify({ userId, operation, input, context: context ?? null, expiresAt: Math.floor(Date.now() / 1000) + 300 });
   return { envelope, signature: createHmac('sha256', Buffer.from(secret, 'hex')).update(envelope).digest('hex') };
 }
+/** QA for re-committing a stored revision model (Phase 30 approve/restore): same option derivation as saveProjectRevision. */
+export function storedRevisionQaReport(model: z.infer<typeof ArchitecturalBuildingModelV2Schema>, generatorVersion: string | null, normalizedRequirements: unknown) {
+  const v2 = generatorVersion === 'precision-blueprint-v2' && normalizedRequirements ? normalizeBlueprintV2Requirements(normalizedRequirements as Parameters<typeof normalizeBlueprintV2Requirements>[0]) : null;
+  return revisionQaReport(model, v2, normalizedRequirements);
+}
+/** Independent QA for a revision commit; the options derive only from the stored normalized requirements, so a re-commit of the same model reproduces the same report. */
+export function revisionQaReport(model: z.infer<typeof ArchitecturalBuildingModelV2Schema>, v2Requirements: ReturnType<typeof normalizeBlueprintV2Requirements> | null, normalizedRequirements: unknown) {
+  const normalized = normalizedRequirements as Parameters<typeof normalizeParametricRequirements>[0] | null;
+  return BlueprintQaReportSchema.parse(auditBlueprint(model, { ...projectQaOptions(model), ...(v2Requirements ? solverV2QaOptions(v2Requirements) : {}),
+    ...(normalized && typeof normalized === 'object' && 'parametricArchitecture' in normalized ? parametricQaOptions(normalizeParametricRequirements(normalized)) : {}) }));
+}
 export async function saveProjectRevision(repository: ProjectRepository, userId: string, projectId: string,
   sourceMode: 'generated' | 'supplied', input: z.infer<typeof GenerateRevisionRequestSchema> | z.infer<typeof SaveRevisionRequestSchema>,
   secret?: string, context?: IdempotencyContext, logger?: FastifyBaseLogger) {
@@ -56,7 +67,7 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
     throw error;
   }
   const model = ArchitecturalBuildingModelV2Schema.parse(rawModel);
-  const report = BlueprintQaReportSchema.parse(auditBlueprint(model, { ...projectQaOptions(model), ...(v2Requirements ? solverV2QaOptions(v2Requirements) : {}), ...(normalizedRequirements && 'parametricArchitecture' in normalizedRequirements ? parametricQaOptions(normalizeParametricRequirements(normalizedRequirements)) : {}) }));
+  const report = revisionQaReport(model, v2Requirements, normalizedRequirements);
   if (report.status === 'FAIL') {
     // Existing error envelope, bounded machine-readable entries; no raw geometry.
     throw new ApiError(422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision', {

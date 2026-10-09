@@ -23,6 +23,8 @@ import { OptimizationDetailSchema, OptimizationInputSchema, OptimizationReadQuer
 import { SceneInputSchema, SceneManifestSchema } from '../apps/api/src/scene3d/contracts.js';
 import { SceneDetailSchema, SceneSummarySchema } from '../apps/api/src/lib/scene-repository.js';
 import { BimKindSchema, RelationshipSchema } from '../apps/api/src/bim/contracts.js';
+import { ApproveRequestSchema, EmptySchema, ExecuteRequestSchema, PreflightRequestSchema, RevisionComparisonSchema } from '../apps/api/src/revision/contracts.js';
+import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDetailSchema, OperationListSchema, ValidationEvidenceSchema } from '../apps/api/src/lib/revision-repository.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
 type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string };
@@ -75,6 +77,20 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${R}/scene/artifacts`]: { query: PageQuerySchema, response: null }, [`GET ${R}/scene/artifacts/:artifactId`]: { query: current, response: SceneSummarySchema.extend({ currency: z.unknown() }) },
   [`GET ${R}/scene/artifacts/:artifactId/manifest`]: { query: current, response: z.object({ artifactId: z.string().uuid(), sceneHash: z.string(), currency: z.unknown(), manifest: SceneManifestSchema }).strict() },
   [`GET ${R}/scene/artifacts/:artifactId/glb`]: { query: current, media: 'model/gltf-binary' }, [`GET ${R}/scene/status`]: { query: empty, response: null },
+  // Phase 30 selective revision.
+  [`POST ${P}/revision-operations`]: { body: PreflightRequestSchema, response: OperationDetailSchema, status: 201 },
+  [`GET ${P}/revision-operations`]: { query: PageQuerySchema, response: OperationListSchema },
+  [`GET ${P}/revision-operations/:operationId`]: { query: EmptySchema, response: OperationDetailSchema },
+  [`POST ${P}/revision-operations/:operationId/execute`]: { body: ExecuteRequestSchema, response: OperationDetailSchema },
+  [`POST ${P}/revision-operations/:operationId/approve`]: { body: ApproveRequestSchema, response: z.object({ operation: OperationDetailSchema, commit: RevisionCommitResponseSchema }).strict(), status: 201 },
+  [`POST ${P}/revision-operations/:operationId/reject`]: { body: EmptySchema, response: OperationDetailSchema },
+  [`POST ${P}/revision-operations/:operationId/cancel`]: { body: EmptySchema, response: OperationDetailSchema },
+  [`GET ${P}/revision-operations/:operationId/comparison`]: { query: EmptySchema, response: RevisionComparisonSchema },
+  [`GET ${P}/revision-operations/:operationId/validation`]: { query: EmptySchema, response: ValidationEvidenceSchema },
+  [`GET ${P}/revision-operations/:operationId/candidate/manifest`]: { query: EmptySchema, response: CandidateManifestResponseSchema },
+  [`GET ${P}/revision-operations/:operationId/candidate/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
+  [`GET ${R}/appearance`]: { query: EmptySchema, response: AppearanceResponseSchema },
+  [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */
@@ -87,7 +103,8 @@ const SHARED = { BuildingModelV2: ArchitecturalBuildingModelV2Schema, BlueprintR
   WorkflowPlan: WorkflowPlanSchema, WorkflowRun: WorkflowRunSchema, Conversation: ConversationSchema, SceneManifest: SceneManifestSchema, ApiError: ApiErrorResponseSchema,
   TakeoffDetail: TakeoffDetailSchema, ConstructionDetail: ConstructionDetailSchema, CostDetail: CostDetailSchema, StructuralDetail: StructuralDetailSchema,
   EnvironmentalDetail: EnvironmentalDetailSchema, SystemsDetail: SystemsDetailSchema, KnowledgeDetail: KnowledgeDetailSchema, OptimizationDetail: OptimizationDetailSchema,
-  StructuralInput: StructuralInputSchema, EnvironmentalInput: EnvironmentalInputSchema, SystemsInput: SystemsInputSchema, KnowledgeInput: KnowledgeInputSchema, OptimizationInput: OptimizationInputSchema };
+  StructuralInput: StructuralInputSchema, EnvironmentalInput: EnvironmentalInputSchema, SystemsInput: SystemsInputSchema, KnowledgeInput: KnowledgeInputSchema, OptimizationInput: OptimizationInputSchema,
+  RevisionOperation: OperationDetailSchema, AppearanceManifest: CandidateManifestResponseSchema.shape.manifest };
 const referenced = (schema: ZodTypeAny) => {
   const { schemas: _shared, ...root } = zodToJsonSchema(schema, { target: 'openApi3', definitions: SHARED, $refStrategy: 'root', basePath: ['#', 'components'],
     definitionPath: 'schemas', effectStrategy: 'input', removeAdditionalStrategy: 'strict' }) as Record<string, unknown>;

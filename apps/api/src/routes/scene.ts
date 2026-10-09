@@ -21,7 +21,7 @@ const acceptsGzip = (header: unknown) => String(header ?? '').split(',').some(pa
   return name === 'gzip' && (!q || Number(q.slice(2)) > 0);
 });
 /** Scene assets compress 10–12× (Phase 29 fixtures, docs/modernization). Each encoding has its own strong ETag; a 304 is only sent for immutable bytes and only after authorization. */
-async function sendAsset(request: FastifyRequest, reply: FastifyReply, etag: string, body: Buffer | string, immutable: boolean) {
+export async function sendAsset(request: FastifyRequest, reply: FastifyReply, etag: string, body: Buffer | string, immutable: boolean) {
   const gz = acceptsGzip(request.headers['accept-encoding']), tag = gz ? `"${etag}-gzip"` : `"${etag}"`;
   reply.header('Vary', 'Accept-Encoding').header('ETag', tag);
   const match = String(request.headers['if-none-match'] ?? '').split(',').map(t => t.trim().replace(/^W\//, ''));

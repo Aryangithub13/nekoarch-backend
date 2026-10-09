@@ -4,6 +4,7 @@ import { GenerationIdentitySchema } from './freshness.js';
 import { QaSummarySchema } from './projects.js';
 import { WorkflowPlanSchema, WorkflowRequestSchema } from './workflows.js';
 import { z } from 'zod';
+import { PreflightSchema } from '../revision/contracts.js';
 import { SelectedBlueprintRequirementsSchema, BlueprintV2RequirementsSchema, ParametricEditSchema } from '@designflow/generator';
 import { IntentCandidateSchema, NaturalLanguageDesignRequestSchema } from './requirement-interpretation.js';
 
@@ -65,7 +66,9 @@ export type ConversationState = z.infer<typeof ConversationStateSchema>;
 export const ConversationSchema = z.object({ id, projectId: id, state: ConversationStateSchema }).strict();
 export const ConversationListSchema = z.object({ items: z.array(ConversationSchema).max(20), nextCursor: id.nullable() }).strict();
 export const ConversationPageSchema = z.object({ limit: z.coerce.number().int().min(1).max(20).default(20), cursor: id.optional() }).strict();
-export const ConversationToolSchema = z.object({ actions: z.array(z.union([z.object({ name: z.enum(['READ_CURRENT_REVISION','CHECK_CAPABILITIES','COMPARE_REQUIREMENTS','EXPLAIN_QA_RESULT']), input: z.object({}).strict() }).strict(), z.object({ name: z.literal('PLAN_EXISTING_WORKFLOW'), input: WorkflowRequestSchema }).strict()])).min(1).max(4) }).strict();
+export const ConversationToolSchema = z.object({ actions: z.array(z.union([z.object({ name: z.enum(['READ_CURRENT_REVISION','CHECK_CAPABILITIES','COMPARE_REQUIREMENTS','EXPLAIN_QA_RESULT']), input: z.object({}).strict() }).strict(), z.object({ name: z.literal('PLAN_EXISTING_WORKFLOW'), input: WorkflowRequestSchema }).strict(),
+  // Phase 30: read-only selective revision preflight against the current accepted revision (nothing is persisted or executed).
+  z.object({ name: z.literal('PLAN_REVISION'), input: z.object({ text: z.string().trim().min(1).max(2000) }).strict() }).strict()])).min(1).max(4) }).strict();
 
 export const ConversationToolResponseSchema = z.object({ schemaVersion: z.literal(1), projectId: id, conversationId: id,
   results: z.array(z.discriminatedUnion('name', [
@@ -77,5 +80,6 @@ export const ConversationToolResponseSchema = z.object({ schemaVersion: z.litera
     z.object({ name: z.literal('COMPARE_REQUIREMENTS'), proposal: ProposalSchema.nullable() }).strict(),
     z.object({ name: z.literal('EXPLAIN_QA_RESULT'), qa: QaSummarySchema.nullable(), explanation: z.string().max(300) }).strict(),
     z.object({ name: z.literal('PLAN_EXISTING_WORKFLOW'), plan: WorkflowPlanSchema }).strict(),
+    z.object({ name: z.literal('PLAN_REVISION'), baseRevisionId: id.nullable(), preflight: PreflightSchema.nullable(), persisted: z.literal(false) }).strict(),
   ])).min(1).max(4),
 }).strict();

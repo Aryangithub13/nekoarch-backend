@@ -22870,6 +22870,1112 @@
      "mode"
     ],
     "additionalProperties": false
+   },
+   "RevisionOperation": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "format": "uuid"
+     },
+     "projectId": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/id"
+     },
+     "baseRevisionId": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/id"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "APPEARANCE_MODIFY",
+       "RESTORE"
+      ],
+      "nullable": true
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "AWAITING_CONSENT",
+       "NEEDS_CLARIFICATION",
+       "UNSUPPORTED",
+       "BLOCKED_BY_LOCK",
+       "CANDIDATE_READY",
+       "COMMITTED",
+       "REJECTED",
+       "CANCELLED",
+       "FAILED",
+       "VALIDATION_FAILED",
+       "STALE_BASE",
+       "EXPIRED"
+      ]
+     },
+     "operationVersion": {
+      "type": "string",
+      "enum": [
+       "revision-operation-v1"
+      ]
+     },
+     "preflightHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+     },
+     "appearanceHash": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+       }
+      ],
+      "nullable": true
+     },
+     "restoreSourceRevisionId": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/RevisionOperation/properties/id"
+       }
+      ],
+      "nullable": true
+     },
+     "candidateHash": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+       }
+      ],
+      "nullable": true
+     },
+     "committedRevisionId": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/RevisionOperation/properties/id"
+       }
+      ],
+      "nullable": true
+     },
+     "createdAt": {
+      "type": "string"
+     },
+     "updatedAt": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+     },
+     "expiresAt": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+     },
+     "request": {},
+     "preflight": {
+      "type": "object",
+      "properties": {
+       "operationVersion": {
+        "type": "string",
+        "enum": [
+         "revision-operation-v1"
+        ]
+       },
+       "status": {
+        "type": "string",
+        "enum": [
+         "AWAITING_CONSENT",
+         "NEEDS_CLARIFICATION",
+         "UNSUPPORTED",
+         "BLOCKED_BY_LOCK"
+        ]
+       },
+       "kind": {
+        "type": "string",
+        "enum": [
+         "APPEARANCE_MODIFY",
+         "RESTORE"
+        ],
+        "nullable": true
+       },
+       "base": {
+        "type": "object",
+        "properties": {
+         "projectId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "revisionId": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+         },
+         "revisionNumber": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+         },
+         "modelHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+         },
+         "appearanceHash": {
+          "allOf": [
+           {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+           }
+          ],
+          "nullable": true
+         }
+        },
+        "required": [
+         "projectId",
+         "revisionId",
+         "revisionNumber",
+         "modelHash",
+         "appearanceHash"
+        ],
+        "additionalProperties": false
+       },
+       "intent": {
+        "type": "object",
+        "properties": {
+         "intentVersion": {
+          "type": "string",
+          "enum": [
+           "revision-intent-v1"
+          ]
+         },
+         "source": {
+          "type": "string",
+          "enum": [
+           "TEXT",
+           "STRUCTURED"
+          ]
+         },
+         "text": {
+          "type": "string",
+          "maxLength": 2000,
+          "nullable": true
+         },
+         "operation": {
+          "type": "string",
+          "enum": [
+           "APPEARANCE_MODIFY",
+           "RESTORE"
+          ],
+          "nullable": true
+         },
+         "appearance": {
+          "type": "object",
+          "properties": {
+           "target": {
+            "type": "object",
+            "properties": {
+             "kind": {
+              "type": "string",
+              "enum": [
+               "EXTERIOR_WALLS"
+              ]
+             },
+             "facades": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "NORTH",
+                "EAST",
+                "SOUTH",
+                "WEST"
+               ]
+              },
+              "minItems": 1,
+              "maxItems": 4
+             },
+             "levelIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "minItems": 1,
+              "maxItems": 16,
+              "nullable": true,
+              "default": null
+             }
+            },
+            "required": [
+             "kind",
+             "facades"
+            ],
+            "additionalProperties": false
+           },
+           "finish": {
+            "type": "object",
+            "properties": {
+             "presetId": {
+              "type": "string",
+              "enum": [
+               "glass-inspired-blue-grey",
+               "dark-contemporary",
+               "warm-render",
+               "light-stone"
+              ]
+             },
+             "rgbThousandths": {
+              "type": "array",
+              "items": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 1000
+              },
+              "minItems": 3,
+              "maxItems": 3
+             },
+             "roughnessThousandths": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+             },
+             "metallicThousandths": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+             }
+            },
+            "required": [
+             "presetId"
+            ],
+            "additionalProperties": false
+           }
+          },
+          "required": [
+           "target",
+           "finish"
+          ],
+          "additionalProperties": false,
+          "nullable": true
+         },
+         "restore": {
+          "type": "object",
+          "properties": {
+           "sourceRevisionId": {
+            "allOf": [
+             {
+              "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+             }
+            ],
+            "nullable": true
+           },
+           "reference": {
+            "type": "string",
+            "maxLength": 100
+           }
+          },
+          "required": [
+           "sourceRevisionId",
+           "reference"
+          ],
+          "additionalProperties": false,
+          "nullable": true
+         },
+         "requestedChanges": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "changeClass": {
+             "type": "string",
+             "enum": [
+              "EXTERIOR_APPEARANCE",
+              "INTERIOR_APPEARANCE",
+              "OPENING_GEOMETRY",
+              "WALL_GEOMETRY",
+              "ROOM_GEOMETRY",
+              "STRUCTURE",
+              "BUILDING_GEOMETRY",
+              "PHYSICAL_GLAZING",
+              "RESTORE"
+             ]
+            },
+            "phrase": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "changeClass",
+            "phrase"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 16
+         },
+         "preservation": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "scope": {
+             "type": "string",
+             "enum": [
+              "BUILDING_GEOMETRY",
+              "FLOOR_PLANS",
+              "STRUCTURE",
+              "STAIRS",
+              "OPENINGS",
+              "WALLS",
+              "ROOMS",
+              "INTERIOR",
+              "BUILDING_DIMENSIONS",
+              "EXTERIOR_APPEARANCE",
+              "LEVEL"
+             ]
+            },
+            "levelId": {
+             "allOf": [
+              {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+              }
+             ],
+             "nullable": true,
+             "default": null
+            },
+            "phrase": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "scope",
+            "phrase"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 16
+         },
+         "ambiguities": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "maxLength": 300
+          },
+          "maxItems": 8
+         },
+         "unsupported": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "code",
+            "message"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 8
+         }
+        },
+        "required": [
+         "intentVersion",
+         "source",
+         "text",
+         "operation",
+         "appearance",
+         "restore",
+         "requestedChanges",
+         "preservation",
+         "ambiguities",
+         "unsupported"
+        ],
+        "additionalProperties": false
+       },
+       "appearance": {
+        "type": "object",
+        "properties": {
+         "version": {
+          "type": "string",
+          "enum": [
+           "appearance-v1"
+          ]
+         },
+         "assignments": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "target": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target"
+            },
+            "finish": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish"
+            }
+           },
+           "required": [
+            "target",
+            "finish"
+           ],
+           "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 8
+         }
+        },
+        "required": [
+         "version",
+         "assignments"
+        ],
+        "additionalProperties": false,
+        "nullable": true
+       },
+       "appearanceHash": {
+        "allOf": [
+         {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         }
+        ],
+        "nullable": true
+       },
+       "restore": {
+        "type": "object",
+        "properties": {
+         "sourceRevisionId": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+         },
+         "sourceRevisionNumber": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0
+         },
+         "modelHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         },
+         "modelEquivalent": {
+          "type": "boolean"
+         },
+         "appearanceHash": {
+          "allOf": [
+           {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+           }
+          ],
+          "nullable": true
+         }
+        },
+        "required": [
+         "sourceRevisionId",
+         "sourceRevisionNumber",
+         "modelHash",
+         "modelEquivalent",
+         "appearanceHash"
+        ],
+        "additionalProperties": false,
+        "nullable": true
+       },
+       "targets": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "sceneObjectId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+          },
+          "sourceEntityType": {
+           "type": "string",
+           "enum": [
+            "wall",
+            "junction"
+           ]
+          },
+          "sourceEntityId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+          },
+          "bimElementId": {
+           "type": "string",
+           "maxLength": 200,
+           "nullable": true
+          },
+          "levelId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+          },
+          "facade": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/facades/items"
+            }
+           ],
+           "nullable": true
+          },
+          "assignment": {
+           "type": "integer",
+           "minimum": 0,
+           "maximum": 7
+          }
+         },
+         "required": [
+          "sceneObjectId",
+          "sourceEntityType",
+          "sourceEntityId",
+          "bimElementId",
+          "levelId",
+          "facade",
+          "assignment"
+         ],
+         "additionalProperties": false
+        },
+        "maxItems": 512
+       },
+       "excluded": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "elementId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+          },
+          "reason": {
+           "type": "string",
+           "maxLength": 200
+          }
+         },
+         "required": [
+          "elementId",
+          "reason"
+         ],
+         "additionalProperties": false
+        },
+        "maxItems": 512
+       },
+       "locks": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "scope": {
+           "type": "string",
+           "maxLength": 80
+          },
+          "granularity": {
+           "type": "string",
+           "enum": [
+            "SEMANTIC_MODEL",
+            "GEOMETRY",
+            "DERIVED_ARTIFACT",
+            "EXACT_BYTES"
+           ]
+          },
+          "origin": {
+           "type": "string",
+           "enum": [
+            "SYSTEM",
+            "USER"
+           ]
+          },
+          "enforcement": {
+           "type": "string",
+           "maxLength": 300
+          }
+         },
+         "required": [
+          "scope",
+          "granularity",
+          "origin",
+          "enforcement"
+         ],
+         "additionalProperties": false
+        },
+        "maxItems": 32
+       },
+       "impacts": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "artifact": {
+           "type": "string",
+           "maxLength": 60
+          },
+          "action": {
+           "type": "string",
+           "enum": [
+            "REGENERATE",
+            "REUSE_SOURCE_EQUIVALENT",
+            "INVALIDATED",
+            "NOT_AFFECTED",
+            "BLOCKED"
+           ]
+          },
+          "baseArtifactIds": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+           },
+           "maxItems": 20
+          },
+          "reason": {
+           "type": "string",
+           "maxLength": 300
+          }
+         },
+         "required": [
+          "artifact",
+          "action",
+          "baseArtifactIds",
+          "reason"
+         ],
+         "additionalProperties": false
+        },
+        "maxItems": 24
+       },
+       "verifications": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "maxLength": 200
+        },
+        "maxItems": 24
+       },
+       "blockers": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "code": {
+           "type": "string",
+           "maxLength": 80
+          },
+          "message": {
+           "type": "string",
+           "maxLength": 300
+          }
+         },
+         "required": [
+          "code",
+          "message"
+         ],
+         "additionalProperties": false
+        },
+        "maxItems": 16
+       },
+       "questions": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "maxLength": 300
+        },
+        "maxItems": 8
+       },
+       "quote": {
+        "type": "object",
+        "properties": {
+         "execution": {
+          "type": "string",
+          "enum": [
+           "LOCAL_DETERMINISTIC",
+           "NONE"
+          ]
+         },
+         "externalProviders": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          },
+          "maxItems": 0
+         },
+         "externalCostUsd": {
+          "type": "number",
+          "enum": [
+           0
+          ]
+         },
+         "dataTransfer": {
+          "type": "string",
+          "enum": [
+           "NONE"
+          ]
+         },
+         "workers": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+         },
+         "deadlineMs": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "maxArtifactBytes": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "estimatedSceneObjects": {
+          "type": "integer",
+          "minimum": 0
+         }
+        },
+        "required": [
+         "execution",
+         "externalProviders",
+         "externalCostUsd",
+         "dataTransfer",
+         "workers",
+         "deadlineMs",
+         "maxArtifactBytes",
+         "estimatedSceneObjects"
+        ],
+        "additionalProperties": false
+       },
+       "approvalRequired": {
+        "type": "boolean",
+        "enum": [
+         true
+        ]
+       },
+       "claims": {
+        "type": "object",
+        "properties": {
+         "physicalGlazing": {
+          "type": "string",
+          "enum": [
+           "NOT_CLAIMED"
+          ]
+         },
+         "materialPerformance": {
+          "type": "string",
+          "enum": [
+           "NOT_CLAIMED"
+          ]
+         },
+         "thermal": {
+          "type": "string",
+          "enum": [
+           "NOT_CLAIMED"
+          ]
+         },
+         "photorealism": {
+          "type": "string",
+          "enum": [
+           "NOT_CLAIMED"
+          ]
+         }
+        },
+        "required": [
+         "physicalGlazing",
+         "materialPerformance",
+         "thermal",
+         "photorealism"
+        ],
+        "additionalProperties": false
+       }
+      },
+      "required": [
+       "operationVersion",
+       "status",
+       "kind",
+       "base",
+       "intent",
+       "appearance",
+       "appearanceHash",
+       "restore",
+       "targets",
+       "excluded",
+       "locks",
+       "impacts",
+       "verifications",
+       "blockers",
+       "questions",
+       "quote",
+       "approvalRequired",
+       "claims"
+      ],
+      "additionalProperties": false
+     },
+     "validation": {
+      "type": "object",
+      "additionalProperties": {},
+      "nullable": true
+     },
+     "failure": {
+      "type": "object",
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "code",
+       "message"
+      ],
+      "additionalProperties": false,
+      "nullable": true
+     },
+     "approvedBy": {
+      "allOf": [
+       {
+        "$ref": "#/components/schemas/RevisionOperation/properties/id"
+       }
+      ],
+      "nullable": true
+     },
+     "candidate": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/id"
+       },
+       "operationId": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/id"
+       },
+       "manifestVersion": {
+        "type": "string",
+        "enum": [
+         "appearance-scene-manifest-v1"
+        ]
+       },
+       "compilerVersion": {
+        "type": "string",
+        "enum": [
+         "appearance-compiler-v1"
+        ]
+       },
+       "validatorVersion": {
+        "type": "string",
+        "enum": [
+         "revision-appearance-validator-v1"
+        ]
+       },
+       "modelHash": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+       },
+       "appearanceHash": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+       },
+       "binarySha256": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+       },
+       "binaryBytes": {
+        "type": "integer",
+        "exclusiveMinimum": true,
+        "minimum": 0
+       },
+       "createdAt": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+       }
+      },
+      "required": [
+       "id",
+       "operationId",
+       "manifestVersion",
+       "compilerVersion",
+       "validatorVersion",
+       "modelHash",
+       "appearanceHash",
+       "binarySha256",
+       "binaryBytes",
+       "createdAt"
+      ],
+      "additionalProperties": false,
+      "nullable": true
+     }
+    },
+    "required": [
+     "id",
+     "projectId",
+     "baseRevisionId",
+     "kind",
+     "status",
+     "operationVersion",
+     "preflightHash",
+     "appearanceHash",
+     "restoreSourceRevisionId",
+     "candidateHash",
+     "committedRevisionId",
+     "createdAt",
+     "updatedAt",
+     "expiresAt",
+     "preflight",
+     "validation",
+     "failure",
+     "approvedBy",
+     "candidate"
+    ],
+    "additionalProperties": false
+   },
+   "AppearanceManifest": {
+    "type": "object",
+    "properties": {
+     "version": {
+      "type": "string",
+      "enum": [
+       "appearance-scene-manifest-v1"
+      ]
+     },
+     "compilerVersion": {
+      "type": "string",
+      "enum": [
+       "appearance-compiler-v1"
+      ]
+     },
+     "source": {
+      "$ref": "#/components/schemas/SceneManifest/properties/source"
+     },
+     "appearance": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/appearance"
+     },
+     "appearanceHash": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+     },
+     "baseScene": {
+      "type": "object",
+      "properties": {
+       "manifestVersion": {
+        "type": "string",
+        "enum": [
+         "scene-manifest-v1"
+        ]
+       },
+       "compilerVersion": {
+        "type": "string",
+        "enum": [
+         "scene-compiler-v1"
+        ]
+       },
+       "inputHash": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+       },
+       "glbSha256": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+       },
+       "glbBytes": {
+        "type": "integer",
+        "exclusiveMinimum": true,
+        "minimum": 0
+       },
+       "binChunkSha256": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+       }
+      },
+      "required": [
+       "manifestVersion",
+       "compilerVersion",
+       "inputHash",
+       "glbSha256",
+       "glbBytes",
+       "binChunkSha256"
+      ],
+      "additionalProperties": false
+     },
+     "materials": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string",
+         "maxLength": 40
+        },
+        "assignment": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 7
+        },
+        "rgbaThousandths": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+         },
+         "minItems": 4,
+         "maxItems": 4
+        },
+        "roughnessThousandths": {
+         "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+        },
+        "metallicThousandths": {
+         "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+        },
+        "alphaMode": {
+         "type": "string",
+         "enum": [
+          "OPAQUE"
+         ]
+        },
+        "provenance": {
+         "type": "string",
+         "enum": [
+          "APPEARANCE_VARIANT"
+         ]
+        }
+       },
+       "required": [
+        "id",
+        "assignment",
+        "rgbaThousandths",
+        "roughnessThousandths",
+        "metallicThousandths",
+        "alphaMode",
+        "provenance"
+       ],
+       "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 8
+     },
+     "targets": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/targets/items"
+      },
+      "minItems": 1,
+      "maxItems": 512
+     },
+     "scene": {
+      "$ref": "#/components/schemas/SceneManifest"
+     },
+     "claims": {
+      "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/claims"
+     },
+     "binary": {
+      "type": "object",
+      "properties": {
+       "format": {
+        "type": "string",
+        "enum": [
+         "glb"
+        ]
+       },
+       "mimeType": {
+        "type": "string",
+        "enum": [
+         "model/gltf-binary"
+        ]
+       },
+       "sha256": {
+        "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+       },
+       "bytes": {
+        "type": "integer",
+        "exclusiveMinimum": true,
+        "minimum": 0
+       }
+      },
+      "required": [
+       "format",
+       "mimeType",
+       "sha256",
+       "bytes"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "required": [
+     "version",
+     "compilerVersion",
+     "source",
+     "appearance",
+     "appearanceHash",
+     "baseScene",
+     "materials",
+     "targets",
+     "scene",
+     "claims",
+     "binary"
+    ],
+    "additionalProperties": false
    }
   }
  },
@@ -25460,6 +26566,36 @@
               "input"
              ],
              "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "name": {
+               "type": "string",
+               "enum": [
+                "PLAN_REVISION"
+               ]
+              },
+              "input": {
+               "type": "object",
+               "properties": {
+                "text": {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 2000
+                }
+               },
+               "required": [
+                "text"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "name",
+              "input"
+             ],
+             "additionalProperties": false
             }
            ]
           },
@@ -25760,6 +26896,46 @@
               "required": [
                "name",
                "plan"
+              ],
+              "additionalProperties": false
+             },
+             {
+              "type": "object",
+              "properties": {
+               "name": {
+                "type": "string",
+                "enum": [
+                 "PLAN_REVISION"
+                ]
+               },
+               "baseRevisionId": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/schemas/Conversation/properties/id"
+                 }
+                ],
+                "nullable": true
+               },
+               "preflight": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/schemas/RevisionOperation/properties/preflight"
+                 }
+                ],
+                "nullable": true
+               },
+               "persisted": {
+                "type": "boolean",
+                "enum": [
+                 false
+                ]
+               }
+              },
+              "required": [
+               "name",
+               "baseRevisionId",
+               "preflight",
+               "persisted"
               ],
               "additionalProperties": false
              }
@@ -26519,6 +27695,1680 @@
     }
    }
   },
+  "/api/projects/{projectId}/revision-operations": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/id"
+             },
+             "projectId": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/id"
+             },
+             "baseRevisionId": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/id"
+             },
+             "kind": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/kind"
+             },
+             "status": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/status"
+             },
+             "operationVersion": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/operationVersion"
+             },
+             "preflightHash": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+             },
+             "appearanceHash": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/appearanceHash"
+             },
+             "restoreSourceRevisionId": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/restoreSourceRevisionId"
+             },
+             "candidateHash": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/candidateHash"
+             },
+             "committedRevisionId": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/committedRevisionId"
+             },
+             "createdAt": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+             },
+             "updatedAt": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+             },
+             "expiresAt": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "projectId",
+             "baseRevisionId",
+             "kind",
+             "status",
+             "operationVersion",
+             "preflightHash",
+             "appearanceHash",
+             "restoreSourceRevisionId",
+             "candidateHash",
+             "committedRevisionId",
+             "createdAt",
+             "updatedAt",
+             "expiresAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/revision-operations",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "baseRevisionId": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+         },
+         "request": {
+          "anyOf": [
+           {
+            "type": "object",
+            "properties": {
+             "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+             }
+            },
+            "required": [
+             "text"
+            ],
+            "additionalProperties": false
+           },
+           {
+            "type": "object",
+            "properties": {
+             "operation": {
+              "anyOf": [
+               {
+                "type": "object",
+                "properties": {
+                 "kind": {
+                  "type": "string",
+                  "enum": [
+                   "APPEARANCE_MODIFY"
+                  ]
+                 },
+                 "target": {
+                  "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target"
+                 },
+                 "finish": {
+                  "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish"
+                 },
+                 "preserve": {
+                  "type": "array",
+                  "items": {
+                   "type": "object",
+                   "properties": {
+                    "scope": {
+                     "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/preservation/items/properties/scope"
+                    },
+                    "levelId": {
+                     "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/preservation/items/properties/levelId"
+                    }
+                   },
+                   "required": [
+                    "scope"
+                   ],
+                   "additionalProperties": false
+                  },
+                  "maxItems": 16,
+                  "default": []
+                 }
+                },
+                "required": [
+                 "kind",
+                 "target",
+                 "finish"
+                ],
+                "additionalProperties": false
+               },
+               {
+                "type": "object",
+                "properties": {
+                 "kind": {
+                  "type": "string",
+                  "enum": [
+                   "RESTORE"
+                  ]
+                 },
+                 "sourceRevisionId": {
+                  "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+                 }
+                },
+                "required": [
+                 "kind",
+                 "sourceRevisionId"
+                ],
+                "additionalProperties": false
+               }
+              ]
+             }
+            },
+            "required": [
+             "operation"
+            ],
+            "additionalProperties": false
+           }
+          ]
+         }
+        },
+        "required": [
+         "baseRevisionId",
+         "request"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RevisionOperation"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations/:operationId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RevisionOperation"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/approve": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revision-operations/:operationId/approve",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "preflightHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         },
+         "candidateHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         }
+        },
+        "required": [
+         "preflightHash",
+         "candidateHash"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "operation": {
+           "$ref": "#/components/schemas/RevisionOperation"
+          },
+          "commit": {
+           "$ref": "#/components/schemas/RevisionCommitResponse"
+          }
+         },
+         "required": [
+          "operation",
+          "commit"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/cancel": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revision-operations/:operationId/cancel",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RevisionOperation"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/candidate/glb": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations/:operationId/candidate/glb",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Binary",
+      "content": {
+       "model/gltf-binary": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "304": {
+      "description": "Not modified (If-None-Match)"
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/candidate/manifest": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations/:operationId/candidate/manifest",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "acceptance": {
+           "type": "string",
+           "enum": [
+            "COMMITTED",
+            "CANDIDATE_PREVIEW_NOT_ACCEPTED"
+           ]
+          },
+          "operation": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/id"
+            },
+            "projectId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/id"
+            },
+            "baseRevisionId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/id"
+            },
+            "kind": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/kind"
+            },
+            "status": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/status"
+            },
+            "operationVersion": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/operationVersion"
+            },
+            "preflightHash": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+            },
+            "appearanceHash": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/appearanceHash"
+            },
+            "restoreSourceRevisionId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/restoreSourceRevisionId"
+            },
+            "candidateHash": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/candidateHash"
+            },
+            "committedRevisionId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/committedRevisionId"
+            },
+            "createdAt": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+            },
+            "updatedAt": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+            },
+            "expiresAt": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+            }
+           },
+           "required": [
+            "id",
+            "projectId",
+            "baseRevisionId",
+            "kind",
+            "status",
+            "operationVersion",
+            "preflightHash",
+            "appearanceHash",
+            "restoreSourceRevisionId",
+            "candidateHash",
+            "committedRevisionId",
+            "createdAt",
+            "updatedAt",
+            "expiresAt"
+           ],
+           "additionalProperties": false
+          },
+          "artifact": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/candidate"
+          },
+          "manifest": {
+           "$ref": "#/components/schemas/AppearanceManifest"
+          }
+         },
+         "required": [
+          "acceptance",
+          "operation",
+          "artifact",
+          "manifest"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/comparison": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations/:operationId/comparison",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "anyOf": [
+          {
+           "type": "object",
+           "properties": {
+            "comparisonVersion": {
+             "type": "string",
+             "enum": [
+              "revision-comparison-v1"
+             ]
+            },
+            "operationId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+            },
+            "kind": {
+             "type": "string",
+             "enum": [
+              "APPEARANCE_MODIFY",
+              "RESTORE"
+             ],
+             "nullable": true
+            },
+            "status": {
+             "type": "string",
+             "enum": [
+              "AWAITING_CONSENT",
+              "NEEDS_CLARIFICATION",
+              "UNSUPPORTED",
+              "BLOCKED_BY_LOCK",
+              "CANDIDATE_READY",
+              "COMMITTED",
+              "REJECTED",
+              "CANCELLED",
+              "FAILED",
+              "VALIDATION_FAILED",
+              "STALE_BASE",
+              "EXPIRED"
+             ]
+            },
+            "committedRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "base": {
+             "type": "object",
+             "properties": {
+              "revisionId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+              },
+              "revisionNumber": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "modelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "appearanceHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              }
+             },
+             "required": [
+              "revisionId",
+              "revisionNumber",
+              "modelHash",
+              "appearanceHash"
+             ],
+             "additionalProperties": false
+            },
+            "engineering": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "artifact": {
+                "type": "string",
+                "maxLength": 60
+               },
+               "freshness": {
+                "type": "string",
+                "enum": [
+                 "SOURCE_EQUIVALENT",
+                 "NOT_EVALUATED_NO_ARTIFACT",
+                 "REGENERATE",
+                 "INVALIDATED",
+                 "BLOCKED"
+                ]
+               },
+               "artifactIds": {
+                "type": "array",
+                "items": {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+                },
+                "maxItems": 20
+               },
+               "recomputed": {
+                "type": "boolean",
+                "enum": [
+                 false
+                ]
+               },
+               "newlyVerified": {
+                "type": "boolean",
+                "enum": [
+                 false
+                ]
+               },
+               "reason": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "artifact",
+               "freshness",
+               "artifactIds",
+               "recomputed",
+               "newlyVerified",
+               "reason"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 16
+            },
+            "quantitiesAndCost": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/anyOf/0/properties/engineering/items"
+             },
+             "maxItems": 3
+            },
+            "validation": {
+             "type": "object",
+             "additionalProperties": {},
+             "nullable": true
+            },
+            "approvalBlockers": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "code": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "message": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "code",
+               "message"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 4
+            },
+            "claims": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/claims"
+            },
+            "warnings": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "maxItems": 4
+            },
+            "candidate": {
+             "type": "object",
+             "properties": {
+              "candidateHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              },
+              "artifactId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+              },
+              "appearanceHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "modelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "glbSha256": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "acceptance": {
+               "type": "string",
+               "enum": [
+                "COMMITTED",
+                "CANDIDATE_PREVIEW_NOT_ACCEPTED"
+               ]
+              }
+             },
+             "required": [
+              "candidateHash",
+              "artifactId",
+              "appearanceHash",
+              "modelHash",
+              "glbSha256",
+              "acceptance"
+             ],
+             "additionalProperties": false
+            },
+            "allowedScopes": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target"
+            },
+            "changes": {
+             "type": "object",
+             "properties": {
+              "changedObjects": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/targets/items"
+               },
+               "maxItems": 512
+              },
+              "preservedObjectCount": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "preservedSceneObjectIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/target/properties/levelIds/items"
+               },
+               "maxItems": 2048
+              }
+             },
+             "required": [
+              "changedObjects",
+              "preservedObjectCount",
+              "preservedSceneObjectIds"
+             ],
+             "additionalProperties": false
+            },
+            "hashes": {
+             "type": "object",
+             "properties": {
+              "baseModelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "candidateModelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "modelIdentical": {
+               "type": "boolean"
+              },
+              "baseBinChunkSha256": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              },
+              "candidateBinChunkSha256": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              },
+              "geometryIdentical": {
+               "type": "boolean"
+              },
+              "baseGlbSha256": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "candidateGlbSha256": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              }
+             },
+             "required": [
+              "baseModelHash",
+              "candidateModelHash",
+              "modelIdentical",
+              "baseBinChunkSha256",
+              "candidateBinChunkSha256",
+              "geometryIdentical",
+              "baseGlbSha256",
+              "candidateGlbSha256"
+             ],
+             "additionalProperties": false
+            },
+            "materials": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "assignment": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "presetId": {
+                "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/presetId"
+               },
+               "from": {
+                "type": "array",
+                "items": {
+                 "type": "object",
+                 "properties": {
+                  "rgbaThousandths": {
+                   "type": "array",
+                   "items": {
+                    "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+                   },
+                   "minItems": 4,
+                   "maxItems": 4
+                  },
+                  "roughnessThousandths": {
+                   "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+                  },
+                  "metallicThousandths": {
+                   "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/intent/properties/appearance/properties/finish/properties/rgbThousandths/items"
+                  },
+                  "provenance": {
+                   "type": "string",
+                   "enum": [
+                    "VISUAL_PLACEHOLDER",
+                    "APPEARANCE_VARIANT"
+                   ]
+                  }
+                 },
+                 "required": [
+                  "rgbaThousandths",
+                  "roughnessThousandths",
+                  "metallicThousandths",
+                  "provenance"
+                 ],
+                 "additionalProperties": false
+                },
+                "maxItems": 8
+               },
+               "to": {
+                "$ref": "#/components/anyOf/0/properties/materials/items/properties/from/items"
+               },
+               "objects": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "assignment",
+               "presetId",
+               "from",
+               "to",
+               "objects"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 8
+            },
+            "visual": {
+             "type": "object",
+             "properties": {
+              "candidateGlbHref": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "candidateManifestHref": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "baseSceneHref": {
+               "type": "string",
+               "maxLength": 300
+              }
+             },
+             "required": [
+              "candidateGlbHref",
+              "candidateManifestHref",
+              "baseSceneHref"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "comparisonVersion",
+            "operationId",
+            "kind",
+            "status",
+            "committedRevisionId",
+            "base",
+            "engineering",
+            "quantitiesAndCost",
+            "validation",
+            "approvalBlockers",
+            "claims",
+            "warnings",
+            "candidate",
+            "allowedScopes",
+            "changes",
+            "hashes",
+            "materials",
+            "visual"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "comparisonVersion": {
+             "$ref": "#/components/anyOf/0/properties/comparisonVersion"
+            },
+            "operationId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+            },
+            "kind": {
+             "$ref": "#/components/anyOf/0/properties/kind"
+            },
+            "status": {
+             "$ref": "#/components/anyOf/0/properties/status"
+            },
+            "committedRevisionId": {
+             "$ref": "#/components/anyOf/0/properties/committedRevisionId"
+            },
+            "base": {
+             "$ref": "#/components/anyOf/0/properties/base"
+            },
+            "engineering": {
+             "$ref": "#/components/anyOf/0/properties/engineering"
+            },
+            "quantitiesAndCost": {
+             "$ref": "#/components/anyOf/0/properties/quantitiesAndCost"
+            },
+            "validation": {
+             "$ref": "#/components/anyOf/0/properties/validation"
+            },
+            "approvalBlockers": {
+             "$ref": "#/components/anyOf/0/properties/approvalBlockers"
+            },
+            "claims": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/claims"
+            },
+            "warnings": {
+             "$ref": "#/components/anyOf/0/properties/warnings"
+            },
+            "candidate": {
+             "type": "object",
+             "properties": {
+              "candidateHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              },
+              "sourceRevisionId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+              },
+              "modelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "appearanceHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              }
+             },
+             "required": [
+              "candidateHash",
+              "sourceRevisionId",
+              "modelHash",
+              "appearanceHash"
+             ],
+             "additionalProperties": false
+            },
+            "changes": {
+             "type": "object",
+             "properties": {
+              "modelIdentical": {
+               "type": "boolean"
+              },
+              "appearanceChanged": {
+               "type": "boolean"
+              },
+              "bimDiffHref": {
+               "type": "string",
+               "maxLength": 300,
+               "nullable": true
+              }
+             },
+             "required": [
+              "modelIdentical",
+              "appearanceChanged",
+              "bimDiffHref"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "comparisonVersion",
+            "operationId",
+            "kind",
+            "status",
+            "committedRevisionId",
+            "base",
+            "engineering",
+            "quantitiesAndCost",
+            "validation",
+            "approvalBlockers",
+            "claims",
+            "warnings",
+            "candidate",
+            "changes"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "comparisonVersion": {
+             "$ref": "#/components/anyOf/0/properties/comparisonVersion"
+            },
+            "operationId": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/projectId"
+            },
+            "kind": {
+             "$ref": "#/components/anyOf/0/properties/kind"
+            },
+            "status": {
+             "$ref": "#/components/anyOf/0/properties/status"
+            },
+            "committedRevisionId": {
+             "$ref": "#/components/anyOf/0/properties/committedRevisionId"
+            },
+            "base": {
+             "$ref": "#/components/anyOf/0/properties/base"
+            },
+            "engineering": {
+             "$ref": "#/components/anyOf/0/properties/engineering"
+            },
+            "quantitiesAndCost": {
+             "$ref": "#/components/anyOf/0/properties/quantitiesAndCost"
+            },
+            "validation": {
+             "$ref": "#/components/anyOf/0/properties/validation"
+            },
+            "approvalBlockers": {
+             "$ref": "#/components/anyOf/0/properties/approvalBlockers"
+            },
+            "claims": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/claims"
+            },
+            "warnings": {
+             "$ref": "#/components/anyOf/0/properties/warnings"
+            },
+            "candidate": {
+             "enum": [
+              "null"
+             ],
+             "nullable": true
+            },
+            "changes": {
+             "enum": [
+              "null"
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "comparisonVersion",
+            "operationId",
+            "kind",
+            "status",
+            "committedRevisionId",
+            "base",
+            "engineering",
+            "quantitiesAndCost",
+            "validation",
+            "approvalBlockers",
+            "claims",
+            "warnings",
+            "candidate",
+            "changes"
+           ],
+           "additionalProperties": false
+          }
+         ]
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/execute": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revision-operations/:operationId/execute",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "preflightHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         },
+         "consent": {
+          "type": "object",
+          "properties": {
+           "acceptLocks": {
+            "type": "boolean",
+            "enum": [
+             true
+            ]
+           },
+           "acceptQuote": {
+            "type": "boolean",
+            "enum": [
+             true
+            ]
+           }
+          },
+          "required": [
+           "acceptLocks",
+           "acceptQuote"
+          ],
+          "additionalProperties": false
+         }
+        },
+        "required": [
+         "preflightHash",
+         "consent"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RevisionOperation"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/reject": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revision-operations/:operationId/reject",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RevisionOperation"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revision-operations/{operationId}/validation": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revision-operations/:operationId/validation",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "operationId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "operationId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/id"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "AWAITING_CONSENT",
+            "NEEDS_CLARIFICATION",
+            "UNSUPPORTED",
+            "BLOCKED_BY_LOCK",
+            "CANDIDATE_READY",
+            "COMMITTED",
+            "REJECTED",
+            "CANCELLED",
+            "FAILED",
+            "VALIDATION_FAILED",
+            "STALE_BASE",
+            "EXPIRED"
+           ]
+          },
+          "preflightHash": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+          },
+          "candidateHash": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+            }
+           ],
+           "nullable": true
+          },
+          "validation": {
+           "type": "object",
+           "additionalProperties": {},
+           "nullable": true
+          },
+          "failure": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string"
+            },
+            "message": {
+             "type": "string"
+            }
+           },
+           "required": [
+            "code",
+            "message"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "verifications": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           },
+           "maxItems": 24
+          },
+          "locks": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/locks/items"
+           },
+           "maxItems": 32
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/id"
+             },
+             "eventType": {
+              "type": "string"
+             },
+             "actor": {
+              "allOf": [
+               {
+                "$ref": "#/components/schemas/RevisionOperation/properties/id"
+               }
+              ],
+              "nullable": true
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "eventType",
+             "actor",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          }
+         },
+         "required": [
+          "operationId",
+          "status",
+          "preflightHash",
+          "candidateHash",
+          "validation",
+          "failure",
+          "verifications",
+          "locks",
+          "events"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/revisions": {
    "get": {
     "operationId": "get /api/projects/:projectId/revisions",
@@ -26756,6 +29606,265 @@
         }
        }
       }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/appearance": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/appearance",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "revisionId": {
+           "$ref": "#/components/schemas/RevisionOperation/properties/id"
+          },
+          "appearance": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/appearance"
+            }
+           ],
+           "nullable": true
+          },
+          "appearanceHash": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+            }
+           ],
+           "nullable": true
+          },
+          "modelHash": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+            }
+           ],
+           "nullable": true
+          },
+          "operationId": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/id"
+            }
+           ],
+           "nullable": true
+          },
+          "artifact": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/RevisionOperation/properties/candidate"
+            }
+           ],
+           "nullable": true
+          },
+          "manifest": {
+           "allOf": [
+            {
+             "$ref": "#/components/schemas/AppearanceManifest"
+            }
+           ],
+           "nullable": true
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "APPEARANCE_VARIANT",
+            "DEFAULT_PLACEHOLDER"
+           ]
+          },
+          "lineage": {
+           "type": "object",
+           "properties": {
+            "operation": {
+             "type": "object",
+             "properties": {
+              "id": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/id"
+              },
+              "projectId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/id"
+              },
+              "baseRevisionId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/id"
+              },
+              "kind": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/kind"
+              },
+              "status": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/status"
+              },
+              "operationVersion": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/operationVersion"
+              },
+              "preflightHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflightHash"
+              },
+              "appearanceHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/appearanceHash"
+              },
+              "restoreSourceRevisionId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/restoreSourceRevisionId"
+              },
+              "candidateHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/candidateHash"
+              },
+              "committedRevisionId": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/committedRevisionId"
+              },
+              "createdAt": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+              },
+              "updatedAt": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+              },
+              "expiresAt": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/createdAt"
+              }
+             },
+             "required": [
+              "id",
+              "projectId",
+              "baseRevisionId",
+              "kind",
+              "status",
+              "operationVersion",
+              "preflightHash",
+              "appearanceHash",
+              "restoreSourceRevisionId",
+              "candidateHash",
+              "committedRevisionId",
+              "createdAt",
+              "updatedAt",
+              "expiresAt"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "modelEquivalentToBase": {
+             "type": "boolean",
+             "nullable": true
+            }
+           },
+           "required": [
+            "operation",
+            "modelEquivalentToBase"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "revisionId",
+          "appearance",
+          "appearanceHash",
+          "modelHash",
+          "operationId",
+          "artifact",
+          "manifest",
+          "status",
+          "lineage"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/appearance/glb": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/appearance/glb",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Binary",
+      "content": {
+       "model/gltf-binary": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "304": {
+      "description": "Not modified (If-None-Match)"
      },
      "default": {
       "description": "Typed error",

@@ -68,7 +68,8 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     expect(CAPABILITIES.find(c => c.capabilityId === 'SCENE_3D')?.implementationStatus).toBe('PLANNED');
   });
   it('never presents a render, panorama or video as available, and only intent extraction among AI capabilities', () => {
-    expect(MEDIA.filter(m => m.status === 'AVAILABLE').map(m => m.media)).toEqual(['INTERACTIVE_3D_MODEL']);
+    // Phase 30 adds the bounded exterior appearance variant (still a visual 3D model, never a render).
+    expect(MEDIA.filter(m => m.status === 'AVAILABLE').map(m => m.media)).toEqual(['INTERACTIVE_3D_MODEL', 'APPEARANCE_VARIANT_3D_MODEL']);
     for (const m of MEDIA.filter(m => m.status === 'UNSUPPORTED')) expect([m.serviceId, m.provider, m.mimeType, typeof m.reason]).toEqual([null, null, null, 'string']);
     expect(AI_CAPABILITIES.filter(c => c.status === 'AVAILABLE').map(c => c.capability)).toEqual(['ARCHITECTURAL_INTENT_EXTRACTION']);
   });

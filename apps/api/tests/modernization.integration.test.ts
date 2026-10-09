@@ -160,7 +160,7 @@ describe('Phases 1–29 modernization acceptance on PostgreSQL', () => {
     const [result] = (await ok('POST', `${url}/${conversationId}/tools`, { actions: [{ name: 'CHECK_CAPABILITIES', input: {} }] }, 200)).json().results;
     expect(result.capabilities.find((c: Json) => c.capabilityId === 'SCENE_3D').implementationStatus).toBe('PLANNED');
     expect(result.services.find((s: Json) => s.serviceId === 'SCENE_3D')).toEqual({ serviceId: 'SCENE_3D', version: 'scene-compiler-v1', status: 'AVAILABLE', workflowCapability: null });
-    expect(result.media.filter((m: Json) => m.status === 'AVAILABLE').map((m: Json) => m.media)).toEqual(['INTERACTIVE_3D_MODEL']);
+    expect(result.media.filter((m: Json) => m.status === 'AVAILABLE').map((m: Json) => m.media)).toEqual(['INTERACTIVE_3D_MODEL', 'APPEARANCE_VARIANT_3D_MODEL']);
   });
 
   it('R07-B: scene assets are gzip-encoded on request, revalidate immutable bytes with 304 only after authorization, and never 304 the manifest', async () => {
