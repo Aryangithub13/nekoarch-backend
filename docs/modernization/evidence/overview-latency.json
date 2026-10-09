@@ -1,0 +1,19 @@
+{
+ "benchmark": "overview-latency-v1",
+ "database": "embedded PostgreSQL (test harness, real RLS roles)",
+ "samples": 25,
+ "overviewBytes": 6621,
+ "overview": {
+  "medianMs": 18.6,
+  "p90Ms": 26.1
+ },
+ "separateCallsSequential": {
+  "medianMs": 19.4,
+  "p90Ms": 21.4
+ },
+ "separateCallsParallel": {
+  "medianMs": 12.6,
+  "p90Ms": 15.5
+ },
+ "separateCalls": 9
+}

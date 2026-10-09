@@ -36,7 +36,7 @@ The evidence column names the source and the tests that execute it. The status i
 | 2 | Integer-mm geometry and precision rules | `generator/tests/geometry.test.ts`, `building-v2-precision.test.ts` | implemented_verified | — |
 | 3 | Walls, storeys, invariants | `generator/tests/invariants.test.ts`, `building-v2-model.test.ts` | implemented_verified | — |
 | 4 | Topology, adjacency, circulation | `blueprint-qa/tests/circulation-stairs.test.ts` | implemented_verified | Phases 1–4 have no individual tags; their source is in the root commit `6670abe` (tagged Phase 5). |
-| 5 | Supabase/Postgres persistence, RLS, estimates | `supabase/tests/database.test.ts`, `backend.integration`, `estimate-service` | implemented_verified | **R06-F1 (low):** 4 legacy plan/estimate POST/PATCH routes validate the body before authenticating (anonymous empty body → 400, not 401). A session is still required for any valid request. Left unchanged and recorded in the catalog test. |
+| 5 | Supabase/Postgres persistence, RLS, estimates | `supabase/tests/database.test.ts`, `backend.integration`, `estimate-service` | implemented_verified | **R06-F1 (low), closed — accepted as a tested contract:** 4 legacy plan/estimate POST/PATCH routes validate the body before authenticating (anonymous empty body → 400, not 401). A session is still required for any valid request. Phase 5 tests deliberately pin this order (`foundation.test.ts`: typed, redacted 400s for anonymous malformed or invalid bodies), so reordering would break verified behaviour for no security gain. Recorded in the catalog test. |
 | 6 | Seeded deterministic generator | `generate.test.ts`, `furniture.test.ts` | implemented_verified | — |
 | 7 | Generator/API integration | `generation.test.ts`, `generation.integration` | implemented_verified | — |
 | 8 | Limits, timeouts, readiness, Sentry scrubbing, structured logs | `hardening.test.ts` / `.integration` | implemented_verified | CORS extended additively (G3). |
@@ -134,6 +134,17 @@ The evidence column names the source and the tests that execute it. The status i
   - Object storage/streaming: future:31.
 - **No browser FPS is claimed.** None was measured.
 
+**Overview latency** ([`evidence/overview-latency.json`](evidence/overview-latency.json)). Embedded PostgreSQL with real RLS roles, in-process requests, 25 samples, a revision with one takeoff and one scene:
+
+| Measurement | Median | p90 |
+|---|---|---|
+| One overview request (6 621 B) | 18.6 ms | 26.1 ms |
+| The 9 equivalent calls, sequential | 19.4 ms | 21.4 ms |
+| The 9 equivalent calls, parallel | 12.6 ms | 15.5 ms |
+
+- **Server time is comparable; the overview is not faster on the server.** It also reads and schema-checks the revision model to report `modelHash` and `identityConsistent`.
+- **Its benefit is one request instead of nine round trips.** That network saving was **not measured** here, so no latency improvement is claimed.
+
 ## E — Frontend compatibility
 
 **Blocked:** the NekoArch frontend repository is not present on this machine. `/home/aryan/NekoArch` is an old backend copy at Phase 18, not the frontend. Test 11, comparing against real frontend TypeScript adapters, could therefore not be executed. The classification below is from the backend side only. It uses the real routes in [api-routes.json](api-routes.json).
@@ -206,7 +217,6 @@ This assessment does **not** authorize Phase 30.
 |---|---|
 | R01-G3: JSON-Schema/OpenAPI export from Zod. Decide between adding `zod-to-json-schema` and migrating to Zod v4 `toJSONSchema`. | modernization follow-up / B45 |
 | R01-G2: scene and analysis engines as workflow steps | modernization follow-up, or B30/B32 |
-| R06-F1: authenticate before validating on the 4 legacy plan/estimate routes | modernization follow-up (low) |
 | Candidate revisions, locks, scoped regeneration, approval, restore-as-new-revision, before/after comparison | B30 |
 | Uploads/reference artifacts, object storage, signed URLs, streaming | B31 |
 | Durable jobs, progress, cancellation, budgets | B32 |
