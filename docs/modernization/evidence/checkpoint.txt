@@ -7,3 +7,7 @@ migrations changed: 0
 files changed vs baseline: 19
 remote operations: none
 phase 30: not started
+follow-up commit: a8a086166d21205fa1f60f087537141108a16b88
+follow-up tag: backend-v1-modernization-phases-1-29-followups -> a8a086166d21205fa1f60f087537141108a16b88 (annotated, local only; first checkpoint tag not moved)
+historical tags (26) after follow-ups: identical to tags-before.txt
+migrations changed: 0
