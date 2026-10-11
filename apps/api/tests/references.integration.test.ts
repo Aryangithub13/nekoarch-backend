@@ -116,7 +116,7 @@ describe('Phase 31 reference ingestion on PostgreSQL', () => {
 
   it('enforces the lifecycle in the API and in the database', async () => {
     const { root } = await project(), ref = (await upload(root, png({ width: 5 }), 'image/png', 'purpose=SKETCH')).json(), item = `${root}/${ref.id}`;
-    const patch = (payload: unknown) => app.inject({ method: 'PATCH', url: item, headers: owner, payload });
+    const patch = (payload: Record<string, unknown>) => app.inject({ method: 'PATCH', url: item, headers: owner, payload });
     expect((await patch({ status: 'ARCHIVED', displayName: 'Old sketch' })).json()).toMatchObject({ status: 'ARCHIVED', displayName: 'Old sketch' });
     expect((await app.inject({ url: root, headers: owner })).json().items).toEqual([]);
     expect((await app.inject({ url: `${root}?status=ARCHIVED`, headers: owner })).json().items.map((i: { id: string }) => i.id)).toEqual([ref.id]);
@@ -200,7 +200,7 @@ describe('Phase 31 reference ingestion on PostgreSQL', () => {
     const signed = signProjectCommit(secret, ownerId, REFERENCE_ROOT, input);
     await expect(write(ownerId, Buffer.from(stored!).toString('base64'))).rejects.toMatchObject({ code: '42501' });
     await expect(write(otherId, Buffer.from(stored!).toString('base64'), signed)).rejects.toMatchObject({ code: '42501' });
-    const swapped = Buffer.from(stored!); swapped[swapped.length - 20] ^= 1;
+    const swapped = Buffer.from(stored!), at = swapped.length - 20; swapped[at] = swapped[at]! ^ 1;
     await expect(write(ownerId, swapped.toString('base64'), signed)).rejects.toMatchObject({ code: 'P3103' });
     expect((await write(ownerId, Buffer.from(stored!).toString('base64'), signed)).rows[0].response).toMatchObject({ storedSha256: sha(stored!), deduplicated: false });
   });
