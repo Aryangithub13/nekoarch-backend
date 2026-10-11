@@ -11,6 +11,7 @@ import { revisionRoutes } from './routes/revisions.js';
 import { AppearancePool } from './revision/pool.js';
 import { jobRoutes } from './routes/jobs.js';
 import { accountRoutes } from './routes/account.js';
+import { verificationRoutes } from './routes/verification.js';
 import { JobRunner } from './jobs/runner.js';
 import { createExecutors } from './jobs/executors.js';
 import { referenceRoutes } from './routes/references.js';
@@ -118,6 +119,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     referenceRoutes(scope, backend, options.env, options.inspectionPool);
     jobRoutes(scope, backend, options.env, runner);
     accountRoutes(scope, backend, options.env);
+    verificationRoutes(scope, backend);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

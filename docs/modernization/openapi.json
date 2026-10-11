@@ -41475,6 +41475,1095 @@
     }
    }
   },
+  "/api/projects/{projectId}/revisions/{revisionId}/verification": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/verification",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "verifierVersion": {
+           "type": "string",
+           "enum": [
+            "complex-verification-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "VERIFIED",
+            "VERIFIED_WITH_WARNINGS",
+            "PARTIAL",
+            "FAILED"
+           ]
+          },
+          "bases": {
+           "type": "object",
+           "properties": {
+            "plotAreaMm2": {
+             "type": "string",
+             "pattern": "^\\d+(\\.5)?$",
+             "nullable": true
+            },
+            "buildableAreaMm2": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+              }
+             ],
+             "nullable": true
+            },
+            "groundCoverage": {
+             "type": "object",
+             "properties": {
+              "levelId": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "areaMm2": {
+               "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+              },
+              "method": {
+               "type": "string",
+               "enum": [
+                "RECTILINEAR_SLAB_UNION",
+                "LEVEL_BOUNDARY_FALLBACK",
+                "LEVEL_BOUNDARY_NO_FLOOR_SLABS"
+               ]
+              }
+             },
+             "required": [
+              "levelId",
+              "areaMm2",
+              "method"
+             ],
+             "additionalProperties": false
+            },
+            "levels": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "levelId": {
+                "$ref": "#/components/properties/bases/properties/groundCoverage/properties/levelId"
+               },
+               "grossPlateAreaMm2": {
+                "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+               },
+               "method": {
+                "$ref": "#/components/properties/bases/properties/groundCoverage/properties/method"
+               }
+              },
+              "required": [
+               "levelId",
+               "grossPlateAreaMm2",
+               "method"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 256
+            },
+            "grossFloorAreaMm2": {
+             "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+            },
+            "netSpaceAreaMm2": {
+             "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+            },
+            "coverageRatio": {
+             "type": "object",
+             "properties": {
+              "numerator": {
+               "type": "string",
+               "pattern": "^\\d+$"
+              },
+              "denominator": {
+               "type": "string",
+               "pattern": "^[1-9]\\d*$"
+              },
+              "decimal": {
+               "type": "string",
+               "pattern": "^\\d+\\.\\d{4}$"
+              },
+              "rounding": {
+               "type": "string",
+               "enum": [
+                "HALF_UP_4"
+               ]
+              }
+             },
+             "required": [
+              "numerator",
+              "denominator",
+              "decimal",
+              "rounding"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "far": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/bases/properties/coverageRatio"
+              }
+             ],
+             "nullable": true
+            },
+            "formulas": {
+             "type": "object",
+             "additionalProperties": {
+              "type": "string",
+              "maxLength": 300
+             }
+            }
+           },
+           "required": [
+            "plotAreaMm2",
+            "buildableAreaMm2",
+            "groundCoverage",
+            "levels",
+            "grossFloorAreaMm2",
+            "netSpaceAreaMm2",
+            "coverageRatio",
+            "far",
+            "formulas"
+           ],
+           "additionalProperties": false
+          },
+          "checks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "checkId": {
+              "type": "string",
+              "enum": [
+               "SITE_POLYGON",
+               "BUILDABLE_WITHIN_SITE",
+               "LEVEL_WITHIN_PERMITTED",
+               "SETBACK_DISTANCE",
+               "SPACE_ON_PLATES",
+               "UPPER_PLATE_SUPPORT",
+               "OPENING_WITHIN_HOST",
+               "DECLARED_LIMIT"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "PASS",
+               "FAIL",
+               "WARNING",
+               "NOT_EVALUATED",
+               "NOT_APPLICABLE"
+              ]
+             },
+             "entityIds": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/bases/properties/groundCoverage/properties/levelId"
+              },
+              "maxItems": 16
+             },
+             "measured": {
+              "type": "string",
+              "maxLength": 60,
+              "nullable": true
+             },
+             "required": {
+              "type": "string",
+              "maxLength": 60,
+              "nullable": true
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "checkId",
+             "status",
+             "entityIds",
+             "measured",
+             "required",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 20000
+          },
+          "summary": {
+           "type": "object",
+           "properties": {
+            "pass": {
+             "type": "integer"
+            },
+            "fail": {
+             "type": "integer"
+            },
+            "warning": {
+             "type": "integer"
+            },
+            "notEvaluated": {
+             "type": "integer"
+            },
+            "notApplicable": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "pass",
+            "fail",
+            "warning",
+            "notEvaluated",
+            "notApplicable"
+           ],
+           "additionalProperties": false
+          },
+          "declaredLimits": {
+           "type": "object",
+           "properties": {
+            "maxCoverageRatio": {
+             "type": "number",
+             "exclusiveMinimum": true,
+             "minimum": 0,
+             "maximum": 1,
+             "multipleOf": 0.0001
+            },
+            "maxFar": {
+             "type": "number",
+             "exclusiveMinimum": true,
+             "minimum": 0,
+             "maximum": 100,
+             "multipleOf": 0.0001
+            }
+           },
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "budget": {
+           "type": "object",
+           "properties": {
+            "operations": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "limit": {
+             "type": "integer"
+            },
+            "exhausted": {
+             "type": "boolean"
+            }
+           },
+           "required": [
+            "operations",
+            "limit",
+            "exhausted"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "statutoryCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "structuralAdequacy": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "surveyAccuracy": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "constructionReadiness": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "statutoryCompliance",
+            "structuralAdequacy",
+            "surveyAccuracy",
+            "constructionReadiness"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "verifierVersion",
+          "projectId",
+          "revisionId",
+          "modelHash",
+          "inputHash",
+          "status",
+          "bases",
+          "checks",
+          "summary",
+          "declaredLimits",
+          "budget",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/revisions/:revisionId/verification",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "declaredLimits": {
+          "type": "object",
+          "properties": {
+           "maxCoverageRatio": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 1,
+            "multipleOf": 0.0001
+           },
+           "maxFar": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 100,
+            "multipleOf": 0.0001
+           }
+          },
+          "additionalProperties": false
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "verifierVersion": {
+           "type": "string",
+           "enum": [
+            "complex-verification-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "VERIFIED",
+            "VERIFIED_WITH_WARNINGS",
+            "PARTIAL",
+            "FAILED"
+           ]
+          },
+          "bases": {
+           "type": "object",
+           "properties": {
+            "plotAreaMm2": {
+             "type": "string",
+             "pattern": "^\\d+(\\.5)?$",
+             "nullable": true
+            },
+            "buildableAreaMm2": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+              }
+             ],
+             "nullable": true
+            },
+            "groundCoverage": {
+             "type": "object",
+             "properties": {
+              "levelId": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "areaMm2": {
+               "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+              },
+              "method": {
+               "type": "string",
+               "enum": [
+                "RECTILINEAR_SLAB_UNION",
+                "LEVEL_BOUNDARY_FALLBACK",
+                "LEVEL_BOUNDARY_NO_FLOOR_SLABS"
+               ]
+              }
+             },
+             "required": [
+              "levelId",
+              "areaMm2",
+              "method"
+             ],
+             "additionalProperties": false
+            },
+            "levels": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "levelId": {
+                "$ref": "#/components/properties/bases/properties/groundCoverage/properties/levelId"
+               },
+               "grossPlateAreaMm2": {
+                "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+               },
+               "method": {
+                "$ref": "#/components/properties/bases/properties/groundCoverage/properties/method"
+               }
+              },
+              "required": [
+               "levelId",
+               "grossPlateAreaMm2",
+               "method"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 256
+            },
+            "grossFloorAreaMm2": {
+             "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+            },
+            "netSpaceAreaMm2": {
+             "$ref": "#/components/properties/bases/properties/plotAreaMm2"
+            },
+            "coverageRatio": {
+             "type": "object",
+             "properties": {
+              "numerator": {
+               "type": "string",
+               "pattern": "^\\d+$"
+              },
+              "denominator": {
+               "type": "string",
+               "pattern": "^[1-9]\\d*$"
+              },
+              "decimal": {
+               "type": "string",
+               "pattern": "^\\d+\\.\\d{4}$"
+              },
+              "rounding": {
+               "type": "string",
+               "enum": [
+                "HALF_UP_4"
+               ]
+              }
+             },
+             "required": [
+              "numerator",
+              "denominator",
+              "decimal",
+              "rounding"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "far": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/bases/properties/coverageRatio"
+              }
+             ],
+             "nullable": true
+            },
+            "formulas": {
+             "type": "object",
+             "additionalProperties": {
+              "type": "string",
+              "maxLength": 300
+             }
+            }
+           },
+           "required": [
+            "plotAreaMm2",
+            "buildableAreaMm2",
+            "groundCoverage",
+            "levels",
+            "grossFloorAreaMm2",
+            "netSpaceAreaMm2",
+            "coverageRatio",
+            "far",
+            "formulas"
+           ],
+           "additionalProperties": false
+          },
+          "checks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "checkId": {
+              "type": "string",
+              "enum": [
+               "SITE_POLYGON",
+               "BUILDABLE_WITHIN_SITE",
+               "LEVEL_WITHIN_PERMITTED",
+               "SETBACK_DISTANCE",
+               "SPACE_ON_PLATES",
+               "UPPER_PLATE_SUPPORT",
+               "OPENING_WITHIN_HOST",
+               "DECLARED_LIMIT"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "PASS",
+               "FAIL",
+               "WARNING",
+               "NOT_EVALUATED",
+               "NOT_APPLICABLE"
+              ]
+             },
+             "entityIds": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/bases/properties/groundCoverage/properties/levelId"
+              },
+              "maxItems": 16
+             },
+             "measured": {
+              "type": "string",
+              "maxLength": 60,
+              "nullable": true
+             },
+             "required": {
+              "type": "string",
+              "maxLength": 60,
+              "nullable": true
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "checkId",
+             "status",
+             "entityIds",
+             "measured",
+             "required",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 20000
+          },
+          "summary": {
+           "type": "object",
+           "properties": {
+            "pass": {
+             "type": "integer"
+            },
+            "fail": {
+             "type": "integer"
+            },
+            "warning": {
+             "type": "integer"
+            },
+            "notEvaluated": {
+             "type": "integer"
+            },
+            "notApplicable": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "pass",
+            "fail",
+            "warning",
+            "notEvaluated",
+            "notApplicable"
+           ],
+           "additionalProperties": false
+          },
+          "declaredLimits": {
+           "type": "object",
+           "properties": {
+            "maxCoverageRatio": {
+             "type": "number",
+             "exclusiveMinimum": true,
+             "minimum": 0,
+             "maximum": 1,
+             "multipleOf": 0.0001
+            },
+            "maxFar": {
+             "type": "number",
+             "exclusiveMinimum": true,
+             "minimum": 0,
+             "maximum": 100,
+             "multipleOf": 0.0001
+            }
+           },
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "budget": {
+           "type": "object",
+           "properties": {
+            "operations": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "limit": {
+             "type": "integer"
+            },
+            "exhausted": {
+             "type": "boolean"
+            }
+           },
+           "required": [
+            "operations",
+            "limit",
+            "exhausted"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "statutoryCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "structuralAdequacy": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "surveyAccuracy": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "constructionReadiness": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "statutoryCompliance",
+            "structuralAdequacy",
+            "surveyAccuracy",
+            "constructionReadiness"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "verifierVersion",
+          "projectId",
+          "revisionId",
+          "modelHash",
+          "inputHash",
+          "status",
+          "bases",
+          "checks",
+          "summary",
+          "declaredLimits",
+          "budget",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/verification/diff": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revisions/:revisionId/verification/diff",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "otherRevisionId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "scope": {
+          "type": "object",
+          "properties": {
+           "levelIds": {
+            "type": "array",
+            "items": {
+             "type": "string",
+             "minLength": 1,
+             "maxLength": 200
+            },
+            "maxItems": 512,
+            "default": []
+           },
+           "entityIds": {
+            "type": "array",
+            "items": {
+             "$ref": "#/components/properties/scope/properties/levelIds/items"
+            },
+            "maxItems": 512,
+            "default": []
+           },
+           "allowSiteChange": {
+            "type": "boolean",
+            "default": false
+           }
+          },
+          "additionalProperties": false
+         }
+        },
+        "required": [
+         "otherRevisionId",
+         "scope"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "diffVersion": {
+           "type": "string",
+           "enum": [
+            "scoped-diff-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "otherRevisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "baseModelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "otherModelHash": {
+           "$ref": "#/components/properties/baseModelHash"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "IDENTICAL",
+            "WITHIN_SCOPE",
+            "OUT_OF_SCOPE_CHANGES"
+           ]
+          },
+          "scope": {
+           "type": "object",
+           "properties": {
+            "levelIds": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+             },
+             "maxItems": 512,
+             "default": []
+            },
+            "entityIds": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/scope/properties/levelIds/items"
+             },
+             "maxItems": 512,
+             "default": []
+            },
+            "allowSiteChange": {
+             "type": "boolean",
+             "default": false
+            }
+           },
+           "additionalProperties": false
+          },
+          "changes": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "collection": {
+              "type": "string",
+              "enum": [
+               "levels",
+               "spaces",
+               "walls",
+               "openings",
+               "slabs",
+               "columns",
+               "stairs",
+               "dimensions",
+               "specifications",
+               "site"
+              ]
+             },
+             "entityId": {
+              "$ref": "#/components/properties/scope/properties/levelIds/items"
+             },
+             "change": {
+              "type": "string",
+              "enum": [
+               "ADDED",
+               "REMOVED",
+               "CHANGED"
+              ]
+             },
+             "levelIds": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/scope/properties/levelIds/items"
+              },
+              "maxItems": 2
+             },
+             "inScope": {
+              "type": "boolean"
+             }
+            },
+            "required": [
+             "collection",
+             "entityId",
+             "change",
+             "levelIds",
+             "inScope"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50000
+          },
+          "violations": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/properties/changes/items"
+           },
+           "maxItems": 50000
+          },
+          "counts": {
+           "type": "object",
+           "properties": {
+            "added": {
+             "type": "integer"
+            },
+            "removed": {
+             "type": "integer"
+            },
+            "changed": {
+             "type": "integer"
+            },
+            "outOfScope": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "added",
+            "removed",
+            "changed",
+            "outOfScope"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "diffVersion",
+          "projectId",
+          "baseRevisionId",
+          "otherRevisionId",
+          "baseModelHash",
+          "otherModelHash",
+          "status",
+          "scope",
+          "changes",
+          "violations",
+          "counts"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/revisions/generate": {
    "post": {
     "operationId": "post /api/projects/:projectId/revisions/generate",

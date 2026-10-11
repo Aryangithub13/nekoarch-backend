@@ -555,6 +555,21 @@
   "anonymous": 401
  },
  {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/verification",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/verification",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/verification/diff",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/projects/:projectId/revisions/generate",
   "anonymous": 401

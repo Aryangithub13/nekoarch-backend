@@ -31,6 +31,8 @@ import { SCENE_ROOT, sceneStatus } from './scene-service.js';
 import { REFERENCE_ROOT } from './reference-service.js';
 import { JOB_ROOT } from './job-service.js';
 import { CONTEXT_ROUTE } from './account-service.js';
+import { VERIFICATION_ROOT } from './verification-service.js';
+import { VERIFIER_VERSION } from '../verification/contracts.js';
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
@@ -59,6 +61,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'DURABLE_JOBS', version: JOB_VERSION, persistence: 'DURABLE_JOB_STATE', route: JOB_ROOT, workflowCapability: null },
   // Phase 33: one consistent, hashed snapshot of a project's brief, references, revision and settings (user-stated, not verified).
   { serviceId: 'PROJECT_CONTEXT', version: CONTEXT_VERSION, persistence: 'DERIVED_ON_READ', route: CONTEXT_ROUTE, workflowCapability: null },
+  // Phase 34: independent exact site/building verification and scoped revision diffs (statutory compliance not claimed).
+  { serviceId: 'COMPLEX_VERIFICATION', version: VERIFIER_VERSION, persistence: 'DERIVED_ON_READ', route: VERIFICATION_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

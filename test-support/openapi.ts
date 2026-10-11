@@ -27,6 +27,7 @@ import { ApproveRequestSchema, EmptySchema, ExecuteRequestSchema, PreflightReque
 import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDetailSchema, OperationListSchema, ValidationEvidenceSchema } from '../apps/api/src/lib/revision-repository.js';
 import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REFERENCE_MEDIA_TYPES, ReferenceDetailSchema, ReferenceListQuerySchema, ReferenceListSchema, ReferenceUpdateSchema,
   ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
+import { DiffReportSchema, DiffRequestSchema, VerificationReportSchema, VerificationRequestSchema } from '../apps/api/src/verification/contracts.js';
 import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
@@ -114,6 +115,9 @@ export const CONTRACTS: Record<string, Op> = {
   [`PATCH ${P}/library`]: { body: LibraryPatchSchema, response: LibraryEntrySchema }, [`GET ${P}/brief`]: { query: EmptyQuerySchema, response: BriefCurrentSchema },
   [`GET ${P}/brief/versions`]: { query: PageQuerySchema, response: BriefListSchema }, [`POST ${P}/brief/versions`]: { body: BriefCreateSchema, response: BriefVersionSchema, status: 201 },
   [`GET ${P}/brief/versions/:version`]: { query: EmptyQuerySchema, response: BriefVersionSchema }, [`GET ${P}/context`]: { query: EmptyQuerySchema, response: ContextBundleSchema },
+  // Phase 34 verification (computed on read).
+  [`GET ${R}/verification`]: { query: empty, response: VerificationReportSchema }, [`POST ${R}/verification`]: { body: VerificationRequestSchema, response: VerificationReportSchema },
+  [`POST ${R}/verification/diff`]: { body: DiffRequestSchema, response: DiffReportSchema },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */
