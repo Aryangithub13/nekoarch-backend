@@ -12,6 +12,7 @@ import { sceneDatabaseError } from '../apps/api/src/lib/scene-repository.js';
 import { revisionDatabaseError } from '../apps/api/src/lib/revision-repository.js';
 import { referenceDatabaseError } from '../apps/api/src/lib/reference-repository.js';
 import { jobDatabaseError } from '../apps/api/src/lib/job-repository.js';
+import { accountDatabaseError } from '../apps/api/src/lib/account-repository.js';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import { projectDatabaseError } from '../apps/api/src/lib/project-repository.js';
@@ -212,6 +213,20 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
             return result.rows[0].response;
           } catch (error) {
             jobDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
+        async accountRpc(name, args) {
+          const keys: Record<string, string[]> = { account_read: ['p_action'], account_write: ['p_action','p_input','p_envelope','p_signature'], library_search: ['p_query'],
+            library_write: ['p_action','p_input','p_envelope','p_signature'], brief_read: ['p_action','p_project_id','p_version','p_limit','p_cursor'],
+            brief_write: ['p_action','p_input','p_context','p_envelope','p_signature'], context_read: ['p_project_id'] };
+          const values = keys[name]!.map(key => args[key] ?? (key === 'p_limit' ? 20 : null));
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}(${values.map((_, i) => `$${i + 1}`).join(',')}) response`,
+              values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            accountDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
           }
         },
         async projectRpc(name, args) {

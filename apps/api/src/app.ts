@@ -10,6 +10,7 @@ import { ScenePool } from './scene3d/pool.js';
 import { revisionRoutes } from './routes/revisions.js';
 import { AppearancePool } from './revision/pool.js';
 import { jobRoutes } from './routes/jobs.js';
+import { accountRoutes } from './routes/account.js';
 import { JobRunner } from './jobs/runner.js';
 import { createExecutors } from './jobs/executors.js';
 import { referenceRoutes } from './routes/references.js';
@@ -116,6 +117,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     revisionRoutes(scope, backend, options.env, pools.appearance);
     referenceRoutes(scope, backend, options.env, options.inspectionPool);
     jobRoutes(scope, backend, options.env, runner);
+    accountRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

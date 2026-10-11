@@ -24216,6 +24216,649 @@
     }
    }
   },
+  "/api/library/projects": {
+   "get": {
+    "operationId": "get /api/library/projects",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "allOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "string",
+         "maxLength": 100
+        }
+       ]
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "ACTIVE",
+        "ARCHIVED",
+        "ALL"
+       ],
+       "default": "ACTIVE"
+      }
+     },
+     {
+      "name": "visibility",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "PRIVATE",
+        "PUBLIC"
+       ]
+      }
+     },
+     {
+      "name": "starred",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "true",
+        "false"
+       ]
+      }
+     },
+     {
+      "name": "tag",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+      }
+     },
+     {
+      "name": "sort",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "updated",
+        "created",
+        "title"
+       ],
+       "default": "updated"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 50,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "title": {
+              "type": "string"
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "ACTIVE",
+               "ARCHIVED"
+              ]
+             },
+             "visibility": {
+              "type": "string",
+              "enum": [
+               "PRIVATE",
+               "PUBLIC"
+              ]
+             },
+             "currentRevisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/items/items/properties/id"
+               }
+              ],
+              "nullable": true
+             },
+             "revisionCount": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "createdAt": {
+              "type": "string"
+             },
+             "updatedAt": {
+              "$ref": "#/components/properties/items/items/properties/createdAt"
+             },
+             "archivedAt": {
+              "type": "string",
+              "nullable": true
+             },
+             "starred": {
+              "type": "boolean"
+             },
+             "tags": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+              },
+              "maxItems": 10
+             },
+             "referenceCount": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "briefVersion": {
+              "type": "integer",
+              "minimum": 0
+             }
+            },
+            "required": [
+             "id",
+             "title",
+             "status",
+             "visibility",
+             "currentRevisionId",
+             "revisionCount",
+             "createdAt",
+             "updatedAt",
+             "archivedAt",
+             "starred",
+             "tags",
+             "referenceCount",
+             "briefVersion"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/me/settings": {
+   "get": {
+    "operationId": "get /api/me/settings",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "version": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "settings": {
+           "type": "object",
+           "properties": {
+            "units": {
+             "type": "string",
+             "enum": [
+              "METRIC",
+              "IMPERIAL"
+             ]
+            },
+            "locale": {
+             "type": "string",
+             "enum": [
+              "en",
+              "en-IN",
+              "hi",
+              "hi-IN",
+              "hi-Latn"
+             ]
+            },
+            "currency": {
+             "type": "string",
+             "enum": [
+              "INR"
+             ]
+            },
+            "defaultRegion": {
+             "allOf": [
+              {
+               "type": "string"
+              },
+              {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 100
+              }
+             ],
+             "nullable": true
+            },
+            "defaultBuildingType": {
+             "type": "string",
+             "enum": [
+              "residential",
+              "commercial",
+              "institutional"
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "units",
+            "locale",
+            "currency",
+            "defaultRegion",
+            "defaultBuildingType"
+           ],
+           "additionalProperties": false
+          },
+          "updatedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "isDefault": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "version",
+          "settings",
+          "updatedAt",
+          "isDefault"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "operationId": "patch /api/me/settings",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "settings": {
+          "type": "object",
+          "properties": {
+           "units": {
+            "type": "string",
+            "enum": [
+             "METRIC",
+             "IMPERIAL"
+            ]
+           },
+           "locale": {
+            "type": "string",
+            "enum": [
+             "en",
+             "en-IN",
+             "hi",
+             "hi-IN",
+             "hi-Latn"
+            ]
+           },
+           "currency": {
+            "type": "string",
+            "enum": [
+             "INR"
+            ]
+           },
+           "defaultRegion": {
+            "allOf": [
+             {
+              "type": "string"
+             },
+             {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+             }
+            ],
+            "nullable": true
+           },
+           "defaultBuildingType": {
+            "type": "string",
+            "enum": [
+             "residential",
+             "commercial",
+             "institutional"
+            ],
+            "nullable": true
+           }
+          },
+          "additionalProperties": false
+         }
+        },
+        "required": [
+         "expectedVersion",
+         "settings"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "version": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "settings": {
+           "type": "object",
+           "properties": {
+            "units": {
+             "type": "string",
+             "enum": [
+              "METRIC",
+              "IMPERIAL"
+             ]
+            },
+            "locale": {
+             "type": "string",
+             "enum": [
+              "en",
+              "en-IN",
+              "hi",
+              "hi-IN",
+              "hi-Latn"
+             ]
+            },
+            "currency": {
+             "type": "string",
+             "enum": [
+              "INR"
+             ]
+            },
+            "defaultRegion": {
+             "allOf": [
+              {
+               "type": "string"
+              },
+              {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 100
+              }
+             ],
+             "nullable": true
+            },
+            "defaultBuildingType": {
+             "type": "string",
+             "enum": [
+              "residential",
+              "commercial",
+              "institutional"
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "units",
+            "locale",
+            "currency",
+            "defaultRegion",
+            "defaultBuildingType"
+           ],
+           "additionalProperties": false
+          },
+          "updatedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "isDefault": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "version",
+          "settings",
+          "updatedAt",
+          "isDefault"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/me/usage": {
+   "get": {
+    "operationId": "get /api/me/usage",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projects": {
+           "type": "object",
+           "properties": {
+            "active": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "archived": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "active",
+            "archived"
+           ],
+           "additionalProperties": false
+          },
+          "revisions": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "references": {
+           "type": "object",
+           "properties": {
+            "count": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "storedBytes": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "count",
+            "storedBytes"
+           ],
+           "additionalProperties": false
+          },
+          "jobs": {
+           "type": "object",
+           "properties": {
+            "active": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "submittedLast24h": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "active",
+            "submittedLast24h"
+           ],
+           "additionalProperties": false
+          },
+          "limits": {
+           "type": "object",
+           "properties": {
+            "projects": {
+             "type": "integer"
+            },
+            "referenceBytes": {
+             "type": "integer"
+            },
+            "activeJobs": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "projects",
+            "referenceBytes",
+            "activeJobs"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "projects",
+          "revisions",
+          "references",
+          "jobs",
+          "limits"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/plans": {
    "post": {
     "operationId": "post /api/plans",
@@ -25767,6 +26410,2018 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ProjectDetail"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/brief": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/brief",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "version": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "current": {
+           "type": "object",
+           "properties": {
+            "projectId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "version": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "brief": {
+             "type": "object",
+             "properties": {
+              "summary": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 2000
+                }
+               ]
+              },
+              "site": {
+               "type": "object",
+               "properties": {
+                "address": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 300
+                  }
+                 ]
+                },
+                "plot": {
+                 "type": "object",
+                 "properties": {
+                  "width": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 100000
+                  },
+                  "depth": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 100000
+                  },
+                  "unit": {
+                   "type": "string",
+                   "enum": [
+                    "m",
+                    "ft"
+                   ]
+                  }
+                 },
+                 "required": [
+                  "width",
+                  "depth",
+                  "unit"
+                 ],
+                 "additionalProperties": false
+                },
+                "orientationNote": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 300
+                  }
+                 ]
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "program": {
+               "type": "object",
+               "properties": {
+                "floors": {
+                 "type": "integer",
+                 "minimum": 1,
+                 "maximum": 200
+                },
+                "bedrooms": {
+                 "type": "integer",
+                 "minimum": 0,
+                 "maximum": 100
+                },
+                "bathrooms": {
+                 "type": "integer",
+                 "minimum": 0,
+                 "maximum": 100
+                },
+                "notes": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 1000
+                  }
+                 ]
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "budget": {
+               "type": "object",
+               "properties": {
+                "amount": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 1000000000000
+                },
+                "currency": {
+                 "type": "string",
+                 "enum": [
+                  "INR"
+                 ]
+                },
+                "flexibility": {
+                 "type": "string",
+                 "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                 ]
+                }
+               },
+               "required": [
+                "amount",
+                "currency",
+                "flexibility"
+               ],
+               "additionalProperties": false
+              },
+              "style": {
+               "type": "object",
+               "properties": {
+                "keywords": {
+                 "type": "array",
+                 "items": {
+                  "allOf": [
+                   {
+                    "type": "string"
+                   },
+                   {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                   }
+                  ]
+                 },
+                 "maxItems": 10,
+                 "default": []
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "constraints": {
+               "type": "array",
+               "items": {
+                "allOf": [
+                 {
+                  "type": "string"
+                 },
+                 {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                 }
+                ]
+               },
+               "maxItems": 20,
+               "default": []
+              },
+              "referenceIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/projectId"
+               },
+               "maxItems": 20,
+               "default": []
+              }
+             },
+             "required": [
+              "summary"
+             ],
+             "additionalProperties": false
+            },
+            "briefHash": {
+             "type": "string",
+             "pattern": "^[a-f0-9]{64}$"
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "type": "string"
+            },
+            "provenance": {
+             "type": "object",
+             "properties": {
+              "source": {
+               "type": "string",
+               "enum": [
+                "USER_STATED"
+               ]
+              },
+              "verified": {
+               "type": "boolean",
+               "enum": [
+                false
+               ]
+              }
+             },
+             "required": [
+              "source",
+              "verified"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "siteVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "budgetVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "codeCompliance": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "ownershipVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "siteVerified",
+              "budgetVerified",
+              "codeCompliance",
+              "ownershipVerified"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "projectId",
+            "version",
+            "brief",
+            "briefHash",
+            "createdBy",
+            "createdAt",
+            "provenance",
+            "claims"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          }
+         },
+         "required": [
+          "projectId",
+          "version",
+          "current"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/brief/versions": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/brief/versions",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "version": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "briefHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+             },
+             "createdBy": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "version",
+             "briefHash",
+             "createdBy",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "projectId",
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/brief/versions",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "expectedVersion": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "brief": {
+          "type": "object",
+          "properties": {
+           "summary": {
+            "allOf": [
+             {
+              "type": "string"
+             },
+             {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+             }
+            ]
+           },
+           "site": {
+            "type": "object",
+            "properties": {
+             "address": {
+              "allOf": [
+               {
+                "type": "string"
+               },
+               {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+               }
+              ]
+             },
+             "plot": {
+              "type": "object",
+              "properties": {
+               "width": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 100000
+               },
+               "depth": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 100000
+               },
+               "unit": {
+                "type": "string",
+                "enum": [
+                 "m",
+                 "ft"
+                ]
+               }
+              },
+              "required": [
+               "width",
+               "depth",
+               "unit"
+              ],
+              "additionalProperties": false
+             },
+             "orientationNote": {
+              "allOf": [
+               {
+                "type": "string"
+               },
+               {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+               }
+              ]
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           },
+           "program": {
+            "type": "object",
+            "properties": {
+             "floors": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+             },
+             "bedrooms": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+             },
+             "bathrooms": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+             },
+             "notes": {
+              "allOf": [
+               {
+                "type": "string"
+               },
+               {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+               }
+              ]
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           },
+           "budget": {
+            "type": "object",
+            "properties": {
+             "amount": {
+              "type": "number",
+              "exclusiveMinimum": true,
+              "minimum": 0,
+              "maximum": 1000000000000
+             },
+             "currency": {
+              "type": "string",
+              "enum": [
+               "INR"
+              ]
+             },
+             "flexibility": {
+              "type": "string",
+              "enum": [
+               "LOW",
+               "MEDIUM",
+               "HIGH"
+              ]
+             }
+            },
+            "required": [
+             "amount",
+             "currency",
+             "flexibility"
+            ],
+            "additionalProperties": false
+           },
+           "style": {
+            "type": "object",
+            "properties": {
+             "keywords": {
+              "type": "array",
+              "items": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 40
+                }
+               ]
+              },
+              "maxItems": 10,
+              "default": []
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           },
+           "constraints": {
+            "type": "array",
+            "items": {
+             "allOf": [
+              {
+               "type": "string"
+              },
+              {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 300
+              }
+             ]
+            },
+            "maxItems": 20,
+            "default": []
+           },
+           "referenceIds": {
+            "type": "array",
+            "items": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "maxItems": 20,
+            "default": []
+           }
+          },
+          "required": [
+           "summary"
+          ],
+          "additionalProperties": false
+         }
+        },
+        "required": [
+         "expectedVersion",
+         "brief"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "version": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "brief": {
+           "type": "object",
+           "properties": {
+            "summary": {
+             "allOf": [
+              {
+               "type": "string"
+              },
+              {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 2000
+              }
+             ]
+            },
+            "site": {
+             "type": "object",
+             "properties": {
+              "address": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 300
+                }
+               ]
+              },
+              "plot": {
+               "type": "object",
+               "properties": {
+                "width": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 100000
+                },
+                "depth": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 100000
+                },
+                "unit": {
+                 "type": "string",
+                 "enum": [
+                  "m",
+                  "ft"
+                 ]
+                }
+               },
+               "required": [
+                "width",
+                "depth",
+                "unit"
+               ],
+               "additionalProperties": false
+              },
+              "orientationNote": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 300
+                }
+               ]
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "program": {
+             "type": "object",
+             "properties": {
+              "floors": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 200
+              },
+              "bedrooms": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 100
+              },
+              "bathrooms": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 100
+              },
+              "notes": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 1000
+                }
+               ]
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "budget": {
+             "type": "object",
+             "properties": {
+              "amount": {
+               "type": "number",
+               "exclusiveMinimum": true,
+               "minimum": 0,
+               "maximum": 1000000000000
+              },
+              "currency": {
+               "type": "string",
+               "enum": [
+                "INR"
+               ]
+              },
+              "flexibility": {
+               "type": "string",
+               "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+               ]
+              }
+             },
+             "required": [
+              "amount",
+              "currency",
+              "flexibility"
+             ],
+             "additionalProperties": false
+            },
+            "style": {
+             "type": "object",
+             "properties": {
+              "keywords": {
+               "type": "array",
+               "items": {
+                "allOf": [
+                 {
+                  "type": "string"
+                 },
+                 {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                 }
+                ]
+               },
+               "maxItems": 10,
+               "default": []
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "constraints": {
+             "type": "array",
+             "items": {
+              "allOf": [
+               {
+                "type": "string"
+               },
+               {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+               }
+              ]
+             },
+             "maxItems": 20,
+             "default": []
+            },
+            "referenceIds": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "maxItems": 20,
+             "default": []
+            }
+           },
+           "required": [
+            "summary"
+           ],
+           "additionalProperties": false
+          },
+          "briefHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "createdBy": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "enum": [
+              "USER_STATED"
+             ]
+            },
+            "verified": {
+             "type": "boolean",
+             "enum": [
+              false
+             ]
+            }
+           },
+           "required": [
+            "source",
+            "verified"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "siteVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "budgetVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "codeCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "ownershipVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "siteVerified",
+            "budgetVerified",
+            "codeCompliance",
+            "ownershipVerified"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "projectId",
+          "version",
+          "brief",
+          "briefHash",
+          "createdBy",
+          "createdAt",
+          "provenance",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/brief/versions/{version}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/brief/versions/:version",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "version",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "version": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "brief": {
+           "type": "object",
+           "properties": {
+            "summary": {
+             "allOf": [
+              {
+               "type": "string"
+              },
+              {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 2000
+              }
+             ]
+            },
+            "site": {
+             "type": "object",
+             "properties": {
+              "address": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 300
+                }
+               ]
+              },
+              "plot": {
+               "type": "object",
+               "properties": {
+                "width": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 100000
+                },
+                "depth": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 100000
+                },
+                "unit": {
+                 "type": "string",
+                 "enum": [
+                  "m",
+                  "ft"
+                 ]
+                }
+               },
+               "required": [
+                "width",
+                "depth",
+                "unit"
+               ],
+               "additionalProperties": false
+              },
+              "orientationNote": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 300
+                }
+               ]
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "program": {
+             "type": "object",
+             "properties": {
+              "floors": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 200
+              },
+              "bedrooms": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 100
+              },
+              "bathrooms": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 100
+              },
+              "notes": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 1000
+                }
+               ]
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "budget": {
+             "type": "object",
+             "properties": {
+              "amount": {
+               "type": "number",
+               "exclusiveMinimum": true,
+               "minimum": 0,
+               "maximum": 1000000000000
+              },
+              "currency": {
+               "type": "string",
+               "enum": [
+                "INR"
+               ]
+              },
+              "flexibility": {
+               "type": "string",
+               "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+               ]
+              }
+             },
+             "required": [
+              "amount",
+              "currency",
+              "flexibility"
+             ],
+             "additionalProperties": false
+            },
+            "style": {
+             "type": "object",
+             "properties": {
+              "keywords": {
+               "type": "array",
+               "items": {
+                "allOf": [
+                 {
+                  "type": "string"
+                 },
+                 {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                 }
+                ]
+               },
+               "maxItems": 10,
+               "default": []
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "constraints": {
+             "type": "array",
+             "items": {
+              "allOf": [
+               {
+                "type": "string"
+               },
+               {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+               }
+              ]
+             },
+             "maxItems": 20,
+             "default": []
+            },
+            "referenceIds": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "maxItems": 20,
+             "default": []
+            }
+           },
+           "required": [
+            "summary"
+           ],
+           "additionalProperties": false
+          },
+          "briefHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "createdBy": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "enum": [
+              "USER_STATED"
+             ]
+            },
+            "verified": {
+             "type": "boolean",
+             "enum": [
+              false
+             ]
+            }
+           },
+           "required": [
+            "source",
+            "verified"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "siteVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "budgetVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "codeCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "ownershipVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "siteVerified",
+            "budgetVerified",
+            "codeCompliance",
+            "ownershipVerified"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "projectId",
+          "version",
+          "brief",
+          "briefHash",
+          "createdBy",
+          "createdAt",
+          "provenance",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/context": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/context",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "contextVersion": {
+           "type": "string",
+           "enum": [
+            "project-context-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "generatedAt": {
+           "type": "string"
+          },
+          "contextHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "project": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "title": {
+             "type": "string"
+            },
+            "status": {
+             "type": "string",
+             "enum": [
+              "ACTIVE",
+              "ARCHIVED"
+             ]
+            },
+            "visibility": {
+             "type": "string",
+             "enum": [
+              "PRIVATE",
+              "PUBLIC"
+             ]
+            },
+            "revisionCount": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "updatedAt": {
+             "$ref": "#/components/properties/generatedAt"
+            },
+            "starred": {
+             "type": "boolean"
+            },
+            "tags": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+             }
+            }
+           },
+           "required": [
+            "id",
+            "title",
+            "status",
+            "visibility",
+            "revisionCount",
+            "updatedAt",
+            "starred",
+            "tags"
+           ],
+           "additionalProperties": false
+          },
+          "settings": {
+           "type": "object",
+           "properties": {
+            "version": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "settings": {
+             "type": "object",
+             "properties": {
+              "units": {
+               "type": "string",
+               "enum": [
+                "METRIC",
+                "IMPERIAL"
+               ]
+              },
+              "locale": {
+               "type": "string",
+               "enum": [
+                "en",
+                "en-IN",
+                "hi",
+                "hi-IN",
+                "hi-Latn"
+               ]
+              },
+              "currency": {
+               "type": "string",
+               "enum": [
+                "INR"
+               ]
+              },
+              "defaultRegion": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 100
+                }
+               ],
+               "nullable": true
+              },
+              "defaultBuildingType": {
+               "type": "string",
+               "enum": [
+                "residential",
+                "commercial",
+                "institutional"
+               ],
+               "nullable": true
+              }
+             },
+             "required": [
+              "units",
+              "locale",
+              "currency",
+              "defaultRegion",
+              "defaultBuildingType"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "version",
+            "settings"
+           ],
+           "additionalProperties": false
+          },
+          "brief": {
+           "type": "object",
+           "properties": {
+            "projectId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "version": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "brief": {
+             "type": "object",
+             "properties": {
+              "summary": {
+               "allOf": [
+                {
+                 "type": "string"
+                },
+                {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 2000
+                }
+               ]
+              },
+              "site": {
+               "type": "object",
+               "properties": {
+                "address": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 300
+                  }
+                 ]
+                },
+                "plot": {
+                 "type": "object",
+                 "properties": {
+                  "width": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 100000
+                  },
+                  "depth": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 100000
+                  },
+                  "unit": {
+                   "type": "string",
+                   "enum": [
+                    "m",
+                    "ft"
+                   ]
+                  }
+                 },
+                 "required": [
+                  "width",
+                  "depth",
+                  "unit"
+                 ],
+                 "additionalProperties": false
+                },
+                "orientationNote": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 300
+                  }
+                 ]
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "program": {
+               "type": "object",
+               "properties": {
+                "floors": {
+                 "type": "integer",
+                 "minimum": 1,
+                 "maximum": 200
+                },
+                "bedrooms": {
+                 "type": "integer",
+                 "minimum": 0,
+                 "maximum": 100
+                },
+                "bathrooms": {
+                 "type": "integer",
+                 "minimum": 0,
+                 "maximum": 100
+                },
+                "notes": {
+                 "allOf": [
+                  {
+                   "type": "string"
+                  },
+                  {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 1000
+                  }
+                 ]
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "budget": {
+               "type": "object",
+               "properties": {
+                "amount": {
+                 "type": "number",
+                 "exclusiveMinimum": true,
+                 "minimum": 0,
+                 "maximum": 1000000000000
+                },
+                "currency": {
+                 "type": "string",
+                 "enum": [
+                  "INR"
+                 ]
+                },
+                "flexibility": {
+                 "type": "string",
+                 "enum": [
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                 ]
+                }
+               },
+               "required": [
+                "amount",
+                "currency",
+                "flexibility"
+               ],
+               "additionalProperties": false
+              },
+              "style": {
+               "type": "object",
+               "properties": {
+                "keywords": {
+                 "type": "array",
+                 "items": {
+                  "allOf": [
+                   {
+                    "type": "string"
+                   },
+                   {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                   }
+                  ]
+                 },
+                 "maxItems": 10,
+                 "default": []
+                }
+               },
+               "additionalProperties": false,
+               "default": {}
+              },
+              "constraints": {
+               "type": "array",
+               "items": {
+                "allOf": [
+                 {
+                  "type": "string"
+                 },
+                 {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                 }
+                ]
+               },
+               "maxItems": 20,
+               "default": []
+              },
+              "referenceIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/projectId"
+               },
+               "maxItems": 20,
+               "default": []
+              }
+             },
+             "required": [
+              "summary"
+             ],
+             "additionalProperties": false
+            },
+            "briefHash": {
+             "$ref": "#/components/properties/contextHash"
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "$ref": "#/components/properties/generatedAt"
+            },
+            "provenance": {
+             "type": "object",
+             "properties": {
+              "source": {
+               "type": "string",
+               "enum": [
+                "USER_STATED"
+               ]
+              },
+              "verified": {
+               "type": "boolean",
+               "enum": [
+                false
+               ]
+              }
+             },
+             "required": [
+              "source",
+              "verified"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "siteVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "budgetVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "codeCompliance": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "ownershipVerified": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "siteVerified",
+              "budgetVerified",
+              "codeCompliance",
+              "ownershipVerified"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "projectId",
+            "version",
+            "brief",
+            "briefHash",
+            "createdBy",
+            "createdAt",
+            "provenance",
+            "claims"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "references": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "purpose": {
+              "type": "string",
+              "enum": [
+               "SITE_PHOTO",
+               "SITE_PLAN",
+               "SKETCH",
+               "INSPIRATION",
+               "DOCUMENT",
+               "OTHER"
+              ]
+             },
+             "displayName": {
+              "type": "string",
+              "nullable": true
+             },
+             "mediaType": {
+              "type": "string",
+              "enum": [
+               "image/png",
+               "image/jpeg",
+               "image/webp",
+               "application/pdf"
+              ]
+             },
+             "storedSha256": {
+              "$ref": "#/components/properties/contextHash"
+             },
+             "boundRevisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             },
+             "currency": {
+              "type": "string",
+              "enum": [
+               "CURRENT",
+               "STALE",
+               "PROJECT_SCOPED"
+              ]
+             },
+             "linkedFromBrief": {
+              "type": "boolean"
+             }
+            },
+            "required": [
+             "id",
+             "purpose",
+             "displayName",
+             "mediaType",
+             "storedSha256",
+             "boundRevisionId",
+             "currency",
+             "linkedFromBrief"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "currentRevision": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "qaStatus": {
+             "type": "string",
+             "enum": [
+              "PASS",
+              "PASS_WITH_WARNINGS",
+              "FAIL"
+             ]
+            },
+            "modelHash": {
+             "$ref": "#/components/properties/contextHash"
+            },
+            "createdAt": {
+             "$ref": "#/components/properties/generatedAt"
+            }
+           },
+           "required": [
+            "id",
+            "revisionNumber",
+            "qaStatus",
+            "modelHash",
+            "createdAt"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "activeJobs": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "kind": {
+              "type": "string",
+              "enum": [
+               "SCENE_COMPILE",
+               "OPTIMIZATION_STUDY",
+               "REVISION_EXECUTE"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "QUEUED",
+               "RUNNING",
+               "SUCCEEDED",
+               "FAILED",
+               "CANCELLED"
+              ]
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/generatedAt"
+             }
+            },
+            "required": [
+             "id",
+             "kind",
+             "status",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "siteVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "budgetVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "codeCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "ownershipVerified": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "siteVerified",
+            "budgetVerified",
+            "codeCompliance",
+            "ownershipVerified"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "contextVersion",
+          "projectId",
+          "generatedAt",
+          "contextHash",
+          "project",
+          "settings",
+          "brief",
+          "references",
+          "currentRevision",
+          "activeJobs",
+          "claims"
+         ],
+         "additionalProperties": false
         }
        }
       }
@@ -28861,6 +31516,99 @@
           "updatedAt",
           "finishedAt",
           "request"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/library": {
+   "patch": {
+    "operationId": "patch /api/projects/:projectId/library",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "starred": {
+          "type": "boolean"
+         },
+         "tags": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+          },
+          "maxItems": 10
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "starred": {
+           "type": "boolean"
+          },
+          "tags": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+           }
+          },
+          "updatedAt": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "projectId",
+          "starred",
+          "tags",
+          "updatedAt"
          ],
          "additionalProperties": false
         }

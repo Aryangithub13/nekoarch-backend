@@ -10,6 +10,26 @@
   "anonymous": 400
  },
  {
+  "method": "GET",
+  "url": "/api/library/projects",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/me/settings",
+  "anonymous": 401
+ },
+ {
+  "method": "PATCH",
+  "url": "/api/me/settings",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/me/usage",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/plans",
   "anonymous": 400
@@ -47,6 +67,31 @@
  {
   "method": "PATCH",
   "url": "/api/projects/:projectId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/brief",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/brief/versions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/brief/versions",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/brief/versions/:version",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/context",
   "anonymous": 401
  },
  {
@@ -112,6 +157,11 @@
  {
   "method": "POST",
   "url": "/api/projects/:projectId/jobs/:jobId/retry",
+  "anonymous": 401
+ },
+ {
+  "method": "PATCH",
+  "url": "/api/projects/:projectId/library",
   "anonymous": 401
  },
  {

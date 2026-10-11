@@ -27,6 +27,8 @@ import { ApproveRequestSchema, EmptySchema, ExecuteRequestSchema, PreflightReque
 import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDetailSchema, OperationListSchema, ValidationEvidenceSchema } from '../apps/api/src/lib/revision-repository.js';
 import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REFERENCE_MEDIA_TYPES, ReferenceDetailSchema, ReferenceListQuerySchema, ReferenceListSchema, ReferenceUpdateSchema,
   ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
+import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
+  LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
@@ -106,6 +108,12 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/jobs`]: { body: JobRequestSchema, response: JobDetailSchema, status: 202 }, [`GET ${P}/jobs`]: { query: JobListQuerySchema, response: JobListSchema },
   [`GET ${P}/jobs/:jobId`]: { query: JobEmpty, response: JobDetailSchema }, [`GET ${P}/jobs/:jobId/events`]: { query: JobEventsQuerySchema, response: JobEventListSchema },
   [`POST ${P}/jobs/:jobId/cancel`]: { body: JobEmpty, response: JobDetailSchema }, [`POST ${P}/jobs/:jobId/retry`]: { body: JobEmpty, response: JobDetailSchema },
+  // Phase 33 account, library, brief and context.
+  'GET /api/me/settings': { query: EmptyQuerySchema, response: SettingsDocumentSchema }, 'PATCH /api/me/settings': { body: SettingsPatchSchema, response: SettingsDocumentSchema },
+  'GET /api/me/usage': { query: EmptyQuerySchema, response: AccountUsageSchema }, 'GET /api/library/projects': { query: LibraryQuerySchema, response: LibraryListSchema },
+  [`PATCH ${P}/library`]: { body: LibraryPatchSchema, response: LibraryEntrySchema }, [`GET ${P}/brief`]: { query: EmptyQuerySchema, response: BriefCurrentSchema },
+  [`GET ${P}/brief/versions`]: { query: PageQuerySchema, response: BriefListSchema }, [`POST ${P}/brief/versions`]: { body: BriefCreateSchema, response: BriefVersionSchema, status: 201 },
+  [`GET ${P}/brief/versions/:version`]: { query: EmptyQuerySchema, response: BriefVersionSchema }, [`GET ${P}/context`]: { query: EmptyQuerySchema, response: ContextBundleSchema },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */
@@ -134,7 +142,7 @@ export function openApiDocument(routes: { method: string; url: string; anonymous
   for (const r of routes) {
     const op = CONTRACTS[`${r.method} ${r.url}`] ?? {}, path = r.url.replace(/:([A-Za-z]+)/g, '{$1}');
     const params = [...r.url.matchAll(/:([A-Za-z]+)/g)].map(([, name]) => ({ name, in: 'path', required: true,
-      schema: name === 'elementId' ? { type: 'string', pattern: '^bim-[a-f0-9]{40}$' } : { type: 'string', format: 'uuid' } }));
+      schema: name === 'elementId' ? { type: 'string', pattern: '^bim-[a-f0-9]{40}$' } : name === 'version' ? { type: 'integer', minimum: 1 } : { type: 'string', format: 'uuid' } }));
     const query = op.query ? Object.entries((jsonSchema(op.query).properties ?? {}) as Record<string, unknown>).map(([name, schema]) =>
       ({ name, in: 'query', required: ((jsonSchema(op.query!).required ?? []) as string[]).includes(name), schema })) : []; // query params are small: inline
     const ok = op.media ? { description: 'Binary', content: { [op.media]: { schema: { type: 'string', format: 'binary' } } } }
