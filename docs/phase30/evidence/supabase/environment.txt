@@ -1,0 +1,64 @@
+# Disposable Supabase environment for the Phase 30 live acceptance (recorded 2026-10-09T05:47:16Z)
+branch: phase30/supabase-verification  base: 401a470 (tag backend-v1-phase30-complete -> 401a470)
+supabase CLI: 2.117.0
+workdir: scratch copy (git archive HEAD of supabase/config.toml, migrations, seed.sql); project_id designflow-p30-verify; ports api 55321, db 55322, shadow 55320; studio, inbucket, edge runtime, analytics disabled
+selection: SUPABASE_WORKDIR=<scratch> npm run test:supabase (repository runner unchanged; it refuses non-local URLs)
+PostgREST: v16.2 replaced by v16.3 on supabase_rest_designflow-p30-verify only, using a copy of scripts/ensure-local-postgrest.mjs with the container/network names changed
+
+## Containers
+supabase_auth_designflow-p30-verify public.ecr.aws/supabase/gotrue:v2.196.0
+supabase_db_designflow-p30-verify public.ecr.aws/supabase/postgres:17.6.1.167
+supabase_kong_designflow-p30-verify public.ecr.aws/supabase/kong:2.8.1
+supabase_realtime_designflow-p30-verify public.ecr.aws/supabase/realtime:v2.130.0
+supabase_rest_designflow-p30-verify public.ecr.aws/supabase/postgrest:v16.3
+supabase_storage_designflow-p30-verify public.ecr.aws/supabase/storage-api:v1.72.1
+
+## Migrations applied (sha256 of the copied files = committed files)
+copied migrations identical to committed migrations: yes
+f3873f5d0c46c902d8bd4f1f8b72186e95511a334c7337d6ee1462d97f142929  0001_core_tables.sql
+b0569ce5dc1b4a237c0816e4e2b31cc23ea395fa1c00e7a984b3ba25f1b341ca  0002_rate_tables.sql
+e8e993ba34bb22cd68397d3eed60ec7de69f13eb64cefff63b77d778d50a1107  0003_estimates_and_logs.sql
+a2838fdcef4c0f083323da8400f306b3229e68bfbb1c5a7bebd2184867d23447  0004_rls_policies.sql
+d3ceb573e6b73684b620e59c87cf72e7c542874dbb8cd7ef943e5a77a2170ac1  0005_idempotency.sql
+2d79f0c281991db01f840a21c0b0215804b03e0a6ecddf55211f537df2a95979  0006_projects.sql
+8262e653fbd869f6ca1a457c490d17c12e98731849dc5cf51c30a3046f753cf0  0007_quantity_takeoffs.sql
+de77450259f9d760a2b2568c41b2832558e7836345592c043a65a4b2c0c89ac8  0008_construction_calculations.sql
+13d030ebc3def3e04309f0bbbaaacedb10de7704a2aefae2d000a36b85037b0a  0009_boq_costs.sql
+25bc89fa7baf62caaabe4036f5a5f2a1f87388aff9a8515b678103a65140a325  0010_workflows.sql
+11cccdd6288ff7cd19bd2923d73dc5cf93708e214d2998599d63b30166252957  0011_generation_freshness.sql
+46078cfc79594443f48cfaf4f8348e0aae07f59cd7def5081e7929d00e115f0d  0012_conversations.sql
+eb0c20912626c0bbd038733c7e341325270265c3364d13b436d576335802bf07  0013_conversation_serialization.sql
+ba74a7e5d36897d40b7e486ce9ff1ce4fa0305ae72e841875b0d6ddcdbef56a4  0014_structural_analyses.sql
+0f49b9a70bff19a5c46f3190177a31d8feb5bf3a758c4f426e1b4f482e522189  0015_environmental_analyses.sql
+49cc78aca08ee5a50ac2c67672d53259ea2a89a13d93c40e67f2cc4671bcaf7a  0016_building_systems_analyses.sql
+dab86cbbd05c69983da96045591a4af7b6f14e982b309502fd8a2e2b766394f1  0017_specialized_knowledge_analyses.sql
+6901f76b0d3d54f403d96085c36e690812560f56dad361fb7f3630ba9ae8d364  0018_optimization_studies.sql
+bb6471cc96ceb2df202407b5df3e585ba0ef8859c6bfcea0b672478a1d74bdf5  0019_scene_artifacts.sql
+6ff4911e049bcb7e92fc1a3ecbd1c6f750927f689ff75c32ee914698181c8a86  0020_revision_operations.sql
+schema_migrations: 20 rows, max 0020
+
+## Shared developer stack (project_id designflow) — not touched
+before (container/volume list at start):
+supabase_rest_designflow
+supabase_db_designflow
+supabase_studio_designflow
+supabase_pg_meta_designflow
+supabase_storage_designflow
+supabase_realtime_designflow
+supabase_inbucket_designflow
+supabase_auth_designflow
+supabase_kong_designflow
+supabase_db_designflow
+supabase_edge_runtime_designflow
+supabase_storage_designflow
+after:
+supabase_rest_designflow
+supabase_db_designflow
+supabase_studio_designflow
+supabase_pg_meta_designflow
+supabase_storage_designflow
+supabase_realtime_designflow
+supabase_inbucket_designflow
+supabase_auth_designflow
+supabase_kong_designflow
+schema_migrations: 19 rows, max 0019; project_revision_operations exists: false

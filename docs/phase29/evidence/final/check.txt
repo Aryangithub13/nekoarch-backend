@@ -1,0 +1,324 @@
+npm notice run designflow@0.1.0 check
+npm notice run npm run build && npm run typecheck && npm run lint && npm test && npm run test:interpretation && npm run test:conversations
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run designflow@0.1.0 typecheck
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && tsc --noEmit && npm run typecheck:browser -w @designflow/shared && npm run typecheck -w @designflow/generator
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/shared@0.1.0 typecheck:browser
+npm notice run tsc -p tsconfig.browser.json --noEmit
+npm notice run @designflow/generator@0.1.0 typecheck
+npm notice run tsc -p tsconfig.json --noEmit && tsc -p tsconfig.browser.json --noEmit
+npm notice run designflow@0.1.0 lint
+npm notice run eslint .
+npm notice run designflow@0.1.0 test
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && vitest run
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/knowledge.integration.test.ts (11 tests) 21061ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G1: catalog, validation and the golden evaluation over real Phase 23–26 artifacts; replay converges  1121ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G2/G3: an unbound source is NOT_EVALUATED (never a pass) and the discipline scope selects rules  776ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > G6–G8: never "latest", other revisions/projects are 404, inconsistent nested upstream and unknown packs are 422  2478ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > enforces ownership, typed errors and resource limits, and never computes on reads  488ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > Phase 27 specialized-knowledge acceptance > replays idempotent commands, rejects key reuse with another input, and makes analyses STALE (never reused) after the revision advances  811ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and foreign or anonymous reads  1451ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > recomputes revision binding, input and fact identities, pack checksums, upstream rows and claims in SQL  7457ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > converges idempotent replays and concurrent identical writes on one immutable row and pages stably  3034ms
+   ✓ Phase 27 specialized-knowledge persistence on PostgreSQL > returns 503 when the signer is not configured  1334ms
+ ✓ apps/api/tests/systems.integration.test.ts (11 tests) 14204ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B  1785ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts  1732ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > enforces ownership and revision association, reports typed errors and never computes on reads  890ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > replays idempotent analysis commands and rejects key reuse with a different input  361ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads  500ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing  2094ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  1331ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > rolls back the analysis together with a failed receipt and fails closed without a signer  1059ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > rejects a fabricated calculator result before signing or persistence  809ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > charges validation and analysis to the generation quota and reads to the read quota  633ms
+   ✓ Phase 26 migration upgrade from the 0015 schema > applies 0016 over a populated database (including Phase 24 and 25 rows) without changing existing rows, RLS or policies  1962ms
+ ✓ apps/api/tests/optimization.test.ts (62 tests) 11296ms
+   ✓ Phase 28 source eligibility and baseline protection > never mutates the source revision  476ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > MINIMIZE and MAXIMIZE rank in opposite directions  510ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > CANDIDATE_RANGE records bounds; degenerate ranges tie and break canonically  458ms
+   ✓ Phase 28 objectives, normalization and weighted scoring > weight 0 is REPORT_ONLY and leaves scores unchanged  495ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > candidateId is deterministic and independent of objectives  466ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > identical reruns are byte-identical; declaration order does not matter; timings are not hashed  682ms
+   ✓ Phase 28 identity, deduplication, adoption and determinism > adoption edits reproduce candidate parameters and models  343ms
+   ✓ Phase 28 deterministic local search > climbs from the baseline to a local optimum, deterministically  472ms
+   ✓ Phase 28 deterministic local search > 8-variable local search on a two-storey revision stays within its budget  1282ms
+ ✓ apps/api/tests/scene.integration.test.ts (11 tests) 9837ms
+   ✓ Phase 29 scene persistence on PostgreSQL > Phase 29 scene acceptance > validates without compiling, then compiles, validates and persists an immutable READY artifact  696ms
+   ✓ Phase 29 scene persistence on PostgreSQL > Phase 29 scene acceptance > is idempotent, converges identical compiles and never compiles on GET  736ms
+   ✓ Phase 29 scene persistence on PostgreSQL > hashes the manifest identically in TypeScript and SQL  594ms
+   ✓ Phase 29 scene persistence on PostgreSQL > replays a signed genuine write onto the same artifact; denies unsigned, forged-signature and foreign writes  614ms
+   ✓ Phase 29 scene persistence on PostgreSQL > rejects forged model hash, forged artifact hash, tampered bytes, missing coverage and unvalidated scenes in SQL  1367ms
+   ✓ Phase 29 scene persistence on PostgreSQL > rejects missing coverage on a revision with no artifact yet, then accepts the genuine scene (positive control)  1057ms
+   ✓ Phase 29 scene persistence on PostgreSQL > keeps artifacts and bytes immutable, READY-only and unreachable except through the owner-scoped RPC  472ms
+   ✓ Phase 29 scene persistence on PostgreSQL > stores nothing when the worker crashes, times out, returns unvalidated output or the queue is full  3144ms
+ ✓ apps/api/tests/environmental.integration.test.ts (10 tests) 9711ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > Phase 25 environmental acceptance > analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B  1267ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > Phase 25 environmental acceptance > enforces ownership and revision association, reports typed errors and never computes on reads  1209ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads  376ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims  953ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  1085ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > rolls back the analysis together with a failed receipt and fails closed without a signer  850ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > rejects a fabricated calculator result before signing or persistence  507ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > charges validation and analysis to the generation quota and reads to the read quota  470ms
+   ✓ Phase 25 migration upgrade from the 0014 schema > applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies  1803ms
+ ✓ apps/api/tests/bim.integration.test.ts (4 tests) 7344ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > enforces owner-only BIM/IFC downloads and redacted failure envelopes  685ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses every element page  1435ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > traverses filtered relationships and rejects invalid pagination queries  3436ms
+   ✓ Phase 23 real PostgreSQL acceptance > Phase 23 BIM acceptance > compares revisions while preserving immutable snapshots and project isolation  676ms
+ ✓ apps/api/tests/optimization.integration.test.ts (15 tests) 7664ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > validates without computing or persisting, then runs and persists an advisory study  695ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > paginates studies stably  422ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > Phase 28 optimization acceptance > adoption goes only through the existing revision path and reproduces the candidate model; studies then become STALE  702ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > hashes inputs and results identically in TypeScript and SQL  460ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > accepts a signed recomputing variant; denies direct writes, unsigned, forged or foreign RPCs and foreign/anonymous reads  454ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > rejects forged binding, input, result and candidate identities with P2803 and stores nothing  641ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > refuses studies that claim more than the bounded result, even with recomputed hashes  505ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > keeps rows immutable, converges concurrent identical writes and refuses a different result for an identical input  547ms
+   ✓ Phase 28 optimization persistence on PostgreSQL > worker pool failures over HTTP store nothing > timeout → 503 OPTIMIZATION_WORKER_TIMEOUT; overflow → 503 OPTIMIZATION_QUEUE_FULL  1607ms
+ ✓ apps/api/tests/structural.integration.test.ts (14 tests) 6717ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > analyses revision A, then a real west-wing edit makes A stale for revision B without rewriting it  1254ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > enforces ownership, revision association and redacted structural error envelopes  562ms
+   ✓ Phase 24 structural persistence on PostgreSQL > Phase 24 structural acceptance > replays idempotent analysis commands and rejects key reuse with a different input  310ms
+   ✓ Phase 24 structural persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  339ms
+   ✓ Phase 24 structural persistence on PostgreSQL > A05: supported-size input that expands past the analysis limit is a typed 422 on both routes; the limit itself analyses  797ms
+   ✓ Phase 24 migration upgrade from the 0013 schema > applies 0014 over a populated database without changing existing rows, RLS or policies  1312ms
+ ✓ apps/api/tests/solver-v2.integration.test.ts (10 tests) 5259ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-L-site: accepts V2 orthogonal sites through immutable revisions  415ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > B-U-site: accepts V2 orthogonal sites through immutable revisions  308ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > D: persists coordinated two-storey stairs and actual entrance reachability  350ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > E: records a measured privacy comparison over the same candidate schedule  816ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > F: preserves actual window and facade evidence without physical simulation claims  578ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > H: generates, audits, persists and costs V2 with honest parking coverage and matching workflow versions  782ms
+   ✓ Phase 19 HTTP acceptance on real PostgreSQL > protects ownership, strict input, changed-command identity, freshness and interpreter boundaries for V2  876ms
+ ✓ apps/api/tests/workflows.integration.test.ts (19 tests) 5364ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > executes COMPLETE_BUILDING with one canonical chain and preserves partial cost coverage  693ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > reuses revision, QA, takeoff and construction and executes only missing cost  698ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > preserves upstream artifacts and reports a downstream domain failure precisely  388ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > retains required outputs when optional cost fails and optional 3D is unavailable  402ms
+   ✓ workflow persistence, recovery, atomic steps and owner security > avoids upstream engine calls on source reuse and records a reviewable real manifest  543ms
+ ✓ packages/generator/tests/solver-v2.test.ts (30 tests) 4837ms
+   ✓ Precision Solver V2 geometry and independent evidence > accepts real rectangle site output  383ms
+   ✓ Precision Solver V2 geometry and independent evidence > exposes geometric privacy/exposure metrics with simulation limitations and real openings  482ms
+   ✓ Precision Solver V2 geometry and independent evidence > enforces explicit hard separation and independently reconstructed clear room minima  484ms
+ ✓ packages/generator/tests/furniture-pipeline.test.ts (15 tests) 2127ms
+   ✓ furniture through the public generation pipeline > preserves furnishing and geometry invariants across seeds: 'maximum footprint and room count'  670ms
+ ✓ apps/api/tests/costs.integration.test.ts (13 tests) 5142ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > persists an exact BOQ with hashes and all ancestors unchanged  312ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > converges concurrent keyed/keyless costs and replays after later rate/policy versions  357ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > lists only summaries with bounded stable pagination  369ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > keeps costs owner-private even for public projects and isolates identical keys across users  485ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > independently checks ancestor identity, source versions, hashes and monetary reconciliation  502ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > enforces composite source-chain and snapshot checks even for privileged inserts  450ms
+   ✓ cost persistence, signatures, PostgreSQL transactions and RLS > preserves historical estimates and separates unversioned book/policy changes in fingerprints  421ms
+ ✓ apps/api/tests/optimization-pool.test.ts (9 tests) 5048ms
+   ✓ Phase 28 optimization worker pool > a worker produces the byte-identical study the in-process core produces, on every worker  968ms
+   ✓ Phase 28 optimization worker pool > bounds the queue: overflow is refused immediately, never started  316ms
+   ✓ Phase 28 optimization worker pool > keeps the main event loop responsive while a heavy study runs  3122ms
+ ✓ apps/api/tests/environmental.test.ts (102 tests) 4722ms
+   ✓ Phase 25 environmental model on native architecture > v2: zones, envelope, independent validation and analysis  333ms
+   ✓ Phase 25 environmental model on native architecture > maximum-24: zones, envelope, independent validation and analysis  314ms
+   ✓ Phase 25 environmental model on native architecture > leaves Phase 23 BIM and IFC output untouched  333ms
+ ✓ apps/api/tests/freshness.integration.test.ts (13 tests) 4809ms
+   ✓ generation freshness on real PostgreSQL > A/B/C/A/D changes real rooms/site/current identity and preserves deterministic return to A  824ms
+   ✓ generation freshness on real PostgreSQL > replays the exact durable attempt but rejects changed requirements, seed, base and solver options  303ms
+   ✓ generation freshness on real PostgreSQL > workflow changed-input sequences execute and same-key changed request conflicts without stale reuse  515ms
+   ✓ generation freshness on real PostgreSQL > keeps R1 takeoff/construction/cost historical and returns explicit R2 absence  718ms
+   ✓ generation freshness on real PostgreSQL > serializes competing generations and rejects a stale base without moving current  364ms
+   ✓ generation freshness on real PostgreSQL > independently verifies signed input/output hashes, seed and execution identity in the database  339ms
+ ✓ packages/generator/tests/blueprint.test.ts (137 tests) 3438ms
+ ✓ apps/api/tests/conversations.integration.test.ts (18 tests) 3739ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  404ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  467ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > persists unresolved relative moves until explicit allocation and accepts native clarification repairs  390ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  725ms
+ ✓ apps/api/tests/projects.integration.test.ts (23 tests) 3120ms
+ ✓ apps/api/tests/scene3d.test.ts (23 tests) 3444ms
+   ✓ Phase 29 scene compiler — geometry fidelity > compiles every supported fixture to a scene the independent validator accepts  360ms
+   ✓ Phase 29 scene compiler — bounded refusals > enforces object, triangle, vertex, byte, extent and navigation budgets  532ms
+ ✓ apps/api/tests/takeoffs.integration.test.ts (10 tests) 3060ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > persists exact takeoff, reads it, preserves revision and acceptance QA without re-auditing  411ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > converges concurrent creates with same, different and absent keys on one artifact  661ms
+   ✓ immutable takeoffs on PostgreSQL transactions and RLS > keeps options and revisions distinct, paginates summaries and replays after architecture advances  677ms
+ ✓ apps/api/tests/bim.test.ts (37 tests) 3170ms
+   ✓ Phase 23 semantic BIM > projects v2 without changing historical geometry or hash  477ms
+   ✓ Phase 23 semantic BIM > projects setback without changing historical geometry or hash  409ms
+ ✓ apps/api/tests/construction.integration.test.ts (9 tests) 2860ms
+   ✓ construction persistence on PostgreSQL transactions and RLS > keeps specification versions, options and takeoffs distinct with stable pagination  489ms
+ ✓ apps/api/tests/parametric.integration.test.ts (1 test) 1932ms
+   ✓ Phase 22 real PostgreSQL acceptance > Phase 22: signed L/setback revision, exact proposal approval, immutable ancestry, concurrency, owner isolation and quantities  1143ms
+ ✓ apps/api/tests/systems.test.ts (36 tests) 2772ms
+   ✓ Phase 26 plumbing and drainage > known answer: a 10 m run at 2 % falls exactly 200 mm  316ms
+   ✓ Phase 26 independent validators reject forged output > rejects malformed, misidentified or foreign calculator output before validation  556ms
+ ✓ apps/api/tests/repair-concurrency.integration.test.ts (8 tests) 1117ms
+ ✓ apps/api/tests/structural.test.ts (115 tests) 2598ms
+   ✓ Phase 24 identity, mapping and Phase 23 preservation > never mutates architecture, BIM or IFC output  457ms
+ ✓ packages/quantity-takeoff/tests/takeoff.test.ts (13 tests) 2353ms
+   ✓ deterministic geometric takeoff > reconciles a fixed-seed generated corpus and independently checks Phase 9/11 geometry  1910ms
+ ✓ apps/api/tests/ai-orchestration.integration.test.ts (8 tests) 2173ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > local protocol provider → strict intent → exact approval → V2 solver → real QA → signed immutable revision  595ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > preferred provider offline → bounded deterministic fallback → correct signed revision  386ms
+   ✓ Phase 21 real HTTP, durable leases, solver, QA and signed immutable revisions > LOCAL_ONLY with configured remote prevents all remote calls and completes the same request  368ms
+ ✓ apps/api/tests/knowledge.test.ts (23 tests) 2090ms
+   ✓ Phase 27 facts and provenance (project-facts-v1) > extracts nothing from an unbound source and rejects inconsistent transitive upstream bindings  649ms
+   ✓ Phase 27 golden G1 (design §22) and independent result validation > G2/G3: unbound sources are NOT_EVALUATED, scope selects rules, and both validate  646ms
+ ✓ packages/blueprint-qa/tests/differential.test.ts (58 tests) 1703ms
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1598ms
+ ✓ supabase/tests/database.test.ts (17 tests) 1479ms
+ ✓ apps/api/tests/scene-pool.test.ts (5 tests) 1322ms
+   ✓ Phase 29 scene worker pool > compiles in a real worker byte-identically to the in-process compiler, off the request thread  487ms
+   ✓ Phase 29 scene worker pool > terminates a timed-out worker and refuses queue overflow immediately  404ms
+   ✓ Phase 29 scene worker pool > drains on close: queued jobs are refused, running jobs finish, later jobs are unavailable  315ms
+ ✓ apps/api/tests/hardening.integration.test.ts (11 tests) 1011ms
+ ✓ apps/api/tests/generation.integration.test.ts (9 tests) 968ms
+ ✓ apps/api/tests/generation.test.ts (36 tests) 379ms
+ ✓ apps/api/tests/backend.integration.test.ts (14 tests) 950ms
+ ✓ packages/generator/tests/parametric.test.ts (34 tests) 815ms
+ ✓ packages/shared/tests/building-v2-model.test.ts (82 tests) 316ms
+ ✓ apps/api/tests/hardening.test.ts (38 tests) 307ms
+(node:1817393) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ apps/api/tests/foundation.test.ts (30 tests) 353ms
+ ✓ packages/blueprint-qa/tests/circulation-stairs.test.ts (29 tests) 616ms
+ ✓ packages/generator/tests/building-v2-compatibility.test.ts (16 tests) 246ms
+ ✓ packages/generator/tests/generate.test.ts (35 tests) 240ms
+ ✓ apps/api/tests/supabase-adapter.test.ts (36 tests) 187ms
+ ✓ apps/api/tests/repair-contracts.test.ts (11 tests) 152ms
+ ✓ packages/blueprint-qa/tests/geometry-coverage.test.ts (17 tests) 395ms
+   ✓ general V2 geometry and honest coverage > bounds a dense adversarial duplicate-wall report and declares truncation  331ms
+ ✓ apps/api/tests/freshness.test.ts (7 tests) 137ms
+ ✓ packages/shared/tests/repair-resource.test.ts (2 tests) 174ms
+ ✓ packages/boq-cost/tests/cost.test.ts (26 tests) 338ms
+ ✓ apps/api/tests/repair-conversation.test.ts (21 tests) 128ms
+ ✓ packages/construction-calculations/tests/construction.test.ts (25 tests) 302ms
+ ✓ packages/blueprint-qa/tests/audit.test.ts (57 tests) 244ms
+ ✓ apps/api/tests/conversations.test.ts (34 tests) 238ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 215ms
+ ✓ packages/blueprint-qa/tests/repair-geometry.test.ts (21 tests) 180ms
+ ✓ packages/shared/tests/contracts.test.ts (411 tests) 55ms
+ ✓ apps/api/tests/ai-transport.test.ts (13 tests) 154ms
+ ✓ packages/generator/tests/parametric-quantities.test.ts (1 test) 112ms
+ ✓ packages/blueprint-qa/tests/rules.test.ts (15 tests) 118ms
+ ✓ packages/generator/tests/input.test.ts (167 tests) 39ms
+ ✓ apps/api/tests/ai-orchestration.test.ts (86 tests) 109ms
+ ✓ packages/generator/tests/invariants.test.ts (55 tests) 41ms
+ ✓ packages/blueprint-qa/tests/boundary.test.ts (1 test) 121ms
+ ✓ packages/shared/tests/building-v2-adapter.test.ts (16 tests) 27ms
+ ✓ apps/api/tests/estimate-service.test.ts (29 tests) 56ms
+ ✓ packages/generator/tests/furniture.test.ts (32 tests) 21ms
+ ✓ packages/shared/tests/building-v2-precision.test.ts (65 tests) 22ms
+ ✓ apps/api/tests/workflows.test.ts (32 tests) 31ms
+ ✓ apps/api/tests/ai-remote.test.ts (13 tests) 22ms
+ ✓ packages/generator/tests/geometry.test.ts (4 tests) 7ms
+ ✓ apps/api/tests/postgres-harness.test.ts (2 tests) 5ms
+
+ Test Files  73 passed (73)
+      Tests  2556 passed (2556)
+   Start at  23:14:46
+   Duration  219.39s (transform 2.25s, setup 0ms, collect 27.49s, tests 178.94s, environment 11ms, prepare 3.66s)
+
+npm notice run designflow@0.1.0 test:interpretation
+npm notice run npm run build && vitest run apps/api/tests/interpretation.test.ts apps/api/tests/interpretation.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/interpretation.integration.test.ts (13 tests) 1672ms
+ ✓ apps/api/tests/interpretation.test.ts (120 tests) 176ms
+
+ Test Files  2 passed (2)
+      Tests  133 passed (133)
+   Start at  23:18:46
+   Duration  4.40s (transform 996ms, setup 0ms, collect 2.17s, tests 1.85s, environment 0ms, prepare 100ms)
+
+npm notice run designflow@0.1.0 test:conversations
+npm notice run npm run build && vitest run apps/api/tests/conversations.test.ts apps/api/tests/conversations.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/conversations.integration.test.ts (18 tests) 3791ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision  404ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > B/E: modifies an L-site V2 kitchen without losing site, native options, counts, floor or seed  474ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > persists unresolved relative moves until explicit allocation and accepts native clarification repairs  431ms
+   ✓ Phase 20 real PostgreSQL conversation acceptance > requires fresh exact proposal approval and permits explicit same-project revision restore  758ms
+ ✓ apps/api/tests/conversations.test.ts (34 tests) 240ms
+
+ Test Files  2 passed (2)
+      Tests  52 passed (52)
+   Start at  23:19:10
+   Duration  6.41s (transform 1.05s, setup 0ms, collect 1.99s, tests 4.03s, environment 0ms, prepare 110ms)
+

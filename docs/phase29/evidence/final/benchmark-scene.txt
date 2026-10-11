@@ -1,0 +1,295 @@
+npm notice run designflow@0.1.0 benchmark:scene
+npm notice run npm run build && node --import tsx scripts/benchmark-scene.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+{
+ "generatedBy": "scripts/benchmark-scene.ts",
+ "node": "v26.10.0",
+ "cpus": 12,
+ "limits": {
+  "objects": 2048,
+  "triangles": 200000,
+  "vertices": 400000,
+  "glbBytes": 16777216,
+  "manifestBytes": 2097152,
+  "navigationNodes": 512,
+  "extentMm": 800000,
+  "compileDeadlineMs": 20000
+ },
+ "poolDefaults": {
+  "size": 2,
+  "queueLimit": 8,
+  "timeoutMs": 20000,
+  "maxOldGenerationSizeMb": 512
+ },
+ "results": [
+  {
+   "name": "single",
+   "sourceEntities": 39,
+   "objects": 52,
+   "nodes": 61,
+   "drawCalls": 52,
+   "triangles": 1076,
+   "vertices": 2152,
+   "materials": 7,
+   "rawMeshBytes": 58104,
+   "glbBytes": 117904,
+   "manifestBytes": 52863,
+   "compileMs": 53.68,
+   "stagesMs": {
+    "sourceAndBim": 40.71,
+    "geometry": 6.08,
+    "assembleAndSerialize": 6.88
+   },
+   "validateMs": 48.14,
+   "validatorChecks": 9565,
+   "validation": "VALID",
+   "khronos": {
+    "errors": 0,
+    "warnings": 0,
+    "ms": 49.68
+   },
+   "repeatedCompileMs": [
+    55.92,
+    48.73,
+    42.86,
+    44.31,
+    39.51
+   ],
+   "repeatedByteIdentical": true,
+   "heapDeltaMb": -14.46,
+   "rssMb": 184.24,
+   "base64RoundTripAndShaMs": 0.14,
+   "shaMatches": true,
+   "uniqueMeshShapes": 24,
+   "instancingWouldShareMeshes": 28,
+   "maxFloat32ErrorNm": 954
+  },
+  {
+   "name": "L",
+   "sourceEntities": 35,
+   "objects": 48,
+   "nodes": 57,
+   "drawCalls": 48,
+   "triangles": 992,
+   "vertices": 1984,
+   "materials": 7,
+   "rawMeshBytes": 53568,
+   "glbBytes": 112320,
+   "manifestBytes": 51474,
+   "compileMs": 38.12,
+   "stagesMs": {
+    "sourceAndBim": 27.44,
+    "geometry": 6.46,
+    "assembleAndSerialize": 4.22
+   },
+   "validateMs": 38.04,
+   "validatorChecks": 8810,
+   "validation": "VALID",
+   "khronos": {
+    "errors": 0,
+    "warnings": 0,
+    "ms": 14.75
+   },
+   "repeatedCompileMs": [
+    37.28,
+    39.24,
+    41.12,
+    37.82,
+    37.05
+   ],
+   "repeatedByteIdentical": true,
+   "heapDeltaMb": -2.62,
+   "rssMb": 196.37,
+   "base64RoundTripAndShaMs": 0.2,
+   "shaMatches": true,
+   "uniqueMeshShapes": 22,
+   "instancingWouldShareMeshes": 26,
+   "maxFloat32ErrorNm": 1073
+  },
+  {
+   "name": "setback",
+   "sourceEntities": 64,
+   "objects": 90,
+   "nodes": 109,
+   "drawCalls": 91,
+   "triangles": 2246,
+   "vertices": 4492,
+   "materials": 9,
+   "rawMeshBytes": 121284,
+   "glbBytes": 229320,
+   "manifestBytes": 87011,
+   "compileMs": 87.78,
+   "stagesMs": {
+    "sourceAndBim": 69.32,
+    "geometry": 11.56,
+    "assembleAndSerialize": 6.89
+   },
+   "validateMs": 67.93,
+   "validatorChecks": 19542,
+   "validation": "VALID",
+   "khronos": {
+    "errors": 0,
+    "warnings": 0,
+    "ms": 26.94
+   },
+   "repeatedCompileMs": [
+    79.92,
+    75.1,
+    69.63,
+    76.59,
+    77.45
+   ],
+   "repeatedByteIdentical": true,
+   "heapDeltaMb": -9.9,
+   "rssMb": 215.39,
+   "base64RoundTripAndShaMs": 0.58,
+   "shaMatches": true,
+   "uniqueMeshShapes": 53,
+   "instancingWouldShareMeshes": 37,
+   "maxFloat32ErrorNm": 1073
+  },
+  {
+   "name": "maximum",
+   "sourceEntities": 150,
+   "objects": 203,
+   "nodes": 212,
+   "drawCalls": 203,
+   "triangles": 4272,
+   "vertices": 8544,
+   "materials": 7,
+   "rawMeshBytes": 230688,
+   "glbBytes": 474636,
+   "manifestBytes": 208813,
+   "compileMs": 213.23,
+   "stagesMs": {
+    "sourceAndBim": 168.93,
+    "geometry": 33.31,
+    "assembleAndSerialize": 10.97
+   },
+   "validateMs": 176.43,
+   "validatorChecks": 37790,
+   "validation": "VALID",
+   "khronos": {
+    "errors": 0,
+    "warnings": 0,
+    "ms": 32.22
+   },
+   "repeatedCompileMs": [
+    226.83,
+    205.32,
+    186.75,
+    200.31,
+    182.09
+   ],
+   "repeatedByteIdentical": true,
+   "heapDeltaMb": 18.69,
+   "rssMb": 228.39,
+   "base64RoundTripAndShaMs": 0.66,
+   "shaMatches": true,
+   "uniqueMeshShapes": 29,
+   "instancingWouldShareMeshes": 174,
+   "maxFloat32ErrorNm": 3279
+  },
+  {
+   "name": "far-from-origin-setback",
+   "sourceEntities": 64,
+   "objects": 90,
+   "nodes": 109,
+   "drawCalls": 91,
+   "triangles": 2246,
+   "vertices": 4492,
+   "materials": 9,
+   "rawMeshBytes": 121284,
+   "glbBytes": 229788,
+   "manifestBytes": 88464,
+   "compileMs": 69.97,
+   "stagesMs": {
+    "sourceAndBim": 58.15,
+    "geometry": 7.93,
+    "assembleAndSerialize": 3.89
+   },
+   "validateMs": 62.56,
+   "validatorChecks": 19542,
+   "validation": "VALID",
+   "khronos": {
+    "errors": 0,
+    "warnings": 0,
+    "ms": 18.07
+   },
+   "repeatedCompileMs": [
+    82.3,
+    84.48,
+    70.06,
+    79.38,
+    78.58
+   ],
+   "repeatedByteIdentical": true,
+   "heapDeltaMb": 13.46,
+   "rssMb": 239.93,
+   "base64RoundTripAndShaMs": 0.38,
+   "shaMatches": true,
+   "uniqueMeshShapes": 53,
+   "instancingWouldShareMeshes": 37,
+   "maxFloat32ErrorNm": 1073
+  }
+ ],
+ "worker": {
+  "single": [
+   {
+    "name": "single",
+    "latencyMs": 356.03,
+    "queueMs": 1.65,
+    "workerMs": 351.99,
+    "loopMaxMs": 10.99,
+    "loopP99Ms": 10.99
+   },
+   {
+    "name": "setback",
+    "latencyMs": 213.61,
+    "queueMs": 0.02,
+    "workerMs": 210.97,
+    "loopMaxMs": 11.09,
+    "loopP99Ms": 11.09
+   },
+   {
+    "name": "maximum",
+    "latencyMs": 497.47,
+    "queueMs": 0.01,
+    "workerMs": 491.95,
+    "loopMaxMs": 10.47,
+    "loopP99Ms": 10.47
+   }
+  ],
+  "concurrency": {
+   "jobs": 4,
+   "wallMs": 1469.2,
+   "throughputPerMin": 163.35,
+   "maxQueueMs": 914.92,
+   "loopMaxMs": 12.76
+  },
+  "saturation": {
+   "submitted": 6,
+   "accepted": 3,
+   "refused": [
+    "SCENE_QUEUE_FULL",
+    "SCENE_QUEUE_FULL",
+    "SCENE_QUEUE_FULL"
+   ]
+  }
+ }
+}

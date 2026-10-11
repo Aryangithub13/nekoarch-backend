@@ -3,6 +3,9 @@ import { structuralAcceptance } from '../../../test-support/structural-acceptanc
 import { environmentalAcceptance } from '../../../test-support/environmental-acceptance.js';
 import { systemsAcceptance } from '../../../test-support/systems-acceptance.js';
 import { knowledgeAcceptance } from '../../../test-support/knowledge-acceptance.js';
+import { optimizationAcceptance } from '../../../test-support/optimization-acceptance.js';
+import { sceneAcceptance } from '../../../test-support/scene-acceptance.js';
+import { revisionAcceptance } from '../../../test-support/revision-acceptance.js';
 import { parametricAcceptance } from '../../../test-support/parametric-acceptance.js';
 import { conversationAcceptance } from '../../../test-support/conversation-acceptance.js';
 import { solverV2Acceptance } from '../../../test-support/solver-v2-acceptance.js';
@@ -148,6 +151,18 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const knowledgeRows = await admin.from('project_revision_specialized_knowledge_analyses').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
       if (knowledgeRows.error) failures.push('read protected knowledge projects');
       for (const row of knowledgeRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Immutable Phase 28 optimization studies likewise.
+      const optimizationRows = await admin.from('project_revision_optimization_studies').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+      if (optimizationRows.error) failures.push('read protected optimization projects');
+      for (const row of optimizationRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Immutable Phase 29 scene artifacts likewise.
+      const sceneRows = await admin.from('project_revision_scene_artifacts').select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+      if (sceneRows.error) failures.push('read protected scene projects');
+      for (const row of sceneRows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      // Phase 30 candidate artifacts and appearances are protected history likewise.
+      const revisionOps = await admin.from('project_revision_operations').select('project_id').in('project_id', ownedIds);
+      if (revisionOps.error) failures.push('read protected revision-operation projects');
+      for (const row of revisionOps.data ?? []) protectedIds.add(row.project_id);
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
@@ -432,9 +447,50 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     if (!app || !owner || !other) throw new Error('Local knowledge setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
   });
+  optimizationAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local optimization setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  sceneAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local scene setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
+  revisionAcceptance(() => {
+    if (!app || !owner || !other) throw new Error('Local revision setup incomplete');
+    return { app, owner: owner.headers, other: other.headers };
+  });
   projectAcceptance(() => {
     if (!app || !owner || !other) throw new Error('Local project setup incomplete');
     return { app, owner: owner.headers, other: other.headers };
+  });
+
+  it('Phase 30 direct SDK: RLS hides foreign revision operations, candidate bytes are ungranted and unsigned or purge RPCs are refused', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'Phase 30 direct SDK' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id;
+    const a = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions/generate`, headers: owner.headers, payload: { requirements: requirements() } });
+    expect(a.statusCode, a.body).toBe(201);
+    const pre = await app.inject({ method: 'POST', url: `/api/projects/${id}/revision-operations`, headers: owner.headers, payload: { baseRevisionId: a.json().revision.id, request: { text: 'Make the exterior walls darker.' } } });
+    expect(pre.statusCode, pre.body).toBe(201);
+    const op = pre.json();
+    const execute = await app.inject({ method: 'POST', url: `/api/projects/${id}/revision-operations/${op.id}/execute`, headers: owner.headers, payload: { preflightHash: op.preflightHash, consent: { acceptLocks: true, acceptQuote: true } } });
+    expect(execute.statusCode, execute.body.slice(0, 500)).toBe(200);
+    for (const [table, field, value] of [['project_revision_operations', 'project_id', id], ['project_revision_operation_events', 'project_id', id], ['project_revision_candidate_artifacts', 'operation_id', op.id]] as const) {
+      const allowed = await owner.client.from(table).select('*').eq(field, value);
+      expect(allowed.error).toBeNull(); expect(allowed.data!.length).toBeGreaterThan(0);
+      const denied = await other.client.from(table).select('*').eq(field, value);
+      expect(denied.error).toBeNull(); expect(denied.data).toEqual([]);
+      expect((await publicClient.from(table).select('*').eq(field, value)).error?.code).toBe('42501');
+    }
+    expect((await owner.client.from('project_revision_candidate_blobs').select('glb')).error?.code).toBe('42501');
+    expect((await owner.client.from('project_revision_operations').update({ status: 'COMMITTED' }).eq('id', op.id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_revision_appearances').insert({ project_id: id })).error?.code).toBe('42501');
+    expect((await owner.client.rpc('revision_operation_write', { p_action: 'approve', p_input: { operationId: op.id } })).error?.code).toBe('42501');
+    expect((await owner.client.rpc('revision_operation_purge', { p_older_than: '0 seconds' })).error?.code).toBe('42501');
+    const foreign = await other.client.rpc('revision_operation_read', { p_action: 'get', p_project_id: id, p_operation_id: op.id });
+    expect(foreign.error).not.toBeNull(); expect(foreign.data).toBeNull();
+    const after = await owner.client.from('project_revision_operations').select('status').eq('id', op.id);
+    expect(after.data).toEqual([{ status: 'CANDIDATE_READY' }]);
   });
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {

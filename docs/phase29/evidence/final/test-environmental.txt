@@ -1,0 +1,41 @@
+npm notice run designflow@0.1.0 test:environmental
+npm notice run npm run build && vitest run apps/api/tests/environmental.test.ts apps/api/tests/environmental.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/environmental.test.ts (102 tests) 4878ms
+   ✓ Phase 25 environmental model on native architecture > v2: zones, envelope, independent validation and analysis  340ms
+   ✓ Phase 25 environmental model on native architecture > maximum-24: zones, envelope, independent validation and analysis  303ms
+   ✓ Phase 25 environmental model on native architecture > leaves Phase 23 BIM and IFC output untouched  330ms
+ ✓ apps/api/tests/environmental.integration.test.ts (10 tests) 10050ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > Phase 25 environmental acceptance > analyses revision A; an environmental-input change is a new row; a west-wing edit makes A stale for revision B  1294ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > Phase 25 environmental acceptance > enforces ownership and revision association, reports typed errors and never computes on reads  1217ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads  376ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > recomputes revision binding inside the RPC and rejects wrong revisions, hashes, QA anchors and claims  973ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  1185ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > rolls back the analysis together with a failed receipt and fails closed without a signer  862ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > rejects a fabricated calculator result before signing or persistence  523ms
+   ✓ Phase 25 environmental persistence on PostgreSQL > charges validation and analysis to the generation quota and reads to the read quota  491ms
+   ✓ Phase 25 migration upgrade from the 0014 schema > applies 0015 over a populated database (including Phase 24 structural rows) without changing existing rows, RLS or policies  1874ms
+
+ Test Files  2 passed (2)
+      Tests  112 passed (112)
+   Start at  23:08:16
+   Duration  17.62s (transform 1.07s, setup 0ms, collect 2.28s, tests 14.93s, environment 0ms, prepare 109ms)
+

@@ -3,6 +3,19 @@ import { structuralRoutes } from './routes/structural.js';
 import { environmentalRoutes } from './routes/environmental.js';
 import { systemsRoutes } from './routes/systems.js';
 import { knowledgeRoutes } from './routes/knowledge.js';
+import { optimizationRoutes } from './routes/optimization.js';
+import { OptimizationPool } from './optimization/pool.js';
+import { sceneRoutes } from './routes/scene.js';
+import { ScenePool } from './scene3d/pool.js';
+import { revisionRoutes } from './routes/revisions.js';
+import { AppearancePool } from './revision/pool.js';
+import { jobRoutes } from './routes/jobs.js';
+import { accountRoutes } from './routes/account.js';
+import { verificationRoutes } from './routes/verification.js';
+import { JobRunner } from './jobs/runner.js';
+import { createExecutors } from './jobs/executors.js';
+import { referenceRoutes } from './routes/references.js';
+import type { InspectionPool } from './references/pool.js';
 import { conversationsRoutes } from './routes/conversations.js';
 import type { ConversationProvider } from './ai/conversation-provider.js';
 import { requirementInterpretationRoutes } from './routes/requirement-interpretation.js';
@@ -29,10 +42,12 @@ import { plansRoutes } from './routes/plans.js';
 import { estimatesRoutes } from './routes/estimates.js';
 import { regionsRoutes } from './routes/regions.js';
 
-export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider }) {
+export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool; scenePool?: ScenePool; appearancePool?: AppearancePool; inspectionPool?: InspectionPool }) {
   const backend = options.backend ?? createSupabaseBackend(options.env);
   const capture = options.captureError ?? reportError;
   const loggerInstance: FastifyBaseLogger = options.logger ?? createLogger(options.env);
+  // Shared bounded pools: synchronous routes and durable jobs (Phase 32) draw on the same capacity. Workers spawn on first use.
+  const pools = { optimization: options.optimizationPool ?? new OptimizationPool(), scene: options.scenePool ?? new ScenePool(), appearance: options.appearancePool ?? new AppearancePool() };
   const app = Fastify({ loggerInstance,
     genReqId: () => randomUUID(), requestIdHeader: false, logController: new LogController({ disableRequestLogging: true }),
     bodyLimit: options.env.BODY_LIMIT_BYTES, requestTimeout: options.env.REQUEST_TIMEOUT_MS,
@@ -40,7 +55,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     trustProxy: options.env.TRUST_PROXY ? options.env.TRUST_PROXY.split(',').map(value => value.trim()) : false,
     exposeHeadRoutes: false });
   app.register(cors, { origin: options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'], exposedHeaders: ['x-request-id'] });
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'If-None-Match'], exposedHeaders: ['x-request-id', 'ETag'] });
   app.register(helmet, { contentSecurityPolicy: false, crossOriginEmbedderPolicy: false,
     strictTransportSecurity: options.env.NODE_ENV === 'production' && options.env.HSTS_ENABLED ? { maxAge: 31_536_000 } : false,
     referrerPolicy: { policy: 'no-referrer' } });
@@ -52,7 +67,10 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     if (route.url === '/api/plans/generate' || route.url === '/api/estimates') route.bodyLimit = options.env.SMALL_BODY_LIMIT_BYTES;
   });
   let draining = false;
-  app.addHook('preClose', async () => { draining = true; });
+  const runner = new JobRunner({ secret: options.env.PROJECT_COMMIT_SECRET, log: app.log,
+    executors: createExecutors({ scene: () => pools.scene, optimization: () => pools.optimization, appearance: () => pools.appearance }, options.env.PROJECT_COMMIT_SECRET) });
+  // preClose runs before the routes' onClose hooks drain the pools, so running jobs finish or are released first.
+  app.addHook('preClose', async () => { draining = true; await runner.close(); });
   app.addHook('onClose', async () => { await backend.close?.(); });
   app.addHook('onResponse', async (request, reply) => {
     // Route templates are safe; raw URL/query/body/header values never enter logs.
@@ -95,6 +113,13 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     environmentalRoutes(scope, backend, options.env);
     systemsRoutes(scope, backend, options.env);
     knowledgeRoutes(scope, backend, options.env);
+    optimizationRoutes(scope, backend, options.env, pools.optimization);
+    sceneRoutes(scope, backend, options.env, pools.scene);
+    revisionRoutes(scope, backend, options.env, pools.appearance);
+    referenceRoutes(scope, backend, options.env, options.inspectionPool);
+    jobRoutes(scope, backend, options.env, runner);
+    accountRoutes(scope, backend, options.env);
+    verificationRoutes(scope, backend);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

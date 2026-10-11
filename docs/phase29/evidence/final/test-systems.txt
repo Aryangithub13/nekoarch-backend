@@ -1,0 +1,42 @@
+npm notice run designflow@0.1.0 test:systems
+npm notice run npm run build && vitest run apps/api/tests/systems.test.ts apps/api/tests/systems.integration.test.ts
+npm notice run designflow@0.1.0 build
+npm notice run npm run build -w @designflow/shared && npm run build -w @designflow/generator && npm run build -w @designflow/blueprint-qa && npm run build -w @designflow/quantity-takeoff && npm run build -w @designflow/construction-calculations && npm run build -w @designflow/boq-cost && npm run build -w @designflow/api
+npm notice run @designflow/shared@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+npm notice run @designflow/generator@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/blueprint-qa@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/quantity-takeoff@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/construction-calculations@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/boq-cost@0.1.0 build
+npm notice run tsc -p tsconfig.json
+npm notice run @designflow/api@0.1.0 build
+npm notice run tsc -p tsconfig.build.json
+
+ RUN  v3.2.7 /home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase29
+
+ ✓ apps/api/tests/systems.integration.test.ts (11 tests) 14589ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > analyses revision A, converges and replays, keeps changed inputs distinct, and makes A stale (never reused) for revision B  1830ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > binds explicit structural and environmental analyses of the same revision and refuses another revision's artifacts  1828ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > enforces ownership and revision association, reports typed errors and never computes on reads  864ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > Phase 26 building-systems acceptance > replays idempotent analysis commands and rejects key reuse with a different input  375ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > denies direct writes, unsigned or forged RPCs, cross-user association, mutation and anonymous reads  549ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > recomputes revision and upstream binding inside the RPC and rejects forged bindings, claims and costing  2169ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > serializes concurrent identical analyses into one immutable row and keeps distinct inputs distinct  1383ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > rolls back the analysis together with a failed receipt and fails closed without a signer  1147ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > rejects a fabricated calculator result before signing or persistence  788ms
+   ✓ Phase 26 building-systems persistence on PostgreSQL > charges validation and analysis to the generation quota and reads to the read quota  633ms
+   ✓ Phase 26 migration upgrade from the 0015 schema > applies 0016 over a populated database (including Phase 24 and 25 rows) without changing existing rows, RLS or policies  1979ms
+ ✓ apps/api/tests/systems.test.ts (36 tests) 2855ms
+   ✓ Phase 26 plumbing and drainage > known answer: a 10 m run at 2 % falls exactly 200 mm  317ms
+   ✓ Phase 26 independent validators reject forged output > rejects malformed, misidentified or foreign calculator output before validation  570ms
+
+ Test Files  2 passed (2)
+      Tests  47 passed (47)
+   Start at  23:08:54
+   Duration  20.53s (transform 1.07s, setup 0ms, collect 2.69s, tests 17.44s, environment 0ms, prepare 100ms)
+

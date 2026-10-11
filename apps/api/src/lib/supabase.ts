@@ -7,6 +7,12 @@ import { structuralDatabaseError } from './structural-repository.js';
 import { environmentalDatabaseError } from './environmental-repository.js';
 import { systemsDatabaseError } from './systems-repository.js';
 import { knowledgeDatabaseError } from './knowledge-repository.js';
+import { optimizationDatabaseError } from './optimization-repository.js';
+import { sceneDatabaseError } from './scene-repository.js';
+import { revisionDatabaseError } from './revision-repository.js';
+import { referenceDatabaseError } from './reference-repository.js';
+import { jobDatabaseError } from './job-repository.js';
+import { accountDatabaseError } from './account-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -59,6 +65,36 @@ export class SupabaseRepository implements Repository {
   async knowledgeRpc(name: 'knowledge_read' | 'knowledge_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) knowledgeDatabaseError(error);
+    return data as unknown;
+  }
+  async optimizationRpc(name: 'optimization_read' | 'optimization_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) optimizationDatabaseError(error);
+    return data as unknown;
+  }
+  async sceneRpc(name: 'scene_read' | 'scene_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) sceneDatabaseError(error);
+    return data as unknown;
+  }
+  async revisionRpc(name: 'revision_operation_read' | 'revision_operation_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) revisionDatabaseError(error);
+    return data as unknown;
+  }
+  async referenceRpc(name: 'reference_read' | 'reference_write' | 'reference_download', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) referenceDatabaseError(error);
+    return data as unknown;
+  }
+  async jobRpc(name: 'job_read' | 'job_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) jobDatabaseError(error);
+    return data as unknown;
+  }
+  async accountRpc(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) accountDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {

@@ -1,0 +1,372 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 58,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": []
+  },
+  {
+    "id": "M01",
+    "defect": "protected wall moved (geometry BIN check removed)",
+    "file": "apps/api/src/revision/verify.ts",
+    "suite": "core",
+    "intendedKiller": "protected wall moved",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 4,
+    "failingTests": [
+      "Phase 30 independent appearance validator: each defect is caught by its own check door opening widened (door leaf geometry)",
+      "Phase 30 independent appearance validator: each defect is caught by its own check protected wall moved",
+      "Phase 30 independent appearance validator: each defect is caught by its own check room boundary modified",
+      "Phase 30 independent appearance validator: each defect is caught by its own check stair height changed"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M02",
+    "defect": "material override on a protected object accepted",
+    "file": "apps/api/src/revision/verify.ts",
+    "suite": "core",
+    "intendedKiller": "material override applied to a protected object",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 2,
+    "failingTests": [
+      "Phase 30 independent appearance validator: each defect is caught by its own check material override applied to a protected object",
+      "Phase 30 independent appearance validator: each defect is caught by its own check the worker job refuses an apply pass that touches a protected object (the validator cannot be bypassed in-process)"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M03",
+    "defect": "BIM element id swap accepted",
+    "file": "apps/api/src/revision/verify.ts",
+    "suite": "core",
+    "intendedKiller": "BIM element id swapped",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 independent appearance validator: each defect is caught by its own check BIM element id swapped on a target"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M04",
+    "defect": "incorrect candidate binding accepted",
+    "file": "apps/api/src/revision/verify.ts",
+    "suite": "core",
+    "intendedKiller": "incorrect candidate binding",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 independent appearance validator: each defect is caught by its own check incorrect candidate binding (other revision)"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M05",
+    "defect": "validator imports the appearance pass (independence lost)",
+    "file": "apps/api/src/revision/verify.ts",
+    "suite": "core",
+    "intendedKiller": "validator is independent",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 validator independence the validator is independent: it imports neither the appearance pass, the job, nor the Phase 29 compiler or GLB writer"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M06",
+    "defect": "finish applied beyond the exterior shell (interior walls selected)",
+    "file": "apps/api/src/revision/appearance.ts",
+    "suite": "core",
+    "intendedKiller": "exactly the exterior shell targets",
+    "killed": false,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 44,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": []
+  },
+  {
+    "id": "M07",
+    "defect": "fa\u00e7ade orientation inverted",
+    "file": "apps/api/src/revision/appearance.ts",
+    "suite": "core",
+    "intendedKiller": "labels bounding-box fa\u00e7ades",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 2,
+    "failingTests": [
+      "Phase 30 fa\u00e7ade orientation and appearance targets cumulative assignments: later wins, fa\u00e7ade-specific targets stay on their fa\u00e7ade",
+      "Phase 30 fa\u00e7ade orientation and appearance targets labels bounding-box fa\u00e7ades by the site north convention and rotates with north"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M08",
+    "defect": "validator bypass in the worker job",
+    "file": "apps/api/src/revision/job.ts",
+    "suite": "core",
+    "intendedKiller": "cannot be bypassed in-process",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 independent appearance validator: each defect is caught by its own check the worker job refuses an apply pass that touches a protected object (the validator cannot be bypassed in-process)"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M09",
+    "defect": "lock conflicts ignored by the planner",
+    "file": "apps/api/src/revision/plan.ts",
+    "suite": "core",
+    "intendedKiller": "BLOCKED_BY_LOCK",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 planner (no compile, deterministic) Make larger windows while keeping the openings unchanged. \u2192 BLOCKED_BY_LOCK"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M10",
+    "defect": "appearance falsely invalidates engineering results",
+    "file": "apps/api/src/revision/plan.ts",
+    "suite": "core",
+    "intendedKiller": "source-equivalent impacts",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 planner (no compile, deterministic) produces an approvable appearance preflight with system locks, source-equivalent impacts and a zero external quote"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M11",
+    "defect": "interior finish silently accepted",
+    "file": "apps/api/src/revision/plan.ts",
+    "suite": "core",
+    "intendedKiller": "warmer finish in the bedroom",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 44,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 planner (no compile, deterministic) Use a warmer finish in the bedroom. \u2192 UNSUPPORTED"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M12",
+    "defect": "stale engineering output marked newly verified",
+    "file": "apps/api/src/services/revision-service.ts",
+    "suite": "integration",
+    "intendedKiller": "Scenarios 4/5/12",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 2,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 16 (primary release gate): A \u2192 preflight \u2192 consent \u2192 validated candidate \u2192 comparison \u2192 approval \u2192 immutable B \u2192 restore as C",
+      "Phase 30 selective revision on PostgreSQL Scenarios 4/5/12: appearance-only revisions keep blueprint geometry, BIM identities and engineering results (source-equivalent, not recomputed)"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M13",
+    "defect": "candidate presented as accepted",
+    "file": "apps/api/src/routes/revisions.ts",
+    "suite": "integration",
+    "intendedKiller": "Scenario 16",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 16 (primary release gate): A \u2192 preflight \u2192 consent \u2192 validated candidate \u2192 comparison \u2192 approval \u2192 immutable B \u2192 restore as C"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M14",
+    "defect": "semantic model lock removed at approval (SQL)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "SQL invariants",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL SQL invariants: unsigned, forged-binding, lock-violating and invalid-transition writes are refused in the database"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M15",
+    "defect": "stale approval allowed (SQL base check removed)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "Scenario 8",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 8: of two candidates from the same base, the second approval is a safe stale-base conflict"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M16",
+    "defect": "cross-user read allowed (read RPC ownership removed)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "Scenario 10",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 10: another user cannot create, read, execute, approve or download anything; anonymous requests are refused"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M17",
+    "defect": "forged candidate binding accepted (SQL)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "forged candidate",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL SQL forged candidate: a candidate bound to another revision, or without VALID validation, is refused in the database"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M18",
+    "defect": "state machine opened (transition trigger)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "SQL invariants",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL SQL invariants: unsigned, forged-binding, lock-violating and invalid-transition writes are refused in the database"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M19",
+    "defect": "RLS owner policy opened",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "Scenario 10",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 10: another user cannot create, read, execute, approve or download anything; anonymous requests are refused"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M20",
+    "defect": "unvalidated candidate accepted by the SQL function",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "forged candidate",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL SQL forged candidate: a candidate bound to another revision, or without VALID validation, is refused in the database"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M21",
+    "defect": "approval of a different candidate than reviewed",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "Scenario 16",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL Scenario 16 (primary release gate): A \u2192 preflight \u2192 consent \u2192 validated candidate \u2192 comparison \u2192 approval \u2192 immutable B \u2192 restore as C"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M22",
+    "defect": "duplicate commit allowed (already-committed check removed in SQL)",
+    "file": "supabase/migrations/0020_revision_operations.sql",
+    "suite": "integration",
+    "intendedKiller": "SQL invariants",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 14,
+    "failed": 1,
+    "failingTests": [
+      "Phase 30 selective revision on PostgreSQL SQL invariants: unsigned, forged-binding, lock-violating and invalid-transition writes are refused in the database"
+    ],
+    "suiteError": []
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 58,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": []
+  }
+]

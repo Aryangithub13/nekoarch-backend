@@ -1,0 +1,437 @@
+{
+  "generatedBy": "scripts/benchmark-optimization.ts",
+  "node": "v26.10.0",
+  "limits": {
+    "inputBytes": 262144,
+    "inputDepth": 16,
+    "inputNodes": 8000,
+    "variables": 8,
+    "valuesPerVariable": 64,
+    "maxGridCandidates": 128,
+    "maxEvaluatedCandidates": 128,
+    "objectives": 8,
+    "hardConstraints": 16,
+    "paretoComparisons": 131072,
+    "snapshotBytes": 1048576,
+    "deadlineMs": 45000,
+    "generatorTimeoutMs": 10000
+  },
+  "results": [
+    {
+      "name": "1-variable",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "5",
+      "evaluatedAssignments": 5,
+      "candidates": 5,
+      "valid": 5,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 137.89,
+        "qa": 23.69,
+        "takeoff": 37.93,
+        "cost": 0.02,
+        "scoring": 0.65,
+        "validation": 31.66,
+        "total": 246.62
+      },
+      "totalMs": 246.66,
+      "msPerEvaluatedAssignment": 49.33,
+      "snapshotBytes": 7895,
+      "heapDeltaBytes": 17506768
+    },
+    {
+      "name": "2-variables",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "20",
+      "evaluatedAssignments": 20,
+      "candidates": 20,
+      "valid": 20,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 547.08,
+        "qa": 113.34,
+        "takeoff": 134.91,
+        "cost": 0.11,
+        "scoring": 0.9,
+        "validation": 102.81,
+        "total": 956.17
+      },
+      "totalMs": 956.21,
+      "msPerEvaluatedAssignment": 47.81,
+      "snapshotBytes": 24186,
+      "heapDeltaBytes": 34617424
+    },
+    {
+      "name": "4-variables",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "81",
+      "evaluatedAssignments": 81,
+      "candidates": 81,
+      "valid": 81,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 2122.2,
+        "qa": 376.17,
+        "takeoff": 520.15,
+        "cost": 0.42,
+        "scoring": 3.04,
+        "validation": 439.07,
+        "total": 3683.94
+      },
+      "totalMs": 3684,
+      "msPerEvaluatedAssignment": 45.48,
+      "snapshotBytes": 95657,
+      "heapDeltaBytes": -447352
+    },
+    {
+      "name": "8-variable-local-search",
+      "outcome": "BUDGET_EXHAUSTED",
+      "candidateSpaceSize": "43046721",
+      "evaluatedAssignments": 128,
+      "candidates": 128,
+      "valid": 108,
+      "rejected": 20,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 2130.04,
+        "qa": 866.14,
+        "takeoff": 1190.55,
+        "cost": 0.61,
+        "scoring": 5.05,
+        "validation": 1070.62,
+        "total": 5827.84
+      },
+      "totalMs": 5827.91,
+      "msPerEvaluatedAssignment": 45.53,
+      "snapshotBytes": 153898,
+      "heapDeltaBytes": 100961680
+    },
+    {
+      "name": "maximum-24-rooms",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "15",
+      "evaluatedAssignments": 15,
+      "candidates": 15,
+      "valid": 15,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 1183.06,
+        "qa": 382.44,
+        "takeoff": 422.77,
+        "cost": 0.09,
+        "scoring": 0.9,
+        "validation": 382,
+        "total": 2600.35
+      },
+      "totalMs": 2600.41,
+      "msPerEvaluatedAssignment": 173.36,
+      "snapshotBytes": 18771,
+      "heapDeltaBytes": -104835008
+    },
+    {
+      "name": "L-two-storey",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "45",
+      "evaluatedAssignments": 45,
+      "candidates": 45,
+      "valid": 45,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 961.58,
+        "qa": 361.77,
+        "takeoff": 514.32,
+        "cost": 0.25,
+        "scoring": 1.85,
+        "validation": 452.08,
+        "total": 2538.21
+      },
+      "totalMs": 2538.24,
+      "msPerEvaluatedAssignment": 56.41,
+      "snapshotBytes": 50931,
+      "heapDeltaBytes": -11803384
+    },
+    {
+      "name": "setback-site",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "15",
+      "evaluatedAssignments": 15,
+      "candidates": 15,
+      "valid": 11,
+      "rejected": 4,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 263.82,
+        "qa": 44.23,
+        "takeoff": 61.31,
+        "cost": 0.05,
+        "scoring": 0.64,
+        "validation": 60.24,
+        "total": 459.15
+      },
+      "totalMs": 459.18,
+      "msPerEvaluatedAssignment": 30.61,
+      "snapshotBytes": 16881,
+      "heapDeltaBytes": 33509504
+    },
+    {
+      "name": "heavy-deduplication",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "23",
+      "evaluatedAssignments": 23,
+      "candidates": 1,
+      "valid": 1,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 22,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 574.35,
+        "qa": 3.65,
+        "takeoff": 5.55,
+        "cost": 0.01,
+        "scoring": 0.34,
+        "validation": 51.48,
+        "total": 696.6
+      },
+      "totalMs": 696.64,
+      "msPerEvaluatedAssignment": 30.29,
+      "snapshotBytes": 6975,
+      "heapDeltaBytes": 62003336
+    },
+    {
+      "name": "pareto-128",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "128",
+      "evaluatedAssignments": 128,
+      "candidates": 128,
+      "valid": 128,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 31,
+      "frontier": 31,
+      "timingsMs": {
+        "generation": 3030.27,
+        "qa": 528.31,
+        "takeoff": 772.21,
+        "cost": 0.63,
+        "scoring": 8.47,
+        "validation": 706.83,
+        "total": 5396.35
+      },
+      "totalMs": 5396.42,
+      "msPerEvaluatedAssignment": 42.16,
+      "snapshotBytes": 198486,
+      "heapDeltaBytes": -59512848
+    },
+    {
+      "name": "weighted-128",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "128",
+      "evaluatedAssignments": 128,
+      "candidates": 128,
+      "valid": 128,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 3033.14,
+        "qa": 509.95,
+        "takeoff": 790.88,
+        "cost": 0.38,
+        "scoring": 10.48,
+        "validation": 780.28,
+        "total": 5467.41
+      },
+      "totalMs": 5467.46,
+      "msPerEvaluatedAssignment": 42.71,
+      "snapshotBytes": 237273,
+      "heapDeltaBytes": -30077896
+    },
+    {
+      "name": "costed-128",
+      "outcome": "COMPLETED",
+      "candidateSpaceSize": "128",
+      "evaluatedAssignments": 128,
+      "candidates": 128,
+      "valid": 128,
+      "rejected": 0,
+      "partial": 0,
+      "inputIncomplete": 0,
+      "deduplicated": 0,
+      "recommended": 1,
+      "frontier": 0,
+      "timingsMs": {
+        "generation": 3163.75,
+        "qa": 528.02,
+        "takeoff": 795.94,
+        "cost": 982.78,
+        "scoring": 6.48,
+        "validation": 863.04,
+        "total": 6690.74
+      },
+      "totalMs": 6690.84,
+      "msPerEvaluatedAssignment": 52.27,
+      "snapshotBytes": 210033,
+      "heapDeltaBytes": 70195376
+    },
+    {
+      "name": "candidate-space-refusal",
+      "outcome": "OPTIMIZATION_RESOURCE_LIMIT",
+      "details": {
+        "limit": "candidateSpaceSize",
+        "value": "3600",
+        "max": "128"
+      },
+      "totalMs": 1.45
+    }
+  ],
+  "pool": {
+    "defaults": {
+      "size": 2,
+      "queueLimit": 4,
+      "timeoutMs": 60000,
+      "maxOldGenerationSizeMb": 512
+    },
+    "cpus": 12,
+    "mainThreadPrecheckMs": {
+      "typical": 1.18,
+      "maximum24Rooms": 1.91
+    },
+    "single": [
+      {
+        "name": "weighted-128",
+        "status": "COMPLETED",
+        "candidates": 128,
+        "latencyMs": 5959.8,
+        "queueMs": 0.02,
+        "workerMs": 5956.12,
+        "loopMaxMs": 12.01,
+        "loopP99Ms": 11.02,
+        "snapshotBytes": 237273,
+        "mainRssDeltaMb": 67.45
+      },
+      {
+        "name": "pareto-128",
+        "status": "COMPLETED",
+        "candidates": 128,
+        "latencyMs": 5774.22,
+        "queueMs": 0.01,
+        "workerMs": 5771.94,
+        "loopMaxMs": 12.25,
+        "loopP99Ms": 11.01,
+        "snapshotBytes": 198486,
+        "mainRssDeltaMb": 0.42
+      },
+      {
+        "name": "8-variable-local-search",
+        "status": "BUDGET_EXHAUSTED",
+        "candidates": 128,
+        "latencyMs": 6218.13,
+        "queueMs": 0.01,
+        "workerMs": 6214.51,
+        "loopMaxMs": 11.32,
+        "loopP99Ms": 10.85,
+        "snapshotBytes": 153898,
+        "mainRssDeltaMb": 22.37
+      },
+      {
+        "name": "costed-128",
+        "status": "COMPLETED",
+        "candidates": 128,
+        "latencyMs": 7132.08,
+        "queueMs": 0.01,
+        "workerMs": 7126.01,
+        "loopMaxMs": 12.04,
+        "loopP99Ms": 10.92,
+        "snapshotBytes": 210033,
+        "mainRssDeltaMb": -7.54
+      },
+      {
+        "name": "maximum-24-rooms-128",
+        "status": "COMPLETED",
+        "candidates": 128,
+        "latencyMs": 23143.34,
+        "queueMs": 0.01,
+        "workerMs": 23140.96,
+        "loopMaxMs": 12.01,
+        "loopP99Ms": 11,
+        "snapshotBytes": 139271,
+        "mainRssDeltaMb": 6.94
+      }
+    ],
+    "refusal": {
+      "code": "OPTIMIZATION_RESOURCE_LIMIT",
+      "latencyMs": 2.99
+    },
+    "concurrentAtCapacity": {
+      "studies": 2,
+      "wallMs": 7242.54,
+      "throughputStudiesPerMin": 16.57,
+      "loopMaxMs": 12.67,
+      "queueMs": [
+        0.01,
+        0.55
+      ],
+      "workerMs": [
+        6585.26,
+        7238.41
+      ],
+      "mainRssDeltaMb": 112.48
+    },
+    "queueSaturation": {
+      "submitted": 8,
+      "accepted": 6,
+      "refused": [
+        "OPTIMIZATION_QUEUE_FULL",
+        "OPTIMIZATION_QUEUE_FULL"
+      ],
+      "refusalLatencyMs": [
+        0.25,
+        0.06
+      ],
+      "maxQueueWaitMs": 2172.74,
+      "wallMs": 3262.6,
+      "loopMaxMs": 11.55
+    }
+  }
+}

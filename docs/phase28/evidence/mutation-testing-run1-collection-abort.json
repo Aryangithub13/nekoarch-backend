@@ -1,0 +1,346 @@
+[
+  {
+    "mutation": "none (control)",
+    "tests": 61,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": []
+  },
+  {
+    "id": "M01",
+    "plan": "skip candidate",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "one variable",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M02",
+    "plan": "duplicate candidate",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "deduplicates by modelHash",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 identity, deduplication, adoption and determinism deduplicates by modelHash before QA and records aliases"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M03",
+    "plan": "alter candidate identity",
+    "file": "apps/api/src/optimization/domain.ts",
+    "intendedKiller": "candidateId is deterministic",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M04",
+    "plan": "bypass hard constraint",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "metric bounds pass and fail",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 metrics, constraints and cost metric bounds pass and fail exactly at the boundary"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M05",
+    "plan": "reverse MINIMIZE comparison",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "MINIMIZE and MAXIMIZE",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M06",
+    "plan": "reverse MAXIMIZE comparison",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "MINIMIZE and MAXIMIZE",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M07",
+    "plan": "corrupt target distance",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "TARGET uses",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 objectives, normalization and weighted scoring TARGET uses |v \u2212 target| with TARGET_TOLERANCE, clamped at zero"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M08",
+    "plan": "ignore objective weight",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "weighted contributions",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 objectives, normalization and weighted scoring weighted contributions sum exactly to the score"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M09",
+    "plan": "alter normalization",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "EXPLICIT_BOUNDS clamps",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M10",
+    "plan": "select dominated Pareto candidate",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "dominance: the smallest",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M11",
+    "plan": "drop non-dominated candidate",
+    "file": "apps/api/src/optimization/rank.ts",
+    "intendedKiller": "identical objective vectors",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 Pareto identical objective vectors are all non-dominated"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M12",
+    "plan": "trust invalid geometry (skip schema)",
+    "file": "apps/api/src/optimization/candidate.ts",
+    "intendedKiller": "schema-invalid and QA-failing",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 hard gates rejects schema-invalid and QA-failing models"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M13",
+    "plan": "skip QA",
+    "file": "apps/api/src/optimization/candidate.ts",
+    "intendedKiller": "schema-invalid and QA-failing",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 hard gates rejects schema-invalid and QA-failing models"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M14",
+    "plan": "ignore unsupported metric",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "refuses deferred",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 metrics, constraints and cost refuses deferred, unknown and unconfigured metrics and sources"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M15",
+    "plan": "treat missing cost as zero",
+    "file": "apps/api/src/optimization/candidate.ts",
+    "intendedKiller": "never zero",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 metrics, constraints and cost unpriced lines are INPUT_INCOMPLETE, never zero"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M16",
+    "plan": "accept candidate-space overflow",
+    "file": "apps/api/src/optimization/domain.ts",
+    "intendedKiller": "refuses search-space overflow",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 domains, enumeration and preflight refuses search-space overflow before generating anything"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M17",
+    "plan": "alter deterministic ordering",
+    "file": "apps/api/src/optimization/domain.ts",
+    "intendedKiller": "canonical order",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M18",
+    "plan": "bypass deduplication",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "deduplicates by modelHash",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 identity, deduplication, adoption and determinism deduplicates by modelHash before QA and records aliases"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M19",
+    "plan": "validator trusts optimizer score",
+    "file": "apps/api/src/optimization/validate.ts",
+    "intendedKiller": "rejects tampered score",
+    "killed": true,
+    "killedForIntendedReason": true,
+    "restored": true,
+    "tests": 61,
+    "failed": 1,
+    "failingTests": [
+      "Phase 28 independent validator rejects tampered score"
+    ],
+    "suiteError": []
+  },
+  {
+    "id": "M20",
+    "plan": "mutate accepted revision",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "never mutates the source",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M21",
+    "plan": "lose provenance (adoption edits)",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "adoption edits reproduce",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "id": "M22",
+    "plan": "change claims",
+    "file": "apps/api/src/optimization/study.ts",
+    "intendedKiller": "claims are fixed",
+    "killed": true,
+    "killedForIntendedReason": false,
+    "restored": true,
+    "tests": 0,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": [
+      "Independent validation rejected the optimization study"
+    ]
+  },
+  {
+    "mutation": "none (after restore)",
+    "tests": 61,
+    "failed": 0,
+    "failingTests": [],
+    "suiteError": []
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "command": "git rev-parse 'backend-v1-phase24-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 0.082,
+    "log": "docs/phase28/evidence/final/phase24-tag.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git rev-parse 'backend-v1-phase25-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 0.072,
+    "log": "docs/phase28/evidence/final/phase25-tag.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git rev-parse 'backend-v1-phase26-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 0.073,
+    "log": "docs/phase28/evidence/final/phase26-tag.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git rev-parse 'backend-v1-phase27-complete^{commit}'",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 0.079,
+    "log": "docs/phase28/evidence/final/phase27-tag.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "git merge-base --is-ancestor 90e5124b78f966de70871802ae8ec8dc0ee99786 HEAD",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 0.069,
+    "log": "docs/phase28/evidence/final/phase27-baseline-ancestor.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  },
+  {
+    "command": "node --import tsx docs/phase24-audit-repair/reproduce-audit.mts",
+    "cwd": "/home/aryan/Documents/Codex/2026-09-12/bu/outputs/designflow-phase28",
+    "exitCode": 0,
+    "seconds": 1.022,
+    "log": "docs/phase28/evidence/final/phase24-audit-reproductions.txt",
+    "sourceManifestSha256": "16c02eb674a7e133c0715b5e7bb3a14b1951b355fbd91dc574e3865ad3d103d0",
+    "sourceUnchanged": true,
+    "untouchedDirectoriesUnchanged": true
+  }
+]

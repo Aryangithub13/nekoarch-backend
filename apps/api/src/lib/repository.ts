@@ -32,6 +32,12 @@ export interface Repository {
   environmentalRpc?(name: 'environmental_read' | 'environmental_write', args: Record<string, unknown>): Promise<unknown>;
   systemsRpc?(name: 'systems_read' | 'systems_write', args: Record<string, unknown>): Promise<unknown>;
   knowledgeRpc?(name: 'knowledge_read' | 'knowledge_write', args: Record<string, unknown>): Promise<unknown>;
+  optimizationRpc?(name: 'optimization_read' | 'optimization_write', args: Record<string, unknown>): Promise<unknown>;
+  sceneRpc?(name: 'scene_read' | 'scene_write', args: Record<string, unknown>): Promise<unknown>;
+  revisionRpc?(name: 'revision_operation_read' | 'revision_operation_write', args: Record<string, unknown>): Promise<unknown>;
+  referenceRpc?(name: 'reference_read' | 'reference_write' | 'reference_download', args: Record<string, unknown>): Promise<unknown>;
+  jobRpc?(name: 'job_read' | 'job_write', args: Record<string, unknown>): Promise<unknown>;
+  accountRpc?(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;

@@ -11,7 +11,7 @@ const conversation = `${project}/conversations/:conversationId`;
 const safeRoutes = new Set([
   '<unmatched>', '/health/live', '/health/ready', '/api/capabilities', '/api/regions', '/api/estimates',
   '/api/plans', '/api/plans/generate', '/api/plans/:id', '/api/projects', project, `${project}/public`,
-  `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision,
+  `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision, `${revision}/overview`,
   `${project}/workflows`, `${project}/workflows/plan`, `${project}/workflows/:workflowRunId`,
   `${project}/conversations`, conversation, `${conversation}/messages`, `${conversation}/proposals/approve`, `${conversation}/tools`,
   takeoff, `${takeoff}/:takeoffId`, construction, `${construction}/:calculationId`,
@@ -19,6 +19,15 @@ const safeRoutes = new Set([
   ...['', '/validation', '/elements', '/elements/:elementId', '/relationships', '/diff/:otherRevisionId', '/export.json', '/export.ifc'].map(suffix => `${revision}/bim${suffix}`),
   ...['/validate', '/analyses', '/analyses/:analysisId', '/status'].flatMap(suffix => [`${revision}/structural${suffix}`, `${revision}/environmental${suffix}`, `${revision}/systems${suffix}`]),
   ...['/packs', '/validate', '/analyses', '/analyses/:analysisId', '/status'].map(suffix => `${revision}/knowledge${suffix}`),
+  ...['/validate', '/studies', '/studies/:studyId', '/status'].map(suffix => `${revision}/optimization${suffix}`),
+  ...['/validate', '/artifacts', '/artifacts/:artifactId', '/artifacts/:artifactId/manifest', '/artifacts/:artifactId/glb', '/status'].map(suffix => `${revision}/scene${suffix}`),
+  `${revision}/appearance`, `${revision}/appearance/glb`, `${project}/revision-operations`,
+  ...['', '/execute', '/approve', '/reject', '/cancel', '/comparison', '/validation', '/candidate/manifest', '/candidate/glb'].map(suffix => `${project}/revision-operations/:operationId${suffix}`),
+  ...['', '/validate', '/usage', '/:referenceId', '/:referenceId/content', '/:referenceId/download-links'].map(suffix => `${project}/references${suffix}`),
+  '/api/reference-downloads',
+  '/api/me/settings', '/api/me/usage', '/api/library/projects', `${project}/library`, `${project}/brief`, `${project}/brief/versions`, `${project}/brief/versions/:version`, `${project}/context`,
+  `${revision}/verification`, `${revision}/verification/diff`,
+  ...['', '/:jobId', '/:jobId/events', '/:jobId/cancel', '/:jobId/retry'].map(suffix => `${project}/jobs${suffix}`),
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.

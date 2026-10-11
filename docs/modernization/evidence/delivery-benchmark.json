@@ -1,0 +1,107 @@
+{
+ "benchmark": "scene-asset-delivery-v1",
+ "node": "v26.10.0",
+ "generatedBy": "scripts/benchmark-delivery.ts",
+ "rows": [
+  {
+   "name": "single",
+   "objects": 52,
+   "glb": {
+    "identityBytes": 117904,
+    "gzipBytes": 11663,
+    "ratio": 10.11,
+    "gzipMedianMs": 0.95,
+    "revalidatedBytes": 0
+   },
+   "manifest": {
+    "identityBytes": 52863,
+    "gzipBytes": 6363,
+    "ratio": 8.31,
+    "gzipMedianMs": 0.3
+   },
+   "firstLoad": {
+    "phase29Bytes": 170767,
+    "modernizedBytes": 18026
+   },
+   "reload": {
+    "phase29Bytes": 170767,
+    "modernizedBytes": 6363
+   }
+  },
+  {
+   "name": "L",
+   "objects": 48,
+   "glb": {
+    "identityBytes": 112320,
+    "gzipBytes": 10965,
+    "ratio": 10.24,
+    "gzipMedianMs": 0.81,
+    "revalidatedBytes": 0
+   },
+   "manifest": {
+    "identityBytes": 51474,
+    "gzipBytes": 6268,
+    "ratio": 8.21,
+    "gzipMedianMs": 0.34
+   },
+   "firstLoad": {
+    "phase29Bytes": 163794,
+    "modernizedBytes": 17233
+   },
+   "reload": {
+    "phase29Bytes": 163794,
+    "modernizedBytes": 6268
+   }
+  },
+  {
+   "name": "setback",
+   "objects": 90,
+   "glb": {
+    "identityBytes": 229320,
+    "gzipBytes": 25053,
+    "ratio": 9.15,
+    "gzipMedianMs": 1.74,
+    "revalidatedBytes": 0
+   },
+   "manifest": {
+    "identityBytes": 87011,
+    "gzipBytes": 9597,
+    "ratio": 9.07,
+    "gzipMedianMs": 0.58
+   },
+   "firstLoad": {
+    "phase29Bytes": 316331,
+    "modernizedBytes": 34650
+   },
+   "reload": {
+    "phase29Bytes": 316331,
+    "modernizedBytes": 9597
+   }
+  },
+  {
+   "name": "maximum",
+   "objects": 203,
+   "glb": {
+    "identityBytes": 474636,
+    "gzipBytes": 38942,
+    "ratio": 12.19,
+    "gzipMedianMs": 3.53,
+    "revalidatedBytes": 0
+   },
+   "manifest": {
+    "identityBytes": 208813,
+    "gzipBytes": 17092,
+    "ratio": 12.22,
+    "gzipMedianMs": 1.24
+   },
+   "firstLoad": {
+    "phase29Bytes": 683449,
+    "modernizedBytes": 56034
+   },
+   "reload": {
+    "phase29Bytes": 683449,
+    "modernizedBytes": 17092
+   }
+  }
+ ]
+}

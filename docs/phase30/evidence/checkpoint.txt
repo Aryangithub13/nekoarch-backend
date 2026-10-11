@@ -1,0 +1,10 @@
+base: bb17949 (modernization evidence commit; contains backend-v1-phase29-complete c7e4bc0 and backend-v1-modernization-phases-1-29-followups a8a0861)
+implementation commit: 380b0d99c8a0412bb49fbb8fad4ac9257ae91a10
+branch: phase30/selective-revision
+historical tags (28) before tagging: identical to tags-before.txt
+migrations changed: 0 historical (added: 0020_revision_operations.sql)
+files changed vs base: 51
+final check: 77 files / 2626 tests + 133 + 52, exit 0 (evidence/check.txt)
+mutation: 22/22 killed for intended reason (evidence/mutation-testing.json)
+release tag: backend-v1-phase30-complete -> the commit that adds this file (annotated, local only)
+remote operations: none; phase 31: not started

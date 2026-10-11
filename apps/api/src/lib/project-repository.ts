@@ -14,6 +14,8 @@ export function projectDatabaseError(error: { code?: string }): never {
     P1203: [409, 'PROJECT_ARCHIVED', 'Unarchive the project before creating a revision'],
     P1204: [422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision'],
     P1205: [404, 'REVISION_NOT_FOUND', 'Revision not found'],
+    // Phase 33 account quotas are enforced by triggers on projects, references and jobs, so every creation path can raise them.
+    P3304: [429, 'ACCOUNT_QUOTA_EXCEEDED', 'The account quota is reached'],
   };
   const mapped = error.code ? errors[error.code] : undefined;
   if (mapped) throw new ApiError(...mapped);

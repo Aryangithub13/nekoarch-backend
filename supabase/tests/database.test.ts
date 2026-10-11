@@ -45,12 +45,26 @@ beforeEach(async () => {
   version = (await db.pool.query<{ id: string }>('select id from public.rate_table_versions')).rows[0]!.id;
 });
 
+const PHASE30_FOREIGN_KEYS: string[] = [
+  'project_revision_appearances: FOREIGN KEY (artifact_id) REFERENCES project_revision_candidate_artifacts(id)',
+  'project_revision_appearances: FOREIGN KEY (operation_id) REFERENCES project_revision_operations(id)',
+  'project_revision_appearances: FOREIGN KEY (project_id, revision_id) REFERENCES project_revisions(project_id, id)',
+  'project_revision_candidate_artifacts: FOREIGN KEY (operation_id) REFERENCES project_revision_operations(id)',
+  'project_revision_candidate_blobs: FOREIGN KEY (artifact_id) REFERENCES project_revision_candidate_artifacts(id) ON DELETE CASCADE',
+  'project_revision_operation_events: FOREIGN KEY (operation_id) REFERENCES project_revision_operations(id)',
+  'project_revision_operation_events: FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE',
+  'project_revision_operations: FOREIGN KEY (committed_revision_id) REFERENCES project_revisions(id)',
+  'project_revision_operations: FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE',
+  'project_revision_operations: FOREIGN KEY (project_id, base_revision_id) REFERENCES project_revisions(project_id, id)',
+  'project_revision_operations: FOREIGN KEY (project_id, restore_source_revision_id) REFERENCES project_revisions(project_id, id)',
+];
+
 describe('migration replay and relational integrity on real PostgreSQL', () => {
-  it('replays all migrations into exactly twenty public tables with RLS enabled', async () => {
+  it('replays all migrations into exactly twenty-eight public tables with RLS enabled', async () => {
     const result = await db.pool.query<{ relname: string; relrowsecurity: boolean }>(`
       select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
       where n.nspname = 'public' and c.relkind = 'r' order by relname`);
-    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_revision_building_systems_analyses', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_environmental_analyses', 'project_revision_qa_runs', 'project_revision_specialized_knowledge_analyses', 'project_revision_structural_analyses', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions']);
+    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_revision_appearances', 'project_revision_building_systems_analyses', 'project_revision_candidate_artifacts', 'project_revision_candidate_blobs', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_environmental_analyses', 'project_revision_operation_events', 'project_revision_operations', 'project_revision_optimization_studies', 'project_revision_qa_runs', 'project_revision_scene_artifacts', 'project_revision_scene_blobs', 'project_revision_specialized_knowledge_analyses', 'project_revision_structural_analyses', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions']);
     expect(result.rows.every(row => row.relrowsecurity)).toBe(true);
   });
 
@@ -58,8 +72,28 @@ describe('migration replay and relational integrity on real PostgreSQL', () => {
     const result = await db.pool.query<{ definition: string }>(`
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and connamespace = 'public'::regnamespace`);
-    // 34 through 0016, plus exactly the five 0017 knowledge-table references pinned below.
-    expect(result.rows).toHaveLength(39);
+    // 34 through 0016, plus exactly the five 0017 knowledge-table, two 0018 optimization-table, three 0019 scene-table and eleven 0020 revision-operation references pinned below.
+    expect(result.rows).toHaveLength(55);
+    const revision = await db.pool.query<{ table: string; definition: string }>(`
+      select conrelid::regclass::text as table, pg_get_constraintdef(oid) as definition from pg_constraint
+      where contype = 'f' and conrelid in ('public.project_revision_operations'::regclass, 'public.project_revision_candidate_artifacts'::regclass, 'public.project_revision_candidate_blobs'::regclass,
+        'public.project_revision_appearances'::regclass, 'public.project_revision_operation_events'::regclass) order by 1, 2`);
+    expect(revision.rows.map(row => `${row.table}: ${row.definition}`)).toEqual(PHASE30_FOREIGN_KEYS);
+    const scene = await db.pool.query<{ definition: string }>(`
+      select pg_get_constraintdef(oid) as definition from pg_constraint
+      where contype = 'f' and conrelid in ('public.project_revision_scene_artifacts'::regclass, 'public.project_revision_scene_blobs'::regclass) order by 1`);
+    expect(scene.rows.map(row => row.definition)).toEqual([
+      'FOREIGN KEY (artifact_id) REFERENCES project_revision_scene_artifacts(id)',
+      'FOREIGN KEY (project_revision_id) REFERENCES project_revisions(id)',
+      'FOREIGN KEY (project_revision_id, acceptance_qa_id) REFERENCES project_revision_qa_runs(revision_id, id)',
+    ]);
+    const optimization = await db.pool.query<{ definition: string }>(`
+      select pg_get_constraintdef(oid) as definition from pg_constraint
+      where contype = 'f' and conrelid = 'public.project_revision_optimization_studies'::regclass order by 1`);
+    expect(optimization.rows.map(row => row.definition)).toEqual([
+      'FOREIGN KEY (project_revision_id) REFERENCES project_revisions(id)',
+      'FOREIGN KEY (project_revision_id, acceptance_qa_id) REFERENCES project_revision_qa_runs(revision_id, id)',
+    ]);
     const knowledge = await db.pool.query<{ definition: string }>(`
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and conrelid = 'public.project_revision_specialized_knowledge_analyses'::regclass order by 1`);
