@@ -90,6 +90,51 @@
   "anonymous": 404
  },
  {
+  "method": "GET",
+  "url": "/api/projects/:projectId/references",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/references",
+  "anonymous": 401
+ },
+ {
+  "method": "DELETE",
+  "url": "/api/projects/:projectId/references/:referenceId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/references/:referenceId",
+  "anonymous": 401
+ },
+ {
+  "method": "PATCH",
+  "url": "/api/projects/:projectId/references/:referenceId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/references/:referenceId/content",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/references/:referenceId/download-links",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/references/usage",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/references/validate",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/projects/:projectId/requirements/interpret",
   "anonymous": 401
@@ -453,6 +498,11 @@
   "method": "POST",
   "url": "/api/projects/:projectId/workflows/plan",
   "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/reference-downloads",
+  "anonymous": 404
  },
  {
   "method": "GET",

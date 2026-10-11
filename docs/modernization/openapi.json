@@ -27056,6 +27056,3376 @@
     }
    }
   },
+  "/api/projects/{projectId}/references": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/references",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "ACTIVE",
+        "ARCHIVED",
+        "DELETED",
+        "ALL"
+       ],
+       "default": "ACTIVE"
+      }
+     },
+     {
+      "name": "purpose",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "SITE_PHOTO",
+        "SITE_PLAN",
+        "SKETCH",
+        "INSPIRATION",
+        "DOCUMENT",
+        "OTHER"
+       ]
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "projectId": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "ACTIVE",
+               "ARCHIVED",
+               "DELETED"
+              ]
+             },
+             "purpose": {
+              "type": "string",
+              "enum": [
+               "SITE_PHOTO",
+               "SITE_PLAN",
+               "SKETCH",
+               "INSPIRATION",
+               "DOCUMENT",
+               "OTHER"
+              ]
+             },
+             "displayName": {
+              "type": "string",
+              "nullable": true
+             },
+             "note": {
+              "type": "string",
+              "nullable": true
+             },
+             "mediaType": {
+              "type": "string",
+              "enum": [
+               "image/png",
+               "image/jpeg",
+               "image/webp",
+               "application/pdf"
+              ]
+             },
+             "originalSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+             },
+             "originalBytes": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "storedSha256": {
+              "$ref": "#/components/properties/items/items/properties/originalSha256"
+             },
+             "storedBytes": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "storageLocator": {
+              "type": "string",
+              "enum": [
+               "postgres-bytea"
+              ]
+             },
+             "inspectorVersion": {
+              "type": "string",
+              "enum": [
+               "reference-inspector-v1"
+              ]
+             },
+             "boundRevisionId": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+             },
+             "uploadedBy": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "createdAt": {
+              "type": "string"
+             },
+             "updatedAt": {
+              "type": "string"
+             },
+             "deletedAt": {
+              "type": "string",
+              "nullable": true
+             },
+             "currency": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "type": "string",
+                "enum": [
+                 "CURRENT",
+                 "STALE",
+                 "PROJECT_SCOPED"
+                ]
+               },
+               "boundRevisionId": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true
+               },
+               "projectCurrentRevisionId": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true
+               }
+              },
+              "required": [
+               "status",
+               "boundRevisionId",
+               "projectCurrentRevisionId"
+              ],
+              "additionalProperties": false
+             }
+            },
+            "required": [
+             "id",
+             "projectId",
+             "status",
+             "purpose",
+             "displayName",
+             "note",
+             "mediaType",
+             "originalSha256",
+             "originalBytes",
+             "storedSha256",
+             "storedBytes",
+             "storageLocator",
+             "inspectorVersion",
+             "boundRevisionId",
+             "uploadedBy",
+             "createdAt",
+             "updatedAt",
+             "deletedAt",
+             "currency"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/references",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "purpose",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "SITE_PHOTO",
+        "SITE_PLAN",
+        "SKETCH",
+        "INSPIRATION",
+        "DOCUMENT",
+        "OTHER"
+       ]
+      }
+     },
+     {
+      "name": "displayName",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "allOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "string",
+         "minLength": 1,
+         "maxLength": 120
+        }
+       ]
+      }
+     },
+     {
+      "name": "note",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "allOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "string",
+         "minLength": 1,
+         "maxLength": 500
+        }
+       ]
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "image/png": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "image/jpeg": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "image/webp": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "application/pdf": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "ACTIVE",
+            "ARCHIVED",
+            "DELETED"
+           ]
+          },
+          "purpose": {
+           "type": "string",
+           "enum": [
+            "SITE_PHOTO",
+            "SITE_PLAN",
+            "SKETCH",
+            "INSPIRATION",
+            "DOCUMENT",
+            "OTHER"
+           ]
+          },
+          "displayName": {
+           "type": "string",
+           "nullable": true
+          },
+          "note": {
+           "type": "string",
+           "nullable": true
+          },
+          "mediaType": {
+           "type": "string",
+           "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "application/pdf"
+           ]
+          },
+          "originalSha256": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "originalBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storedSha256": {
+           "$ref": "#/components/properties/originalSha256"
+          },
+          "storedBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storageLocator": {
+           "type": "string",
+           "enum": [
+            "postgres-bytea"
+           ]
+          },
+          "inspectorVersion": {
+           "type": "string",
+           "enum": [
+            "reference-inspector-v1"
+           ]
+          },
+          "boundRevisionId": {
+           "type": "string",
+           "format": "uuid",
+           "nullable": true
+          },
+          "uploadedBy": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "deletedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "STALE",
+              "PROJECT_SCOPED"
+             ]
+            },
+            "boundRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            },
+            "projectCurrentRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "boundRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "sourceKind": {
+             "type": "string",
+             "enum": [
+              "USER_UPLOAD"
+             ]
+            },
+            "uploadedBy": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "original": {
+             "type": "object",
+             "properties": {
+              "sha256": {
+               "$ref": "#/components/properties/originalSha256"
+              },
+              "bytes": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 10485760
+              }
+             },
+             "required": [
+              "sha256",
+              "bytes"
+             ],
+             "additionalProperties": false
+            },
+            "stored": {
+             "$ref": "#/components/properties/provenance/properties/original"
+            },
+            "transformations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "METADATA_REMOVED",
+               "MPF_SECONDARY_IMAGES"
+              ]
+             },
+             "maxItems": 2
+            },
+            "inspection": {
+             "type": "object",
+             "properties": {
+              "inspectorVersion": {
+               "type": "string",
+               "enum": [
+                "reference-inspector-v1"
+               ]
+              },
+              "verdict": {
+               "type": "string",
+               "enum": [
+                "ACCEPTED",
+                "REJECTED"
+               ]
+              },
+              "declaredMediaType": {
+               "type": "string",
+               "maxLength": 100
+              },
+              "detectedMediaType": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/mediaType"
+                }
+               ],
+               "nullable": true
+              },
+              "original": {
+               "$ref": "#/components/properties/provenance/properties/original"
+              },
+              "stored": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/provenance/properties/original"
+                }
+               ],
+               "nullable": true
+              },
+              "checks": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{1,40}$"
+               },
+               "maxItems": 32
+              },
+              "findings": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "code": {
+                  "anyOf": [
+                   {
+                    "type": "string",
+                    "enum": [
+                     "EMPTY_FILE",
+                     "TYPE_MISMATCH",
+                     "TRAILING_DATA",
+                     "TRUNCATED",
+                     "MALFORMED_STRUCTURE",
+                     "DIMENSIONS_EXCEEDED",
+                     "PNG_CRC_MISMATCH",
+                     "PNG_UNKNOWN_CRITICAL_CHUNK",
+                     "PDF_ACTIVE_CONTENT",
+                     "PDF_ENCRYPTED",
+                     "PDF_INFLATE_LIMIT",
+                     "PDF_PAGE_LIMIT"
+                    ]
+                   },
+                   {
+                    "type": "string",
+                    "enum": [
+                     "METADATA_REMOVED",
+                     "MPF_SECONDARY_IMAGES",
+                     "PDF_METADATA_RETAINED"
+                    ]
+                   }
+                  ]
+                 },
+                 "severity": {
+                  "type": "string",
+                  "enum": [
+                   "REJECT",
+                   "INFO"
+                  ]
+                 },
+                 "detail": {
+                  "type": "string",
+                  "maxLength": 200
+                 }
+                },
+                "required": [
+                 "code",
+                 "severity",
+                 "detail"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              },
+              "media": {
+               "anyOf": [
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "IMAGE"
+                   ]
+                  },
+                  "width": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  },
+                  "height": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "width",
+                  "height"
+                 ],
+                 "additionalProperties": false
+                },
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "DOCUMENT"
+                   ]
+                  },
+                  "pageCount": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "pageCount"
+                 ],
+                 "additionalProperties": false
+                }
+               ],
+               "nullable": true
+              },
+              "metadata": {
+               "type": "object",
+               "properties": {
+                "removed": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "segment": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                   },
+                   "bytes": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
+                   }
+                  },
+                  "required": [
+                   "segment",
+                   "bytes"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 64
+                },
+                "retained": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                 },
+                 "maxItems": 32
+                }
+               },
+               "required": [
+                "removed",
+                "retained"
+               ],
+               "additionalProperties": false
+              },
+              "malwareScan": {
+               "type": "object",
+               "properties": {
+                "status": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_PERFORMED"
+                 ]
+                },
+                "reason": {
+                 "type": "string",
+                 "enum": [
+                  "NO_SCANNER_CONFIGURED"
+                 ]
+                }
+               },
+               "required": [
+                "status",
+                "reason"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "malwareFree": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "contentAccuracy": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "drawingScale": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "siteConditions": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "ownershipOrLicence": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "malwareFree",
+                "contentAccuracy",
+                "drawingScale",
+                "siteConditions",
+                "ownershipOrLicence"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "inspectorVersion",
+              "verdict",
+              "declaredMediaType",
+              "detectedMediaType",
+              "original",
+              "stored",
+              "checks",
+              "findings",
+              "media",
+              "metadata",
+              "malwareScan",
+              "claims"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "sourceKind",
+            "uploadedBy",
+            "original",
+            "stored",
+            "transformations",
+            "inspection"
+           ],
+           "additionalProperties": false
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "eventType": {
+              "type": "string",
+              "enum": [
+               "UPLOADED",
+               "DEDUPLICATED",
+               "REJECTED",
+               "ARCHIVED",
+               "RESTORED",
+               "DELETED",
+               "DOWNLOAD_LINK_ISSUED",
+               "METADATA_UPDATED"
+              ]
+             },
+             "actor": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "id",
+             "eventType",
+             "actor",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "status",
+          "purpose",
+          "displayName",
+          "note",
+          "mediaType",
+          "originalSha256",
+          "originalBytes",
+          "storedSha256",
+          "storedBytes",
+          "storageLocator",
+          "inspectorVersion",
+          "boundRevisionId",
+          "uploadedBy",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "currency",
+          "provenance",
+          "events"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/references/{referenceId}": {
+   "delete": {
+    "operationId": "delete /api/projects/:projectId/references/:referenceId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "referenceId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "ACTIVE",
+            "ARCHIVED",
+            "DELETED"
+           ]
+          },
+          "purpose": {
+           "type": "string",
+           "enum": [
+            "SITE_PHOTO",
+            "SITE_PLAN",
+            "SKETCH",
+            "INSPIRATION",
+            "DOCUMENT",
+            "OTHER"
+           ]
+          },
+          "displayName": {
+           "type": "string",
+           "nullable": true
+          },
+          "note": {
+           "type": "string",
+           "nullable": true
+          },
+          "mediaType": {
+           "type": "string",
+           "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "application/pdf"
+           ]
+          },
+          "originalSha256": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "originalBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storedSha256": {
+           "$ref": "#/components/properties/originalSha256"
+          },
+          "storedBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storageLocator": {
+           "type": "string",
+           "enum": [
+            "postgres-bytea"
+           ]
+          },
+          "inspectorVersion": {
+           "type": "string",
+           "enum": [
+            "reference-inspector-v1"
+           ]
+          },
+          "boundRevisionId": {
+           "type": "string",
+           "format": "uuid",
+           "nullable": true
+          },
+          "uploadedBy": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "deletedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "STALE",
+              "PROJECT_SCOPED"
+             ]
+            },
+            "boundRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            },
+            "projectCurrentRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "boundRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "sourceKind": {
+             "type": "string",
+             "enum": [
+              "USER_UPLOAD"
+             ]
+            },
+            "uploadedBy": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "original": {
+             "type": "object",
+             "properties": {
+              "sha256": {
+               "$ref": "#/components/properties/originalSha256"
+              },
+              "bytes": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 10485760
+              }
+             },
+             "required": [
+              "sha256",
+              "bytes"
+             ],
+             "additionalProperties": false
+            },
+            "stored": {
+             "$ref": "#/components/properties/provenance/properties/original"
+            },
+            "transformations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "METADATA_REMOVED",
+               "MPF_SECONDARY_IMAGES"
+              ]
+             },
+             "maxItems": 2
+            },
+            "inspection": {
+             "type": "object",
+             "properties": {
+              "inspectorVersion": {
+               "type": "string",
+               "enum": [
+                "reference-inspector-v1"
+               ]
+              },
+              "verdict": {
+               "type": "string",
+               "enum": [
+                "ACCEPTED",
+                "REJECTED"
+               ]
+              },
+              "declaredMediaType": {
+               "type": "string",
+               "maxLength": 100
+              },
+              "detectedMediaType": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/mediaType"
+                }
+               ],
+               "nullable": true
+              },
+              "original": {
+               "$ref": "#/components/properties/provenance/properties/original"
+              },
+              "stored": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/provenance/properties/original"
+                }
+               ],
+               "nullable": true
+              },
+              "checks": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{1,40}$"
+               },
+               "maxItems": 32
+              },
+              "findings": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "code": {
+                  "anyOf": [
+                   {
+                    "type": "string",
+                    "enum": [
+                     "EMPTY_FILE",
+                     "TYPE_MISMATCH",
+                     "TRAILING_DATA",
+                     "TRUNCATED",
+                     "MALFORMED_STRUCTURE",
+                     "DIMENSIONS_EXCEEDED",
+                     "PNG_CRC_MISMATCH",
+                     "PNG_UNKNOWN_CRITICAL_CHUNK",
+                     "PDF_ACTIVE_CONTENT",
+                     "PDF_ENCRYPTED",
+                     "PDF_INFLATE_LIMIT",
+                     "PDF_PAGE_LIMIT"
+                    ]
+                   },
+                   {
+                    "type": "string",
+                    "enum": [
+                     "METADATA_REMOVED",
+                     "MPF_SECONDARY_IMAGES",
+                     "PDF_METADATA_RETAINED"
+                    ]
+                   }
+                  ]
+                 },
+                 "severity": {
+                  "type": "string",
+                  "enum": [
+                   "REJECT",
+                   "INFO"
+                  ]
+                 },
+                 "detail": {
+                  "type": "string",
+                  "maxLength": 200
+                 }
+                },
+                "required": [
+                 "code",
+                 "severity",
+                 "detail"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              },
+              "media": {
+               "anyOf": [
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "IMAGE"
+                   ]
+                  },
+                  "width": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  },
+                  "height": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "width",
+                  "height"
+                 ],
+                 "additionalProperties": false
+                },
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "DOCUMENT"
+                   ]
+                  },
+                  "pageCount": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "pageCount"
+                 ],
+                 "additionalProperties": false
+                }
+               ],
+               "nullable": true
+              },
+              "metadata": {
+               "type": "object",
+               "properties": {
+                "removed": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "segment": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                   },
+                   "bytes": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
+                   }
+                  },
+                  "required": [
+                   "segment",
+                   "bytes"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 64
+                },
+                "retained": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                 },
+                 "maxItems": 32
+                }
+               },
+               "required": [
+                "removed",
+                "retained"
+               ],
+               "additionalProperties": false
+              },
+              "malwareScan": {
+               "type": "object",
+               "properties": {
+                "status": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_PERFORMED"
+                 ]
+                },
+                "reason": {
+                 "type": "string",
+                 "enum": [
+                  "NO_SCANNER_CONFIGURED"
+                 ]
+                }
+               },
+               "required": [
+                "status",
+                "reason"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "malwareFree": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "contentAccuracy": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "drawingScale": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "siteConditions": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "ownershipOrLicence": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "malwareFree",
+                "contentAccuracy",
+                "drawingScale",
+                "siteConditions",
+                "ownershipOrLicence"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "inspectorVersion",
+              "verdict",
+              "declaredMediaType",
+              "detectedMediaType",
+              "original",
+              "stored",
+              "checks",
+              "findings",
+              "media",
+              "metadata",
+              "malwareScan",
+              "claims"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "sourceKind",
+            "uploadedBy",
+            "original",
+            "stored",
+            "transformations",
+            "inspection"
+           ],
+           "additionalProperties": false
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "eventType": {
+              "type": "string",
+              "enum": [
+               "UPLOADED",
+               "DEDUPLICATED",
+               "REJECTED",
+               "ARCHIVED",
+               "RESTORED",
+               "DELETED",
+               "DOWNLOAD_LINK_ISSUED",
+               "METADATA_UPDATED"
+              ]
+             },
+             "actor": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "id",
+             "eventType",
+             "actor",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "status",
+          "purpose",
+          "displayName",
+          "note",
+          "mediaType",
+          "originalSha256",
+          "originalBytes",
+          "storedSha256",
+          "storedBytes",
+          "storageLocator",
+          "inspectorVersion",
+          "boundRevisionId",
+          "uploadedBy",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "currency",
+          "provenance",
+          "events"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "get": {
+    "operationId": "get /api/projects/:projectId/references/:referenceId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "referenceId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "ACTIVE",
+            "ARCHIVED",
+            "DELETED"
+           ]
+          },
+          "purpose": {
+           "type": "string",
+           "enum": [
+            "SITE_PHOTO",
+            "SITE_PLAN",
+            "SKETCH",
+            "INSPIRATION",
+            "DOCUMENT",
+            "OTHER"
+           ]
+          },
+          "displayName": {
+           "type": "string",
+           "nullable": true
+          },
+          "note": {
+           "type": "string",
+           "nullable": true
+          },
+          "mediaType": {
+           "type": "string",
+           "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "application/pdf"
+           ]
+          },
+          "originalSha256": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "originalBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storedSha256": {
+           "$ref": "#/components/properties/originalSha256"
+          },
+          "storedBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storageLocator": {
+           "type": "string",
+           "enum": [
+            "postgres-bytea"
+           ]
+          },
+          "inspectorVersion": {
+           "type": "string",
+           "enum": [
+            "reference-inspector-v1"
+           ]
+          },
+          "boundRevisionId": {
+           "type": "string",
+           "format": "uuid",
+           "nullable": true
+          },
+          "uploadedBy": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "deletedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "STALE",
+              "PROJECT_SCOPED"
+             ]
+            },
+            "boundRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            },
+            "projectCurrentRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "boundRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "sourceKind": {
+             "type": "string",
+             "enum": [
+              "USER_UPLOAD"
+             ]
+            },
+            "uploadedBy": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "original": {
+             "type": "object",
+             "properties": {
+              "sha256": {
+               "$ref": "#/components/properties/originalSha256"
+              },
+              "bytes": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 10485760
+              }
+             },
+             "required": [
+              "sha256",
+              "bytes"
+             ],
+             "additionalProperties": false
+            },
+            "stored": {
+             "$ref": "#/components/properties/provenance/properties/original"
+            },
+            "transformations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "METADATA_REMOVED",
+               "MPF_SECONDARY_IMAGES"
+              ]
+             },
+             "maxItems": 2
+            },
+            "inspection": {
+             "type": "object",
+             "properties": {
+              "inspectorVersion": {
+               "type": "string",
+               "enum": [
+                "reference-inspector-v1"
+               ]
+              },
+              "verdict": {
+               "type": "string",
+               "enum": [
+                "ACCEPTED",
+                "REJECTED"
+               ]
+              },
+              "declaredMediaType": {
+               "type": "string",
+               "maxLength": 100
+              },
+              "detectedMediaType": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/mediaType"
+                }
+               ],
+               "nullable": true
+              },
+              "original": {
+               "$ref": "#/components/properties/provenance/properties/original"
+              },
+              "stored": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/provenance/properties/original"
+                }
+               ],
+               "nullable": true
+              },
+              "checks": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{1,40}$"
+               },
+               "maxItems": 32
+              },
+              "findings": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "code": {
+                  "anyOf": [
+                   {
+                    "type": "string",
+                    "enum": [
+                     "EMPTY_FILE",
+                     "TYPE_MISMATCH",
+                     "TRAILING_DATA",
+                     "TRUNCATED",
+                     "MALFORMED_STRUCTURE",
+                     "DIMENSIONS_EXCEEDED",
+                     "PNG_CRC_MISMATCH",
+                     "PNG_UNKNOWN_CRITICAL_CHUNK",
+                     "PDF_ACTIVE_CONTENT",
+                     "PDF_ENCRYPTED",
+                     "PDF_INFLATE_LIMIT",
+                     "PDF_PAGE_LIMIT"
+                    ]
+                   },
+                   {
+                    "type": "string",
+                    "enum": [
+                     "METADATA_REMOVED",
+                     "MPF_SECONDARY_IMAGES",
+                     "PDF_METADATA_RETAINED"
+                    ]
+                   }
+                  ]
+                 },
+                 "severity": {
+                  "type": "string",
+                  "enum": [
+                   "REJECT",
+                   "INFO"
+                  ]
+                 },
+                 "detail": {
+                  "type": "string",
+                  "maxLength": 200
+                 }
+                },
+                "required": [
+                 "code",
+                 "severity",
+                 "detail"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              },
+              "media": {
+               "anyOf": [
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "IMAGE"
+                   ]
+                  },
+                  "width": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  },
+                  "height": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "width",
+                  "height"
+                 ],
+                 "additionalProperties": false
+                },
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "DOCUMENT"
+                   ]
+                  },
+                  "pageCount": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "pageCount"
+                 ],
+                 "additionalProperties": false
+                }
+               ],
+               "nullable": true
+              },
+              "metadata": {
+               "type": "object",
+               "properties": {
+                "removed": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "segment": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                   },
+                   "bytes": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
+                   }
+                  },
+                  "required": [
+                   "segment",
+                   "bytes"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 64
+                },
+                "retained": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                 },
+                 "maxItems": 32
+                }
+               },
+               "required": [
+                "removed",
+                "retained"
+               ],
+               "additionalProperties": false
+              },
+              "malwareScan": {
+               "type": "object",
+               "properties": {
+                "status": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_PERFORMED"
+                 ]
+                },
+                "reason": {
+                 "type": "string",
+                 "enum": [
+                  "NO_SCANNER_CONFIGURED"
+                 ]
+                }
+               },
+               "required": [
+                "status",
+                "reason"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "malwareFree": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "contentAccuracy": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "drawingScale": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "siteConditions": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "ownershipOrLicence": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "malwareFree",
+                "contentAccuracy",
+                "drawingScale",
+                "siteConditions",
+                "ownershipOrLicence"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "inspectorVersion",
+              "verdict",
+              "declaredMediaType",
+              "detectedMediaType",
+              "original",
+              "stored",
+              "checks",
+              "findings",
+              "media",
+              "metadata",
+              "malwareScan",
+              "claims"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "sourceKind",
+            "uploadedBy",
+            "original",
+            "stored",
+            "transformations",
+            "inspection"
+           ],
+           "additionalProperties": false
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "eventType": {
+              "type": "string",
+              "enum": [
+               "UPLOADED",
+               "DEDUPLICATED",
+               "REJECTED",
+               "ARCHIVED",
+               "RESTORED",
+               "DELETED",
+               "DOWNLOAD_LINK_ISSUED",
+               "METADATA_UPDATED"
+              ]
+             },
+             "actor": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "id",
+             "eventType",
+             "actor",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "status",
+          "purpose",
+          "displayName",
+          "note",
+          "mediaType",
+          "originalSha256",
+          "originalBytes",
+          "storedSha256",
+          "storedBytes",
+          "storageLocator",
+          "inspectorVersion",
+          "boundRevisionId",
+          "uploadedBy",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "currency",
+          "provenance",
+          "events"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "operationId": "patch /api/projects/:projectId/references/:referenceId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "referenceId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "displayName": {
+          "allOf": [
+           {
+            "type": "string"
+           },
+           {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+           }
+          ],
+          "nullable": true
+         },
+         "note": {
+          "allOf": [
+           {
+            "type": "string"
+           },
+           {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+           }
+          ],
+          "nullable": true
+         },
+         "purpose": {
+          "type": "string",
+          "enum": [
+           "SITE_PHOTO",
+           "SITE_PLAN",
+           "SKETCH",
+           "INSPIRATION",
+           "DOCUMENT",
+           "OTHER"
+          ]
+         },
+         "status": {
+          "type": "string",
+          "enum": [
+           "ACTIVE",
+           "ARCHIVED"
+          ]
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "ACTIVE",
+            "ARCHIVED",
+            "DELETED"
+           ]
+          },
+          "purpose": {
+           "type": "string",
+           "enum": [
+            "SITE_PHOTO",
+            "SITE_PLAN",
+            "SKETCH",
+            "INSPIRATION",
+            "DOCUMENT",
+            "OTHER"
+           ]
+          },
+          "displayName": {
+           "type": "string",
+           "nullable": true
+          },
+          "note": {
+           "type": "string",
+           "nullable": true
+          },
+          "mediaType": {
+           "type": "string",
+           "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "application/pdf"
+           ]
+          },
+          "originalSha256": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "originalBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storedSha256": {
+           "$ref": "#/components/properties/originalSha256"
+          },
+          "storedBytes": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "storageLocator": {
+           "type": "string",
+           "enum": [
+            "postgres-bytea"
+           ]
+          },
+          "inspectorVersion": {
+           "type": "string",
+           "enum": [
+            "reference-inspector-v1"
+           ]
+          },
+          "boundRevisionId": {
+           "type": "string",
+           "format": "uuid",
+           "nullable": true
+          },
+          "uploadedBy": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "deletedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "STALE",
+              "PROJECT_SCOPED"
+             ]
+            },
+            "boundRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            },
+            "projectCurrentRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "boundRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "sourceKind": {
+             "type": "string",
+             "enum": [
+              "USER_UPLOAD"
+             ]
+            },
+            "uploadedBy": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "original": {
+             "type": "object",
+             "properties": {
+              "sha256": {
+               "$ref": "#/components/properties/originalSha256"
+              },
+              "bytes": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 10485760
+              }
+             },
+             "required": [
+              "sha256",
+              "bytes"
+             ],
+             "additionalProperties": false
+            },
+            "stored": {
+             "$ref": "#/components/properties/provenance/properties/original"
+            },
+            "transformations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "METADATA_REMOVED",
+               "MPF_SECONDARY_IMAGES"
+              ]
+             },
+             "maxItems": 2
+            },
+            "inspection": {
+             "type": "object",
+             "properties": {
+              "inspectorVersion": {
+               "type": "string",
+               "enum": [
+                "reference-inspector-v1"
+               ]
+              },
+              "verdict": {
+               "type": "string",
+               "enum": [
+                "ACCEPTED",
+                "REJECTED"
+               ]
+              },
+              "declaredMediaType": {
+               "type": "string",
+               "maxLength": 100
+              },
+              "detectedMediaType": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/mediaType"
+                }
+               ],
+               "nullable": true
+              },
+              "original": {
+               "$ref": "#/components/properties/provenance/properties/original"
+              },
+              "stored": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/provenance/properties/original"
+                }
+               ],
+               "nullable": true
+              },
+              "checks": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{1,40}$"
+               },
+               "maxItems": 32
+              },
+              "findings": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "code": {
+                  "anyOf": [
+                   {
+                    "type": "string",
+                    "enum": [
+                     "EMPTY_FILE",
+                     "TYPE_MISMATCH",
+                     "TRAILING_DATA",
+                     "TRUNCATED",
+                     "MALFORMED_STRUCTURE",
+                     "DIMENSIONS_EXCEEDED",
+                     "PNG_CRC_MISMATCH",
+                     "PNG_UNKNOWN_CRITICAL_CHUNK",
+                     "PDF_ACTIVE_CONTENT",
+                     "PDF_ENCRYPTED",
+                     "PDF_INFLATE_LIMIT",
+                     "PDF_PAGE_LIMIT"
+                    ]
+                   },
+                   {
+                    "type": "string",
+                    "enum": [
+                     "METADATA_REMOVED",
+                     "MPF_SECONDARY_IMAGES",
+                     "PDF_METADATA_RETAINED"
+                    ]
+                   }
+                  ]
+                 },
+                 "severity": {
+                  "type": "string",
+                  "enum": [
+                   "REJECT",
+                   "INFO"
+                  ]
+                 },
+                 "detail": {
+                  "type": "string",
+                  "maxLength": 200
+                 }
+                },
+                "required": [
+                 "code",
+                 "severity",
+                 "detail"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              },
+              "media": {
+               "anyOf": [
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "IMAGE"
+                   ]
+                  },
+                  "width": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  },
+                  "height": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "width",
+                  "height"
+                 ],
+                 "additionalProperties": false
+                },
+                {
+                 "type": "object",
+                 "properties": {
+                  "kind": {
+                   "type": "string",
+                   "enum": [
+                    "DOCUMENT"
+                   ]
+                  },
+                  "pageCount": {
+                   "type": "integer",
+                   "exclusiveMinimum": true,
+                   "minimum": 0
+                  }
+                 },
+                 "required": [
+                  "kind",
+                  "pageCount"
+                 ],
+                 "additionalProperties": false
+                }
+               ],
+               "nullable": true
+              },
+              "metadata": {
+               "type": "object",
+               "properties": {
+                "removed": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "segment": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                   },
+                   "bytes": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
+                   }
+                  },
+                  "required": [
+                   "segment",
+                   "bytes"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 64
+                },
+                "retained": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                 },
+                 "maxItems": 32
+                }
+               },
+               "required": [
+                "removed",
+                "retained"
+               ],
+               "additionalProperties": false
+              },
+              "malwareScan": {
+               "type": "object",
+               "properties": {
+                "status": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_PERFORMED"
+                 ]
+                },
+                "reason": {
+                 "type": "string",
+                 "enum": [
+                  "NO_SCANNER_CONFIGURED"
+                 ]
+                }
+               },
+               "required": [
+                "status",
+                "reason"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "malwareFree": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "contentAccuracy": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "drawingScale": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "siteConditions": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "ownershipOrLicence": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "malwareFree",
+                "contentAccuracy",
+                "drawingScale",
+                "siteConditions",
+                "ownershipOrLicence"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "inspectorVersion",
+              "verdict",
+              "declaredMediaType",
+              "detectedMediaType",
+              "original",
+              "stored",
+              "checks",
+              "findings",
+              "media",
+              "metadata",
+              "malwareScan",
+              "claims"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "sourceKind",
+            "uploadedBy",
+            "original",
+            "stored",
+            "transformations",
+            "inspection"
+           ],
+           "additionalProperties": false
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "eventType": {
+              "type": "string",
+              "enum": [
+               "UPLOADED",
+               "DEDUPLICATED",
+               "REJECTED",
+               "ARCHIVED",
+               "RESTORED",
+               "DELETED",
+               "DOWNLOAD_LINK_ISSUED",
+               "METADATA_UPDATED"
+              ]
+             },
+             "actor": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "id",
+             "eventType",
+             "actor",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 50
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "status",
+          "purpose",
+          "displayName",
+          "note",
+          "mediaType",
+          "originalSha256",
+          "originalBytes",
+          "storedSha256",
+          "storedBytes",
+          "storageLocator",
+          "inspectorVersion",
+          "boundRevisionId",
+          "uploadedBy",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "currency",
+          "provenance",
+          "events"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/references/{referenceId}/content": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/references/:referenceId/content",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "referenceId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Binary",
+      "content": {
+       "application/octet-stream": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "304": {
+      "description": "Not modified (If-None-Match)"
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/references/{referenceId}/download-links": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/references/:referenceId/download-links",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "referenceId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "expiresInSeconds": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 900,
+          "default": 300
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "url": {
+           "type": "string",
+           "pattern": "^\\/api\\/reference\\-do\\wnloads\\?token\\="
+          },
+          "expiresAt": {
+           "type": "string"
+          },
+          "referenceId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "storedSha256": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          }
+         },
+         "required": [
+          "url",
+          "expiresAt",
+          "referenceId",
+          "storedSha256"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/references/usage": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/references/usage",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "references": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "storedBytes": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "attemptsLastHour": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "limits": {
+           "type": "object",
+           "properties": {
+            "references": {
+             "type": "integer"
+            },
+            "storedBytes": {
+             "type": "integer"
+            },
+            "attemptsPerHour": {
+             "type": "integer"
+            },
+            "maxFileBytes": {
+             "type": "integer"
+            }
+           },
+           "required": [
+            "references",
+            "storedBytes",
+            "attemptsPerHour",
+            "maxFileBytes"
+           ],
+           "additionalProperties": false
+          },
+          "supportedMediaTypes": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "image/png",
+             "image/jpeg",
+             "image/webp",
+             "application/pdf"
+            ]
+           }
+          },
+          "malwareScan": {
+           "type": "string",
+           "enum": [
+            "NOT_PERFORMED"
+           ]
+          }
+         },
+         "required": [
+          "projectId",
+          "references",
+          "storedBytes",
+          "attemptsLastHour",
+          "limits",
+          "supportedMediaTypes",
+          "malwareScan"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/references/validate": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/references/validate",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "image/png": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "image/jpeg": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "image/webp": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      },
+      "application/pdf": {
+       "schema": {
+        "type": "string",
+        "format": "binary"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "report": {
+           "type": "object",
+           "properties": {
+            "inspectorVersion": {
+             "type": "string",
+             "enum": [
+              "reference-inspector-v1"
+             ]
+            },
+            "verdict": {
+             "type": "string",
+             "enum": [
+              "ACCEPTED",
+              "REJECTED"
+             ]
+            },
+            "declaredMediaType": {
+             "type": "string",
+             "maxLength": 100
+            },
+            "detectedMediaType": {
+             "type": "string",
+             "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp",
+              "application/pdf"
+             ],
+             "nullable": true
+            },
+            "original": {
+             "type": "object",
+             "properties": {
+              "sha256": {
+               "type": "string",
+               "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 10485760
+              }
+             },
+             "required": [
+              "sha256",
+              "bytes"
+             ],
+             "additionalProperties": false
+            },
+            "stored": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/report/properties/original"
+              }
+             ],
+             "nullable": true
+            },
+            "checks": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "pattern": "^[A-Z0-9_]{1,40}$"
+             },
+             "maxItems": 32
+            },
+            "findings": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "code": {
+                "anyOf": [
+                 {
+                  "type": "string",
+                  "enum": [
+                   "EMPTY_FILE",
+                   "TYPE_MISMATCH",
+                   "TRAILING_DATA",
+                   "TRUNCATED",
+                   "MALFORMED_STRUCTURE",
+                   "DIMENSIONS_EXCEEDED",
+                   "PNG_CRC_MISMATCH",
+                   "PNG_UNKNOWN_CRITICAL_CHUNK",
+                   "PDF_ACTIVE_CONTENT",
+                   "PDF_ENCRYPTED",
+                   "PDF_INFLATE_LIMIT",
+                   "PDF_PAGE_LIMIT"
+                  ]
+                 },
+                 {
+                  "type": "string",
+                  "enum": [
+                   "METADATA_REMOVED",
+                   "MPF_SECONDARY_IMAGES",
+                   "PDF_METADATA_RETAINED"
+                  ]
+                 }
+                ]
+               },
+               "severity": {
+                "type": "string",
+                "enum": [
+                 "REJECT",
+                 "INFO"
+                ]
+               },
+               "detail": {
+                "type": "string",
+                "maxLength": 200
+               }
+              },
+              "required": [
+               "code",
+               "severity",
+               "detail"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 32
+            },
+            "media": {
+             "anyOf": [
+              {
+               "type": "object",
+               "properties": {
+                "kind": {
+                 "type": "string",
+                 "enum": [
+                  "IMAGE"
+                 ]
+                },
+                "width": {
+                 "type": "integer",
+                 "exclusiveMinimum": true,
+                 "minimum": 0
+                },
+                "height": {
+                 "type": "integer",
+                 "exclusiveMinimum": true,
+                 "minimum": 0
+                }
+               },
+               "required": [
+                "kind",
+                "width",
+                "height"
+               ],
+               "additionalProperties": false
+              },
+              {
+               "type": "object",
+               "properties": {
+                "kind": {
+                 "type": "string",
+                 "enum": [
+                  "DOCUMENT"
+                 ]
+                },
+                "pageCount": {
+                 "type": "integer",
+                 "exclusiveMinimum": true,
+                 "minimum": 0
+                }
+               },
+               "required": [
+                "kind",
+                "pageCount"
+               ],
+               "additionalProperties": false
+              }
+             ],
+             "nullable": true
+            },
+            "metadata": {
+             "type": "object",
+             "properties": {
+              "removed": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "segment": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+                 },
+                 "bytes": {
+                  "type": "integer",
+                  "exclusiveMinimum": true,
+                  "minimum": 0
+                 }
+                },
+                "required": [
+                 "segment",
+                 "bytes"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 64
+              },
+              "retained": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_ ]{1,24}$"
+               },
+               "maxItems": 32
+              }
+             },
+             "required": [
+              "removed",
+              "retained"
+             ],
+             "additionalProperties": false
+            },
+            "malwareScan": {
+             "type": "object",
+             "properties": {
+              "status": {
+               "type": "string",
+               "enum": [
+                "NOT_PERFORMED"
+               ]
+              },
+              "reason": {
+               "type": "string",
+               "enum": [
+                "NO_SCANNER_CONFIGURED"
+               ]
+              }
+             },
+             "required": [
+              "status",
+              "reason"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "malwareFree": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "contentAccuracy": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "drawingScale": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "siteConditions": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "ownershipOrLicence": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "malwareFree",
+              "contentAccuracy",
+              "drawingScale",
+              "siteConditions",
+              "ownershipOrLicence"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "inspectorVersion",
+            "verdict",
+            "declaredMediaType",
+            "detectedMediaType",
+            "original",
+            "stored",
+            "checks",
+            "findings",
+            "media",
+            "metadata",
+            "malwareScan",
+            "claims"
+           ],
+           "additionalProperties": false
+          },
+          "stored": {
+           "type": "boolean",
+           "enum": [
+            false
+           ]
+          }
+         },
+         "required": [
+          "report",
+          "stored"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/requirements/interpret": {
    "post": {
     "operationId": "post /api/projects/:projectId/requirements/interpret",
@@ -33740,6 +37110,48 @@
         }
        }
       }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/reference-downloads": {
+   "get": {
+    "operationId": "get /api/reference-downloads",
+    "parameters": [
+     {
+      "name": "token",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "pattern": "^[A-Za-z0-9_-]{16,600}\\.[a-f0-9]{64}$"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Binary",
+      "content": {
+       "application/octet-stream": {
+        "schema": {
+         "type": "string",
+         "format": "binary"
+        }
+       }
+      }
+     },
+     "304": {
+      "description": "Not modified (If-None-Match)"
      },
      "default": {
       "description": "Typed error",

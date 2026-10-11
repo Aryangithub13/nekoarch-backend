@@ -51,8 +51,11 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     const anonymousReads = ['GET /api/capabilities', 'GET /api/plans/:id', 'GET /api/projects/:projectId/public', 'GET /api/regions', 'GET /health/live', 'GET /health/ready'];
     // Phase 5 routes that parse the body before authenticating (an empty body is a 400 before the 401); they still require a session. Finding R06-F1.
     const validateBeforeAuth = ['POST /api/estimates', 'POST /api/plans', 'POST /api/plans/generate', 'PATCH /api/plans/:id'];
-    expect(open).toEqual([...anonymousReads, ...validateBeforeAuth].sort());
+    // Phase 31: the signed reference link is its own authorization; anything that is not a valid token is the uniform 404.
+    const tokenAuthorized = ['GET /api/reference-downloads'];
+    expect(open).toEqual([...anonymousReads, ...validateBeforeAuth, ...tokenAuthorized].sort());
     for (const r of validateBeforeAuth) expect(catalog.find(c => `${c.method} ${c.url}` === r)?.anonymous, r).toBe(400);
+    for (const r of tokenAuthorized) expect(catalog.find(c => `${c.method} ${c.url}` === r)?.anonymous, r).toBe(404);
     expect(catalog.filter(r => r.url.startsWith('/api/projects/:projectId/') && !r.url.endsWith('/public')).every(r => r.anonymous === 401)).toBe(true);
   });
   it('advertises only services that are registered routes, with engine versions taken from source', async () => {
@@ -79,7 +82,8 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     const keys = new Set(catalog.map(r => `${r.method} ${r.url}`));
     expect(Object.keys(CONTRACTS).filter(k => !keys.has(k))).toEqual([]);
     expect([...keys].filter(k => !(k in CONTRACTS))).toEqual([]);
-    expect(catalog.filter(r => ['POST', 'PATCH'].includes(r.method) && !CONTRACTS[`${r.method} ${r.url}`]!.body).map(r => r.url)).toEqual([]);
+    // Every write documents its request body: a JSON contract, or (Phase 31 uploads) the accepted raw media types.
+    expect(catalog.filter(r => ['POST', 'PATCH'].includes(r.method) && !CONTRACTS[`${r.method} ${r.url}`]!.body && !CONTRACTS[`${r.method} ${r.url}`]!.rawBody).map(r => r.url)).toEqual([]);
   });
   it('R01-G3: the exported JSON Schema accepts and rejects the same payloads as the Zod contracts', () => {
     const ajv = new Ajv({ allErrors: true });

@@ -25,9 +25,11 @@ import { SceneDetailSchema, SceneSummarySchema } from '../apps/api/src/lib/scene
 import { BimKindSchema, RelationshipSchema } from '../apps/api/src/bim/contracts.js';
 import { ApproveRequestSchema, EmptySchema, ExecuteRequestSchema, PreflightRequestSchema, RevisionComparisonSchema } from '../apps/api/src/revision/contracts.js';
 import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDetailSchema, OperationListSchema, ValidationEvidenceSchema } from '../apps/api/src/lib/revision-repository.js';
+import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REFERENCE_MEDIA_TYPES, ReferenceDetailSchema, ReferenceListQuerySchema, ReferenceListSchema, ReferenceUpdateSchema,
+  ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
-type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string };
+type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string; rawBody?: readonly string[] };
 const P = '/api/projects/:projectId', R = `${P}/revisions/:revisionId`, T = `${R}/takeoffs`, C = `${T}/:takeoffId/construction-calculations`, V = `${P}/conversations/:conversationId`;
 const empty = z.object({}).strict(), current = z.object({ require: z.literal('current').optional() }).strict();
 const bimPage = z.object({ limit: z.coerce.number().int().min(1).max(100).default(50), after: z.string().regex(/^bim-[a-f0-9]{40}$/).optional(), kind: BimKindSchema.optional() }).strict();
@@ -91,6 +93,14 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${P}/revision-operations/:operationId/candidate/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
   [`GET ${R}/appearance`]: { query: EmptySchema, response: AppearanceResponseSchema },
   [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
+  // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
+  [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
+  [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },
+  [`GET ${P}/references`]: { query: ReferenceListQuerySchema, response: ReferenceListSchema }, [`GET ${P}/references/usage`]: { query: empty, response: ReferenceUsageSchema },
+  [`GET ${P}/references/:referenceId`]: { query: empty, response: ReferenceDetailSchema }, [`PATCH ${P}/references/:referenceId`]: { body: ReferenceUpdateSchema, response: ReferenceDetailSchema },
+  [`DELETE ${P}/references/:referenceId`]: { response: ReferenceDetailSchema }, [`GET ${P}/references/:referenceId/content`]: { query: empty, media: 'application/octet-stream' },
+  [`POST ${P}/references/:referenceId/download-links`]: { body: DownloadLinkRequestSchema, response: DownloadLinkSchema, status: 201 },
+  'GET /api/reference-downloads': { query: DownloadTokenSchema, media: 'application/octet-stream' },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */
@@ -128,7 +138,8 @@ export function openApiDocument(routes: { method: string; url: string; anonymous
     (paths[path] ??= {})[r.method.toLowerCase()] = { operationId: `${r.method.toLowerCase()} ${r.url}`,
       ...(r.anonymous === 401 ? { security: [{ bearer: [] }] } : {}), parameters: [...params, ...query],
       ...(op.body ? { requestBody: { required: true, content: { 'application/json': { schema: referenced(op.body) } } } } : {}),
-      responses: { [String(op.status ?? 200)]: ok, ...(op.media === 'model/gltf-binary' ? { 304: { description: 'Not modified (If-None-Match)' } } : {}),
+      ...(op.rawBody ? { requestBody: { required: true, content: Object.fromEntries(op.rawBody.map(m => [m, { schema: { type: 'string', format: 'binary' } }])) } } : {}),
+      responses: { [String(op.status ?? 200)]: ok, ...(op.media === 'model/gltf-binary' || op.media === 'application/octet-stream' ? { 304: { description: 'Not modified (If-None-Match)' } } : {}),
         default: { description: 'Typed error', content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } } } } };
   }
   return { openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: 'modernization-phases-1-29' },

@@ -10,6 +10,7 @@ import { knowledgeDatabaseError } from './knowledge-repository.js';
 import { optimizationDatabaseError } from './optimization-repository.js';
 import { sceneDatabaseError } from './scene-repository.js';
 import { revisionDatabaseError } from './revision-repository.js';
+import { referenceDatabaseError } from './reference-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -77,6 +78,11 @@ export class SupabaseRepository implements Repository {
   async revisionRpc(name: 'revision_operation_read' | 'revision_operation_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) revisionDatabaseError(error);
+    return data as unknown;
+  }
+  async referenceRpc(name: 'reference_read' | 'reference_write' | 'reference_download', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) referenceDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {

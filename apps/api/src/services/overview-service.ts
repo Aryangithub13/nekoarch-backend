@@ -28,6 +28,8 @@ import { SYSTEMS_ROOT, systemsStatus } from './systems-service.js';
 import { KNOWLEDGE_ROOT, knowledgeStatus } from './knowledge-service.js';
 import { OPTIMIZATION_ROOT, optimizationStatus } from './optimization-service.js';
 import { SCENE_ROOT, sceneStatus } from './scene-service.js';
+import { REFERENCE_ROOT } from './reference-service.js';
+import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -47,6 +49,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'DESIGN_OPTIMIZATION', version: OPTIMIZER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: OPTIMIZATION_ROOT, workflowCapability: null },
   { serviceId: 'SCENE_3D', version: SCENE_COMPILER_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: SCENE_ROOT, workflowCapability: null },
   { serviceId: 'SELECTIVE_REVISION', version: REVISION_OPERATION_VERSION, persistence: 'CANDIDATE_THEN_IMMUTABLE_REVISION', route: '/api/projects/:projectId/revision-operations', workflowCapability: null },
+  // Project-scoped user evidence (Phase 31): inspected, private and never an engine input.
+  { serviceId: 'REFERENCE_LIBRARY', version: REFERENCE_INSPECTOR_VERSION, persistence: 'INSPECTED_PRIVATE_BLOB', route: REFERENCE_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */
