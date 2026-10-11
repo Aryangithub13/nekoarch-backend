@@ -11,6 +11,8 @@ import { signProjectCommit } from '../src/services/project-service.js';
 import { JOB_ROOT } from '../src/services/job-service.js';
 import { ScenePool } from '../src/scene3d/pool.js';
 
+// Same convention as the Phase 30 suite: untyped JSON bodies in assertions.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = Record<string, any>;
 const env = (secret: string) => parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent',
   RATE_LIMIT_ENABLED: 'false', PROJECT_COMMIT_SECRET: secret });
