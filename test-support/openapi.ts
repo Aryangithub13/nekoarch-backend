@@ -28,6 +28,7 @@ import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDet
 import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REFERENCE_MEDIA_TYPES, ReferenceDetailSchema, ReferenceListQuerySchema, ReferenceListSchema, ReferenceUpdateSchema,
   ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
 import { DiffReportSchema, DiffRequestSchema, VerificationReportSchema, VerificationRequestSchema } from '../apps/api/src/verification/contracts.js';
+import { AssessmentReportSchema, AssessmentRequestSchema } from '../apps/api/src/engineering/contracts.js';
 import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
@@ -118,6 +119,8 @@ export const CONTRACTS: Record<string, Op> = {
   // Phase 34 verification (computed on read).
   [`GET ${R}/verification`]: { query: empty, response: VerificationReportSchema }, [`POST ${R}/verification`]: { body: VerificationRequestSchema, response: VerificationReportSchema },
   [`POST ${R}/verification/diff`]: { body: DiffRequestSchema, response: DiffReportSchema },
+  // Phase 35 engineering assessment (computed on read).
+  [`GET ${R}/engineering-assessment`]: { query: empty, response: AssessmentReportSchema }, [`POST ${R}/engineering-assessment`]: { body: AssessmentRequestSchema, response: AssessmentReportSchema },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */

@@ -26,7 +26,7 @@ const safeRoutes = new Set([
   ...['', '/validate', '/usage', '/:referenceId', '/:referenceId/content', '/:referenceId/download-links'].map(suffix => `${project}/references${suffix}`),
   '/api/reference-downloads',
   '/api/me/settings', '/api/me/usage', '/api/library/projects', `${project}/library`, `${project}/brief`, `${project}/brief/versions`, `${project}/brief/versions/:version`, `${project}/context`,
-  `${revision}/verification`, `${revision}/verification/diff`,
+  `${revision}/verification`, `${revision}/verification/diff`, `${revision}/engineering-assessment`,
   ...['', '/:jobId', '/:jobId/events', '/:jobId/cancel', '/:jobId/retry'].map(suffix => `${project}/jobs${suffix}`),
 ]);
 

@@ -33,6 +33,8 @@ import { JOB_ROOT } from './job-service.js';
 import { CONTEXT_ROUTE } from './account-service.js';
 import { VERIFICATION_ROOT } from './verification-service.js';
 import { VERIFIER_VERSION } from '../verification/contracts.js';
+import { ENGINEERING_ROOT } from './engineering-service.js';
+import { ASSESSMENT_VERSION } from '../engineering/contracts.js';
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
@@ -63,6 +65,9 @@ export const SERVICES = Object.freeze([
   { serviceId: 'PROJECT_CONTEXT', version: CONTEXT_VERSION, persistence: 'DERIVED_ON_READ', route: CONTEXT_ROUTE, workflowCapability: null },
   // Phase 34: independent exact site/building verification and scoped revision diffs (statutory compliance not claimed).
   { serviceId: 'COMPLEX_VERIFICATION', version: VERIFIER_VERSION, persistence: 'DERIVED_ON_READ', route: VERIFICATION_ROOT, workflowCapability: null },
+  // Phase 35: preliminary engineering assessment (height, areas, volume, base width, conceptual cost arithmetic) and a truthful map of what needs inputs,
+  // verified sources, a validated solver or professional review. No structural, wind, seismic or foundation value is produced.
+  { serviceId: 'ENGINEERING_ASSESSMENT', version: ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ENGINEERING_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */
