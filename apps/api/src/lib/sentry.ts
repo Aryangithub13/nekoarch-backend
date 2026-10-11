@@ -25,6 +25,7 @@ const safeRoutes = new Set([
   ...['', '/execute', '/approve', '/reject', '/cancel', '/comparison', '/validation', '/candidate/manifest', '/candidate/glb'].map(suffix => `${project}/revision-operations/:operationId${suffix}`),
   ...['', '/validate', '/usage', '/:referenceId', '/:referenceId/content', '/:referenceId/download-links'].map(suffix => `${project}/references${suffix}`),
   '/api/reference-downloads',
+  ...['', '/:jobId', '/:jobId/events', '/:jobId/cancel', '/:jobId/retry'].map(suffix => `${project}/jobs${suffix}`),
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.

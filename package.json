@@ -62,6 +62,7 @@
     "benchmark:delivery": "npm run build && node --import tsx scripts/benchmark-delivery.ts",
     "test:revision": "npm run build && vitest run apps/api/tests/revision.test.ts apps/api/tests/revision.integration.test.ts",
     "test:references": "npm run build && vitest run apps/api/tests/references.test.ts apps/api/tests/references.integration.test.ts",
+    "test:jobs": "npm run build && vitest run apps/api/tests/jobs.test.ts apps/api/tests/jobs.integration.test.ts",
     "benchmark:revision": "npm run build && node --import tsx scripts/benchmark-revision.ts",
     "test:ifc": "python3 scripts/verify-ifc.py"
   },

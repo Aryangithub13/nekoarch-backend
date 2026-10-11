@@ -29,6 +29,8 @@ import { KNOWLEDGE_ROOT, knowledgeStatus } from './knowledge-service.js';
 import { OPTIMIZATION_ROOT, optimizationStatus } from './optimization-service.js';
 import { SCENE_ROOT, sceneStatus } from './scene-service.js';
 import { REFERENCE_ROOT } from './reference-service.js';
+import { JOB_ROOT } from './job-service.js';
+import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
@@ -51,6 +53,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'SELECTIVE_REVISION', version: REVISION_OPERATION_VERSION, persistence: 'CANDIDATE_THEN_IMMUTABLE_REVISION', route: '/api/projects/:projectId/revision-operations', workflowCapability: null },
   // Project-scoped user evidence (Phase 31): inspected, private and never an engine input.
   { serviceId: 'REFERENCE_LIBRARY', version: REFERENCE_INSPECTOR_VERSION, persistence: 'INSPECTED_PRIVATE_BLOB', route: REFERENCE_ROOT, workflowCapability: null },
+  // Phase 32: asynchronous execution of SCENE_COMPILE, OPTIMIZATION_STUDY and REVISION_EXECUTE with durable state and recovery.
+  { serviceId: 'DURABLE_JOBS', version: JOB_VERSION, persistence: 'DURABLE_JOB_STATE', route: JOB_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

@@ -27,6 +27,7 @@ import { ApproveRequestSchema, EmptySchema, ExecuteRequestSchema, PreflightReque
 import { AppearanceResponseSchema, CandidateManifestResponseSchema, OperationDetailSchema, OperationListSchema, ValidationEvidenceSchema } from '../apps/api/src/lib/revision-repository.js';
 import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REFERENCE_MEDIA_TYPES, ReferenceDetailSchema, ReferenceListQuerySchema, ReferenceListSchema, ReferenceUpdateSchema,
   ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
+import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
 type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string; rawBody?: readonly string[] };
@@ -101,6 +102,10 @@ export const CONTRACTS: Record<string, Op> = {
   [`DELETE ${P}/references/:referenceId`]: { response: ReferenceDetailSchema }, [`GET ${P}/references/:referenceId/content`]: { query: empty, media: 'application/octet-stream' },
   [`POST ${P}/references/:referenceId/download-links`]: { body: DownloadLinkRequestSchema, response: DownloadLinkSchema, status: 201 },
   'GET /api/reference-downloads': { query: DownloadTokenSchema, media: 'application/octet-stream' },
+  // Phase 32 durable jobs.
+  [`POST ${P}/jobs`]: { body: JobRequestSchema, response: JobDetailSchema, status: 202 }, [`GET ${P}/jobs`]: { query: JobListQuerySchema, response: JobListSchema },
+  [`GET ${P}/jobs/:jobId`]: { query: JobEmpty, response: JobDetailSchema }, [`GET ${P}/jobs/:jobId/events`]: { query: JobEventsQuerySchema, response: JobEventListSchema },
+  [`POST ${P}/jobs/:jobId/cancel`]: { body: JobEmpty, response: JobDetailSchema }, [`POST ${P}/jobs/:jobId/retry`]: { body: JobEmpty, response: JobDetailSchema },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */

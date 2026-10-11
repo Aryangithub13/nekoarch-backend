@@ -26969,6 +26969,1917 @@
     }
    }
   },
+  "/api/projects/{projectId}/jobs": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/jobs",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     },
+     {
+      "name": "status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "QUEUED",
+        "RUNNING",
+        "SUCCEEDED",
+        "FAILED",
+        "CANCELLED"
+       ]
+      }
+     },
+     {
+      "name": "kind",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "SCENE_COMPILE",
+        "OPTIMIZATION_STUDY",
+        "REVISION_EXECUTE"
+       ]
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "projectId": {
+              "$ref": "#/components/properties/items/items/properties/id"
+             },
+             "ownerId": {
+              "$ref": "#/components/properties/items/items/properties/id"
+             },
+             "kind": {
+              "type": "string",
+              "enum": [
+               "SCENE_COMPILE",
+               "OPTIMIZATION_STUDY",
+               "REVISION_EXECUTE"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "QUEUED",
+               "RUNNING",
+               "SUCCEEDED",
+               "FAILED",
+               "CANCELLED"
+              ]
+             },
+             "jobVersion": {
+              "type": "string",
+              "enum": [
+               "durable-job-v1"
+              ]
+             },
+             "inputHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+             },
+             "attempt": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "maxAttempts": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "userRetries": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "notBefore": {
+              "type": "string"
+             },
+             "leaseExpiresAt": {
+              "type": "string",
+              "nullable": true
+             },
+             "cancelRequested": {
+              "type": "boolean"
+             },
+             "progress": {
+              "type": "object",
+              "properties": {
+               "stage": {
+                "type": "string",
+                "enum": [
+                 "QUEUED",
+                 "VALIDATING",
+                 "COMPUTING",
+                 "PERSISTING",
+                 "DONE"
+                ]
+               },
+               "percent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+               },
+               "message": {
+                "type": "string",
+                "maxLength": 200
+               }
+              },
+              "required": [
+               "stage",
+               "percent",
+               "message"
+              ],
+              "additionalProperties": false
+             },
+             "result": {
+              "type": "object",
+              "properties": {
+               "resultKind": {
+                "type": "string",
+                "enum": [
+                 "SCENE_ARTIFACT",
+                 "OPTIMIZATION_STUDY",
+                 "REVISION_OPERATION"
+                ]
+               },
+               "resultId": {
+                "$ref": "#/components/properties/items/items/properties/id"
+               },
+               "href": {
+                "type": "string",
+                "pattern": "^\\/api\\/projects\\/"
+               }
+              },
+              "required": [
+               "resultKind",
+               "resultId",
+               "href"
+              ],
+              "additionalProperties": false,
+              "nullable": true
+             },
+             "failure": {
+              "type": "object",
+              "properties": {
+               "code": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{1,64}$"
+               },
+               "message": {
+                "type": "string",
+                "maxLength": 300
+               },
+               "retryable": {
+                "type": "boolean"
+               },
+               "attempt": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "code",
+               "message",
+               "retryable",
+               "attempt"
+              ],
+              "additionalProperties": false,
+              "nullable": true
+             },
+             "lastFailure": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/items/items/properties/failure"
+               }
+              ],
+              "nullable": true
+             },
+             "createdAt": {
+              "type": "string"
+             },
+             "updatedAt": {
+              "type": "string"
+             },
+             "finishedAt": {
+              "type": "string",
+              "nullable": true
+             }
+            },
+            "required": [
+             "id",
+             "projectId",
+             "ownerId",
+             "kind",
+             "status",
+             "jobVersion",
+             "inputHash",
+             "attempt",
+             "maxAttempts",
+             "userRetries",
+             "notBefore",
+             "leaseExpiresAt",
+             "cancelRequested",
+             "progress",
+             "result",
+             "failure",
+             "lastFailure",
+             "createdAt",
+             "updatedAt",
+             "finishedAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/jobs",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "anyOf": [
+         {
+          "type": "object",
+          "properties": {
+           "kind": {
+            "type": "string",
+            "enum": [
+             "SCENE_COMPILE"
+            ]
+           },
+           "revisionId": {
+            "type": "string",
+            "format": "uuid"
+           }
+          },
+          "required": [
+           "kind",
+           "revisionId"
+          ],
+          "additionalProperties": false
+         },
+         {
+          "type": "object",
+          "properties": {
+           "kind": {
+            "type": "string",
+            "enum": [
+             "OPTIMIZATION_STUDY"
+            ]
+           },
+           "revisionId": {
+            "$ref": "#/components/anyOf/0/properties/revisionId"
+           },
+           "input": {
+            "type": "object",
+            "additionalProperties": {}
+           }
+          },
+          "required": [
+           "kind",
+           "revisionId",
+           "input"
+          ],
+          "additionalProperties": false
+         },
+         {
+          "type": "object",
+          "properties": {
+           "kind": {
+            "type": "string",
+            "enum": [
+             "REVISION_EXECUTE"
+            ]
+           },
+           "operationId": {
+            "$ref": "#/components/anyOf/0/properties/revisionId"
+           },
+           "preflightHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+           },
+           "consent": {
+            "type": "object",
+            "properties": {
+             "acceptLocks": {
+              "type": "boolean",
+              "enum": [
+               true
+              ]
+             },
+             "acceptQuote": {
+              "type": "boolean",
+              "enum": [
+               true
+              ]
+             }
+            },
+            "required": [
+             "acceptLocks",
+             "acceptQuote"
+            ],
+            "additionalProperties": false
+           }
+          },
+          "required": [
+           "kind",
+           "operationId",
+           "preflightHash",
+           "consent"
+          ],
+          "additionalProperties": false
+         }
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "$ref": "#/components/properties/id"
+          },
+          "ownerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "SCENE_COMPILE",
+            "OPTIMIZATION_STUDY",
+            "REVISION_EXECUTE"
+           ]
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED"
+           ]
+          },
+          "jobVersion": {
+           "type": "string",
+           "enum": [
+            "durable-job-v1"
+           ]
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "attempt": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "maxAttempts": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "userRetries": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "notBefore": {
+           "type": "string"
+          },
+          "leaseExpiresAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "cancelRequested": {
+           "type": "boolean"
+          },
+          "progress": {
+           "type": "object",
+           "properties": {
+            "stage": {
+             "type": "string",
+             "enum": [
+              "QUEUED",
+              "VALIDATING",
+              "COMPUTING",
+              "PERSISTING",
+              "DONE"
+             ]
+            },
+            "percent": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 100
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "stage",
+            "percent",
+            "message"
+           ],
+           "additionalProperties": false
+          },
+          "result": {
+           "type": "object",
+           "properties": {
+            "resultKind": {
+             "type": "string",
+             "enum": [
+              "SCENE_ARTIFACT",
+              "OPTIMIZATION_STUDY",
+              "REVISION_OPERATION"
+             ]
+            },
+            "resultId": {
+             "$ref": "#/components/properties/id"
+            },
+            "href": {
+             "type": "string",
+             "pattern": "^\\/api\\/projects\\/"
+            }
+           },
+           "required": [
+            "resultKind",
+            "resultId",
+            "href"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "failure": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string",
+             "pattern": "^[A-Z0-9_]{1,64}$"
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 300
+            },
+            "retryable": {
+             "type": "boolean"
+            },
+            "attempt": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "code",
+            "message",
+            "retryable",
+            "attempt"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "lastFailure": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/failure"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "finishedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "request": {
+           "anyOf": [
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "SCENE_COMPILE"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "OPTIMIZATION_STUDY"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "input": {
+               "type": "object",
+               "additionalProperties": {}
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId",
+              "input"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "REVISION_EXECUTE"
+               ]
+              },
+              "operationId": {
+               "$ref": "#/components/properties/id"
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/inputHash"
+              },
+              "consent": {
+               "type": "object",
+               "properties": {
+                "acceptLocks": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                },
+                "acceptQuote": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                }
+               },
+               "required": [
+                "acceptLocks",
+                "acceptQuote"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "operationId",
+              "preflightHash",
+              "consent"
+             ],
+             "additionalProperties": false
+            }
+           ]
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "ownerId",
+          "kind",
+          "status",
+          "jobVersion",
+          "inputHash",
+          "attempt",
+          "maxAttempts",
+          "userRetries",
+          "notBefore",
+          "leaseExpiresAt",
+          "cancelRequested",
+          "progress",
+          "result",
+          "failure",
+          "lastFailure",
+          "createdAt",
+          "updatedAt",
+          "finishedAt",
+          "request"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/jobs/{jobId}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/jobs/:jobId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "jobId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "$ref": "#/components/properties/id"
+          },
+          "ownerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "SCENE_COMPILE",
+            "OPTIMIZATION_STUDY",
+            "REVISION_EXECUTE"
+           ]
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED"
+           ]
+          },
+          "jobVersion": {
+           "type": "string",
+           "enum": [
+            "durable-job-v1"
+           ]
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "attempt": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "maxAttempts": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "userRetries": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "notBefore": {
+           "type": "string"
+          },
+          "leaseExpiresAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "cancelRequested": {
+           "type": "boolean"
+          },
+          "progress": {
+           "type": "object",
+           "properties": {
+            "stage": {
+             "type": "string",
+             "enum": [
+              "QUEUED",
+              "VALIDATING",
+              "COMPUTING",
+              "PERSISTING",
+              "DONE"
+             ]
+            },
+            "percent": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 100
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "stage",
+            "percent",
+            "message"
+           ],
+           "additionalProperties": false
+          },
+          "result": {
+           "type": "object",
+           "properties": {
+            "resultKind": {
+             "type": "string",
+             "enum": [
+              "SCENE_ARTIFACT",
+              "OPTIMIZATION_STUDY",
+              "REVISION_OPERATION"
+             ]
+            },
+            "resultId": {
+             "$ref": "#/components/properties/id"
+            },
+            "href": {
+             "type": "string",
+             "pattern": "^\\/api\\/projects\\/"
+            }
+           },
+           "required": [
+            "resultKind",
+            "resultId",
+            "href"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "failure": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string",
+             "pattern": "^[A-Z0-9_]{1,64}$"
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 300
+            },
+            "retryable": {
+             "type": "boolean"
+            },
+            "attempt": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "code",
+            "message",
+            "retryable",
+            "attempt"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "lastFailure": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/failure"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "finishedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "request": {
+           "anyOf": [
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "SCENE_COMPILE"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "OPTIMIZATION_STUDY"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "input": {
+               "type": "object",
+               "additionalProperties": {}
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId",
+              "input"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "REVISION_EXECUTE"
+               ]
+              },
+              "operationId": {
+               "$ref": "#/components/properties/id"
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/inputHash"
+              },
+              "consent": {
+               "type": "object",
+               "properties": {
+                "acceptLocks": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                },
+                "acceptQuote": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                }
+               },
+               "required": [
+                "acceptLocks",
+                "acceptQuote"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "operationId",
+              "preflightHash",
+              "consent"
+             ],
+             "additionalProperties": false
+            }
+           ]
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "ownerId",
+          "kind",
+          "status",
+          "jobVersion",
+          "inputHash",
+          "attempt",
+          "maxAttempts",
+          "userRetries",
+          "notBefore",
+          "leaseExpiresAt",
+          "cancelRequested",
+          "progress",
+          "result",
+          "failure",
+          "lastFailure",
+          "createdAt",
+          "updatedAt",
+          "finishedAt",
+          "request"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/jobs/{jobId}/cancel": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/jobs/:jobId/cancel",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "jobId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "$ref": "#/components/properties/id"
+          },
+          "ownerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "SCENE_COMPILE",
+            "OPTIMIZATION_STUDY",
+            "REVISION_EXECUTE"
+           ]
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED"
+           ]
+          },
+          "jobVersion": {
+           "type": "string",
+           "enum": [
+            "durable-job-v1"
+           ]
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "attempt": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "maxAttempts": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "userRetries": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "notBefore": {
+           "type": "string"
+          },
+          "leaseExpiresAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "cancelRequested": {
+           "type": "boolean"
+          },
+          "progress": {
+           "type": "object",
+           "properties": {
+            "stage": {
+             "type": "string",
+             "enum": [
+              "QUEUED",
+              "VALIDATING",
+              "COMPUTING",
+              "PERSISTING",
+              "DONE"
+             ]
+            },
+            "percent": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 100
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "stage",
+            "percent",
+            "message"
+           ],
+           "additionalProperties": false
+          },
+          "result": {
+           "type": "object",
+           "properties": {
+            "resultKind": {
+             "type": "string",
+             "enum": [
+              "SCENE_ARTIFACT",
+              "OPTIMIZATION_STUDY",
+              "REVISION_OPERATION"
+             ]
+            },
+            "resultId": {
+             "$ref": "#/components/properties/id"
+            },
+            "href": {
+             "type": "string",
+             "pattern": "^\\/api\\/projects\\/"
+            }
+           },
+           "required": [
+            "resultKind",
+            "resultId",
+            "href"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "failure": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string",
+             "pattern": "^[A-Z0-9_]{1,64}$"
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 300
+            },
+            "retryable": {
+             "type": "boolean"
+            },
+            "attempt": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "code",
+            "message",
+            "retryable",
+            "attempt"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "lastFailure": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/failure"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "finishedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "request": {
+           "anyOf": [
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "SCENE_COMPILE"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "OPTIMIZATION_STUDY"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "input": {
+               "type": "object",
+               "additionalProperties": {}
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId",
+              "input"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "REVISION_EXECUTE"
+               ]
+              },
+              "operationId": {
+               "$ref": "#/components/properties/id"
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/inputHash"
+              },
+              "consent": {
+               "type": "object",
+               "properties": {
+                "acceptLocks": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                },
+                "acceptQuote": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                }
+               },
+               "required": [
+                "acceptLocks",
+                "acceptQuote"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "operationId",
+              "preflightHash",
+              "consent"
+             ],
+             "additionalProperties": false
+            }
+           ]
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "ownerId",
+          "kind",
+          "status",
+          "jobVersion",
+          "inputHash",
+          "attempt",
+          "maxAttempts",
+          "userRetries",
+          "notBefore",
+          "leaseExpiresAt",
+          "cancelRequested",
+          "progress",
+          "result",
+          "failure",
+          "lastFailure",
+          "createdAt",
+          "updatedAt",
+          "finishedAt",
+          "request"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/jobs/{jobId}/events": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/jobs/:jobId/events",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "jobId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "after",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 200,
+       "default": 100
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "jobId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED"
+           ]
+          },
+          "events": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "seq": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "eventType": {
+              "type": "string",
+              "enum": [
+               "SUBMITTED",
+               "DEDUPLICATED",
+               "STARTED",
+               "PROGRESS",
+               "CANCEL_REQUESTED",
+               "REQUEUED",
+               "LEASE_EXPIRED",
+               "SUCCEEDED",
+               "FAILED",
+               "CANCELLED",
+               "RETRIED",
+               "RELEASED"
+              ]
+             },
+             "detail": {
+              "type": "object",
+              "additionalProperties": {}
+             },
+             "createdAt": {
+              "type": "string"
+             }
+            },
+            "required": [
+             "seq",
+             "eventType",
+             "detail",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 200
+          },
+          "nextAfter": {
+           "type": "integer",
+           "minimum": 0
+          }
+         },
+         "required": [
+          "jobId",
+          "status",
+          "events",
+          "nextAfter"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/jobs/{jobId}/retry": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/jobs/:jobId/retry",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "jobId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectId": {
+           "$ref": "#/components/properties/id"
+          },
+          "ownerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "SCENE_COMPILE",
+            "OPTIMIZATION_STUDY",
+            "REVISION_EXECUTE"
+           ]
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED"
+           ]
+          },
+          "jobVersion": {
+           "type": "string",
+           "enum": [
+            "durable-job-v1"
+           ]
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "attempt": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "maxAttempts": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "userRetries": {
+           "type": "integer",
+           "minimum": 0
+          },
+          "notBefore": {
+           "type": "string"
+          },
+          "leaseExpiresAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "cancelRequested": {
+           "type": "boolean"
+          },
+          "progress": {
+           "type": "object",
+           "properties": {
+            "stage": {
+             "type": "string",
+             "enum": [
+              "QUEUED",
+              "VALIDATING",
+              "COMPUTING",
+              "PERSISTING",
+              "DONE"
+             ]
+            },
+            "percent": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 100
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "stage",
+            "percent",
+            "message"
+           ],
+           "additionalProperties": false
+          },
+          "result": {
+           "type": "object",
+           "properties": {
+            "resultKind": {
+             "type": "string",
+             "enum": [
+              "SCENE_ARTIFACT",
+              "OPTIMIZATION_STUDY",
+              "REVISION_OPERATION"
+             ]
+            },
+            "resultId": {
+             "$ref": "#/components/properties/id"
+            },
+            "href": {
+             "type": "string",
+             "pattern": "^\\/api\\/projects\\/"
+            }
+           },
+           "required": [
+            "resultKind",
+            "resultId",
+            "href"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "failure": {
+           "type": "object",
+           "properties": {
+            "code": {
+             "type": "string",
+             "pattern": "^[A-Z0-9_]{1,64}$"
+            },
+            "message": {
+             "type": "string",
+             "maxLength": 300
+            },
+            "retryable": {
+             "type": "boolean"
+            },
+            "attempt": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "code",
+            "message",
+            "retryable",
+            "attempt"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "lastFailure": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/failure"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "updatedAt": {
+           "type": "string"
+          },
+          "finishedAt": {
+           "type": "string",
+           "nullable": true
+          },
+          "request": {
+           "anyOf": [
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "SCENE_COMPILE"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "OPTIMIZATION_STUDY"
+               ]
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "input": {
+               "type": "object",
+               "additionalProperties": {}
+              }
+             },
+             "required": [
+              "kind",
+              "revisionId",
+              "input"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "REVISION_EXECUTE"
+               ]
+              },
+              "operationId": {
+               "$ref": "#/components/properties/id"
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/inputHash"
+              },
+              "consent": {
+               "type": "object",
+               "properties": {
+                "acceptLocks": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                },
+                "acceptQuote": {
+                 "type": "boolean",
+                 "enum": [
+                  true
+                 ]
+                }
+               },
+               "required": [
+                "acceptLocks",
+                "acceptQuote"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "operationId",
+              "preflightHash",
+              "consent"
+             ],
+             "additionalProperties": false
+            }
+           ]
+          },
+          "deduplicated": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectId",
+          "ownerId",
+          "kind",
+          "status",
+          "jobVersion",
+          "inputHash",
+          "attempt",
+          "maxAttempts",
+          "userRetries",
+          "notBefore",
+          "leaseExpiresAt",
+          "cancelRequested",
+          "progress",
+          "result",
+          "failure",
+          "lastFailure",
+          "createdAt",
+          "updatedAt",
+          "finishedAt",
+          "request"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/public": {
    "get": {
     "operationId": "get /api/projects/:projectId/public",

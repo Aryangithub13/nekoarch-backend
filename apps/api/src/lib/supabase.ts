@@ -11,6 +11,7 @@ import { optimizationDatabaseError } from './optimization-repository.js';
 import { sceneDatabaseError } from './scene-repository.js';
 import { revisionDatabaseError } from './revision-repository.js';
 import { referenceDatabaseError } from './reference-repository.js';
+import { jobDatabaseError } from './job-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -83,6 +84,11 @@ export class SupabaseRepository implements Repository {
   async referenceRpc(name: 'reference_read' | 'reference_write' | 'reference_download', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) referenceDatabaseError(error);
+    return data as unknown;
+  }
+  async jobRpc(name: 'job_read' | 'job_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) jobDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {
