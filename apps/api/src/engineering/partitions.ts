@@ -25,6 +25,7 @@ export const PARTITION_LIMITATIONS = [
   'Partition volumes use the whole-model storey heights, because a partition\'s uppermost storey is measured to the next zone\'s floor, which the partition does not contain.',
   'Verification, takeoff and BIM of a partition describe that partition alone. Loads, structure, shafts and services crossing zones are not represented, because Building Model V2 has no such elements.',
   'Scene, structural, environmental, building-systems, knowledge, cost and optimization services store artifacts bound to a stored revision and are not run per partition.',
+  'RECONCILED is a quantity and coverage reconciliation; it says nothing about whether a partition passes QA or BIM on its own (see validity). Coverage is a self-check of the assignment, which by construction places every entity.',
   'Nothing is stored: the report is derived on read and is deterministic for (model, canonical declaration, includeModels).',
 ];
 
@@ -73,7 +74,10 @@ export function partitionZones(ctx: ZoneContext, request: PartitionRequest): Par
       slabs: on(model.slabs), columns: on(model.columns), stairs: model.stairs.filter(s => inZone(s.fromLevelId) && inZone(s.toLevelId)),
       dimensions: model.dimensions.filter(d => zoneOfDimension.get(d.id) === k) };
     const refs = specRefs(base);
-    const { parametricArchitecture: _p, ...rest } = { ...base, specifications: model.specifications.filter(s => refs.has(s.id)) };
+    // The site is shared, but its primary entrance is a door of one storey: only the partition holding that door keeps the reference.
+    const entry = model.site?.primaryEntryOpeningId, site = model.site && entry && !base.openings.some(o => o.id === entry)
+      ? (({ primaryEntryOpeningId: _e, ...s }) => s)(model.site) : model.site;
+    const { parametricArchitecture: _p, ...rest } = { ...base, site, specifications: model.specifications.filter(s => refs.has(s.id)) };
     // The parametric submodel describes the whole building; it is kept only when the partition is the whole building.
     const pm: Model = zones.length === 1 && model.parametricArchitecture ? { ...rest, parametricArchitecture: model.parametricArchitecture } : rest;
     for (const c of COLLECTIONS) for (const e of pm[c] as { id: string }[]) seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
@@ -158,7 +162,12 @@ export function partitionZones(ctx: ZoneContext, request: PartitionRequest): Par
       }),
       stairCount: interfaceStairs.length, dimensionIds: interfaceDimensions.slice(0, PARTITION_LIMITS.listed), dimensionCount: interfaceDimensions.length,
     },
-    reconciliation, services: SERVICES, limitations: PARTITION_LIMITATIONS, claims: { ...NOT_CLAIMED_PARTITIONS },
+    reconciliation,
+    validity: { partitions: partitions.length, schemaValid: partitions.filter(p => p.schema.status === 'VALID').length,
+      qaNotFailed: partitions.filter(p => p.qa && p.qa.status !== 'FAIL').length, bimProjected: partitions.filter(p => p.bim?.projection).length },
+    services: SERVICES, limitations: PARTITION_LIMITATIONS, claims: { ...NOT_CLAIMED_PARTITIONS },
   };
-  return PartitionReportSchema.parse({ ...body, resultHash: costHash(body), currency: ctx.currency, generatedAt: ctx.generatedAt });
+  // Partition models are identified by partitionModelHash (canonical), so the result hash never depends on their array order.
+  const resultHash = costHash({ ...body, partitions: body.partitions.map(p => ({ ...p, model: null })) });
+  return PartitionReportSchema.parse({ ...body, resultHash, currency: ctx.currency, generatedAt: ctx.generatedAt });
 }

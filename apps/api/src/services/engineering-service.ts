@@ -100,16 +100,16 @@ const zoneRequest = <T>(run: () => T): T => {
 };
 
 /** Phase 35 regeneration: a candidate derived on read from the stored revision; nothing is committed or stored by this call. */
-export async function regenerateRevisionZone(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, now = new Date()) {
+export async function regenerateRevisionZone(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, saveBodyLimitBytes: number, now = new Date()) {
   const context = await zoneContext(repository, projectId, revisionId, now);
-  return zoneRequest(() => regenerate(context, request, { qa: supplyQa }));
+  return zoneRequest(() => regenerate(context, request, { qa: supplyQa, saveBodyLimitBytes }));
 }
 
 /** Recomputes the stated regeneration from the revision's parent (owner-scoped reads of both) and compares it with the committed revision. */
-export async function verifyRevisionRegeneration(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, now = new Date()) {
+export async function verifyRevisionRegeneration(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, saveBodyLimitBytes: number, now = new Date()) {
   const committed = await readRevisionModel(repository, projectId, revisionId);
   const parent = committed.parentRevisionId ? await zoneContext(repository, projectId, committed.parentRevisionId, now) : null;
-  return zoneRequest(() => verifyRegeneration({ ids: { projectId, revisionId, modelHash: committed.hash }, model: committed.model }, parent, request, { qa: supplyQa }, now.toISOString()));
+  return zoneRequest(() => verifyRegeneration({ ids: { projectId, revisionId, modelHash: committed.hash }, model: committed.model }, parent, request, { qa: supplyQa, saveBodyLimitBytes }, now.toISOString()));
 }
 
 /** Phase 35 partitioned processing, derived on read from the stored revision. */

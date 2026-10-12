@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { FastifyInstance } from 'fastify';
 import type { Backend } from '../lib/repository.js';
+import type { Env } from '../config/env.js';
 import { requestContext } from '../lib/auth.js';
 import { parseRequest } from '../lib/errors.js';
 import { RevisionParamsSchema } from '../contracts/projects.js';
@@ -12,7 +13,7 @@ import { ENGINEERING_ROOT, ZONES_ROOT, ZONE_PARTITIONS_ROUTE, ZONE_PREFLIGHT_ROU
   assessRevisionZones, partitionRevisionZones, preflightRevisionZoneRegeneration, regenerateRevisionZone, verifyRevisionRegeneration } from '../services/engineering-service.js';
 
 /** Phase 35: preliminary engineering assessment of a stored revision with declared inputs. Computed on read; nothing is stored. */
-export function engineeringRoutes(app: FastifyInstance, backend: Backend) {
+export function engineeringRoutes(app: FastifyInstance, backend: Backend, env: Env) {
   app.get(ENGINEERING_ROOT, async request => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
@@ -45,12 +46,12 @@ export function engineeringRoutes(app: FastifyInstance, backend: Backend) {
   app.post(ZONE_REGENERATION_ROUTE, { bodyLimit: REGENERATION_LIMITS.bodyBytes }, async request => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
-    return regenerateRevisionZone(repository, projectId, revisionId, parseRequest(RegenerationRequestSchema, request.body ?? {}));
+    return regenerateRevisionZone(repository, projectId, revisionId, parseRequest(RegenerationRequestSchema, request.body ?? {}), env.BODY_LIMIT_BYTES);
   });
   app.post(ZONE_REGENERATION_VERIFICATION_ROUTE, { bodyLimit: REGENERATION_LIMITS.bodyBytes }, async request => {
     const { repository } = await requestContext(request, backend, true);
     const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
-    return verifyRevisionRegeneration(repository, projectId, revisionId, parseRequest(RegenerationRequestSchema, request.body ?? {}));
+    return verifyRevisionRegeneration(repository, projectId, revisionId, parseRequest(RegenerationRequestSchema, request.body ?? {}), env.BODY_LIMIT_BYTES);
   });
   app.post(ZONE_PARTITIONS_ROUTE, { bodyLimit: PARTITION_LIMITS.bodyBytes }, async request => {
     const { repository } = await requestContext(request, backend, true);

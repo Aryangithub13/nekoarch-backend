@@ -6,7 +6,8 @@ import { tower, withIntermediateLevel, withTwoRooms, withWindows } from '../../.
 import { modelHash } from '../src/lib/generation-identity.js';
 import { revisionQaReport } from '../src/services/project-service.js';
 import { ZoneRequestError, type ZoneContext } from '../src/engineering/zones.js';
-import { preservationCheck, regenerate, runRegeneration, verifyRegeneration, type QaRunner } from '../src/engineering/regeneration.js';
+import { MODEL_MAXIMA, preservationCheck, regenerate, regeneratedId, runRegeneration, verifyRegeneration, type QaRunner } from '../src/engineering/regeneration.js';
+import { BuildingModelShapeSchema } from '@designflow/shared';
 import { RegenerationRequestSchema } from '../src/engineering/regeneration-contracts.js';
 import { partitionZones } from '../src/engineering/partitions.js';
 import { PartitionRequestSchema } from '../src/engineering/partition-contracts.js';
@@ -19,7 +20,9 @@ const ctx = (model: BuildingModelV2, revisionId = BASE): ZoneContext => {
 };
 /** The QA a supplied revision is saved with (the save route's own function). */
 const qa: QaRunner = m => revisionQaReport(m as never, null, null);
-const run = (model: BuildingModelV2, body: unknown, runner = qa) => regenerate(ctx(model), RegenerationRequestSchema.parse(body), { qa: runner });
+/** The save route's default request limit (config BODY_LIMIT_BYTES). */
+const SAVE_LIMIT = 1_048_576;
+const run = (model: BuildingModelV2, body: unknown, runner = qa, saveBodyLimitBytes = SAVE_LIMIT) => regenerate(ctx(model), RegenerationRequestSchema.parse(body), { qa: runner, saveBodyLimitBytes });
 const z = (key: string, from: number, to: number) => ({ key, fromLevelId: `storey-${from}`, toLevelId: `storey-${to}` });
 const THREE = [z('LOW', 0, 1), z('MID', 2, 5), z('HIGH', 6, 7)];
 /** An 8-storey tower whose storey 2 has a two-room layout (west and east offices, an interior wall and a door): the template. */
@@ -183,7 +186,8 @@ describe('Phase 35 FENESTRATION regeneration of an exterior skin', () => {
 
   it('refuses a candidate that exceeds acceptance QA\'s own resource budget, exactly as the save route would refuse the model', () => {
     // 256 storeys × 24 windows: the save route's QA reports QA_RESOURCE_LIMIT, so the candidate is never offered for commit.
-    const r = run(tower({ storeys: 256 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' }, operation: { kind: 'FENESTRATION', window: { ...rule, gapMm: 4000 } } });
+    // A deployment may raise BODY_LIMIT_BYTES; QA's own budget still refuses (at the 1 MiB default the save-size check refuses first).
+    const r = run(tower({ storeys: 256 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' }, operation: { kind: 'FENESTRATION', window: { ...rule, gapMm: 4000 } } }, qa, 16 * SAVE_LIMIT);
     expect([r.status, r.candidate, r.commit, r.refusals.map(x => x.code)]).toEqual(['REFUSED', null, null, ['QA_REJECTED']]);
     expect(r.qa!.findings.map(f => f.code)).toContain('QA_RESOURCE_LIMIT');
     expect(r.preservation!.check).toMatchObject({ status: 'WITHIN_SCOPE', added: 6143 });
@@ -218,19 +222,19 @@ describe('Phase 35 preservation check and regeneration verification', () => {
 
   it('VERIFIES a committed candidate, lists every deviation of a tampered commit (MISMATCH), and reports NO_PARENT and NOT_REPRODUCIBLE', () => {
     const base = typical(), request = RegenerationRequestSchema.parse({ zones: THREE, target: { kind: 'ZONE', zoneKey: 'MID' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } });
-    const candidate = runRegeneration(ctx(base), request, { qa }).candidate!;
+    const candidate = runRegeneration(ctx(base), request, { qa, saveBodyLimitBytes: SAVE_LIMIT }).candidate!;
     const committed = (m: BuildingModelV2) => ({ ids: { projectId: PROJECT, revisionId: CHILD, modelHash: modelHash(m) }, model: m });
-    const ok = verifyRegeneration(committed(candidate), ctx(base), request, { qa }, '2026-10-12T00:00:00.000Z');
+    const ok = verifyRegeneration(committed(candidate), ctx(base), request, { qa, saveBodyLimitBytes: SAVE_LIMIT }, '2026-10-12T00:00:00.000Z');
     expect(ok).toMatchObject({ status: 'VERIFIED', parentRevisionId: BASE, recomputed: { status: 'CANDIDATE_READY', modelHash: modelHash(candidate) },
       preservation: { status: 'WITHIN_SCOPE', outOfScope: 0 }, deviation: { status: 'IDENTICAL' } });
     const tampered = structuredClone(candidate);
     tampered.slabs.find(s => s.id === 'storey-0-floor')!.thicknessMm = 300;
-    const bad = verifyRegeneration(committed(tampered), ctx(base), request, { qa }, '2026-10-12T00:00:00.000Z');
+    const bad = verifyRegeneration(committed(tampered), ctx(base), request, { qa, saveBodyLimitBytes: SAVE_LIMIT }, '2026-10-12T00:00:00.000Z');
     expect(bad).toMatchObject({ status: 'MISMATCH', preservation: { status: 'OUT_OF_SCOPE_CHANGES', violations: [{ collection: 'slabs', entityId: 'storey-0-floor', change: 'CHANGED' }] },
       deviation: { status: 'OUT_OF_SCOPE_CHANGES', changed: 1, violations: [{ collection: 'slabs', entityId: 'storey-0-floor', change: 'CHANGED' }] } });
-    expect(verifyRegeneration(committed(candidate), null, request, { qa }, '2026-10-12T00:00:00.000Z').status).toBe('NO_PARENT');
+    expect(verifyRegeneration(committed(candidate), null, request, { qa, saveBodyLimitBytes: SAVE_LIMIT }, '2026-10-12T00:00:00.000Z').status).toBe('NO_PARENT');
     const nothing = RegenerationRequestSchema.parse({ target: { kind: 'ZONE', zoneKey: 'ALL' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } });
-    expect(verifyRegeneration(committed(candidate), ctx(base), nothing, { qa }, '2026-10-12T00:00:00.000Z')).toMatchObject({ status: 'NOT_REPRODUCIBLE', recomputed: { status: 'REFUSED' } });
+    expect(verifyRegeneration(committed(candidate), ctx(base), nothing, { qa, saveBodyLimitBytes: SAVE_LIMIT }, '2026-10-12T00:00:00.000Z')).toMatchObject({ status: 'NOT_REPRODUCIBLE', recomputed: { status: 'REFUSED' } });
   });
 });
 
@@ -312,5 +316,163 @@ describe('Phase 35 partitioned processing (each zone as its own model)', () => {
     expect([b.inputHash, b.resultHash]).toEqual([a.inputHash, a.resultHash]);
     expect(m).toEqual(before);
     expect(() => partition(m, { zones: [z('A', 0, 2)] })).toThrow(ZoneRequestError);
+  });
+});
+
+describe('Phase 35 independent-review findings (save limit, bounded work, junctions, references, verification)', () => {
+  const rule = { widthMm: 1500, heightMm: 1800, sillMm: 900, gapMm: 900, edgeClearanceMm: 600 };
+  const MID = { zones: THREE, target: { kind: 'ZONE', zoneKey: 'MID' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } };
+
+  it('refuses a candidate the save route could not accept for size, and pins the model maxima to the schema', () => {
+    const tight = run(typical(), MID, qa, 20_000);
+    expect([tight.status, tight.candidate, tight.refusals[0]!.code]).toEqual(['REFUSED', null, 'CANDIDATE_EXCEEDS_SAVE_LIMIT']);
+    // Reviewer reproduction: many small windows with a 200-character type exceed the default 1 MiB save body.
+    const many = run(tower({ storeys: 8 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' },
+      operation: { kind: 'FENESTRATION', window: { widthMm: 300, heightMm: 300, sillMm: 900, gapMm: 100, edgeClearanceMm: 0, type: 'w'.repeat(200) } } });
+    expect([many.status, many.refusals.map(r => r.code)]).toEqual(['REFUSED', ['CANDIDATE_EXCEEDS_SAVE_LIMIT']]);
+    expect(Number(many.refusals[0]!.detail.match(/needs a (\d+)-byte/)![1])).toBeGreaterThan(SAVE_LIMIT);
+    const shape = BuildingModelShapeSchema.shape;
+    expect(MODEL_MAXIMA).toEqual({ spaces: shape.spaces._def.maxLength!.value, walls: shape.walls._def.maxLength!.value, openings: shape.openings._def.maxLength!.value,
+      dimensions: shape.dimensions._def.maxLength!.value });
+  });
+
+  it('counts windows and copied entities against the schema maxima before building anything', () => {
+    // A 20 km façade would take about 50 000 windows of 300 mm; the count is refused before any window is created.
+    const long = tower({ storeys: 2, widthMm: 20_000_000 });
+    const f = run(long, { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' }, operation: { kind: 'FENESTRATION', window: { ...rule, widthMm: 300, gapMm: 100 } } });
+    expect([f.status, f.changes, f.refusals]).toEqual(['REFUSED', null, [{ code: 'OPENING_LIMIT', detail: 'The window layout would exceed the 8192 openings Building Model V2 allows' }]]);
+    const dense = tower({ storeys: 256 });
+    for (let i = 0; i < 40; i++) dense.walls.push({ id: `storey-2-screen-${i}`, levelId: 'storey-2', path: { start: { x: 15_000, z: 5000 + i * 300 }, end: { x: 20_000, z: 5000 + i * 300 } },
+      pathReference: 'centerline', thicknessMm: 100, heightMm: 3000, baseOffsetMm: 0, classification: 'partition' });
+    const t = run(dense, { target: { kind: 'SECTION', fromLevelId: 'storey-1', toLevelId: 'storey-254' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } });
+    // Kept: 1 024 + 40 walls, less the 4 on each of the 253 targets = 52; copied: (4 + 40) × 253 = 11 132.
+    expect([t.status, t.changes, t.refusals]).toEqual(['REFUSED', null, [{ code: 'ENTITY_LIMIT', detail: 'The candidate would have 11184 walls; Building Model V2 allows 8192' }]]);
+  });
+
+  it('treats a wall ending at the façade\'s inner face as a junction, and keeps windows at least gapMm apart across junctions', () => {
+    const m = typical(), partition = m.walls.find(w => w.id === 'storey-2-partition')!;
+    partition.path = { start: { x: 20_000, z: 200 }, end: { x: 20_000, z: 29_800 } };
+    const narrow = { widthMm: 1890, heightMm: 1800, sillMm: 900, gapMm: 100, edgeClearanceMm: 0 };
+    const r = run(m, { zones: THREE, target: { kind: 'EXTERIOR_SKIN', zoneKey: 'MID', facades: ['NORTH'] }, operation: { kind: 'FENESTRATION', window: narrow } });
+    expect(r.status).toBe('CANDIDATE_READY');
+    // Both façade walls run +x along z = 100 from x = 100, so a window's global extent is [start.x + offset, + width].
+    const walls = new Map(r.candidate!.model.walls.map(w => [w.id, w]));
+    const spans = r.candidate!.model.openings.filter(o => o.levelId === 'storey-2' && ['storey-2-south-west', 'storey-2-south-east'].includes(o.wallId))
+      .map(o => [walls.get(o.wallId)!.path.start.x + o.offsetMm, walls.get(o.wallId)!.path.start.x + o.offsetMm + o.widthMm] as const).sort((a, b) => a[0] - b[0]);
+    expect(spans.every(([a, b]) => b <= 19_950 || a >= 20_050)).toBe(true); // never across the partition solid
+    expect(spans.slice(1).every(([a], i) => a - spans[i]![1] >= narrow.gapMm)).toBe(true);
+  });
+
+  it('isolates the two junction rules: a mid-wall partition ending at the inner face, and a collinear split with no wall at the joint', () => {
+    // The layout is what is under test, so QA is stubbed to pass (these test walls carry no room topology).
+    const pass: QaRunner = () => ({ status: 'PASS', summary: { errors: 0, warnings: 0, info: 0, rulePass: 0, ruleFail: 0, ruleNotApplicable: 0, ruleNotEvaluated: 0 }, findings: [] });
+    const narrow = { widthMm: 1890, heightMm: 1800, sillMm: 900, gapMm: 100, edgeClearanceMm: 0 };
+    const along = (m: BuildingModelV2, wallIds: string[]) => { const ws = new Map(m.walls.map(w => [w.id, w]));
+      return m.openings.filter(o => wallIds.includes(o.wallId)).map(o => { const w = ws.get(o.wallId)!, x = w.path.start.x + Math.sign(w.path.end.x - w.path.start.x) * o.offsetMm;
+        return [Math.min(x, x + Math.sign(w.path.end.x - w.path.start.x) * o.widthMm), Math.max(x, x + Math.sign(w.path.end.x - w.path.start.x) * o.widthMm)] as const; }).sort((a, b) => a[0] - b[0]); };
+    const apart = (spans: (readonly [number, number])[]) => spans.slice(1).every(([a], i) => a - spans[i]![1] >= narrow.gapMm);
+    const a = tower({ storeys: 2 });
+    a.walls.push({ id: 'storey-0-screen', levelId: 'storey-0', path: { start: { x: 20_000, z: 200 }, end: { x: 20_000, z: 29_800 } }, pathReference: 'centerline',
+      thicknessMm: 100, heightMm: 3000, baseOffsetMm: 0, classification: 'partition' });
+    const ra = regenerate(ctx(a), RegenerationRequestSchema.parse({ zones: [z('G', 0, 0), z('U', 1, 1)], target: { kind: 'EXTERIOR_SKIN', zoneKey: 'G' }, operation: { kind: 'FENESTRATION', window: narrow } }),
+      { qa: pass, saveBodyLimitBytes: SAVE_LIMIT });
+    const sa = along(ra.candidate!.model, ['storey-0-south']);
+    expect(sa.every(([x0, x1]) => x1 <= 19_950 || x0 >= 20_050)).toBe(true);
+    expect(apart(sa)).toBe(true);
+    const b = withTwoRooms(tower({ storeys: 2 }), 0);
+    b.walls = b.walls.filter(w => w.id !== 'storey-0-partition'); b.openings = b.openings.filter(o => o.id !== 'storey-0-partition-door');
+    const rb = regenerate(ctx(b), RegenerationRequestSchema.parse({ zones: [z('G', 0, 0), z('U', 1, 1)], target: { kind: 'EXTERIOR_SKIN', zoneKey: 'G' }, operation: { kind: 'FENESTRATION', window: narrow } }),
+      { qa: pass, saveBodyLimitBytes: SAVE_LIMIT });
+    const sb = along(rb.candidate!.model, ['storey-0-north-west', 'storey-0-north-east']);
+    expect(sb.length).toBeGreaterThan(10);
+    expect(apart(sb)).toBe(true);
+  });
+
+  it('measures offsets from the path start on a wall drawn in the negative direction (asymmetric kept door)', () => {
+    const m = typical();
+    m.openings.push({ id: 'storey-3-north-door', kind: 'door', wallId: 'storey-3-north', levelId: 'storey-3', offsetMm: 5000, widthMm: 1000, heightMm: 2100, sillMm: 0, type: 'balcony',
+      operation: { kind: 'unspecified' } });
+    const r = run(m, { zones: THREE, target: { kind: 'EXTERIOR_SKIN', zoneKey: 'MID', facades: ['SOUTH'] }, operation: { kind: 'FENESTRATION', window: rule } });
+    expect(r.status).toBe('CANDIDATE_READY');
+    // storey-3-north runs from x = 39 900 to x = 100: the door's [5 000, 6 000] from that start fixes the layout, as on storey-0-south.
+    const offsets = r.candidate!.model.openings.filter(o => o.wallId === 'storey-3-north' && o.kind === 'window').map(o => o.offsetMm).sort((a, b) => a - b);
+    expect(offsets).toEqual([1650, ...Array.from({ length: 13 }, (_, k) => 7850 + k * 2400)]);
+  });
+
+  it('copies template dimensions with their anchors remapped and point anchors moved by the elevation difference', () => {
+    const m = typical();
+    m.dimensions.push({ id: 'storey-2-west-length', levelId: 'storey-2', purpose: 'wall', axis: 'x', constraint: { mode: 'derived' },
+      anchors: [{ kind: 'wall-end', wallId: 'storey-2-south-west', end: 'start' }, { kind: 'wall-end', wallId: 'storey-2-south-west', end: 'end' }] },
+    { id: 'storey-2-clear-height', levelId: 'storey-2', purpose: 'elevation', axis: 'y', constraint: { mode: 'derived' },
+      anchors: [{ kind: 'level', levelId: 'storey-2' }, { kind: 'point', point: { x: 0, z: 0, y: 11_000 } }] });
+    expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).toBe(true);
+    const r = run(m, MID);
+    expect(r.status).toBe('CANDIDATE_READY');
+    const on3 = r.candidate!.model.dimensions.filter(d => d.levelId === 'storey-3');
+    expect(on3.map(d => d.anchors)).toEqual([
+      [{ kind: 'wall-end', wallId: regeneratedId('typical-floor-v1', 'storey-3', 'storey-2-south-west'), end: 'start' }, { kind: 'wall-end', wallId: regeneratedId('typical-floor-v1', 'storey-3', 'storey-2-south-west'), end: 'end' }],
+      [{ kind: 'level', levelId: 'storey-3' }, { kind: 'point', point: { x: 0, z: 0, y: 15_000 } }]]);
+    expect(r.changes!.levels[0]!.added.dimensions).toBe(2);
+  });
+
+  it('names the remaining TYPICAL_FLOOR refusals: id collision, a site entrance on a replaced storey, and a declared height a template wall exceeds', () => {
+    const clash = typical();
+    clash.specifications.push({ id: regeneratedId('typical-floor-v1', 'storey-3', 'storey-2-west-office'), name: 'Squatter' });
+    expect(run(clash, MID).refusals.map(r => r.code)).toEqual(['ID_COLLISION']);
+    const entrance = typical();
+    entrance.site!.primaryEntryOpeningId = 'entry-door';
+    expect(ArchitecturalBuildingModelV2Schema.safeParse(entrance).success).toBe(true);
+    const e = run(entrance, { target: { kind: 'ZONE', zoneKey: 'ALL' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } });
+    expect(e.refusals.map(r => r.code)).toContain('SITE_ENTRANCE_ON_REGENERATED_STOREY');
+    const low = withIntermediateLevel(typical(), { storey: 4, offsetMm: 3000, declare: true });
+    low.levels.find(l => l.id === 'storey-2')!.floorToFloorHeightMm = null;
+    expect(ArchitecturalBuildingModelV2Schema.safeParse(low).success).toBe(true);
+    const h = run(low, { target: { kind: 'SECTION', fromLevelId: 'storey-3', toLevelId: 'storey-5' }, operation: { kind: 'TYPICAL_FLOOR', templateLevelId: 'storey-2' } });
+    expect(h.refusals.map(r => r.detail)).toEqual([expect.stringMatching(/^A template wall would rise above this storey's declared floor-to-floor height \(storey storey-4,/)]);
+  });
+
+  it('reports MISMATCH for a candidate committed onto a later base, and reports provenance separately from VERIFIED', () => {
+    const base = typical(), request = RegenerationRequestSchema.parse(MID), deps = { qa, saveBodyLimitBytes: SAVE_LIMIT };
+    const candidate = runRegeneration(ctx(base), request, deps).candidate!;
+    const committed = (m: BuildingModelV2) => ({ ids: { projectId: PROJECT, revisionId: CHILD, modelHash: modelHash(m) }, model: m });
+    const later = structuredClone(base);
+    later.slabs.find(s => s.id === 'storey-0-floor')!.thicknessMm = 250;
+    const onLater = verifyRegeneration(committed(candidate), ctx(later), request, deps, '2026-10-12T00:00:00.000Z');
+    expect(onLater).toMatchObject({ status: 'MISMATCH', deviation: { changed: 1, violations: [{ collection: 'slabs', entityId: 'storey-0-floor' }] } });
+    const relabelled = { ...structuredClone(candidate), provenance: { ...candidate.provenance, seed: 'relabelled' } };
+    expect(verifyRegeneration(committed(relabelled), ctx(base), request, deps, '2026-10-12T00:00:00.000Z')).toMatchObject({ status: 'VERIFIED', provenanceIdentical: false });
+    expect(verifyRegeneration(committed(candidate), ctx(base), request, deps, '2026-10-12T00:00:00.000Z').provenanceIdentical).toBe(true);
+  });
+});
+
+describe('Phase 35 partitions: shared references and unusual levels', () => {
+  const partition = (model: BuildingModelV2, body: unknown) => partitionZones(ctx(model), PartitionRequestSchema.parse(body));
+  it('keeps the site entrance only in the partition that holds the door, so every partition stays schema-valid', () => {
+    const m = tower({ storeys: 4 });
+    m.site!.primaryEntryOpeningId = 'entry-door';
+    const r = partition(m, { zones: [z('LOW', 0, 1), z('HIGH', 2, 3)], includeModels: true });
+    expect(r.partitions.map(p => p.schema.status)).toEqual(['VALID', 'VALID']);
+    expect(r.partitions.map(p => p.model!.site!.primaryEntryOpeningId ?? null)).toEqual(['entry-door', null]);
+    expect(r.status).toBe('RECONCILED');
+  });
+
+  it('puts a level below the lowest storey in the first zone, routes level-less dimensions, and copies only referenced specifications', () => {
+    const m = tower({ storeys: 4 });
+    m.levels.push({ id: 'foundation-datum', name: 'Foundation datum', index: -1, kind: 'datum', elevationMm: -3000, floorToFloorHeightMm: null, boundary: m.levels[0]!.boundary });
+    m.dimensions.push({ id: 'low-span', purpose: 'elevation', axis: 'y', constraint: { mode: 'derived' }, anchors: [{ kind: 'level', levelId: 'storey-0' }, { kind: 'level', levelId: 'storey-1' }] },
+      { id: 'full-span', purpose: 'elevation', axis: 'y', constraint: { mode: 'derived' }, anchors: [{ kind: 'level', levelId: 'storey-0' }, { kind: 'level', levelId: 'storey-3' }] });
+    m.specifications.push({ id: 'concrete', name: 'Concrete' });
+    m.slabs.find(s => s.id === 'storey-3-floor')!.specificationId = 'concrete';
+    expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).toBe(true);
+    const r = partition(m, { zones: [z('LOW', 0, 1), z('HIGH', 2, 3)] });
+    expect(r.partitions[0]!.levelIds).toEqual(['foundation-datum', 'storey-0', 'storey-1']);
+    expect(r.interfaceElements).toMatchObject({ dimensionIds: ['full-span'], dimensionCount: 1 });
+    expect(r.partitions.map(p => [p.entities.dimensions, p.entities.specifications])).toEqual([[1, 0], [0, 1]]);
+    expect(r.reconciliation.coverage).toMatchObject({ status: 'COMPLETE', interfaceEntities: 2 });
+  });
+
+  it('summarises partition validity separately from reconciliation', () => {
+    const r = partition(tower({ storeys: 8 }), { zones: [0, 2, 4, 6].map(i => z(`Z${i}`, i, i + 1)) });
+    expect([r.status, r.validity]).toEqual(['RECONCILED', { partitions: 4, schemaValid: 4, qaNotFailed: 1, bimProjected: 1 }]);
   });
 });

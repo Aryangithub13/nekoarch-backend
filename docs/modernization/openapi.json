@@ -44625,6 +44625,30 @@
            ],
            "additionalProperties": false
           },
+          "validity": {
+           "type": "object",
+           "properties": {
+            "partitions": {
+             "$ref": "#/components/properties/partitions/items/properties/entities/properties/levels"
+            },
+            "schemaValid": {
+             "$ref": "#/components/properties/partitions/items/properties/entities/properties/levels"
+            },
+            "qaNotFailed": {
+             "$ref": "#/components/properties/partitions/items/properties/entities/properties/levels"
+            },
+            "bimProjected": {
+             "$ref": "#/components/properties/partitions/items/properties/entities/properties/levels"
+            }
+           },
+           "required": [
+            "partitions",
+            "schemaValid",
+            "qaNotFailed",
+            "bimProjected"
+           ],
+           "additionalProperties": false
+          },
           "services": {
            "type": "array",
            "items": {
@@ -44710,6 +44734,7 @@
           "partitions",
           "interfaceElements",
           "reconciliation",
+          "validity",
           "services",
           "limitations",
           "claims"
@@ -47207,6 +47232,10 @@
            ],
            "nullable": true
           },
+          "provenanceIdentical": {
+           "type": "boolean",
+           "nullable": true
+          },
           "claims": {
            "type": "object",
            "properties": {
@@ -47261,6 +47290,7 @@
           "recomputed",
           "preservation",
           "deviation",
+          "provenanceIdentical",
           "claims"
          ],
          "additionalProperties": false

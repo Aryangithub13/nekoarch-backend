@@ -70,6 +70,8 @@ export const PartitionReportSchema = z.object({
     plates: z.object({ compared: count, equal: count }).strict(),
     grossVolume: z.object({ wholeModelMm3: area.nullable(), sumOfPartitionsMm3: area.nullable(), equal: z.boolean().nullable() }).strict(),
   }).strict(),
+  /** How many partitions are independently valid, separately from reconciliation: schema-valid, not failing QA, and projected to BIM. */
+  validity: z.object({ partitions: count, schemaValid: count, qaNotFailed: count, bimProjected: count }).strict(),
   services: z.array(z.object({ serviceId: z.string().max(60), perPartition: z.enum(['EVALUATED', 'EVALUATED_WHERE_ELIGIBLE', 'NOT_PARTITIONED']), detail: z.string().max(400) }).strict()).max(16),
   limitations: z.array(z.string().max(400)).max(8), claims: notClaimed(NOT_CLAIMED_PARTITIONS),
 }).strict();

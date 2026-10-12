@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { ArchitecturalBuildingModelV2Schema, segmentsTouch, type BuildingModelV2 } from '@designflow/shared';
+import { ArchitecturalBuildingModelV2Schema, BuildingModelShapeSchema, segmentsTouch, type BuildingModelV2 } from '@designflow/shared';
 import type { BlueprintQaReport } from '@designflow/blueprint-qa';
 import { costHash } from '@designflow/boq-cost';
 import { modelHash } from '../lib/generation-identity.js';
@@ -26,6 +26,11 @@ type PreservedItem = NonNullable<RegenerationReport['preservation']>['preservedI
 export type Allowed = (collection: Collection, entity: Entity) => boolean;
 /** The acceptance QA a supplied revision is saved with (services/project-service revisionQaReport), injected so this module stays pure. */
 export type QaRunner = (model: Model) => Pick<BlueprintQaReport, 'status' | 'summary' | 'findings'>;
+/** The save route's checks a candidate must also pass: its QA and its request body limit (config BODY_LIMIT_BYTES). */
+export type RegenerationDeps = { qa: QaRunner; saveBodyLimitBytes: number };
+/** Collection maxima of Building Model V2, read from the schema itself so a candidate is never built past them. */
+export const MODEL_MAXIMA = Object.freeze(Object.fromEntries((['spaces', 'walls', 'openings', 'dimensions'] as const)
+  .map(k => [k, (BuildingModelShapeSchema.shape[k] as unknown as { _def: { maxLength: { value: number } } })._def.maxLength.value])) as Record<'spaces' | 'walls' | 'openings' | 'dimensions', number>);
 
 export const REGENERATION_LIMITATIONS = [
   'Regeneration is deterministic model editing, not AI or generator design: TYPICAL_FLOOR copies an existing storey\'s layout and FENESTRATION lays out windows by a stated rule. Neither judges design quality.',
@@ -82,7 +87,7 @@ function levelContentHash(model: Model, levelIds: ReadonlySet<string>): string {
 // ---------------------------------------------------------------- shared helpers
 
 /** Deterministic id of a regenerated entity: the operation version, the level or wall it is created for, and its source. */
-const regeneratedId = (version: string, scope: string, source: string) => `rg-${createHash('sha256').update(`${version}\n${scope}\n${source}`).digest('hex').slice(0, 40)}`;
+export const regeneratedId = (version: string, scope: string, source: string) => `rg-${createHash('sha256').update(`${version}\n${scope}\n${source}`).digest('hex').slice(0, 40)}`;
 const multiset = (xs: readonly unknown[]) => xs.map(x => costHash(x)).sort().join('|');
 const byId = <T extends { id: string }>(xs: readonly T[]) => [...xs].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 const counts = (m: Model, levelId: string) => ({ spaces: m.spaces.filter(s => s.levelId === levelId).length, walls: m.walls.filter(w => w.levelId === levelId).length,
@@ -131,6 +136,7 @@ function typicalFloor(m: Model, heights: Map<string, number | null>, targetIds: 
   const on = <T extends { levelId?: string | undefined }>(xs: readonly T[], id: string) => xs.filter(x => x.levelId === id);
   const exteriorWalls = new Set(on(m.walls, templateId).filter(w => w.classification === 'exterior').map(w => w.id));
   const templateHasEntrance = on(m.openings, templateId).some(o => o.kind === 'door' && exteriorWalls.has(o.wallId));
+  const tallestWall = Math.max(0, ...on(m.walls, templateId).map(w => (w.baseOffsetMm ?? 0) + (w.heightMm ?? 0)));
   const fixed = fixedGeometry(m, template), incompatible = (levelId: string, reason: string) =>
     refusals.push({ code: 'STOREY_INCOMPATIBLE', detail: `${reason} (storey ${levelId.slice(0, 120)}, template ${templateId.slice(0, 120)})` });
   for (const id of targets) {
@@ -140,12 +146,22 @@ function typicalFloor(m: Model, heights: Map<string, number | null>, targetIds: 
     else if (h !== th) incompatible(id, 'The storey height differs from the template\'s');
     if (level.floorToFloorHeightMm !== null && template.floorToFloorHeightMm !== null && level.floorToFloorHeightMm !== template.floorToFloorHeightMm)
       incompatible(id, 'The declared floor-to-floor height differs from the template\'s');
+    else if (level.floorToFloorHeightMm !== null && tallestWall > level.floorToFloorHeightMm)
+      incompatible(id, 'A template wall would rise above this storey\'s declared floor-to-floor height');
     if (f.slabs !== fixed.slabs) incompatible(id, 'Its slabs (outline, voids, offset or thickness) differ from the template\'s');
     if (f.columns !== fixed.columns) incompatible(id, 'Its columns differ from the template\'s');
     if (f.stairs !== fixed.stairs) incompatible(id, 'The stair flights leaving or arriving at it differ from the template\'s');
     if (templateHasEntrance && id !== lowestStoreyId) incompatible(id, 'The template has a door in an exterior wall, which would be copied to an upper storey');
   }
   const removedIds = new Set([...m.spaces, ...m.walls, ...m.openings].filter(e => targetSet.has(e.levelId)).map(e => e.id));
+  const entry = m.site?.primaryEntryOpeningId;
+  if (entry && removedIds.has(entry))
+    refusals.push({ code: 'SITE_ENTRANCE_ON_REGENERATED_STOREY', detail: `The site's primary entrance ${entry.slice(0, 150)} is on a storey this operation replaces` });
+  // Counted before anything is built: kept entities plus the template's entities on every target, against the schema maxima.
+  for (const k of ['spaces', 'walls', 'openings', 'dimensions'] as const) {
+    const total = m[k].filter(e => !(e.levelId !== undefined && targetSet.has(e.levelId))).length + on(m[k] as { levelId?: string | undefined }[], templateId).length * targets.length;
+    if (total > MODEL_MAXIMA[k]) refusals.push({ code: 'ENTITY_LIMIT', detail: `The candidate would have ${total} ${k}; Building Model V2 allows ${MODEL_MAXIMA[k]}` });
+  }
   for (const d of m.dimensions) if (!(d.levelId !== undefined && targetSet.has(d.levelId)) && anchoredEntities(d).some(e => removedIds.has(e)))
     refusals.push({ code: 'DIMENSION_DEPENDS_ON_REPLACED_ENTITY', detail: `Dimension ${d.id.slice(0, 150)} is outside the regenerated storeys but measures an entity they replace` });
   if (refusals.length) return refused(refusals, TYPICAL_FLOOR_SCOPE);
@@ -213,32 +229,41 @@ function freeIntervals(blocked: [number, number][], length: number): [number, nu
  * every wall meeting or crossing this one (half its thickness, rounded up, plus the clearance) and every kept door or opening (plus the gap).
  * In each free interval the largest number of windows that fit at the minimum gap is placed as one group, centred (floor of the half slack).
  */
-function layoutWall(w: Wall, levelWalls: readonly Wall[], hosted: readonly Opening[], rule: WindowRule): { offsets: number[] } | { skip: string } {
+function layoutWall(w: Wall, levelWalls: readonly Wall[], hosted: readonly Opening[], rule: WindowRule, allowance: number): { offsets: number[] } | { skip: string } | { overflow: true } {
   const horizontal = w.path.start.z === w.path.end.z, vertical = w.path.start.x === w.path.end.x;
   if (horizontal === vertical) return { skip: 'WALL_NOT_AXIS_ALIGNED' };
   if (w.heightMm === null || w.thicknessMm === null || w.baseOffsetMm === null) return { skip: 'WALL_CONSTRUCTION_INCOMPLETE' };
   if (rule.sillMm + rule.heightMm > w.heightMm) return { skip: 'WINDOW_EXCEEDS_WALL_HEIGHT' };
   const axis = horizontal ? 'x' : 'z', across = horizontal ? 'z' : 'x', s0 = w.path.start[axis], dir = Math.sign(w.path.end[axis] - s0);
   const length = Math.abs(w.path.end[axis] - s0), line = w.path.start[across], pos = (c: number) => (c - s0) * dir, ec = rule.edgeClearanceMm;
+  // A wall meets this one if its centreline reaches this wall's solid (centreline ± half thickness), e.g. a partition ending at the inner face.
+  const ownHalf = Math.ceil(w.thicknessMm / 2), collinearClearance = Math.max(ec, Math.ceil(rule.gapMm / 2));
   const blocked: [number, number][] = [[0, ec], [length - ec, length]];
   for (const o of levelWalls) {
     if (o.id === w.id) continue;
     const oh = o.path.start.z === o.path.end.z, ov = o.path.start.x === o.path.end.x, half = Math.ceil((o.thicknessMm ?? 0) / 2);
     if (oh === ov) { if (segmentsTouch(w.path.start, w.path.end, o.path.start, o.path.end)) return { skip: 'NON_ORTHOGONAL_JUNCTION' }; continue; }
     if (oh === horizontal) {
+      // A collinear wall carries its own windows: half the gap on each side keeps windows across the shared end at least gapMm apart.
       if (o.path.start[across] !== line) continue;
       const a = pos(o.path.start[axis]), b = pos(o.path.end[axis]);
-      blocked.push([Math.min(a, b) - ec, Math.max(a, b) + ec]);
+      blocked.push([Math.min(a, b) - collinearClearance, Math.max(a, b) + collinearClearance]);
     } else {
+      // At a junction inside the wall, windows on either side are separated by the meeting wall's thickness plus twice this clearance, so at
+      // least gapMm in total. At a wall end (a corner) nothing on this line lies beyond it; a collinear continuation is handled above.
       const lo = Math.min(o.path.start[across], o.path.end[across]), hi = Math.max(o.path.start[across], o.path.end[across]), p = pos(o.path.start[axis]);
-      if (line < lo || line > hi || p < 0 || p > length) continue;
-      blocked.push([p - half - ec, p + half + ec]);
+      if (line < lo - ownHalf || line > hi + ownHalf || p < 0 || p > length) continue;
+      const c = p > 0 && p < length ? Math.max(ec, Math.ceil((rule.gapMm - 2 * half) / 2)) : ec;
+      blocked.push([p - half - c, p + half + c]);
     }
   }
   for (const o of hosted) if (o.kind !== 'window') blocked.push([o.offsetMm - rule.gapMm, o.offsetMm + o.widthMm + rule.gapMm]);
-  const offsets: number[] = [];
-  for (const [a, b] of freeIntervals(blocked, length)) {
-    const free = b - a, n = Math.floor((free + rule.gapMm) / (rule.widthMm + rule.gapMm));
+  const offsets: number[] = [], intervals = freeIntervals(blocked, length);
+  const count = (free: number) => Math.floor((free + rule.gapMm) / (rule.widthMm + rule.gapMm));
+  // Counted before any offset is generated, so a very long wall cannot make the operation build more windows than the model may hold.
+  if (intervals.reduce((n, [a, b]) => n + Math.max(0, count(b - a)), 0) > allowance) return { overflow: true };
+  for (const [a, b] of intervals) {
+    const free = b - a, n = count(free);
     if (n < 1) continue;
     const start = a + Math.floor((free - (n * rule.widthMm + (n - 1) * rule.gapMm)) / 2);
     for (let k = 0; k < n; k++) offsets.push(start + k * (rule.widthMm + rule.gapMm));
@@ -248,27 +273,30 @@ function layoutWall(w: Wall, levelWalls: readonly Wall[], hosted: readonly Openi
 
 function fenestration(m: Model, targetIds: readonly string[], facades: readonly Facade[], rule: WindowRule): OperationResult {
   const version = OPERATION_VERSIONS.FENESTRATION, targetSet = new Set(targetIds), all = facades.length === FACADES.length;
+  const wallById = new Map(m.walls.map(w => [w.id, w])), walls = (id: string) => wallById.get(id);
   if (m.parametricArchitecture) return refused([{ code: 'PARAMETRIC_MODEL', detail: 'A parametric model is regenerated by changing its parameters, not by editing its openings' }], FENESTRATION_SCOPE);
   if (!all && !northResolvable(m)) return refused([{ code: 'FACADE_ORIENTATION_UNKNOWN', detail: 'Site north is absent or not a multiple of 90°, so the requested façades cannot be resolved to walls' }], FENESTRATION_SCOPE);
   const skipped: { entityId: string; reason: string }[] = [], regenerated = new Map<string, number[]>();
-  // Indexed once, so a layout reads only its own level's walls and its own openings (no wall × model scan at the schema maxima).
-  const wallsOn = new Map<string, Wall[]>(), openingsOn = new Map<string, Opening[]>();
-  for (const w of m.walls) { const xs = wallsOn.get(w.levelId); if (xs) xs.push(w); else wallsOn.set(w.levelId, [w]); }
-  for (const o of m.openings) { const xs = openingsOn.get(o.wallId); if (xs) xs.push(o); else openingsOn.set(o.wallId, [o]); }
+  // Indexed once, so a layout reads only its own level's walls, spaces and openings (no wall × model scan at the schema maxima).
+  const group = <T, K>(xs: readonly T[], key: (x: T) => K) => { const g = new Map<K, T[]>(); for (const x of xs) { const k = key(x), v = g.get(k); if (v) v.push(x); else g.set(k, [x]); } return g; };
+  const wallsOn = group(m.walls, w => w.levelId), openingsOn = group(m.openings, o => o.wallId), spacesOn = group(m.spaces, s => s.levelId);
+  // The windows that may be replaced do not count against the model's opening limit; everything else does.
+  let allowance = MODEL_MAXIMA.openings - m.openings.filter(o => !(o.kind === 'window' && targetSet.has(o.levelId) && walls(o.wallId)?.classification === 'exterior')).length;
   for (const w of byId(m.walls)) {
     if (!targetSet.has(w.levelId) || w.classification !== 'exterior') continue;
-    if (!all) { const f = wallFacade(m, w); if (f === null) { skipped.push({ entityId: w.id, reason: 'FACADE_UNRESOLVED' }); continue; } if (!facades.includes(f)) continue; }
-    const layout = layoutWall(w, wallsOn.get(w.levelId) ?? [], openingsOn.get(w.id) ?? [], rule);
-    if ('skip' in layout) skipped.push({ entityId: w.id, reason: layout.skip }); else regenerated.set(w.id, layout.offsets);
+    if (!all) { const f = wallFacade({ ...m, spaces: spacesOn.get(w.levelId) ?? [] }, w); if (f === null) { skipped.push({ entityId: w.id, reason: 'FACADE_UNRESOLVED' }); continue; } if (!facades.includes(f)) continue; }
+    const layout = layoutWall(w, wallsOn.get(w.levelId) ?? [], openingsOn.get(w.id) ?? [], rule, allowance);
+    if ('overflow' in layout) return refused([{ code: 'OPENING_LIMIT', detail: `The window layout would exceed the ${MODEL_MAXIMA.openings} openings Building Model V2 allows` }], FENESTRATION_SCOPE);
+    if ('skip' in layout) skipped.push({ entityId: w.id, reason: layout.skip }); else { regenerated.set(w.id, layout.offsets); allowance -= layout.offsets.length; }
   }
   if (!regenerated.size) return refused([{ code: 'NO_EXTERIOR_WALLS_IN_SCOPE', detail: `No exterior wall on the target storeys and façades can be regenerated (${skipped.length} skipped)` }], FENESTRATION_SCOPE);
   const removed = new Set(m.openings.filter(o => o.kind === 'window' && regenerated.has(o.wallId)).map(o => o.id));
   const refusals = m.dimensions.filter(d => anchoredEntities(d).some(e => removed.has(e)))
     .map(d => ({ code: 'DIMENSION_DEPENDS_ON_REPLACED_ENTITY', detail: `Dimension ${d.id.slice(0, 150)} measures a window that would be replaced` }));
   if (refusals.length) return refused(refusals, FENESTRATION_SCOPE);
-  const walls = new Map(m.walls.map(w => [w.id, w])), windows: Opening[] = [];
+  const windows: Opening[] = [];
   for (const [wallId, offsets] of regenerated) offsets.forEach((offsetMm, k) => windows.push({ id: regeneratedId(version, wallId, `window-${k}`), kind: 'window', wallId,
-    levelId: walls.get(wallId)!.levelId, offsetMm, widthMm: rule.widthMm, heightMm: rule.heightMm, sillMm: rule.sillMm, type: rule.type }));
+    levelId: walls(wallId)!.levelId, offsetMm, widthMm: rule.widthMm, heightMm: rule.heightMm, sillMm: rule.sillMm, type: rule.type }));
   const inUse = idsInUse(m, removed);
   if (windows.some(o => inUse.has(o.id))) return refused([{ code: 'ID_COLLISION', detail: 'A regenerated window id is already in use in this revision' }], FENESTRATION_SCOPE);
   const candidate: Model = { ...m, openings: [...m.openings.filter(o => !removed.has(o.id)), ...windows] };
@@ -305,7 +333,7 @@ type Outcome = { report: RegenerationReport; allowed: Allowed | null; candidate:
  * and never committed. A candidate is returned only when it parses as Building Model V2, changes nothing outside the operation's allowed scope
  * (entity-level comparison; any violation refuses it) and passes the same acceptance QA the supplied-revision save runs.
  */
-export function runRegeneration(ctx: ZoneContext, request: RegenerationRequest, deps: { qa: QaRunner }): Outcome {
+export function runRegeneration(ctx: ZoneContext, request: RegenerationRequest, deps: RegenerationDeps): Outcome {
   const { model, ids } = ctx, { height, resolved } = prepare(model, ids, request.zones);
   if (resolved.issues.length) throw new ZoneRequestError('ZONE_DECLARATION_INVALID', 'The zone declaration is invalid for this model', resolved.issues.map(i => `${i.code}: ${i.detail}`));
   const t = request.target, op = request.operation, { target, preserved } = resolveTarget(model, height.storeys, resolved.zones, t);
@@ -322,7 +350,10 @@ export function runRegeneration(ctx: ZoneContext, request: RegenerationRequest, 
       candidate = parsed.data;
       check = preservationCheck(model, candidate, result.allowed!);
       candidateHash = modelHash(candidate);
-      if (check.status === 'OUT_OF_SCOPE_CHANGES') refusals.push({ code: 'PRESERVATION_VIOLATION', detail: `${check.outOfScope} change(s) outside the allowed scope; the candidate is refused` });
+      // The save route must be able to accept the candidate: its body is { model, baseRevisionId } under BODY_LIMIT_BYTES.
+      const saveBytes = Buffer.byteLength(JSON.stringify({ model: candidate, baseRevisionId: ids.revisionId }));
+      if (saveBytes > deps.saveBodyLimitBytes) refusals.push({ code: 'CANDIDATE_EXCEEDS_SAVE_LIMIT', detail: `Saving the candidate needs a ${saveBytes}-byte request; the save route accepts ${deps.saveBodyLimitBytes} bytes` });
+      else if (check.status === 'OUT_OF_SCOPE_CHANGES') refusals.push({ code: 'PRESERVATION_VIOLATION', detail: `${check.outOfScope} change(s) outside the allowed scope; the candidate is refused` });
       else if (candidateHash !== ids.modelHash) {
         qa = qaSummary(deps.qa(candidate));
         if (qa.status === 'FAIL') refusals.push({ code: 'QA_REJECTED', detail: `Acceptance QA rejects the candidate with ${qa.errors} error(s); the findings are listed under qa` });
@@ -353,11 +384,13 @@ export function runRegeneration(ctx: ZoneContext, request: RegenerationRequest, 
       detail: 'Derived from this revision\'s geometry: results for it do not apply to the candidate, which needs its own computation once committed' })),
     limitations: REGENERATION_LIMITATIONS, claims: { ...NOT_CLAIMED_REGENERATION },
   };
-  const report = RegenerationReportSchema.parse({ ...body, resultHash: costHash(body), currency: ctx.currency, generatedAt: ctx.generatedAt });
+  // The candidate model is identified by its canonical hash, so the result hash never depends on how its arrays happen to be ordered.
+  const resultHash = costHash({ ...body, candidate: body.candidate && { modelHash: body.candidate.modelHash } });
+  const report = RegenerationReportSchema.parse({ ...body, resultHash, currency: ctx.currency, generatedAt: ctx.generatedAt });
   return { report, allowed: result.allowed, candidate: ready ? candidate : null };
 }
 
-export const regenerate = (ctx: ZoneContext, request: RegenerationRequest, deps: { qa: QaRunner }) => runRegeneration(ctx, request, deps).report;
+export const regenerate = (ctx: ZoneContext, request: RegenerationRequest, deps: RegenerationDeps) => runRegeneration(ctx, request, deps).report;
 
 /**
  * Verifies that a committed revision is exactly the stated regeneration of its parent: the regeneration is recomputed from the parent and the
@@ -365,24 +398,26 @@ export const regenerate = (ctx: ZoneContext, request: RegenerationRequest, deps:
  * operation's allowed scope, and with the recomputed candidate under an empty scope, so any deviation is listed by entity.
  */
 export function verifyRegeneration(committed: { ids: { projectId: string; revisionId: string; modelHash: string }; model: Model }, parent: ZoneContext | null,
-  request: RegenerationRequest, deps: { qa: QaRunner }, generatedAt: string): RegenerationVerificationReport {
+  request: RegenerationRequest, deps: RegenerationDeps, generatedAt: string): RegenerationVerificationReport {
   const op = request.operation, operation = { kind: op.kind, operationVersion: OPERATION_VERSIONS[op.kind], templateLevelId: op.kind === 'TYPICAL_FLOOR' ? op.templateLevelId : null,
     window: op.kind === 'FENESTRATION' ? op.window : null };
   const inputHash = costHash({ verificationVersion: REGENERATION_VERIFICATION_VERSION, modelHash: committed.ids.modelHash, parentModelHash: parent?.ids.modelHash ?? null,
     zones: canonicalDeclarations(request.zones), target: request.target, operation: op });
   let body;
+  // No parent: nothing to recompute from, so the request is not resolved against any model (a zone key it names is not checked).
   if (!parent) body = { status: 'NO_PARENT' as const, detail: 'The revision has no parent revision, so it cannot be a regeneration of one', parentRevisionId: null, parentModelHash: null,
-    target: null, recomputed: null, preservation: null, deviation: null };
+    target: null, recomputed: null, preservation: null, deviation: null, provenanceIdentical: null };
   else {
     const { report, allowed, candidate } = runRegeneration(parent, request, deps);
     const recomputed = { status: report.status, modelHash: report.candidate?.modelHash ?? null, refusals: report.refusals };
     const preservation = allowed ? preservationCheck(parent.model, committed.model, allowed) : null;
     const common = { parentRevisionId: parent.ids.revisionId, parentModelHash: parent.ids.modelHash, target: report.target, recomputed, preservation };
-    if (!candidate) body = { ...common, status: 'NOT_REPRODUCIBLE' as const, deviation: null,
+    if (!candidate) body = { ...common, status: 'NOT_REPRODUCIBLE' as const, deviation: null, provenanceIdentical: null,
       detail: `The regeneration recomputed from the parent revision is ${report.status}, so no candidate exists to compare with` };
     else {
       const verified = report.candidate!.modelHash === committed.ids.modelHash;
       body = { ...common, status: verified ? 'VERIFIED' as const : 'MISMATCH' as const, deviation: preservationCheck(candidate, committed.model, () => false),
+        provenanceIdentical: costHash(candidate.provenance) === costHash(committed.model.provenance),
         detail: verified ? 'The committed model has the canonical hash of the regeneration recomputed from its parent'
           : 'The committed model differs from the regeneration recomputed from its parent; the deviations are listed' };
     }

@@ -13,7 +13,7 @@
 | Preservation guarantees (R3) | Enforced on every candidate by an entity-level comparison; any out-of-scope change refuses it. Verifiable on the committed revision. | An atomic regenerate-and-commit that the database itself enforces (needs a migration; see §7) |
 | Partitioned processing (R1b) | Each zone is processed as its own model: schema, QA, B34 verification, gross floor area and volume, quantity takeoff, and BIM where the bounded profile admits it. The results reconcile exactly with the whole model. | Scene, structural, environmental, building-systems, knowledge, cost and optimization per zone (they store artifacts bound to stored revisions) |
 
-All three routes are **derived on read**: they store nothing and create no revision, operation, job or artifact.
+All three routes are **derived on read**: they store nothing and create no revision, operation, job or artifact. They compute whole models per request, so they are charged to the stricter `generate` rate-limit group.
 
 ## 2. API
 
@@ -82,7 +82,10 @@ The targets are the target zone's or section's storeys, excluding the template. 
 - for any target other than the lowest storey: the template has no door in an exterior wall (an entrance is never copied upward).
 
 Other refusals:
+- `STOREY_INCOMPATIBLE`, also when a target declares a floor-to-floor height that a template wall would rise above;
 - `DIMENSION_DEPENDS_ON_REPLACED_ENTITY`: a dimension outside the targets measures a replaced entity;
+- `SITE_ENTRANCE_ON_REGENERATED_STOREY`: the site's primary entrance door would be replaced;
+- `ENTITY_LIMIT`: kept entities plus the template's entities on every target would exceed the Building Model V2 maxima. This is counted before anything is copied.
 - `PARAMETRIC_MODEL`: change the parameters instead;
 - `ID_COLLISION`.
 
@@ -107,11 +110,13 @@ The layout on a regenerated wall of length L is measured along the path from its
 1. Every window on the wall is removed. Doors and generic openings stay.
 2. These intervals are blocked:
    - `[0, c]` and `[L − c, L]`, where c is `edgeClearanceMm`;
-   - for every wall meeting or crossing this one at position p: `[p − ⌈t/2⌉ − c, p + ⌈t/2⌉ + c]`, where t is that wall's thickness;
-   - for every collinear wall: its extent ± c;
+   - for every wall meeting or crossing this one at position p: `[p − ⌈t/2⌉ − c′, p + ⌈t/2⌉ + c′]`, where t is that wall's thickness. A wall meets this one if its centreline reaches this wall's solid, so a partition that ends at the inner face counts. At a junction inside the wall, c′ = max(c, ⌈(gap − 2⌈t/2⌉) / 2⌉), so windows either side are at least `gap` apart. At a wall end (a corner), c′ = c;
+   - for every collinear wall: its extent ± max(c, ⌈gap / 2⌉), so windows on two collinear walls are at least `gap` apart across their shared end;
    - for every kept opening: `[offset − gap, offset + width + gap]`.
 3. In each free interval of length F, the number of windows is n = ⌊(F + gap) / (width + gap)⌋. They are placed as one group at exactly `gap` spacing, starting at `a + ⌊(F − (n·width + (n − 1)·gap)) / 2⌋`.
 4. Window ids are `rg-` + sha256(`fenestration-v1`, wall id, `window-k`).
+
+The windows are **counted before any is created**. If the count would exceed the 8,192-opening schema maximum, the operation is refused with `OPENING_LIMIT`. That count includes the openings that are kept, and excludes the windows that may be replaced.
 
 Other refusals:
 - `NO_EXTERIOR_WALLS_IN_SCOPE`;
@@ -122,9 +127,10 @@ Other refusals:
 ### 5.3 Gates common to both
 
 After the operation, in order:
-1. The candidate must parse as Building Model V2 (`CANDIDATE_SCHEMA_INVALID`).
-2. Preservation must hold (`PRESERVATION_VIOLATION`).
-3. If it differs from the base, it must pass acceptance QA (`QA_REJECTED`). The QA is `revisionQaReport(model, null, null)`, exactly what the supplied-revision save runs. This includes QA's own resource budget. For example, 24 windows on each of 256 storeys exceeds it (`QA_RESOURCE_LIMIT`), so that candidate is refused, as its save would be.
+1. The candidate must parse as Building Model V2 (`CANDIDATE_SCHEMA_INVALID`). This is a backstop: the operations' own pre-checks cover every schema rule the tests reach.
+2. Its save request (`{ model, baseRevisionId }`) must fit the save route's `BODY_LIMIT_BYTES` (`CANDIDATE_EXCEEDS_SAVE_LIMIT`). The limit defaults to 1 MiB, which many small windows can exceed.
+3. Preservation must hold (`PRESERVATION_VIOLATION`).
+4. If it differs from the base, it must pass acceptance QA (`QA_REJECTED`). The QA is `revisionQaReport(model, null, null)`, exactly what the supplied-revision save runs. This includes QA's own resource budget. For example, 24 windows on each of 256 storeys exceeds it (`QA_RESOURCE_LIMIT`), so that candidate is refused, as its save would be.
 
 ## 6. Verification report
 
@@ -134,9 +140,12 @@ The verification recomputes the regeneration from the committed revision's paren
 - `NOT_REPRODUCIBLE`: the recomputation is not `CANDIDATE_READY`;
 - `NO_PARENT`.
 
-Independently of the hash, it reports two comparisons:
+Independently of the hash, it reports:
 - `preservation`: the committed revision against its parent, under the operation's allowed scope;
-- `deviation`: the committed revision against the recomputed candidate, with an empty scope, so every deviation is listed by entity.
+- `deviation`: the committed revision against the recomputed candidate, with an empty scope, so every deviation is listed by entity;
+- `provenanceIdentical`: provenance is outside model identity, so it does not affect `VERIFIED`, and is reported here instead.
+
+A candidate committed onto a later base (a different parent) gives `MISMATCH`, with the parent's differences listed. `NO_PARENT` short-circuits: the request is not resolved against any model, so a zone key it names is not checked.
 
 ## 7. Partitioned processing
 
@@ -148,7 +157,7 @@ Independently of the hash, it reports two comparisons:
 4. Each stair goes into a partition only if both of its levels are in that partition.
 5. A level-less dimension goes into a partition only if every level it references is in that partition.
 
-Anything else is an **interface element**: it is listed, and processed in no partition. Specifications are copied into each partition that references them. A partition model keeps the source model's id, name, site and provenance. A parametric submodel is kept only when the partition is the whole building.
+Anything else is an **interface element**: it is listed, and processed in no partition. Specifications are copied into each partition that references them. The site's primary entrance reference is kept only in the partition holding that door, because it must name a ground-storey door. A partition model keeps the source model's id, name, site and provenance. A parametric submodel is kept only when the partition is the whole building.
 
 ### 7.2 What runs on each partition
 
@@ -163,6 +172,8 @@ All of these are recomputed on the partition alone; nothing is stored:
 `includeModels` returns each partition model.
 
 ### 7.3 Reconciliation
+
+`status` is about quantities and coverage only. It says nothing about whether a partition passes QA or BIM on its own; that is `validity`: `{ partitions, schemaValid, qaNotFailed, bimProjected }`. The coverage check is a self-check of the assignment, which by construction places every entity.
 
 `status` is `RECONCILED` only when all of the following hold:
 - **Coverage:** every entity is in exactly one partition or is an interface element.
@@ -199,7 +210,8 @@ The OpenAPI document gains three paths. After resolving references, all 103 exis
 - **Reads:** the regeneration, verification and partition routes read revisions through the owner-scoped RLS loader. Verification also reads the parent revision through that loader.
 - **Writes:** none. The only write path is the existing save route.
 - **Bounds:** request bodies ≤ 32 KiB, zones ≤ 64, models within the Building Model V2 schema limits. Partitioned BIM uses the existing profile limits.
-- **Response size:** responses carry full models, for the candidate and for partitions with `includeModels`. Their size is that of the stored model.
+- **Response size:** responses carry full models, for the candidate and for partitions with `includeModels`. A candidate is never larger than the save route accepts. `resultHash` identifies each model by its canonical hash, not by its array order.
+- **Work bounds:** each partition gets its own B34 verification budget, so a 64-zone request can do up to 64 times the work of one whole-model verification. Report parsing validates included models again. Both are bounded by the schema maxima; at 256 levels each route took about 1.5 s locally.
 
 ## 10. Limitations
 

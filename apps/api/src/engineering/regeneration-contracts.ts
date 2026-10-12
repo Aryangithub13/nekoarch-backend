@@ -111,6 +111,8 @@ export const RegenerationVerificationReportSchema = z.object({
   preservation: PreservationCheckSchema.nullable(),
   /** The committed revision compared with the recomputed candidate (empty scope): any difference is listed. */
   deviation: PreservationCheckSchema.nullable(),
+  /** Provenance is outside model identity (so outside VERIFIED); whether the committed provenance equals the candidate's is reported here. */
+  provenanceIdentical: z.boolean().nullable(),
   claims: notClaimed(NOT_CLAIMED_REGENERATION),
 }).strict();
 export type RegenerationVerificationReport = z.infer<typeof RegenerationVerificationReportSchema>;
