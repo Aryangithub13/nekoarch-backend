@@ -12,7 +12,7 @@ import type { DeclaredLimitsSchema, DiffScopeSchema } from '../verification/cont
 export const VERIFICATION_ROOT = '/api/projects/:projectId/revisions/:revisionId/verification';
 
 /** Ownership is established by the revision read (RLS); a stored identity that disagrees with its model is refused, not verified. */
-async function revision(repository: Repository, projectId: string, revisionId: string) {
+export async function readRevisionModel(repository: Repository, projectId: string, revisionId: string) {
   const detail = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
   if (detail.projectId !== projectId || detail.id !== revisionId) throw new ApiError(404, 'REVISION_NOT_FOUND', 'Revision not found');
   const model = detail.model as BuildingModelV2, hash = modelHash(model);
@@ -22,11 +22,11 @@ async function revision(repository: Repository, projectId: string, revisionId: s
 
 /** Derived on read: deterministic for (model, declared limits); nothing is stored. */
 export async function verifyRevision(repository: Repository, projectId: string, revisionId: string, declaredLimits: z.infer<typeof DeclaredLimitsSchema> | null) {
-  const { model, hash } = await revision(repository, projectId, revisionId);
+  const { model, hash } = await readRevisionModel(repository, projectId, revisionId);
   return verifyModel(model, { projectId, revisionId, modelHash: hash }, declaredLimits);
 }
 
 export async function diffRevisions(repository: Repository, projectId: string, revisionId: string, otherRevisionId: string, scope: z.infer<typeof DiffScopeSchema>) {
-  const [base, other] = await Promise.all([revision(repository, projectId, revisionId), revision(repository, projectId, otherRevisionId)]);
+  const [base, other] = await Promise.all([readRevisionModel(repository, projectId, revisionId), readRevisionModel(repository, projectId, otherRevisionId)]);
   return scopedDiff(base.model, other.model, { projectId, baseRevisionId: revisionId, otherRevisionId, baseModelHash: base.hash, otherModelHash: other.hash }, scope);
 }
