@@ -1,8 +1,8 @@
 # Phase 35.1 report: B35 release remediation
 
-**Final status: B35.1 IMPLEMENTED AND VERIFIED WITHIN ITS AUTHORIZED SCOPE. B35 itself is NOT COMPLETE: partial regeneration remains unimplemented, and the B35 scope could not be confirmed against the canonical roadmap.**
+**Final status (superseded by §16, the Phase 35 completion round):** the owner-brief Phase 35 scope is implemented and verified, **except** validated engineering solvers (R2 beyond typed boundaries), the evidence-class mapping (R6) and the research-specified values (R8). The scope still could not be confirmed against the canonical roadmap, which remains unavailable.
 
-**Release decision: BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS** (§14). No tag was created.
+**Release decision: NO-GO for merge or tag until the gates in §16.9 pass.** No tag was created. Earlier sections record the state at their time; §16 supersedes them where they differ.
 
 **Remediation round 2 (§15)** fixes the correctness defects found after this report was first written (N1, F1, F8) and the disclosure defects (F2, F3, F4, F5, F7). F6 is an unresolved numbering gap, not a known defect. §9 and §12 below are corrected: CI does run.
 
@@ -365,5 +365,160 @@ Both reports are derived on read and nothing stores them, so no stored result be
 
 ### 15.3 What this round does not change
 
-Partial regeneration is still not implemented, processing partitioning is still not implemented, and the canonical roadmap and Phase 35 V2 research are still absent. The release decision in §14 stands: **BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS**.
+At this round, partial regeneration and processing partitioning were still not implemented, and the canonical roadmap and Phase 35 V2 research were still absent. **Superseded by §16**, which implements both.
 
+## 16. Phase 35 completion round (regeneration, preservation, partitioned processing)
+
+Base: `9bcbad8`. Commits: `3a5251f` (implementation), `fd5f3c7` (specification and inventory), `183f80e` (work bounds), `f7d5524` (local Supabase receipt), `b75f414` (independent-review fixes), and this documentation commit (which also adds the second receipt). No migration, no new table, no new dependency, no B36 work.
+
+### 16.1 Sources (searched again; still unavailable)
+
+None of these is in any reachable source:
+- the canonical 46-phase roadmap;
+- its Phase 35 definition;
+- the 56-phase frontend roadmap;
+- the Phase 35 V2 research, with its cost JSON and city-rates CSV.
+
+What was searched, in [phase-1-46-reconciliation.md](phase-1-46-reconciliation.md) §6:
+- all branches, tags and history;
+- the filesystem and the upload mounts;
+- the Claude Docs and artifact workspaces;
+- the account's other repositories (`Testing-Something` could not be attached).
+
+The Phase 35 scope used here is therefore the owner's briefs R1–R8. **It has not been checked against the roadmap.**
+
+### 16.2 F6
+
+A full scan of the originating session's readable transcript covered 19 pages and 1,843 events, from 06:56 to 12:53Z. No F6 appears anywhere. The first findings list (12:14:34Z) already goes F1–F5, then F7. F8 was added a minute later.
+
+**F6 is closed as a numbering gap.** That session's encrypted reasoning cannot be read, so a dropped or merged F6 cannot be ruled out. The only unexplained content is a clause added to F1 about stair-footprint continuity, and that check was fixed and tested in `01eed24`.
+
+### 16.3 What was implemented
+
+Specified in [regeneration-and-partitions.md](regeneration-and-partitions.md).
+
+| Requirement | Implementation | Not implemented |
+|---|---|---|
+| **R3** partial regeneration of zones, sections, skins | `TYPICAL_FLOOR` (zone or section layout from a compatible template storey) and `FENESTRATION` (exterior-skin windows by a stated rule), at `zones/regeneration` | Generator-driven regeneration (no multi-storey generator); envelope or structure geometry |
+| Preservation guarantees | Enforced on every candidate: an entity-level canonical-hash comparison, where any out-of-scope change refuses it. The candidate also passes the save route's QA and body limit. It is committed through the existing supplied-revision route (QA, compare-and-swap), and `zones/regeneration/verification` proves the committed revision is exactly the regeneration of its parent. | An atomic regenerate-and-commit enforced by the database (needs a migration, §16.9) |
+| **R1b** partitioned processing | `zones/partitions`: each zone runs as its own model through schema, QA, B34 verification, area and volume, quantity takeoff, and BIM where the profile admits it. Results are reconciled exactly with the whole model, with validity reported separately. | Scene, structural, environmental, systems, knowledge, cost and optimization per zone (`PARTITIONED_ARTIFACT_SERVICES: UNSUPPORTED`) |
+| **R5** capability reporting | Discovery lists `ZONE_REGENERATION` and `ZONE_PARTITIONS`. `unsupportedOperations` lists what they do not cover. A `QUANTITY_TAKEOFF_MAX_ENTITIES` limit row is added. The preflight now names the deterministic alternatives. | — |
+
+### 16.4 Requirement status (supersedes §5 for R1, R3 and R5)
+
+| # | Status |
+|---|---|
+| R1a zoning | Implemented (B35.1) |
+| R1b partitioned processing | **Implemented** for derived-on-read services; stored artifact services are not partitioned |
+| R2 engineering-aware boundaries | Implemented as typed blockers; **no validated solver** (§16.5) |
+| R3 partial regeneration | **Implemented** as deterministic operations with enforced preservation; generator-driven regeneration unsupported |
+| R4a revision ancestry | Implemented; verification uses it |
+| R4b cross-zone consistency | Geometric checks (B35.1, F1/F8 fixed) |
+| R5 limits and disclosure | Implemented |
+| R6 evidence classes | **Partial**: mapping proposed (§5.2), owner decision |
+| R7 no certification claims | Implemented; every new report's `claims` is `NOT_CLAIMED` |
+| R8 research-specified formulas, thresholds, rates, CPWD factor | **Blocked: source unavailable** |
+
+### 16.5 Engineering calculations: what is validated and what is not
+
+**Exact and independently cross-checked (deterministic):**
+- `model-height-v2` storey heights;
+- plates, gross floor area and gross volume, which per-zone verification of each partition reproduces exactly (partition reconciliation);
+- window counts, which per-zone takeoff reproduces as laid out;
+- the height-to-width indicator.
+
+These are geometric quantities, not engineering determinations.
+
+**Estimates:** conceptual cost arithmetic, from caller-supplied, sourced rates only. No rate is built in.
+
+**Not calculated**, as typed blockers with no value: wind, seismic, lateral stability, drift, dynamic response, soil and foundation, member design, lift traffic, and egress for more than 2 storeys. A validated solver needs:
+- verified editions of IS 875 Parts 1–3, IS 1893 Part 1, IS 16700 and NBC (named by designation only, `NOT_VERIFIED`);
+- the V2 research (unavailable);
+- validation benchmarks.
+
+None is in hand. No load, coefficient, soil value, rate or CPWD factor was invented.
+
+### 16.6 Verification results (executed)
+
+| Check | Result |
+|---|---|
+| `npm run build`, `npm run typecheck`, `npx eslint .` | Exit 0 |
+| `npm audit --omit=dev --audit-level=high` | 0 vulnerabilities |
+| Full suite, unprivileged user, Node 22.22.0, on `b75f414` | **93/93 files, 2,835/2,835 tests**, 0 skipped, exit 0 |
+| Full suite, unprivileged user, Node 22.23.2, on `b75f414` | **93/93 files, 2,835/2,835 tests**, 0 skipped, exit 0 |
+| New unit tests (`engineering-regeneration.test.ts`) | 31 |
+| New HTTP integration tests (`engineering-regeneration.integration.test.ts`) | 4: regenerate → commit through the save route → `VERIFIED`; tampered commit → `MISMATCH`; window regeneration and partitions over HTTP; 401/404/400/422 and body limit on every new route |
+| Mutation checks | 22 deliberate defects in the new safeguards; **22 caught** |
+| Route catalog and OpenAPI drift | Pass. Catalog 128 → 131. The OpenAPI document gains exactly three paths; after reference resolution, all 103 existing paths and every shared component are unchanged. |
+| Container smoke test (local Docker 29.8.2) | Pass on `b75f414`: non-root (uid 1000), liveness 200, readiness 503 with the dependency unavailable, SIGTERM exit 0 |
+| Local Supabase acceptance (`scripts/test-local-supabase.mjs`; CLI 2.117.0; disposable local stack, migrations 0001–0024) | **120/120 tests**, exit 0, on `f7d5524` and again on `b75f414` (receipts `…15-11-02.037Z.json` and `…15-52-09.253Z.json`: 0 API errors; the 16 recorded failures are the expected 401 refusals). The stack was stopped afterwards. The `ensure-local-postgrest.mjs` repair declined ("Unexpected REST image"), because the stack ran `postgrest/postgrest:v16.2` rather than the image it pins; the suite passed without it. |
+| Scale (local, 256 levels) | TYPICAL_FLOOR over 253 storeys, partitions over 64 zones, and FENESTRATION on a 256-storey tower each took about 1.5 s. Candidates beyond acceptance QA's own budget, or beyond the save body limit, are refused. |
+
+**Not run:**
+- hosted Supabase (not contacted);
+- Node 24 and 26;
+- frontend integration (deferred by the owner).
+
+The container smoke test used a scratch copy of the Dockerfile that adds the sandbox proxy CA to the **build stage only**. CI builds the unmodified Dockerfile.
+
+### 16.7 Independent review
+
+A fresh-context review agent reviewed the implementation: it did not write the code and had no access to its reasoning. It found **no blocker**, and no path where a ready candidate changes anything outside its allowed scope. All 3 MAJOR and 5 MINOR findings and the one nit were fixed in `b75f414`, each with a test:
+- MAJOR: a candidate larger than the save body limit;
+- MAJOR: partitions broken by a site entrance reference;
+- MAJOR: unbounded work before the schema caps;
+- MINOR: a wall meeting the façade at its face;
+- MINOR: two unnamed refusals;
+- MINOR: status claims that said less than they suggested;
+- MINOR: missing tests;
+- the nit: result-hash ordering.
+
+**This is not human approval.** A human reviewer must still complete the PR checklist.
+
+### 16.8 Compatibility, retention, migrations, deployment
+
+**Versions.** These are new:
+- `zone-regeneration-v1`;
+- `zone-regeneration-verification-v1`;
+- `typical-floor-v1` and `fenestration-v1`;
+- `zone-partitions-v1`.
+
+These are unchanged:
+- `model-height-v2` and the other formula ids;
+- `engineering-assessment` and `zone-assessment-v1`;
+- `zone-regeneration-preflight-v1`.
+
+The preflight's schema is unchanged; its alternatives now name the deterministic operations. Report-version literals were **not** bumped for N1. The reports are derived on read and never stored, and `engine.formulas.height` distinguishes v1 from v2. Bumping them is optional, and remains an owner decision.
+
+**API.**
+- Three additive POST routes, in the `generate` rate-limit group.
+- Discovery adds two services and one limit row, and changes the **unreleased** Phase 35.1 `unsupportedOperations` ids.
+- No existing route changes.
+
+**Data retention.** Nothing new is stored. A committed candidate is an ordinary immutable supplied revision, under the existing (undecided) deletion policy.
+
+**Migrations.** None. Hosted Supabase is believed to be at 0017; 0018–0024 are unverified there. That is a deployment gate, not a code gate.
+
+**Deployment.** No new environment variable. The save body limit is read from the existing `BODY_LIMIT_BYTES`. The image changes only in its compiled code.
+
+### 16.9 Release decision
+
+**NO-GO for merge or tag at this time.** The code is complete and verified for the owner-brief scope, but these release gates are open:
+
+| # | Gate | Owner | Smallest decision or action |
+|---|---|---|---|
+| 1 | Phase 35 scope of record | Owner | Confirm R1–R8 (the briefs) as Phase 35's scope, or commit the roadmap's Phase 35 section to `docs/roadmap/` |
+| 2 | Validated engineering solvers (R2) and research values (R8) | Owner | Either supply verified standard editions and the V2 research, or record that validated solvers are outside Phase 35 (B36 compute plumbing plus a named validation phase) |
+| 3 | Evidence-class mapping (R6) | Owner | Approve the §5.2 mapping, or keep the seven assurance levels |
+| 4 | Independent human review | Reviewer | Complete the PR #7 checklist |
+| 5 | CI on the final head | Automatic | Must be green on both Node legs |
+| 6 | Merge and tag `backend-v1-phase35-complete` | Owner | Only after 1–5 |
+| 7 | Deployment gate (separate from the code tag) | Authorized operator | Read-only hosted migration check, then 0018 → 0024 to staging, then production |
+
+**Optional decisions, not blocking release:**
+- an atomic regenerate-and-commit (a migration adding a regeneration operation label);
+- a wider BIM profile for partitions;
+- the erasure policy;
+- a report-version bump.
+
+Phase 30 frontend integration verification stays **deferred**.
