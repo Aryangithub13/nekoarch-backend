@@ -1,0 +1,23 @@
+# Test-run summaries (audited HEAD 6f71c02)
+
+## Node 22.22.0, npx vitest run, exit 1
+ ❯ apps/api/tests/revision.integration.test.ts (14 tests | 9 failed) 20331ms
+ ❯ apps/api/tests/references.integration.test.ts (11 tests | 10 failed) 4964ms
+ ❯ apps/api/tests/modernization.integration.test.ts (6 tests | 5 failed) 4643ms
+ ❯ apps/api/tests/account.integration.test.ts (5 tests | 3 failed) 3595ms
+ ❯ apps/api/tests/jobs.integration.test.ts (8 tests | 4 failed) 67083ms
+ ❯ apps/api/tests/optimization.integration.test.ts (15 tests | 9 failed) 8363ms
+ ❯ apps/api/tests/scene.integration.test.ts (11 tests | 10 failed) 6280ms
+ ❯ apps/api/tests/references.test.ts (25 tests | 1 failed) 975ms
+ ❯ apps/api/tests/optimization-pool.test.ts (9 tests | 3 failed) 2519ms
+ ❯ apps/api/tests/scene-pool.test.ts (5 tests | 1 failed) 1471ms
+ Test Files  10 failed | 78 passed (88)
+      Tests  55 failed | 2689 passed (2744)
+
+## Node 22.23.2, 10 previously failing files, exit 0
+ Test Files  10 passed (10)
+      Tests  109 passed (109)
+
+## Node 22.23.2, full suite, exit 0
+ Test Files  88 passed (88)
+      Tests  2744 passed (2744)

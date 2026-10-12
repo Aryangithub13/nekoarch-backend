@@ -1,0 +1,59 @@
+// Audit probe (not part of the repository): replays migrations 0001-0024 on embedded PostgreSQL and
+// attempts a superuser DELETE of a project that holds (a) nothing, (b) a reference, (c) a durable job, (d) a brief,
+// (e) a DELETED (tombstoned) reference. Prints the outcome of each; changes nothing outside this disposable database.
+import { createHash } from 'node:crypto';
+import { createTestUser, startTestDatabase } from '../test-support/postgres.js';
+
+const db = await startTestDatabase();
+const sha = (s: string) => createHash('sha256').update(s).digest('hex');
+const results: Record<string, string> = {};
+try {
+  const owner = await createTestUser(db.pool);
+  const newProject = async (title: string) =>
+    (await db.pool.query<{ id: string }>('insert into public.projects(owner_id,title) values ($1,$2) returning id', [owner, title])).rows[0]!.id;
+  const tryDelete = async (label: string, projectId: string) => {
+    try { await db.pool.query('delete from public.projects where id=$1', [projectId]); results[label] = 'DELETED (cascade succeeded)'; }
+    catch (e) { const err = e as { code?: string; message?: string }; results[label] = `REFUSED ${err.code}: ${err.message}`; }
+  };
+  const insertReference = async (projectId: string) => {
+    const h = sha(projectId);
+    const prov = { sourceKind: 'USER_UPLOAD', uploadedBy: owner, original: { sha256: h, bytes: 10 }, stored: { sha256: h, bytes: 10 },
+      inspection: { inspectorVersion: 'reference-inspector-v1', verdict: 'ACCEPTED', detectedMediaType: 'image/png', declaredMediaType: 'image/png',
+        malwareScan: { status: 'NOT_PERFORMED', reason: 'NO_SCANNER_CONFIGURED' },
+        claims: { malwareFree: 'NOT_CLAIMED', contentAccuracy: 'NOT_CLAIMED', drawingScale: 'NOT_CLAIMED', siteConditions: 'NOT_CLAIMED', ownershipOrLicence: 'NOT_CLAIMED' } } };
+    return (await db.pool.query<{ id: string }>(`insert into public.project_references(project_id,uploaded_by,status,purpose,media_type,original_sha256,original_bytes,
+      stored_sha256,stored_bytes,storage_locator,inspector_version,provenance_json) values ($1,$2,'ACTIVE','OTHER','image/png',$3,10,$3,10,'postgres-bytea','reference-inspector-v1',$4) returning id`,
+      [projectId, owner, h, prov])).rows[0]!.id;
+  };
+
+  await tryDelete('A empty project', await newProject('empty'));
+
+  const withRef = await newProject('with reference'); await insertReference(withRef);
+  await tryDelete('B project with ACTIVE reference', withRef);
+
+  const withTomb = await newProject('with tombstone'); const refId = await insertReference(withTomb);
+  await db.pool.query(`update public.project_references set status='DELETED' where id=$1`, [refId]);
+  await tryDelete('C project with DELETED (tombstoned) reference', withTomb);
+
+  const withJob = await newProject('with job');
+  await db.pool.query(`insert into public.project_jobs(project_id,owner_id,kind,status,job_version,request_json,input_hash,progress_json)
+    values ($1,$2,'SCENE_COMPILE','QUEUED','durable-job-v1','{"kind":"SCENE_COMPILE"}',$3,'{"percent":0}')`, [withJob, owner, sha('job')]);
+  await tryDelete('D project with durable job', withJob);
+
+  const withBrief = await newProject('with brief');
+  await db.pool.query(`insert into public.project_briefs(project_id,version,brief_json,brief_hash,created_by) values ($1,1,'{}',$2,$3)`, [withBrief, sha('brief'), owner]);
+  await tryDelete('E project with brief', withBrief);
+
+  // Account deletion path: auth.users -> profiles (cascade) -> projects.owner_id (set null). Does it succeed with a reference attached?
+  const owner2 = await createTestUser(db.pool);
+  const p2 = (await db.pool.query<{ id: string }>('insert into public.projects(owner_id,title) values ($1,$2) returning id', [owner2, 'acct'])).rows[0]!.id;
+  try { await db.pool.query('delete from auth.users where id=$1', [owner2]);
+    const row = (await db.pool.query('select owner_id from public.projects where id=$1', [p2])).rows[0];
+    results['F account deletion (project kept, owner nulled)'] = `SUCCEEDED; project owner_id now ${row?.owner_id === null ? 'NULL (orphaned, retained)' : String(row?.owner_id)}`;
+  } catch (e) { const err = e as { code?: string; message?: string }; results['F account deletion'] = `REFUSED ${err.code}: ${err.message}`; }
+  const migrations = (await db.pool.query<{ n: string }>(`select count(*)::text n from pg_proc where proname='reference_download'`)).rows[0]!.n;
+  results['reference_download functions present'] = migrations;
+} finally {
+  console.log(JSON.stringify(results, null, 2));
+  await db.stop();
+}
