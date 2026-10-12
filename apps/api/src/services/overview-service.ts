@@ -33,9 +33,11 @@ import { JOB_ROOT } from './job-service.js';
 import { CONTEXT_ROUTE } from './account-service.js';
 import { VERIFICATION_ROOT } from './verification-service.js';
 import { VERIFIER_VERSION } from '../verification/contracts.js';
-import { ENGINEERING_ROOT, ZONES_ROOT } from './engineering-service.js';
+import { ENGINEERING_ROOT, ZONES_ROOT, ZONE_PARTITIONS_ROUTE, ZONE_REGENERATION_ROUTE } from './engineering-service.js';
 import { ASSESSMENT_VERSION } from '../engineering/contracts.js';
 import { ZONE_ASSESSMENT_VERSION } from '../engineering/zone-contracts.js';
+import { REGENERATION_VERSION } from '../engineering/regeneration-contracts.js';
+import { PARTITION_VERSION } from '../engineering/partition-contracts.js';
 import { MODEL_LIMITS, UNSUPPORTED_OPERATIONS } from '../engineering/capability-limits.js';
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
@@ -70,9 +72,13 @@ export const SERVICES = Object.freeze([
   // Phase 35: preliminary engineering assessment (height, areas, volume, base width, conceptual cost arithmetic) and a truthful map of what needs inputs,
   // verified sources, a validated solver or professional review. No structural, wind, seismic or foundation value is produced.
   { serviceId: 'ENGINEERING_ASSESSMENT', version: ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ENGINEERING_ROOT, workflowCapability: null },
-  // Phase 35.1: geometric zone assessment of a stored revision (validated vertical zones, per-zone quantities, interface checks). Analysis only: it does not
-  // partition, generate or regenerate the model. Regeneration of zones, sections and skins is listed under unsupportedOperations.
+  // Phase 35.1: geometric zone assessment of a stored revision (validated vertical zones, per-zone quantities, interface checks). Analysis only.
   { serviceId: 'ZONE_ASSESSMENT', version: ZONE_ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ZONES_ROOT, workflowCapability: null },
+  // Phase 35: deterministic regeneration of a zone, section or exterior skin (TYPICAL_FLOOR, FENESTRATION) as a QA-accepted, preservation-checked candidate that is
+  // committed through the supplied-revision route and verified afterwards; and partitioned processing of each zone as its own model. What they do not cover is
+  // listed under unsupportedOperations.
+  { serviceId: 'ZONE_REGENERATION', version: REGENERATION_VERSION, persistence: 'CANDIDATE_THEN_SUPPLIED_REVISION', route: ZONE_REGENERATION_ROUTE, workflowCapability: null },
+  { serviceId: 'ZONE_PARTITIONS', version: PARTITION_VERSION, persistence: 'DERIVED_ON_READ', route: ZONE_PARTITIONS_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

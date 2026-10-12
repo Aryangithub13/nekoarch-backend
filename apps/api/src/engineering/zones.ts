@@ -20,7 +20,7 @@ export type Currency = ZoneAssessmentReport['currency'];
 export type ResolvedZone = { key: string; start: number; end: number; storeys: Storey[] };
 
 export const ZONE_LIMITATIONS = [
-  'Zone assessment is geometric analysis of the stored model. It groups storeys for analysis only: it does not partition, generate or regenerate the model, and BIM-derived services still process (or refuse) the whole model.',
+  'Zone assessment is geometric analysis of the stored model. It groups storeys for analysis only; partitioned processing and regeneration of zones are separate operations (zones/partitions, zones/regeneration), and the other BIM-derived services still process (or refuse) the whole model.',
   'Interface checks compare only geometry the model represents. Building Model V2 has no shaft, lift or riser elements, so their continuity is never evaluated.',
   'An interface elevation is checked only where the lower storey declares its floor-to-floor height, which reaches the next represented level of any kind (a datum or roof level may lie between zones).',
   'INTERFACE_ELEVATION and STAIR_SLAB_VOID restate acceptance-QA rules that every stored revision passed when it was saved: a PASS confirms an existing invariant and is not independent cross-zone evidence. The other checks are cross-zone observations to which no rule is applied.',
@@ -97,7 +97,7 @@ function elementCounts(model: BuildingModelV2, levelIds: ReadonlySet<string>): E
     stairsWithin: model.stairs.filter(s => levelIds.has(s.fromLevelId) && levelIds.has(s.toLevelId)).length };
 }
 
-const northResolvable = (model: BuildingModelV2) => { const n = model.site?.northMilliDegrees; return n !== null && n !== undefined && n % 90_000 === 0; };
+export const northResolvable = (model: BuildingModelV2) => { const n = model.site?.northMilliDegrees; return n !== null && n !== undefined && n % 90_000 === 0; };
 
 function exteriorSkin(model: BuildingModelV2, levelIds: ReadonlySet<string>) {
   const walls = model.walls.filter(w => levelIds.has(w.levelId)), exterior = walls.filter(w => w.classification === 'exterior');
@@ -210,8 +210,8 @@ const summarize = (checks: readonly InterfaceCheck[]) => {
 
 export type ZoneContext = { ids: ZoneIds; model: BuildingModelV2; sourceRevision: SourceRevision; currency: Currency; generatedAt: string };
 
-/** Shared front half of both reports: B34 plates (same as the B35 assessment) → B35 storey rows → validated zones. */
-function prepare(model: BuildingModelV2, ids: ZoneIds, zones: readonly ZoneDeclaration[] | undefined) {
+/** Shared front half of the zone reports: B34 plates (same as the B35 assessment) → B35 storey rows → validated zones. */
+export function prepare(model: BuildingModelV2, ids: ZoneIds, zones: readonly ZoneDeclaration[] | undefined) {
   const verification = verifyModel(model, ids, null), height = storeyHeights(model, verification.bases.levels);
   return { verification, height, resolved: resolveZones(model, height.storeys, zones) };
 }
@@ -240,7 +240,29 @@ export function assessZones(ctx: ZoneContext, request: ZoneAssessmentRequest): Z
 }
 
 export class ZoneRequestError extends Error {
-  constructor(readonly code: 'ZONE_DECLARATION_INVALID' | 'ZONE_TARGET_NOT_FOUND' | 'SECTION_TARGET_INVALID', message: string, readonly issues: string[]) { super(message); }
+  constructor(readonly code: 'ZONE_DECLARATION_INVALID' | 'ZONE_TARGET_NOT_FOUND' | 'SECTION_TARGET_INVALID' | 'REGENERATION_TEMPLATE_INVALID', message: string, readonly issues: string[]) { super(message); }
+}
+
+export type ResolvedTarget = { key: string | null; storeys: Storey[]; preserved: { zoneKey: string | null; levelIds: string[] }[] };
+
+/**
+ * The storeys a regeneration target names, and the groups of storeys it leaves untouched: the other declared zones, or for a section the
+ * storeys below and above it. Shared by the preflight and the regeneration operations, so both read a target identically.
+ */
+export function resolveTarget(model: BuildingModelV2, storeys: readonly Storey[], zones: readonly ResolvedZone[], t: ZonePreflightRequest['target']): { target: ResolvedTarget; preserved: ResolvedTarget['preserved'] } {
+  const position = new Map(storeys.map((s, i) => [s.levelId, i]));
+  if (t.kind === 'SECTION') {
+    // A section is an undeclared storey range; it reuses the zone validation, where only the coverage of the rest of the building is expected to fail.
+    const bad = resolveZones(model, storeys, [{ key: 'SECTION', fromLevelId: t.fromLevelId, toLevelId: t.toLevelId }]).issues.filter(i => i.code !== 'INCOMPLETE_COVERAGE');
+    if (bad.length) throw new ZoneRequestError('SECTION_TARGET_INVALID', 'The section does not name two storeys of this model in ascending order', bad.map(i => `${i.code}: ${i.detail}`));
+    const start = position.get(t.fromLevelId)!, end = position.get(t.toLevelId)!;
+    const preserved = [storeys.slice(0, start), storeys.slice(end + 1)].filter(g => g.length).map(g => ({ zoneKey: null, levelIds: g.map(s => s.levelId) }));
+    return { target: { key: null, storeys: storeys.slice(start, end + 1), preserved }, preserved };
+  }
+  const zone = zones.find(z => z.key === t.zoneKey);
+  if (!zone) throw new ZoneRequestError('ZONE_TARGET_NOT_FOUND', `No zone ${t.zoneKey} is declared`, [`Declared zones: ${zones.map(z => z.key).join(', ')}`]);
+  const preserved = zones.filter(z => z.key !== zone.key).map(z => ({ zoneKey: z.key, levelIds: z.storeys.map(s => s.levelId) }));
+  return { target: { key: zone.key, storeys: zone.storeys, preserved }, preserved };
 }
 
 type PreservedItem = NonNullable<ZonePreflightReport['preservation']['targetInterior']>['items'][number];
@@ -268,7 +290,10 @@ function targetInterior(model: BuildingModelV2, levelIds: ReadonlySet<string>, f
   return items;
 }
 
-const DEPENDENT_ARTIFACTS = ['BIM', 'SCENE_3D', 'QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS',
+/** The regeneration operations route (deterministic TYPICAL_FLOOR and FENESTRATION); mirrors services/engineering-service ZONE_REGENERATION_ROUTE. */
+export const REGENERATION_ROUTE = '/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration';
+
+export const DEPENDENT_ARTIFACTS = ['BIM', 'SCENE_3D', 'QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS',
   'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'DESIGN_OPTIMIZATION', 'COMPLEX_VERIFICATION', 'ENGINEERING_ASSESSMENT'];
 
 /**
@@ -278,28 +303,13 @@ const DEPENDENT_ARTIFACTS = ['BIM', 'SCENE_3D', 'QUANTITY_TAKEOFF', 'CONSTRUCTIO
 export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflightRequest): ZonePreflightReport {
   const { model, ids } = ctx, { height, resolved } = prepare(model, ids, request.zones);
   if (resolved.issues.length) throw new ZoneRequestError('ZONE_DECLARATION_INVALID', 'The zone declaration is invalid for this model', resolved.issues.map(i => `${i.code}: ${i.detail}`));
-  const t = request.target, storeys = height.storeys;
-  const position = new Map(storeys.map((s, i) => [s.levelId, i]));
-  let target: { key: string | null; storeys: Storey[] }, preserved: { zoneKey: string | null; levelIds: string[] }[];
-  if (t.kind === 'SECTION') {
-    // A section is an undeclared storey range; it reuses the zone validation, where only the coverage of the rest of the building is expected to fail.
-    const bad = resolveZones(model, storeys, [{ key: 'SECTION', fromLevelId: t.fromLevelId, toLevelId: t.toLevelId }]).issues.filter(i => i.code !== 'INCOMPLETE_COVERAGE');
-    if (bad.length) throw new ZoneRequestError('SECTION_TARGET_INVALID', 'The section does not name two storeys of this model in ascending order', bad.map(i => `${i.code}: ${i.detail}`));
-    const start = position.get(t.fromLevelId)!, end = position.get(t.toLevelId)!;
-    target = { key: null, storeys: storeys.slice(start, end + 1) };
-    preserved = [storeys.slice(0, start), storeys.slice(end + 1)].filter(g => g.length).map(g => ({ zoneKey: null, levelIds: g.map(s => s.levelId) }));
-  } else {
-    const zone = resolved.zones.find(z => z.key === t.zoneKey);
-    if (!zone) throw new ZoneRequestError('ZONE_TARGET_NOT_FOUND', `No zone ${t.zoneKey} is declared`, [`Declared zones: ${resolved.zones.map(z => z.key).join(', ')}`]);
-    target = { key: zone.key, storeys: zone.storeys };
-    preserved = resolved.zones.filter(z => z.key !== zone.key).map(z => ({ zoneKey: z.key, levelIds: z.storeys.map(s => s.levelId) }));
-  }
+  const t = request.target, { target, preserved } = resolveTarget(model, height.storeys, resolved.zones, t);
   const targetIds = target.storeys.map(s => s.levelId), targetSet = new Set(targetIds);
   const crossing = model.stairs.filter(s => targetSet.has(s.fromLevelId) !== targetSet.has(s.toLevelId)).sort((a, b) => a.id < b.id ? -1 : 1);
   const profile = bimProfile(model), facades = t.kind === 'EXTERIOR_SKIN' ? (t.facades ?? [...FACADES]) : null;
   const missingCapabilities: ZonePreflightReport['missingCapabilities'] = [
     { code: 'NO_MULTI_STOREY_GENERATOR', detail: 'Generation is limited to two floors, and no generator regenerates part of a building in place' },
-    { code: 'GEOMETRY_REVISION_OPERATION_UNSUPPORTED', detail: 'Selective revision (Phase 30) refuses geometry changes; it changes exterior wall appearance only' },
+    { code: 'GEOMETRY_REVISION_OPERATION_UNSUPPORTED', detail: 'Selective revision (Phase 30) refuses geometry changes; zone regeneration rewrites storey layouts (TYPICAL_FLOOR) and windows (FENESTRATION) only, never envelope or structure geometry' },
   ];
   if (!profile.eligible) missingCapabilities.push({ code: 'BIM_PROFILE_EXCEEDED', detail: `The model is outside the bounded BIM profile (${profile.refusalCode}), so no BIM-derived service can process it` });
   let exteriorWallsInScope: number | null = null;
@@ -309,9 +319,9 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
     else if (northResolvable(model)) exteriorWallsInScope = exterior.filter(w => { const f = wallFacade(model, w); return f !== null && facades!.includes(f); }).length;
     else missingCapabilities.push({ code: 'FACADE_ORIENTATION_UNKNOWN', detail: 'Site north is absent or not a multiple of 90°, so the requested façades cannot be resolved to walls' });
   }
-  const refusal = t.kind === 'ZONE' ? { code: 'ZONE_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Regenerating the geometry of a vertical zone is not supported: no validated multi-storey generation path exists' }
-    : t.kind === 'SECTION' ? { code: 'SECTION_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Regenerating a building section (storey range) is not supported: no validated multi-storey generation path exists' }
-    : { code: 'EXTERIOR_SKIN_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Regenerating exterior skin geometry is not supported; only exterior wall appearance can be changed, through selective revision' };
+  const refusal = t.kind === 'ZONE' ? { code: 'ZONE_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Generator-driven regeneration of a vertical zone is not supported: no validated multi-storey generation path exists. Deterministic TYPICAL_FLOOR regeneration is listed under alternatives' }
+    : t.kind === 'SECTION' ? { code: 'SECTION_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Generator-driven regeneration of a building section (storey range) is not supported: no validated multi-storey generation path exists. Deterministic TYPICAL_FLOOR regeneration is listed under alternatives' }
+    : { code: 'EXTERIOR_SKIN_GEOMETRY_REGENERATION_UNSUPPORTED' as const, detail: 'Regenerating exterior wall geometry is not supported. Windows can be regenerated (FENESTRATION) and exterior wall appearance changed (APPEARANCE_MODIFY); see alternatives' };
   const inputHash = costHash({ preflightVersion: ZONE_PREFLIGHT_VERSION, modelHash: ids.modelHash, zones: canonicalDeclarations(request.zones), target: t });
   const body = {
     preflightVersion: ZONE_PREFLIGHT_VERSION, ...ids, inputHash, sourceRevision: ctx.sourceRevision, status: 'UNSUPPORTED' as const, refusal,
@@ -333,10 +343,17 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
     dependencies: DEPENDENT_ARTIFACTS.map(artifact => ({ artifact, impact: 'WOULD_REQUIRE_RECOMPUTATION' as const,
       detail: 'Derived from the building geometry; any regenerated geometry would make results for this revision inapplicable to the new one' })),
     missingCapabilities,
-    alternatives: t.kind === 'EXTERIOR_SKIN' ? [{ operation: 'APPEARANCE_MODIFY', eligibility: profile.eligible ? 'PRELIMINARY_ELIGIBLE' as const : 'REFUSED' as const,
-      route: '/api/projects/:projectId/revision-operations',
-      detail: profile.eligible ? 'Changes exterior wall finish (appearance only) as a new revision; it does not regenerate geometry. The model passes the BIM source gate only: its own preflight may still refuse it'
-        : 'Appearance changes need the scene, which needs the bounded BIM profile; this model is outside it' }] : [],
+    alternatives: [
+      ...(t.kind === 'EXTERIOR_SKIN' ? [{ operation: 'APPEARANCE_MODIFY', eligibility: profile.eligible ? 'PRELIMINARY_ELIGIBLE' as const : 'REFUSED' as const,
+        route: '/api/projects/:projectId/revision-operations',
+        detail: profile.eligible ? 'Changes exterior wall finish (appearance only) as a new revision; it does not regenerate geometry. The model passes the BIM source gate only: its own preflight may still refuse it'
+          : 'Appearance changes need the scene, which needs the bounded BIM profile; this model is outside it' }] : []),
+      t.kind === 'EXTERIOR_SKIN'
+        ? { operation: 'FENESTRATION', eligibility: model.parametricArchitecture || !exteriorWallsInScope ? 'REFUSED' as const : 'PRELIMINARY_ELIGIBLE' as const, route: REGENERATION_ROUTE,
+          detail: 'Regenerates the windows of the exterior walls in scope by a stated layout rule, preserving everything else (enforced on the candidate). The operation itself decides the final outcome' }
+        : { operation: 'TYPICAL_FLOOR', eligibility: model.parametricArchitecture ? 'REFUSED' as const : 'PRELIMINARY_ELIGIBLE' as const, route: REGENERATION_ROUTE,
+          detail: 'Replaces the layout of every target storey with a copy of a template storey of identical envelope, height, slabs, columns and stairs, preserving everything else (enforced on the candidate). The operation itself decides the final outcome' },
+    ],
     roadmapDestination: { phase: null, status: 'OWNER_DECISION_REQUIRED' as const,
       detail: 'The canonical roadmap was not available to this implementation, so the phase that delivers multi-storey geometry regeneration is not named here; the owner must assign it' },
     claims: { ...NOT_CLAIMED_PREFLIGHT },

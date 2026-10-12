@@ -69,7 +69,7 @@ describe('Phase 35.1 limits, zone assessment and regeneration preflight over HTT
     expect(systems).toMatchObject({ serviceId: 'BUILDING_SYSTEMS_ANALYSIS', modelSupport: 'REFUSED', refusalCode: 'BIM_UNSUPPORTED_MODEL' });
     const capabilities = (await app.inject({ url: '/api/capabilities' })).json();
     expect(capabilities.modelLimits.find((l: { limitId: string }) => l.limitId === 'BIM_PROFILE_MAX_STOREYS').appliesTo).toEqual(expect.arrayContaining(['BIM', 'SCENE_3D', 'BUILDING_SYSTEMS_ANALYSIS']));
-    expect(capabilities.unsupportedOperations.map((o: { operationId: string }) => o.operationId)).toContain('ZONE_GEOMETRY_REGENERATION');
+    expect(capabilities.unsupportedOperations.map((o: { operationId: string }) => o.operationId)).toContain('GENERATIVE_ZONE_REGENERATION');
   }, 120_000);
 
   it('assesses declared zones of a stored 163-storey concept, binds them to the revision and its hash, and changes nothing', async () => {

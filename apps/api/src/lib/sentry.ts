@@ -27,6 +27,7 @@ const safeRoutes = new Set([
   '/api/reference-downloads',
   '/api/me/settings', '/api/me/usage', '/api/library/projects', `${project}/library`, `${project}/brief`, `${project}/brief/versions`, `${project}/brief/versions/:version`, `${project}/context`,
   `${revision}/verification`, `${revision}/verification/diff`, `${revision}/engineering-assessment`, `${revision}/engineering-assessment/zones`, `${revision}/engineering-assessment/zones/regeneration-preflight`,
+  `${revision}/engineering-assessment/zones/regeneration`, `${revision}/engineering-assessment/zones/regeneration/verification`, `${revision}/engineering-assessment/zones/partitions`,
   ...['', '/:jobId', '/:jobId/events', '/:jobId/cancel', '/:jobId/retry'].map(suffix => `${project}/jobs${suffix}`),
 ]);
 

@@ -16,9 +16,10 @@ export const ZoneKeySchema = z.string().regex(/^[A-Z0-9][A-Z0-9_-]{0,39}$/, 'Zon
 // ---------------------------------------------------------------- requests
 export const ZoneDeclarationSchema = z.object({ key: ZoneKeySchema, fromLevelId: entityId, toLevelId: entityId }).strict();
 export type ZoneDeclaration = z.infer<typeof ZoneDeclarationSchema>;
-const declarations = z.array(ZoneDeclarationSchema).min(1).max(ZONE_LIMITS.zones).superRefine((zones, ctx) => {
+export const ZoneDeclarationsSchema = z.array(ZoneDeclarationSchema).min(1).max(ZONE_LIMITS.zones).superRefine((zones, ctx) => {
   if (new Set(zones.map(z => z.key)).size !== zones.length) ctx.addIssue({ code: 'custom', message: 'Duplicate zone key' });
 });
+const declarations = ZoneDeclarationsSchema;
 /** Omitted `zones` means the documented default: one zone, key ALL, from the lowest to the highest storey. */
 export const ZoneAssessmentRequestSchema = z.object({ zones: declarations.optional() }).strict();
 export type ZoneAssessmentRequest = z.infer<typeof ZoneAssessmentRequestSchema>;

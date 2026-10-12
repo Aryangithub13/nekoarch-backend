@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ArchitecturalBuildingModelV2Schema, RingMmSchema, type BuildingModelV2, type Point2Mm } from '@designflow/shared';
 import { BLUEPRINT_LIMITS } from '@designflow/generator';
+import { LIMITS as TAKEOFF_LIMITS } from '@designflow/quantity-takeoff';
 import { tower, withIntermediateLevel } from '../../../test-support/tower-fixtures.js';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { assessZones, preflightZoneRegeneration, sameRegion, zoneId, ZoneRequestError, type ZoneContext } from '../src/engineering/zones.js';
@@ -279,7 +280,7 @@ describe('Phase 35.1 determinism, hash binding, freshness and non-mutation', () 
   });
 });
 
-describe('Phase 35.1 regeneration preflight (refusal, not regeneration)', () => {
+describe('Phase 35.1 regeneration preflight (refuses generator-driven regeneration; names the deterministic alternatives)', () => {
   it('refuses zone geometry regeneration, naming the target, the preserved zones, the cross-boundary stair and every missing capability', () => {
     const r = preflight(supertall(), { ...LOW_HIGH, target: { kind: 'ZONE', zoneKey: 'HIGH' } });
     expect(r.status).toBe('UNSUPPORTED');
@@ -307,12 +308,17 @@ describe('Phase 35.1 regeneration preflight (refusal, not regeneration)', () => 
     expect(tall.refusal.code).toBe('EXTERIOR_SKIN_GEOMETRY_REGENERATION_UNSUPPORTED');
     expect(tall.target.exteriorWallsInScope).toBeNull();
     expect(tall.missingCapabilities.map(m => m.code)).toContain('FACADE_ORIENTATION_UNKNOWN');
-    expect(tall.alternatives).toEqual([expect.objectContaining({ operation: 'APPEARANCE_MODIFY', eligibility: 'REFUSED' })]);
+    // Unresolvable façades refuse both alternatives: appearance needs the scene profile, and window regeneration needs façades it can resolve.
+    expect(tall.alternatives).toEqual([expect.objectContaining({ operation: 'APPEARANCE_MODIFY', eligibility: 'REFUSED' }),
+      expect.objectContaining({ operation: 'FENESTRATION', eligibility: 'REFUSED', route: expect.stringMatching(/\/engineering-assessment\/zones\/regeneration$/) })]);
+    const whole = preflight(supertall(), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' } });
+    expect(whole.alternatives.map(a => [a.operation, a.eligibility])).toEqual([['APPEARANCE_MODIFY', 'REFUSED'], ['FENESTRATION', 'PRELIMINARY_ELIGIBLE']]);
     const small = preflight(tower({ storeys: 2 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' } });
     expect(small.status).toBe('UNSUPPORTED');
     expect(small.target.exteriorWallsInScope).toBe(8);
     // F4: the BIM source gate is only the first gate, so this is preliminary eligibility, never "available".
     expect(small.alternatives[0]).toMatchObject({ eligibility: 'PRELIMINARY_ELIGIBLE', detail: expect.stringContaining('its own preflight may still refuse it') });
+    expect(preflight(supertall(), { ...LOW_HIGH, target: { kind: 'ZONE', zoneKey: 'HIGH' } }).alternatives.map(a => [a.operation, a.eligibility])).toEqual([['TYPICAL_FLOOR', 'PRELIMINARY_ELIGIBLE']]);
   });
 
   it('F7: lists everything inside the target zone that an exterior-skin change must preserve, and nothing for zone or section targets', () => {
@@ -349,16 +355,19 @@ describe('Phase 35.1 capability disclosure', () => {
   it('discovers the enforced limits and the unsupported tall-building operations with stable identifiers', () => {
     const d = discovery();
     expect(d.modelLimits.map(l => [l.limitId, l.value])).toEqual([['BUILDING_MODEL_MAX_LEVELS', 256], ['GENERATION_MAX_FLOORS', 2], ['BIM_PROFILE_MAX_STOREYS', 2],
-      ['SELECTIVE_REVISION_APPEARANCE_PROFILE', 2], ['ZONE_ASSESSMENT_MAX_ZONES', 64]]);
-    expect(d.unsupportedOperations.map(o => [o.operationId, o.status])).toEqual([['SUPERTALL_GENERATION', 'UNSUPPORTED'], ['PARTITIONED_MODEL_PROCESSING', 'UNSUPPORTED'],
-      ['ZONE_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['SECTION_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['EXTERIOR_SKIN_GEOMETRY_REGENERATION', 'UNSUPPORTED'],
-      ['VALIDATED_ENGINEERING_SOLVERS', 'UNSUPPORTED']]);
+      ['SELECTIVE_REVISION_APPEARANCE_PROFILE', 2], ['ZONE_ASSESSMENT_MAX_ZONES', 64], ['QUANTITY_TAKEOFF_MAX_ENTITIES', 5000]]);
+    // Phase 35 delivered deterministic zone regeneration and partitioned processing; only what they do not cover is still listed as unsupported.
+    expect(d.unsupportedOperations.map(o => [o.operationId, o.status])).toEqual([['SUPERTALL_GENERATION', 'UNSUPPORTED'], ['GENERATIVE_ZONE_REGENERATION', 'UNSUPPORTED'],
+      ['ENVELOPE_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['PARTITIONED_ARTIFACT_SERVICES', 'UNSUPPORTED'], ['VALIDATED_ENGINEERING_SOLVERS', 'UNSUPPORTED']]);
     expect(d.services.find(s => s.serviceId === 'ZONE_ASSESSMENT')).toMatchObject({ persistence: 'DERIVED_ON_READ', status: 'AVAILABLE' });
+    expect(d.services.find(s => s.serviceId === 'ZONE_REGENERATION')).toMatchObject({ version: 'zone-regeneration-v1', persistence: 'CANDIDATE_THEN_SUPPLIED_REVISION', status: 'AVAILABLE' });
+    expect(d.services.find(s => s.serviceId === 'ZONE_PARTITIONS')).toMatchObject({ version: 'zone-partitions-v1', persistence: 'DERIVED_ON_READ', status: 'AVAILABLE' });
   });
 
   it('states limits that match the code that enforces them', () => {
     expect(MODEL_LIMITS.find(l => l.limitId === 'GENERATION_MAX_FLOORS')!.value).toBe(BLUEPRINT_LIMITS.maxFloors);
     expect(MODEL_LIMITS.find(l => l.limitId === 'ZONE_ASSESSMENT_MAX_ZONES')!.value).toBe(ZONE_LIMITS.zones);
+    expect(MODEL_LIMITS.find(l => l.limitId === 'QUANTITY_TAKEOFF_MAX_ENTITIES')!.value).toBe(TAKEOFF_LIMITS.entities);
     expect(UNSUPPORTED_OPERATIONS.filter(o => o.preflightRoute).every(o => o.preflightRoute!.endsWith('/engineering-assessment/zones/regeneration-preflight'))).toBe(true);
     // The BIM profile limit is the real gate's: 2 storeys pass, 3 are refused.
     expect([bimProfile(tower({ storeys: 2 })), bimProfile(tower({ storeys: 3 }))]).toEqual([{ eligible: true, refusalCode: null },

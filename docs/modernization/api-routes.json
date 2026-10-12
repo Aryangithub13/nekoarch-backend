@@ -371,7 +371,22 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/partitions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration-preflight",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration/verification",
   "anonymous": 401
  },
  {
