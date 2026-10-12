@@ -1,0 +1,337 @@
+# Phase 35.1 report: B35 release remediation
+
+**Final status: B35.1 IMPLEMENTED AND VERIFIED WITHIN ITS AUTHORIZED SCOPE. B35 itself is NOT COMPLETE: partial regeneration remains unimplemented, and the B35 scope could not be confirmed against the canonical roadmap.**
+
+**Release decision: BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS** (§14). No tag was created.
+
+Legend used throughout:
+- **Inspected**: read in the repository or GitHub.
+- **Executed**: run in this session, with the output recorded.
+- **Inferred**: a conclusion drawn from inspected material.
+- **Unverified**: not reachable from this session.
+
+## 1. Commits
+
+| Item | Value |
+|---|---|
+| Verified base | `phase31/development` = `6f71c0255f957b7bb99cdb64c16c6c42d454421e`, the audited baseline. It was unchanged at start and is the GitHub default branch. |
+| Branch | `phase35-1/release-remediation` |
+| `008a77f` | Register tsx inside source-mode workers (Node 22.22.0 worker fix) |
+| `401000c` | Add B35.1 zone assessment, regeneration preflight and limit disclosure |
+| `fcd0d3d` | Pin retained project history and guarded deletion in the replay suite |
+| `0c2e41c` | Run the complete suite in CI on both bracketing Node 22 releases. **This is the verified code candidate.** |
+| Documentation commit | Adds this report and its design/API siblings. It contains no code. Its hash is in the PR. |
+
+**Other branches found at start (inspected):**
+- `origin/main` = `cbe5c1e` holds the B35 audit and the first B36 handoff (`docs/audit/`).
+- `origin/claude/hopeful-mclean-ec974f` = `a7e3da4` was authored by the owner's local session. It adds `docs/phase36/phase36-handoff.md` and quotes the canonical roadmap's B36 section (§13).
+- Neither is merged into the base, and neither was modified.
+
+**An unexplained scratchpad worktree** (`…/scratchpad/wt`, detached at `6f71c02`) had run the suite as root. Its PostgreSQL suites could not start (`initdb EACCES`). Its results are **UNVERIFIED and not used** as evidence.
+
+## 2. Sources
+
+| Source | Found? | Read? | Used? |
+|---|---|---|---|
+| `NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md` (canonical) | **No.** It is not in any branch or commit, and `~/Downloads` does not exist in this container (`HOME=/root`). | No | Only the secondary quotes below |
+| `…Roadmap_46_Phases_F32_Site_Integration_Updated.md` | No | No | No |
+| `NekoArch_Phase35_Engineering_Research_Enhanced_v2_2026-10-10.md` | No. It was not found here, and `a7e3da4` reports it as not found on the owner's machine either. | No | No |
+| Phase 35 V2 cost-data JSON; indicative-city-rates CSV | No | No | No |
+| B35 audit and first B36 handoff (`origin/main:docs/audit/`) | Yes | Yes | Yes |
+| Roadmap-sourced B36 handoff (`origin/claude/hopeful-mclean-ec974f:docs/phase36/phase36-handoff.md`) | Yes | Yes | Yes (B36 §13; the B35 terminology note in §5, R6) |
+| Phase 30–35 design, API and report docs; migrations 0001–0024; engineering, revision, scene, BIM, systems, jobs and discovery code | Yes | Yes | Yes |
+
+**In-repository roadmap evidence for B35** (secondary quotes only):
+- `docs/phase34/phase34-design.md:84`: *"High-rise specific checks (wind, drift, egress) → B35"*.
+- `docs/modernization/modernization-report.md:225`: *"Large/complex models, supertall, > 2 storeys in the scene → B34/B35"*.
+- `docs/phase30/phase30-report.md:163`: *"Complex/large/high-rise building verification and supertall → 34–35"*.
+- `a7e3da4`: *"the roadmap's B35 wording asks for `conceptual` / `assumption_based` / `professionally_reviewed` evidence classes"*.
+
+The B35 requirement list used below (R1–R7) is the one in the owner's B35/B35.1 briefs. **It could not be checked against the canonical text.** That is the first owner action (§14).
+
+**Research consequences.** No research-specified formula, threshold, rate, factor (including CPWD `0.973`), standard edition or solver choice is implemented. Named standards remain `NOT_VERIFIED / IDENTIFICATION_ONLY`.
+
+## 3. What changed
+
+| Area | Files |
+|---|---|
+| Worker bootstrap | `apps/api/src/lib/worker-pool.ts` (`ownWorker`), `apps/api/src/lib/tsx-worker.mjs` (new; source mode only) |
+| Limit disclosure | `apps/api/src/engineering/capability-limits.ts` (new), `apps/api/src/services/overview-service.ts` (discovery), `apps/api/src/engineering/{assess,contracts}.ts` (`relatedServices.modelSupport`, limitations) |
+| Zone assessment and preflight | `apps/api/src/engineering/{zone-contracts,zones}.ts` (new), `apps/api/src/services/engineering-service.ts`, `apps/api/src/routes/engineering.ts`, `apps/api/src/services/verification-service.ts` (the loader also returns the revision number and parent; additive) |
+| Registration | `apps/api/src/lib/sentry.ts` (safe routes), `test-support/openapi.ts` (mapping), `docs/modernization/{api-routes,openapi}.json` (regenerated, 125 → 128 routes) |
+| Tests | `apps/api/tests/worker-bootstrap.test.ts` (3), `apps/api/tests/engineering-zones.test.ts` (30), `apps/api/tests/engineering-zones.integration.test.ts` (6), `supabase/tests/database.test.ts` (+3), `test-support/source-workers/*` (fixture), `package.json` (script lists) |
+| CI | `.github/workflows/backend-ci.yml` |
+| Docs | `docs/phase35-1/phase35-1-{design,api,report}.md` |
+
+**Not changed:**
+- no migration;
+- no trigger;
+- no existing route path, method or request schema;
+- no execution limit (the 2-storey BIM profile and 2-floor generation are untouched);
+- no repository setting.
+
+## 4. Worker compatibility (executed)
+
+**Mechanism.** On Node 22.22.0, `execArgv: ['--import','tsx']` is not applied inside `worker_threads`. Node's strip-only loader loads the `.ts` entry instead. It rejects `enum` and does not map `.js` specifiers to `.ts`, so every source-mode worker failed (`ERR_MODULE_NOT_FOUND`). Node 22.23.2 does apply the hook. Both were probed directly.
+
+**Fix.** Source-mode workers start from `tsx-worker.mjs`, which calls `register()` inside the worker and then imports the entry. Compiled workers are unchanged.
+
+| Run | Node 22.22.0 | Node 22.23.2 |
+|---|---|---|
+| 10 affected files, unmodified baseline `6f71c02` | **55 failed**, 54 passed (109), exit 1 | 109/109, exit 0 |
+| New regression test, unmodified baseline | Behavioural test **fails** (`WORKER_FAILED`) | Passes |
+| 10 affected files plus regression test, with the fix | 112/112, exit 0 | 112/112, exit 0 |
+| Compiled `dist` workers (optimization, scene, references, revision) | Load, with `execArgv: []` and no `workerData`; the bootstrap is not in `dist` | — |
+
+## 5. Requirement-by-requirement status
+
+| # | Requirement (owner brief) | Status | Evidence | Decision needed |
+|---|---|---|---|---|
+| R1 | Large-site and multistorey **model partitioning** | **PARTIALLY IMPLEMENTED** | **Analysis partitioning implemented:** validated vertical zones over up to 256 levels, stable ids, exact per-zone quantities (`zones.ts`; 30 unit tests and 6 HTTP tests). **Processing partitioning not implemented:** BIM, scene and analyses still take or refuse the whole model; this is disclosed as `PARTITIONED_MODEL_PROCESSING: UNSUPPORTED`. | Owner: confirm whether the roadmap requires processing partitioning in B35 or a later phase |
+| R2 | Engineering-aware wind, drift, seismic, vertical transport and egress with specialist boundaries | **FULLY IMPLEMENTED as boundaries** (B35) plus the B35.1 disclosure fix | B35 domains and blockers; B35.1 `relatedServices.modelSupport` from the real BIM gate (the egress and lift service shows `REFUSED` for tall models). No engineering value is computed; that needs validated solvers. | None for B35 |
+| R3 | **Partial regeneration** of sections, exterior skins and vertical zones | **NOT IMPLEMENTED** | Only an honest preflight with a typed `UNSUPPORTED` refusal (zone, section and skin targets; preservation planned, not enforced; dependencies; missing capabilities). No multi-storey generator exists (generation ≤ 2 floors; the BIM profile is ≤ 2 storeys). A preflight is **not** regeneration. | **Owner:** implement a multi-storey generation path (beyond B35.1's safe scope), or approve the amendment in §5.1 |
+| R4a | Stable revision ancestry | **FULLY IMPLEMENTED** | Pre-existing parent, immutability and CAS (0006/0020). Zone and preflight reports are bound to `sourceRevision`, `modelHash`, `inputHash` and `resultHash`; staleness follows the scene convention; no mutation (tested over HTTP) | None |
+| R4b | Cross-zone consistency | **PARTIALLY IMPLEMENTED** | Six exact geometric interface checks for represented geometry (elevation, stair connection, stair void, stair footprint, envelope). Shaft and lift continuity is `NOT_EVALUATED`, because those elements are not represented. No engineering consistency is checked. | Owner: confirm that geometric consistency is the B35 bar |
+| R5 | Hard limits and honest infeasibility disclosure for Burj-scale concepts | **FULLY IMPLEMENTED** | Discovery `modelLimits` and `unsupportedOperations`. Tests cover: 256 levels stored; 257 refused with `400 VALIDATION_ERROR` on `model.levels`, storing nothing; 3-floor generation refused with 400; a 12-storey tower refused with `BIM_UNSUPPORTED_MODEL` and `SCENE_UNSUPPORTED_MODEL`; B35 limitations | None |
+| R6 | Evidence classification: conceptual, assumption-based, professionally reviewed | **PARTIALLY IMPLEMENTED (terminology mismatch)** | B35 publishes 7 assurance levels, `USER_DECLARED_NOT_VERIFIED` provenance, `CONCEPTUAL_PARAMETRIC` cost and `NOT_VERIFIED` sources. The roadmap reportedly names `conceptual` / `assumption_based` / `professionally_reviewed`. No mapping is published, and no review can be recorded (B38). The terminology was **not** changed silently. | **Owner:** approve a mapping (proposal §5.2) or confirm the existing taxonomy |
+| R7 | No certification, compliance or approval claims | **FULLY IMPLEMENTED** | B35 `claims` are all `NOT_CLAIMED`; zone and preflight `claims` are all `NOT_CLAIMED` (tested) | None |
+| — | Research-dependent items (V2 formulas, thresholds, rates, CPWD factor) | **NOT IMPLEMENTED: source unavailable** | §2 | Owner: supply the research |
+
+### 5.1 Proposed roadmap amendment (requires owner approval; not applied)
+
+| Deferred capability | Proposed destination | Dependency | Acceptance criteria |
+|---|---|---|---|
+| Zone, section and exterior-skin **geometry regeneration** | **Owner to name.** The roadmap is unavailable here, so no phase is guessed. Plausible owners are a multi-storey generation phase, or B39/B43 generative work if the roadmap places it there. | A multi-storey generator and a BIM/scene profile beyond 2 storeys | <ul><li>Regenerates only the target zone.</li><li>The B35.1 preflight's preserved zones are byte-identical afterwards (compared by zone id and element hashes).</li><li>A new immutable revision is created through `project_write`.</li><li>Every dependent artifact is recomputed or marked stale.</li><li>The interface checks pass at the zone boundaries.</li></ul> |
+| **Partitioned processing** (BIM, scene and analyses per zone) | Owner to name (B45, chunked delivery, is a candidate per the modernization report, which is not verified against the roadmap) | The same profile extension | <ul><li>Each service accepts a zone-scoped request for models over 2 storeys, with bounded resources.</li><li>Results are tagged with `zoneId` and revision.</li></ul> |
+
+### 5.2 Proposed evidence-class mapping (requires owner approval; not implemented)
+
+| Roadmap class (as quoted) | Proposed mapping |
+|---|---|
+| `conceptual` | `CONCEPT_FEASIBILITY`, `GEOMETRIC_VERIFICATION` and `PRELIMINARY_CALCULATION` results computed from the model |
+| `assumption_based` | Anything that depends on `USER_DECLARED_NOT_VERIFIED` context, caller-supplied rates (`CONCEPTUAL_PARAMETRIC`) or unverified sources |
+| `professionally_reviewed` | **Never assigned by software.** It requires a recorded review (a B38 evidence package). |
+
+It would be published as an additive `evidenceClass` per domain. This needs the canonical definitions first.
+
+## 6. API and discovery compatibility
+
+All changes are additive (see [phase35-1-api.md](phase35-1-api.md)):
+- three new routes;
+- discovery `modelLimits`, `unsupportedOperations` and the `ZONE_ASSESSMENT` service;
+- B35 `relatedServices[].modelSupport` and `refusalCode`;
+- two B35 limitation lines.
+
+The OpenAPI diff contains only additions; the two "removed" lines are the `required` arrays being extended. The anonymous-access inventory shows all three new routes as 401.
+
+B35 `resultHash` values change for the same revision, because the report gained fields. They were never stored.
+
+## 7. Security, tenancy and persistence (executed tests and inspection)
+
+**Tested over HTTP for all three new routes:**
+- anonymous requests get 401; another user gets 404; an unknown revision gets 404;
+- a query string on GET gets 400;
+- duplicate keys get 400; a body over 32 KiB gets 400;
+- invalid declarations and targets get typed 422s or 200 `INVALID_DECLARATION`;
+- no revision is created and the current revision is unchanged after assessment and preflight.
+
+**Ownership.** Ownership is established by the existing RLS-scoped revision read, plus the model-hash identity check. Currency uses the B33 context bundle, which is owner-scoped.
+
+**Unchanged:**
+- no new write path;
+- no signed-envelope or fencing change;
+- no service-role credential;
+- no provider, paid service or solver enabled;
+- no request body or model is logged (only route templates are added to Sentry's safe list).
+
+**Retention (`ON DELETE CASCADE` against the guards).** This is a documented intentional constraint. It is now pinned by 3 replay tests:
+- a project with a reference (including a tombstoned one), a job or a brief cannot be deleted (`23514`);
+- an empty project can be deleted;
+- account deletion leaves the project and its history ownerless.
+
+The schema is unchanged. The latent risk for a future erasure feature stands, as does the separate `user_settings` FK question (a B33 decision).
+
+## 8. Verification results (executed)
+
+Candidate `0c2e41cf0bf8f64374c7fe05c1c3a3e520135be0`, Linux container.
+
+**Build gates** (Node v22.22.0, npm 10.9.4, run as root in the checkout):
+
+| Command | Exit | Result |
+|---|---|---|
+| `npm run build` | 0 | |
+| `npm run typecheck` | 0 | |
+| `npm run lint` | 0 | |
+| `npm audit --omit=dev --audit-level=high` | 0 | 0 vulnerabilities |
+
+**Full suite** (run as the unprivileged `nobody` user on an exact copy of the candidate; the copy's only untracked entries were its runtime and home directories and, for the second run, `docs/phase35-1/`):
+
+| Command | Node / npm | Exit | Result |
+|---|---|---|---|
+| `node node_modules/vitest/vitest.mjs run` | **v22.22.0** / 10.9.4 | **0** | **91/91 files, 2,786/2,786 tests, 0 skipped** |
+| `node node_modules/vitest/vitest.mjs run` | **v22.23.2** / npm not installed for this binary (Vitest invoked directly) | **0** | **91/91 files, 2,786/2,786 tests, 0 skipped** |
+
+**Count reconciliation:** 2,744 (B35 baseline) + 3 (worker) + 30 (zone unit) + 6 (zone HTTP) + 3 (retention) = 2,786.
+
+**Mutation check of the zone logic:** 8/8 hand mutants killed. The mutants were:
+- a stair void never reported missing;
+- a derived height treated as evidence;
+- overlap undetected;
+- the key folded into the identity;
+- declaration order changing the hash;
+- the BIM gate bypassed;
+- cross-boundary stairs missed;
+- a gap reported as valid.
+
+**Not run:**
+- Node 24 or 26;
+- `npm run test:supabase`: no Docker daemon in this container, and the live suite still has no B31–B35 scenarios;
+- hosted anything.
+
+## 9. CI
+
+- **No GitHub Actions run exists for this repository, so none exists for this candidate.** GitHub returns 0 workflows and 0 runs, and `GET …/actions/workflows/backend-ci.yml` returns **404** although the file is on the default branch.
+- Inferred cause: Actions is disabled in the repository settings. A YAML error would still register the workflow. **Owner action:** Settings → Actions → General → allow actions.
+- Workflow changes (`0c2e41c`): the workflow now
+  - builds pushes to `phase31/development`;
+  - runs the complete `npx vitest run` in place of subsets that omitted the references, jobs, account and verification suites;
+  - uses a Node matrix of `22.22.0` and `22.23.2`;
+  - adds `npm audit --omit=dev --audit-level=high` and the `en_US.UTF-8` locale;
+  - runs the container build and smoke test once.
+- The YAML parses. **It has not run.**
+
+## 10. Independent review
+
+**Outstanding.** This report is the implementing agent's own verification and is **not** independent review. PRs #4 and #5 were merged with 0 reviews. Checklist for a reviewer who did not write the code:
+
+**Scope against the roadmap**
+- [ ] R1–R7 match the canonical B35 text.
+- [ ] The R3 amendment and R6 mapping decisions are recorded.
+
+**Worker bootstrap**
+- [ ] The source and compiled branches of `ownWorker` are correct.
+- [ ] The bootstrap is absent from `dist` and the image.
+- [ ] Worker lifecycle (timeout, crash, shutdown) is unchanged; the pool tests pass.
+
+**Zone identity and geometry**
+- [ ] The id depends only on the ordered storey ids.
+- [ ] Storey ordering matches the B35 height rows.
+- [ ] Areas sum to B35.
+- [ ] No tolerance appears anywhere; every check is exact or `NOT_EVALUATED`.
+
+**Regeneration honesty**
+- [ ] The preflight cannot create rows or revisions.
+- [ ] `status` is literally `UNSUPPORTED`.
+- [ ] Preservation is labelled `PLANNED_NOT_ENFORCED`.
+- [ ] `roadmapDestination` names no phase.
+
+**Engineering evidence**
+- [ ] No new numeric engineering value.
+- [ ] B35 domain statuses are unchanged.
+- [ ] `modelSupport` comes from the real gate.
+- [ ] Claims are `NOT_CLAIMED`.
+
+**Security**
+- [ ] RLS-scoped reads only.
+- [ ] Body and array bounds hold.
+- [ ] 404 for a foreign revision or project.
+- [ ] No logging of bodies.
+
+**Migration and deploy**
+- [ ] No migration.
+- [ ] The retention tests pin the existing behaviour only.
+- [ ] Hosted state is unverified (§11).
+
+**Reproducibility**
+- [ ] Re-run the full suite on 22.22.0 and 22.23.2 as non-root.
+- [ ] Confirm the counts in §8.
+- [ ] Confirm an Actions run once enabled.
+
+## 11. Migrations and hosted environment
+
+- B35.1 adds **no migration**. 0001–0024 replay cleanly on embedded PostgreSQL (executed, as part of the suite).
+- **Hosted state: unverified.** The B31–B33 reports say 0018–0023 were not applied to the hosted project, so the last documented hosted level is 0017. 0024's hosted status is unverified.
+- **Operator action** (read-only): run `npx supabase migration list --linked` from a clean checkout, or `select version from supabase_migrations.schema_migrations order by version;`. Then apply 0018→0024 in order to staging, then to production, only with explicit approval.
+- This is a deployment gate, not a code-tag gate.
+
+## 12. Remaining limitations and risks
+
+These are in addition to the unmet requirements in §5:
+- Generation remains at most 2 floors.
+- BIM, scene and analyses remain within the 2-storey profile.
+- Shafts, lifts and risers are not represented.
+- No validated engineering solver exists.
+- Standards are unverified; there is no official rate data.
+- The canonical roadmap and the V2 research are absent from the repository.
+- CI has never run.
+- There has been no independent review.
+- Hosted migrations are unverified.
+- The frontend is not integrated (deferred, not a blocker).
+
+## 13. B36 readiness (planning only; no B36 code or branch)
+
+**Correction to the first handoff (`origin/main:docs/audit/B36-implementation-handoff-2026-10-12.md`).** The roadmap-sourced handoff `a7e3da4` lists B36 deliverables that the first handoff omits:
+- dependency-aware fan-out/fan-in;
+- checkpoints;
+- content-addressed caching of `VERIFIED` results;
+- fine-grained recomputation of impacted tasks only;
+- reproducible environments (an environment digest);
+- unit and boundary verification of solver output;
+- queue isolation from scene and optimization jobs.
+
+Where the two differ, `a7e3da4` (canonical-roadmap-sourced) should govern. The first handoff's safeguards remain compatible.
+
+**Boundaries, confirmed against the code and both handoffs:**
+- [x] B36 is compute infrastructure, not solver validation.
+- [x] B35 `REQUIRES_SOLVER` and `NO_VALIDATED_SOLVER` blockers are unchanged by B35.1 and must stay until a validated result exists for that revision and input hash.
+- [x] Remote execution stays disabled by default.
+- [x] B32 jobs, leases, fencing, retries, cancellation, deduplication and the B33 quotas stay authoritative (hard rule 3: B36 builds on B32).
+- [x] No worker gets database access or model-mutation authority.
+- [x] Remote results are verified before persistence.
+- [x] Cost ceilings, data-transfer consent, tenant isolation and fail-closed behaviour are required.
+- [x] No vendor, price or hosting is assumed.
+
+**Unresolved owner decisions before B36:**
+1. Provider or providers, or gateway plus local adapter only.
+2. Non-user execution identity (a dedicated narrow DB role, or owner-read recovery only).
+3. Callbacks, or polling only.
+4. Budget unit and approver (money, compute-seconds or credits; B33 settings or per-job consent).
+5. Supply the V2 research and commit the canonical roadmap.
+
+**Preconditions:**
+- the B35 release decision (§14);
+- Actions enabled;
+- hosted migration state confirmed before any `0025`.
+
+## 14. B35 completion and release recommendation
+
+**Is the original B35 scope complete? No.**
+- R3 (partial regeneration) is not implemented.
+- R1, R4b and R6 are partial.
+- The scope itself could not be confirmed against the canonical roadmap.
+
+### Decision: BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS
+
+**Completed and verified:**
+- the worker fix;
+- truthful limits and refusals;
+- zone assessment and interface checks;
+- the honest regeneration preflight;
+- retention pins;
+- the CI correction;
+- a full suite green on both Node 22 releases (§8).
+
+**Required to proceed, in order:**
+
+| # | Owner | Action |
+|---|---|---|
+| 1 | Owner | Commit the canonical roadmap (and the V2 research, if it exists) to the repository, or paste the exact B35 section, so the mandatory scope can be confirmed |
+| 2 | Owner | Decide R3: fund a multi-storey regeneration path within B35, or approve the §5.1 amendment with a named destination phase. Decide R1 processing partitioning and the R6 evidence-class mapping (§5.2) the same way. |
+| 3 | Owner | Enable GitHub Actions. Then a green run on this PR's head is required. |
+| 4 | Independent reviewer | Complete §10 on this PR |
+| 5 | Owner | Merge the PR (not done by this agent) |
+| 6 | Authorized operator | Read-only hosted migration check (§11). This is a deployment gate. |
+
+**Tag.** If steps 1–5 all resolve in favour of release, the proposed tag is **`backend-v1-phase35-complete`**, the existing naming convention. It would go on the merge commit of this PR into `phase31/development`.
+
+That tag would include B35 (`e93479b`), the PR #5 schema pins, and B35.1, with any approved amendment recorded. **No tag was created.** It waits for explicit authorization.
