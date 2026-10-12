@@ -8,7 +8,7 @@ B35.1 closes the release gaps found by the B35 release audit (`docs/audit/B35-re
 2. It adds the parts of the missing B35 scope that can be built safely on the existing model and pipeline:
    - a bounded, deterministic **zone assessment**;
    - **cross-zone interface checks**;
-   - an honest **regeneration preflight** that always refuses.
+   - an honest **regeneration preflight** that refuses generator-driven regeneration (deterministic regeneration came later in Phase 35: [regeneration-and-partitions.md](regeneration-and-partitions.md)).
 3. It repairs the test toolchain on Node 22.22.0 and corrects CI.
 
 It does **not** generate or regenerate any geometry, change any execution limit, add a migration, or produce any engineering value.
@@ -206,13 +206,13 @@ For a valid target the report always has `status: UNSUPPORTED`, with `refusal.co
 | `preservation.targetInterior` | **Exterior-skin targets only (F7; `null` otherwise).** Everything inside the target zone that a skin change must leave untouched, with exact counts and the first 16 ids: `SPACES` (room identities), `INTERIOR_WALLS` (interior and partition), `UNCLASSIFIED_WALLS` (preserved, and to be classified before any skin change), `INTERIOR_OPENINGS`, `SLABS` (with their voids), `COLUMNS`, `STAIRS` (within or connecting to the zone), `LEVELS` (elevations, floor-to-floor heights, envelopes), `DIMENSIONS`, and, for a façade subset with resolvable orientation, `EXTERIOR_WALLS_ON_OTHER_FACADES`. Dependent artifacts are in `dependencies`. This corrects the contract only: regeneration still refuses, and preservation stays planned, not enforced. |
 | `dependencies` | Every derived artifact family (the Phase 30 list plus verification and the engineering assessment): `WOULD_REQUIRE_RECOMPUTATION` |
 | `missingCapabilities` | `NO_MULTI_STOREY_GENERATOR` and `GEOMETRY_REVISION_OPERATION_UNSUPPORTED` always; `BIM_PROFILE_EXCEEDED` from the real gate; `FACADE_ORIENTATION_UNKNOWN` when it applies |
-| `alternatives` | Skin only: Phase 30 `APPEARANCE_MODIFY`, with `eligibility: PRELIMINARY_ELIGIBLE \| REFUSED` from the real BIM source gate (F4: it replaces `availableForThisModel`, which overstated a first-gate result as availability; the appearance preflight can still refuse). It changes appearance only and does not regenerate geometry. |
+| `alternatives` | Skin targets: Phase 30 `APPEARANCE_MODIFY`, with `eligibility: PRELIMINARY_ELIGIBLE \| REFUSED` from the real BIM source gate (F4: it replaces `availableForThisModel`, which overstated a first-gate result as availability; the appearance preflight can still refuse), and Phase 35 `FENESTRATION` (`REFUSED` when no exterior wall in scope resolves). Zone and section targets: Phase 35 `TYPICAL_FLOOR` (`REFUSED` only for a parametric model). Each names the route that decides the final outcome. |
 | `roadmapDestination` | `{ phase: null, status: OWNER_DECISION_REQUIRED }`. The canonical roadmap was unavailable, so no phase is guessed. |
 | `claims` | `regenerationPerformed`, `revisionCreated`, `preservationEnforced`, `engineeringValidity`: all `NOT_CLAIMED` |
 
 **Why not a Phase 30 operation?** A Phase 30 preflight persists an operation row. This preflight must create nothing, so it is derived on read under the engineering routes.
 
-**What it cannot do.** It cannot regenerate anything. **Preflight is not regeneration**, and the B35 partial-regeneration requirement remains unmet (report §5).
+**What it cannot do.** It cannot regenerate anything: **preflight is not regeneration**. Its refusal is now only of **generator-driven** regeneration. The Phase 35 completion round delivers deterministic regeneration (`TYPICAL_FLOOR`, `FENESTRATION`) with enforced preservation at `ZONES/regeneration`; see [regeneration-and-partitions.md](regeneration-and-partitions.md).
 
 ## 6. Node 22.22.0 worker bootstrap
 
@@ -232,7 +232,7 @@ The B31–B33 children (references, including tombstones; jobs; briefs) declare 
 
 ## 8. Out of scope (unchanged by B35.1)
 
-- Multi-storey geometry generation or regeneration: owner must assign a roadmap phase.
+- Multi-storey geometry *generation*, and generator-driven regeneration: owner must assign a roadmap phase. Deterministic regeneration and partitioned processing were added later in Phase 35 ([regeneration-and-partitions.md](regeneration-and-partitions.md)).
 - Validated engineering solvers: B36 (gateway) plus later validation work.
 - Evidence packages: B38.
 - Dependency graph and freshness propagation: B37.

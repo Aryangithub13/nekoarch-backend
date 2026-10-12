@@ -1,6 +1,6 @@
 # Backend Phases 1–46: reconstructed inventory and B35 scope reconciliation
 
-**Prepared:** 2026-10-12, against `phase35-1/release-remediation` plus remediation round 2.
+**Prepared:** 2026-10-12, against `phase35-1/release-remediation` plus remediation round 2. **Updated** the same day for the Phase 35 completion round (regeneration, preservation, partitioned processing; [regeneration-and-partitions.md](regeneration-and-partitions.md)) and a second full source search, which again found no roadmap or research (§6).
 
 **This is not the roadmap.** The canonical 46-phase roadmap (`NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`, 8 Oct 2026, reported to be in the owner's `~/Downloads`) has never been committed. This document is reconstructed from secondary evidence: phase reports, design documents, verbatim roadmap quotes that earlier sessions copied into those documents, tags and Git history. Every row says how strong its evidence is. Where nothing is recoverable, the row says so instead of filling the gap.
 
@@ -57,7 +57,7 @@ Status vocabulary: **Released** (tagged), **Merged, untagged**, **Partial**, **N
 | 32 | Durable generation jobs, progress and recovery (RQ, RP) | *"persistent queues, progress events, retries, cancellation and recovery …"* | 0022 | Merged, untagged | Background sweeper and external workers → B36 (AS) | High (scope) |
 | 33 | Account, project library, settings and context (RQ, RP) | *"complete project search, archive, preferences, quotas and brief/context services …"* | 0023 | Merged, untagged | `user_settings` retention; teams → B44 (AS) | High (scope) |
 | 34 | Complex building verification (RQ, RP) | *"independently check complex geometry, site polygons, dimensions and scoped diffs …"*, plus the F35 update on integer-mm bases | — | Merged, untagged | High-rise checks → B35 (AS) | High (scope) |
-| 35 | Supertall engineering and verification (title from report; **no roadmap quote recovered**) | Owner briefs: R1–R7 (§3) | — | **Partial.** B35 merged (PR #4, no review); B35.1 + remediation round 2 on PR #7 (draft) | §3; roadmap text needed | Low (scope) |
+| 35 | Supertall engineering and verification (title from report; **no roadmap quote recovered**) | Owner briefs: R1–R8 (§3) | — | **Implemented against the owner briefs except R2 solvers, R6 and R8** (§3). B35 merged (PR #4, no review); B35.1, remediation round 2 and the completion round on PR #7 (draft, unreviewed) | §3; roadmap text needed to confirm scope | Low (scope) |
 | 36 | Cloud Engineering Compute Gateway (RQ via handoff) | Offload engineering and 3D computation: durable queue with fan-out/fan-in, adapters, budgets, verification, content-addressed cache, recovery; builds on B32 (hard rule 3) | — | Not started; handoffs `docs/phase36/phase36-handoff.md`, `docs/audit/B36-…` on `main` | Five owner decisions (handoff §4) | Medium |
 | 37 | Unified multidisciplinary dependency graph and freshness propagation (AS) | Phase 30 §K, modernization §I, B35 design §12 | — | Not started | — | Low |
 | 38 | Documentation exports, evidence packages, drawing sheets (AS) | PDF/DXF/SVG, persisted signed assessments | — | Not started | — | Low |
@@ -75,12 +75,12 @@ Status vocabulary: **Released** (tagged), **Merged, untagged**, **Partial**, **N
 | ID | Requirement | Status after remediation round 2 | Evidence |
 |---|---|---|---|
 | R1a | Multistorey analysis zoning | Implemented (zone assessment, 256-level bound) | `engineering-zones*.test.ts`, CI |
-| R1b | Partitioned model processing (BIM, scene, analyses per zone) | **Not implemented**; disclosed as `PARTITIONED_MODEL_PROCESSING: UNSUPPORTED` | Discovery; integration tests |
+| R1b | Partitioned model processing (BIM, scene, analyses per zone) | **Implemented for QA, B34 verification, area and volume, quantity takeoff and BIM (where the profile admits a partition)**, reconciled exactly with the whole model (`zones/partitions`). Scene, structural, environmental, systems, knowledge, cost and optimization are **not** partitioned (`PARTITIONED_ARTIFACT_SERVICES: UNSUPPORTED`) | `engineering-regeneration*.test.ts`, mutation checks |
 | R2 | Wind, drift, seismic, soil, lift, egress: engineering-aware boundaries | Implemented as typed blockers; **no calculation** (no validated solver) | `engineering.test.ts` |
-| R3 | Partial regeneration of zones, sections and exterior skins | **Not implemented**; honest preflight only (`UNSUPPORTED`) | Preflight tests |
+| R3 | Partial regeneration of zones, sections and exterior skins | **Implemented as deterministic operations**: `TYPICAL_FLOOR` (zone or section layout from a compatible template storey) and `FENESTRATION` (exterior-skin windows by rule), with enforced preservation, the save-route QA, commit through the supplied-revision route and post-commit verification. Generator-driven regeneration and envelope-geometry regeneration stay **unsupported** (no multi-storey generator) | `engineering-regeneration*.test.ts` (HTTP: regenerate → commit → `VERIFIED`; tampered → `MISMATCH`) |
 | R4a | Stable revision ancestry | Implemented (Phase 12/30 schema, report binding) | Tests |
 | R4b | Cross-zone consistency | Geometric only; F1, F8 fixed; F2 labelled; shafts never evaluated | Tests |
-| R5 | Hard limits and honest infeasibility disclosure | Implemented; F3 and F4 corrected | Tests |
+| R5 | Hard limits and honest infeasibility disclosure | Implemented; F3 and F4 corrected; discovery updated for the new routes and the operations they do not cover | Tests |
 | R6 | Evidence classes `conceptual` / `assumption_based` / `professionally_reviewed` (reported roadmap wording) | **Partial**: B35 uses seven assurance levels; mapping proposed (report §5.2), not approved | — |
 | R7 | No certification, compliance or approval claims | Implemented | Tests |
 | R8 | Research-specified formulas, thresholds, rates, CPWD factor | **Blocked on missing source** | §6 |
@@ -91,10 +91,10 @@ Status vocabulary: **Released** (tagged), **Merged, untagged**, **Partial**, **N
 | Capability | Classification | Evidence | Note |
 |---|---|---|---|
 | N1, F1, F2, F3, F4, F5, F7, F8 fixes | **A. Required for B35** | Defects in delivered B35/B35.1 code | Done in remediation round 2 |
-| F6 | **D. Owner decision** | No description recoverable | Confirm or close as numbering gap |
+| F6 | **Closed as a numbering gap (evidence)**; owner may reopen | A full scan of the originating session's readable transcript (19 pages, 06:56–12:53Z) found no F6 anywhere; the first findings list (12:14:34Z) already went F1–F5, F7 | Its unreadable reasoning blocks cannot be ruled out |
 | Stable zone ids, revision binding, typed unsupported operations, `REQUIRES_SOLVER` contract | **B. Foundation** | Code and tests | Consumed by B36 (solvers), B37 (freshness) |
-| Real selective regeneration (R3) | **D. Owner decision** | Only in-repo assignment points *into* B34/B35 (`modernization-report.md:225`); none moves it later | Needs a multi-storey generator and a BIM/scene profile beyond 2 storeys, which no phase owns |
-| Partitioned processing (R1b) | **D. Owner decision** (proposed B45, unconfirmed) | Same | Touches the BIM profile used by Phases 23–29 |
+| Deterministic selective regeneration and preservation (R3) | **A. Required for B35 — done** | Owner briefs; the only in-repo assignment points into B34/B35 (`modernization-report.md:225`) | Generator-driven regeneration still needs a multi-storey generator, which no phase owns: **D. Owner decision** |
+| Partitioned processing (R1b) | **A. Required for B35 — done** for derived-on-read services | Owner briefs | Partitioned artifact services (scene and analyses stored per zone) and a wider BIM profile: **D. Owner decision** (B45 proposed, unconfirmed) |
 | Validated structural, wind, seismic, soil solvers | **D**, with B36 as plumbing only (AS + RQ handoff) | B36 handoff: "B36 is compute infrastructure, not solver validation" | Who validates solvers is unassigned |
 | Lift traffic and full egress on tall models | **D** | Phase 26 refuses > 2 storeys | — |
 | Evidence-class mapping (R6) | **D** | Roadmap wording reported secondhand | — |
@@ -127,6 +127,14 @@ Status vocabulary: **Released** (tagged), **Merged, untagged**, **Partial**, **N
 
 No standard was retrieved, no edition is asserted, no load, material, soil or rate value is built in, and no conceptual result is presented as verified engineering.
 
+**Second search (completion round, 2026-10-12).** Searched again, with nothing found:
+- all 23 remote branches, 27 tags and 71 commits of history (file names and contents, including "56-phase" and the file names above);
+- the container filesystem, `/mnt/user-data/uploads` and `/mnt/attach` (all empty);
+- the connected Claude Docs and artifact workspaces (no artifacts);
+- the account's other repositories: `Better-Pomodoro` (unrelated), and `Testing-Something`, which could not be attached (denied) and was last pushed on 2026-09-02, before the research's 2026-10-10 date.
+
+The 56-phase frontend roadmap is likewise not in any reachable source; §7 remains an inference from `modernization-report.md` §E.
+
 ## 7. Frontend dependencies (56-phase frontend plan; mapping from `modernization-report.md` §E)
 
 | Frontend phases | Backend contract | State |
@@ -137,7 +145,7 @@ No standard was retrieved, no edition is asserted, no load, material, soil or ra
 | F21–F24 auth, projects, settings | Sessions, projects, B33 library and settings | Live |
 | F25–F28 chat and context | Conversations, tools, approval | Live |
 | F29 generation configuration | Modes, capability registry, discovery | Live |
-| **F30 revision and regeneration** | Phase 30 appearance, restore, compare; B35.1 zone preflight (refusal only) | Live within ≤ 2 storeys; **integration verification deferred** |
+| **F30 revision and regeneration** | Phase 30 appearance, restore, compare; B35.1 zone preflight; Phase 35 zone regeneration (candidate, commit through the save route, verification) | Phase 30 live within ≤ 2 storeys; Phase 35 regeneration live at any height; **integration verification deferred** (owner) |
 | F31 project overview | `GET …/overview` | Live; unified model → B37 |
 | **F32 Site and Plot Workspace** (F32–F35 site, blueprints, measurements) | Revision model, QA, takeoff, B34 site/plot/FAR bases | Live; the F32 "site integration" roadmap variant was not recovered; drawing sheets → B38 |
 | **F35 Architectural Calculation Workspace** | B34 verification; B35 assessment (deterministic geometry, conceptual cost, typed engineering blockers, `model-height-v2`); B35.1 zones | Live as conceptual or blocked results only; validated calculations need solvers (B36 plumbing + unassigned validation) |
@@ -148,8 +156,8 @@ No standard was retrieved, no edition is asserted, no load, material, soil or ra
 | F51–F54 blueprint, structural, materials, budget AI | Deterministic engines only | → B39 |
 | F55 cross-module context | Overview v1 | Partial → B37 |
 | F56 final integration | — | → B45–46 |
-| Full Building / Interior Only / Exterior Only / Blueprint Only modes | Generation modes and capability registry (F29); Phase 30 appearance is exterior-only | Exterior-only and interior-only *regeneration* do not exist; the zone preflight lists what an exterior-only change must preserve (F7) |
-| Large-building and supertall workflows | Zone assessment, B35 assessment, discovery limits | Analysis only; generation, BIM, scene and regeneration above 2 storeys unsupported |
+| Full Building / Interior Only / Exterior Only / Blueprint Only modes | Generation modes and capability registry (F29); Phase 30 appearance is exterior-only; Phase 35 `FENESTRATION` (exterior windows) and `TYPICAL_FLOOR` (storey layouts) | Exterior-only window regeneration and layout regeneration by template exist; generator-driven interior-only or exterior-only regeneration does not |
+| Large-building and supertall workflows | Zone assessment, B35 assessment, zone regeneration (candidate + verification), zone partitions, discovery limits | Deterministic regeneration and per-zone QA, verification, takeoff and BIM-where-eligible are live; generation above 2 floors, whole-model BIM and scene above 2 storeys, and per-zone stored analyses are unsupported |
 
 Stable identities that the frontend can rely on: revision ids and ancestry, model hashes, zone ids (`zone-identity-v1`, from ordered storey ids), BIM semantic ids (≤ 2 storeys), and `CURRENT`/`STALE` currency on derived reports.
 
@@ -159,4 +167,4 @@ Stable identities that the frontend can rely on: revision ids and ancestry, mode
 2. The original 56-phase frontend roadmap, if frontend dependencies are to be confirmed rather than inferred.
 3. The Phase 35 V2 research set, or confirmation that it does not exist.
 4. Confirmation of the Phase 1–5 plan of record (`PLAN.md` versus the 46-phase roadmap).
-5. Whether F6 existed.
+5. Whether F6 existed (closed here as a numbering gap on the transcript evidence; reopen if you know otherwise).

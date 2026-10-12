@@ -1,5 +1,7 @@
 # Phase 35.1 API: zone assessment, regeneration preflight and limit disclosure
 
+> The Phase 35 completion round adds `ZONES/regeneration`, `ZONES/regeneration/verification` and `ZONES/partitions` (catalog 128 → 131). They are specified in [regeneration-and-partitions.md](regeneration-and-partitions.md). The preflight below now refuses only generator-driven regeneration, and names `TYPICAL_FLOOR` or `FENESTRATION` among its alternatives.
+
 All changes are **additive**. The route catalog grows from 125 to 128 entries. No existing route changes its path, method, request schema or status codes.
 
 | Property | Value |
@@ -18,7 +20,7 @@ All changes are **additive**. The route catalog grows from 125 to 128 entries. N
 |---|---|---|
 | `GET ZONES` | None; query parameters are rejected | 200 `ZoneAssessmentReport` for the default single zone `ALL` |
 | `POST ZONES` | `{ zones?: ZoneDeclaration[1..64] }` | 200 `ZoneAssessmentReport` |
-| `POST ZONES/regeneration-preflight` | `{ zones?: ZoneDeclaration[1..64], target }` | 200 `ZonePreflightReport`, always `status: UNSUPPORTED` |
+| `POST ZONES/regeneration-preflight` | `{ zones?: ZoneDeclaration[1..64], target }` | 200 `ZonePreflightReport`, always `status: UNSUPPORTED` (for generator-driven regeneration; the deterministic operations are listed under `alternatives`) |
 
 **`ZoneDeclaration`** is `{ key, fromLevelId, toLevelId }`. The key matches `^[A-Z0-9][A-Z0-9_-]{0,39}$`. Keys are unique, and the order of the list does not matter.
 
