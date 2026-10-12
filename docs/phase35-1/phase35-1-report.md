@@ -2,7 +2,7 @@
 
 **Final status (superseded by §16, the Phase 35 completion round):** the owner-brief Phase 35 scope is implemented and verified, **except** validated engineering solvers (R2 beyond typed boundaries), the evidence-class mapping (R6) and the research-specified values (R8). The scope still could not be confirmed against the canonical roadmap, which remains unavailable.
 
-**Release decision: NO-GO for merge or tag until the gates in §16.9 pass.** No tag was created. Earlier sections record the state at their time; §16 supersedes them where they differ.
+**Release decision: NO-GO for merge or tag until the gates in §17.6 pass** (human review, scope of record). No tag was created. Earlier sections record the state at their time; §16 supersedes them where they differ.
 
 **Remediation round 2 (§15)** fixes the correctness defects found after this report was first written (N1, F1, F8) and the disclosure defects (F2, F3, F4, F5, F7). F6 is an unresolved numbering gap, not a known defect. §9 and §12 below are corrected: CI does run.
 
@@ -503,7 +503,7 @@ The preflight's schema is unchanged; its alternatives now name the deterministic
 
 **Deployment.** No new environment variable. The save body limit is read from the existing `BODY_LIMIT_BYTES`. The image changes only in its compiled code.
 
-### 16.9 Release decision
+### 16.9 Release decision (superseded by §17.6)
 
 **NO-GO for merge or tag at this time.** The code is complete and verified for the owner-brief scope, but these release gates are open:
 
@@ -524,3 +524,89 @@ The preflight's schema is unchanged; its alternatives now name the deterministic
 - a report-version bump.
 
 Phase 30 frontend integration verification stays **deferred**.
+
+## 17. Release-gate round (review, scope, evidence classes, verdict)
+
+Base: `7caf74d`. Commits: `28077fa` (R6 and disclosure fixes), and this documentation commit. No migration, no new route. History was not rewritten.
+
+### 17.1 Independent human review
+
+**Not yet obtained.** PR #7 has no reviews, review threads or comments.
+- A Copilot review was requested; Copilot posted nothing. Automated review is not human approval in any case.
+- On 2026-10-12 a review was requested from `shubham-0`, the repository's only other collaborator (write access).
+- The owner (`Aryangithub13`) is the PR's author on GitHub, so GitHub will not record the owner's approval of this PR.
+- The fresh-context agent review in §16.7 is automated and is not counted as human review.
+
+**This gate stays open** until a human reviewer completes the checklist in the PR.
+
+### 17.2 Roadmap and research
+
+A third search found no new branch, tag, commit, upload or attachment. The canonical 46-phase roadmap, its Phase 35 section, the 56-phase frontend roadmap and the Phase 35 V2 research remain **unavailable**.
+
+The minimum owner decision needed to fix the accepted Phase 35 scope is:
+> **Accept the owner briefs R1–R8, as delivered and limited in §16–§17, as the Phase 35 scope of record.**
+
+### 17.3 Standards and evidence-class decision
+
+**Standards and solvers (R2, R8).** Per the owner's instruction of 2026-10-12, Phase 35 is released **without** validated structural engineering solvers or research-specified values.
+- Wind, seismic, lateral stability, drift, dynamic response, soil and foundation, member design, progressive collapse, lift traffic and tall-building egress stay **explicitly unsupported**. They appear as typed blockers in the assessment, as `VALIDATED_ENGINEERING_SOLVERS: UNSUPPORTED` in discovery, and with `evidenceClass: null`.
+- IS 875 Parts 1–3, IS 1893 Part 1, IS 16700 and NBC remain identification only: no edition is verified and nothing is retrieved.
+- No load, coefficient, soil value, rate or CPWD factor exists in the code.
+- Delivering these needs verified editions, the V2 research and validation benchmarks. No phase is named for them, because the roadmap is unavailable.
+
+**Evidence classes (R6).** Implemented in `28077fa`.
+- Each domain carries `evidenceClass`: `conceptual` or `assumption_based` for computed results, `null` otherwise.
+- `professionally_reviewed` is never assigned by software.
+- The seven assurance levels are kept.
+- §5.2 is withdrawn (category error; see the note there).
+- The definitions are in `docs/phase35/phase35-design.md` §2.1. They are the backend's own, because the canonical definitions are unavailable.
+
+### 17.4 Review of §5.2, §16 and the related policies
+
+| Item | Finding | Action |
+|---|---|---|
+| §5.2 mapping | **Defect:** it mapped required assurance levels onto evidence classes, so uncomputed domains would have been labelled `conceptual` | Withdrawn; replaced by result-based classification (§17.3), with a test |
+| Seven assurance levels | Consistent: each domain states the level its question needs, and `CODE_APPLICABILITY` and above are never reached | Kept unchanged; `evidenceClass` is orthogonal to them |
+| Assessment limitations | **Defect:** they said no part of a tall model can be regenerated, which is false since §16 | Corrected, with a regression test |
+| Preflight texts | **Defect:** "no regeneration executes" and an ambiguous roadmap note | Corrected, with a regression test |
+| §16 | No other defect found. Its claims were rechecked against code and tests: catalog 131, the three routes, 22/22 mutations, and VERIFIED excluding provenance. | §16.4's R6 row is superseded by §17.3 |
+| Formula and report versions | No formula changed this round. `evidenceClass` is an additive field. `engineering-assessment-v1` is kept, as for B35.1's additive `modelSupport`, because reports are derived on read, never stored, and `engine.formulas` still identifies the arithmetic. | **Decided: no report-version bump** |
+| Save versus verification provenance | A committed candidate keeps the base model's `provenance`; the save route records `source_mode: supplied`. No code reads `provenance.generatorVersion` or `seed` except parametric checks, and regeneration refuses parametric models. `VERIFIED` compares the canonical model (provenance excluded); `provenanceIdentical` reports provenance separately. | No functional defect; the disclosure stands (spec §2.1 and §6) |
+| Deletion policy | Regeneration verification needs the parent revision. Revisions are immutable and cannot be deleted today, so verification stays reproducible. Any future erasure feature must keep, or tombstone with its model hash, each parent of a committed regeneration, or such revisions become `NO_PARENT`. | Recorded for the undecided erasure policy; not a Phase 35 blocker |
+| Migrations | Phase 35 adds none. Deploying this backend still needs hosted migrations 0018–0024, which earlier phases need. | Deployment gate, separate from the code release |
+
+### 17.5 Evidence on the final code head (`28077fa`)
+
+Everything below was **executed** in this session on `28077fa`. `28077fa` carries all the code; the documentation commit after it changes no code.
+
+| Check | Result |
+|---|---|
+| Full suite, unprivileged user, Node 22.22.0 | **93/93 files, 2,838/2,838 tests**, 0 skipped, exit 0 |
+| Full suite, unprivileged user, Node 22.23.2 | **93/93 files, 2,838/2,838 tests**, 0 skipped, exit 0 |
+| Build, typecheck, lint | Exit 0 |
+| `npm audit --omit=dev --audit-level=high` | 0 vulnerabilities |
+| New tests this round | 3 (R6 classification; assessment regeneration disclosure; preflight texts) |
+| OpenAPI | Drift test passes. Against `7caf74d`, the only change is the nullable `domains[].evidenceClass` on the engineering-assessment path; the other 105 paths and every shared component are unchanged. |
+| Container smoke (local Docker; scratch Dockerfile adds the proxy CA to the build stage only) | Non-root, liveness 200, readiness 503, SIGTERM exit 0 |
+| **Local** Supabase acceptance (CLI 2.117.0; a fresh disposable stack applied all 24 migrations, 0001–0024) | **120/120**, exit 0. Receipt `docs/phase16-evidence/supabase-2026-10-12T16-33-07.746Z.json`: 3,495 requests, 0 API errors; its 16 failures are the expected 401 refusals. The stack was stopped. |
+| GitHub Actions | Runs on the PR head that includes this commit. A commit cannot cite its own run, so the run and its result are recorded in the PR #7 description. |
+
+**Hosted Supabase is NOT verified.** These are local, disposable-stack results only. The hosted database was never contacted. It is believed to be at migration 0017, and 0018–0024 are unverified there. Applying them is a separate deployment gate that needs an authorized operator.
+
+Not run: Node 24 and 26; Phase 30 frontend integration verification (**deferred** by the owner).
+
+### 17.6 Verdict
+
+**NO-GO for merge or tag.** Code, tests, contract, container and local database evidence all pass. Two gates are open:
+
+| # | Gate | State | What closes it |
+|---|---|---|---|
+| 1 | Independent **human** review | **Open.** Requested from `shubham-0`; no review yet | A human reviewer completes the PR #7 checklist and records approval or changes |
+| 2 | Phase 35 scope of record | **Open** (roadmap unavailable) | Owner decision: accept R1–R8, as delivered and limited in §16–§17, as the Phase 35 scope |
+| 3 | Standards and evidence classes | **Closed:** R6 implemented; R2 solvers and R8 values excluded and explicitly unsupported per the owner's instruction | — |
+| 4 | Version, provenance, deletion and migration review | **Closed** (§17.4) | — |
+| 5 | CI, suite, OpenAPI, smoke, local Supabase | **Closed** (§17.5) | — |
+| 6 | Merge and tag `backend-v1-phase35-complete` | Waits on 1–2, then explicit owner authorization | — |
+| 7 | Hosted migrations 0018–0024 | Deployment gate, separate from the code tag | An authorized operator: read-only check, then staging, then production |
+
+Once gates 1 and 2 close, the owner's explicit authorization is required to merge PR #7 into `phase31/development` and tag the merge commit `backend-v1-phase35-complete`.
