@@ -337,7 +337,7 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
       notRepresented: [
         { item: 'SHAFTS_LIFTS_AND_RISERS', detail: 'Not modelled, so their continuity across the target boundary cannot be planned' },
         { item: 'STRUCTURAL_LOAD_PATHS', detail: 'Columns exist as geometry only; no load path through the target is represented' },
-        { item: 'LOCK_ENFORCEMENT', detail: 'Preservation is planned, not enforced: no regeneration executes, so nothing is locked or compared after a change' },
+        { item: 'LOCK_ENFORCEMENT', detail: 'This preflight plans preservation only. The deterministic operations at zones/regeneration enforce it on their candidates; generator-driven regeneration does not exist' },
       ],
     },
     dependencies: DEPENDENT_ARTIFACTS.map(artifact => ({ artifact, impact: 'WOULD_REQUIRE_RECOMPUTATION' as const,
@@ -355,7 +355,7 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
           detail: 'Replaces the layout of every target storey with a copy of a template storey of identical envelope, height, slabs, columns and stairs, preserving everything else (enforced on the candidate). The operation itself decides the final outcome' },
     ],
     roadmapDestination: { phase: null, status: 'OWNER_DECISION_REQUIRED' as const,
-      detail: 'The canonical roadmap was not available to this implementation, so the phase that delivers multi-storey geometry regeneration is not named here; the owner must assign it' },
+      detail: 'The canonical roadmap was not available to this implementation, so the phase that delivers generator-driven multi-storey regeneration is not named here; the owner must assign it' },
     claims: { ...NOT_CLAIMED_PREFLIGHT },
   };
   return ZonePreflightReportSchema.parse({ ...body, resultHash: costHash(body), currency: ctx.currency, generatedAt: ctx.generatedAt });

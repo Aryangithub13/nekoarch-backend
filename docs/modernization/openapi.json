@@ -39293,6 +39293,15 @@
                "UNSUPPORTED"
               ]
              },
+             "evidenceClass": {
+              "type": "string",
+              "enum": [
+               "conceptual",
+               "assumption_based",
+               "professionally_reviewed"
+              ],
+              "nullable": true
+             },
              "blockers": {
               "type": "array",
               "items": {
@@ -39396,6 +39405,7 @@
              "domain",
              "assuranceLevel",
              "status",
+             "evidenceClass",
              "blockers",
              "relatedServices"
             ],
@@ -41411,6 +41421,15 @@
                "UNSUPPORTED"
               ]
              },
+             "evidenceClass": {
+              "type": "string",
+              "enum": [
+               "conceptual",
+               "assumption_based",
+               "professionally_reviewed"
+              ],
+              "nullable": true
+             },
              "blockers": {
               "type": "array",
               "items": {
@@ -41514,6 +41533,7 @@
              "domain",
              "assuranceLevel",
              "status",
+             "evidenceClass",
              "blockers",
              "relatedServices"
             ],

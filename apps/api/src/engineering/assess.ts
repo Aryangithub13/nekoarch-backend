@@ -24,7 +24,8 @@ export const LIMITATIONS = [
   'Named standards are candidates for identification only: none has been retrieved or verified, so every determination that depends on one is blocked.',
   'Evidence documents are recorded as user-declared; their contents are not read or interpreted.',
   'Nothing here is a code-compliance determination, an engineering certification, a statutory approval or a statement that a building is safe to build.',
-  'Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated, and no part of it can be regenerated.',
+  'Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated; parts of it can be regenerated only by the deterministic zone operations (TYPICAL_FLOOR storey layouts, FENESTRATION windows), never by a generator.',
+  'evidenceClass says what a computed result rests on: conceptual (the stored model alone) or assumption_based (caller-supplied rates or other declared inputs). It is null where nothing is computed, and professionally_reviewed is never assigned by software (it needs a recorded professional review).',
   'BIM-derived services (BIM, structural, environmental, building systems including egress and lifts, knowledge, scene and appearance revision) refuse models outside the bounded BIM profile of at most two storeys; relatedServices[].modelSupport reports REFUSED for the assessed model, or PRELIMINARY_ELIGIBLE where only that first gate is known to pass.',
 ];
 /** Related services that read the revision through the bounded BIM source profile (bim/core sourceModel). */
@@ -37,6 +38,15 @@ const review = (detail: string, code = 'QUALIFIED_ENGINEER_REVIEW'): Blocker => 
 const conflict = (inputPath: string, code: string, detail: string): Blocker => ({ kind: 'INPUT_CONFLICT', code, detail: detail.slice(0, 400), inputPath, sourceIds: [] });
 
 /** Precedence (design §5): unsupported, then what the caller can supply, then sources, solvers and review. Computed domains are (partially) evaluated. */
+/** Computed domains whose result rests on caller-supplied values rather than on the stored model alone. */
+const ASSUMPTION_BASED_DOMAINS: ReadonlySet<Domain> = new Set(['PRELIMINARY_COST']);
+/**
+ * R6 evidence class of a domain's result. It classifies what a computed result rests on, not the assurance level the question needs (a domain
+ * that computes nothing has no result to classify). professionally_reviewed requires a recorded review and is never assigned here.
+ */
+export const evidenceClass = (domain: Domain, computed: boolean): DomainResult['evidenceClass'] =>
+  !computed ? null : ASSUMPTION_BASED_DOMAINS.has(domain) ? 'assumption_based' : 'conceptual';
+
 export function domainStatus(computed: boolean, blockers: Blocker[]): DomainResult['status'] {
   if (computed) return blockers.length ? 'PARTIALLY_EVALUATED' : 'EVALUATED';
   const any = (...kinds: Blocker['kind'][]) => blockers.some(b => kinds.includes(b.kind));
@@ -173,7 +183,7 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
       [review('Engineering certification and statutory approval are given only by qualified professionals and the competent authority', 'CERTIFICATION_AND_STATUTORY_APPROVAL')], []],
   ];
   const domains: DomainResult[] = definitions.filter(([d]) => inScope(d)).map(([domain, assuranceLevel, computed, blockers, relatedServices]) =>
-    ({ domain, assuranceLevel, status: domainStatus(computed, blockers), blockers: blockers.slice(0, 24), relatedServices }));
+    ({ domain, assuranceLevel, status: domainStatus(computed, blockers), evidenceClass: evidenceClass(domain, computed), blockers: blockers.slice(0, 24), relatedServices }));
 
   const requirements = new Map<string, { inputPath: string; detail: string; neededFor: Domain[] }>();
   for (const d of domains) for (const b of d.blockers) if (b.inputPath && (b.kind === 'MISSING_INPUT' || b.kind === 'INPUT_CONFLICT')) {

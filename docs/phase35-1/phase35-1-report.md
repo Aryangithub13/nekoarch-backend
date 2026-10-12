@@ -106,7 +106,9 @@ The B35 requirement list used below (R1–R7) is the one in the owner's B35/B35.
 | Zone, section and exterior-skin **geometry regeneration** | **Owner to name.** The roadmap is unavailable here, so no phase is guessed. Plausible owners are a multi-storey generation phase, or B39/B43 generative work if the roadmap places it there. | A multi-storey generator and a BIM/scene profile beyond 2 storeys | <ul><li>Regenerates only the target zone.</li><li>The B35.1 preflight's preserved zones are byte-identical afterwards (compared by zone id and element hashes).</li><li>A new immutable revision is created through `project_write`.</li><li>Every dependent artifact is recomputed or marked stale.</li><li>The interface checks pass at the zone boundaries.</li></ul> |
 | **Partitioned processing** (BIM, scene and analyses per zone) | Owner to name (B45, chunked delivery, is a candidate per the modernization report, which is not verified against the roadmap) | The same profile extension | <ul><li>Each service accepts a zone-scoped request for models over 2 storeys, with bounded resources.</li><li>Results are tagged with `zoneId` and revision.</li></ul> |
 
-### 5.2 Proposed evidence-class mapping (requires owner approval; not implemented)
+### 5.2 Proposed evidence-class mapping (WITHDRAWN; superseded by design §2.1 and §17.3)
+
+> **Withdrawn.** This proposal mapped assurance levels (what a question needs) to evidence classes (what a result rests on). That would label an uncomputed domain, such as `VERTICAL_TRANSPORT` at `PRELIMINARY_CALCULATION`, as `conceptual`. The implemented rule classifies only computed results; see `docs/phase35/phase35-design.md` §2.1. The table below is kept as the historical record.
 
 | Roadmap class (as quoted) | Proposed mapping |
 |---|---|

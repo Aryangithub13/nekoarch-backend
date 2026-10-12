@@ -332,3 +332,27 @@ describe('Phase 35 request contract', () => {
     expect(parsed).toMatchObject({ scope: ['WIND_LOADS'], structuralSystem: { description: 'Core + outriggers' }, evidence: [] });
   });
 });
+
+describe('Phase 35 evidence classes (R6) and current capability disclosure', () => {
+  it('classifies what a computed result rests on, never the level its question needs, and never assigns professionally_reviewed', () => {
+    const priced = assess(authored(), costRequest({ components: [component('ALL', 'WHOLE_BUILDING', '25000.5')] }, complete));
+    const classes = Object.fromEntries(priced.domains.map(d => [d.domain, d.evidenceClass]));
+    expect(classes).toMatchObject({ HEIGHT_AND_STOREYS: 'conceptual', AREAS_AND_VOLUME: 'conceptual', SITE_AND_GEOMETRY: 'conceptual', BASE_SLENDERNESS: 'conceptual',
+      PRELIMINARY_COST: 'assumption_based' });
+    // Uncomputed domains have no result to classify, whatever level they need (VERTICAL_TRANSPORT needs PRELIMINARY_CALCULATION, computes nothing).
+    for (const d of priced.domains.filter(x => !['EVALUATED', 'PARTIALLY_EVALUATED'].includes(x.status))) expect([d.domain, d.evidenceClass]).toEqual([d.domain, null]);
+    expect(domain(priced, 'VERTICAL_TRANSPORT')).toMatchObject({ assuranceLevel: 'PRELIMINARY_CALCULATION', evidenceClass: null });
+    const tall = assess(tower({ storeys: 60 }), complete);
+    expect(tall.domains.some(d => d.evidenceClass === 'professionally_reviewed')).toBe(false);
+    expect(domain(tall, 'PRELIMINARY_COST')).toMatchObject({ status: 'REQUIRES_INPUTS', evidenceClass: null });
+    expect(['WIND_LOADS', 'SEISMIC_LOADS', 'LATERAL_DRIFT_AND_STABILITY', 'MEMBER_DESIGN', 'GEOTECHNICAL_AND_FOUNDATIONS'].map(d => [domain(tall, d).status, domain(tall, d).evidenceClass]))
+      .toEqual([['REQUIRES_SOURCE_VERIFICATION', null], ['REQUIRES_SOURCE_VERIFICATION', null], ['REQUIRES_SOURCE_VERIFICATION', null], ['UNSUPPORTED', null], ['REQUIRES_SOLVER', null]]);
+    expect(tall.limitations.some(l => l.startsWith('evidenceClass says what a computed result rests on'))).toBe(true);
+  });
+
+  it('states that parts of a tall model can be regenerated only by the deterministic zone operations, never that none can', () => {
+    const r = assess(tower({ storeys: 12 }));
+    expect(r.limitations.some(l => l.includes('no part of it can be regenerated'))).toBe(false);
+    expect(r.limitations).toContain('Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated; parts of it can be regenerated only by the deterministic zone operations (TYPICAL_FLOOR storey layouts, FENESTRATION windows), never by a generator.');
+  });
+});

@@ -81,9 +81,9 @@ Status vocabulary: **Released** (tagged), **Merged, untagged**, **Partial**, **N
 | R4a | Stable revision ancestry | Implemented (Phase 12/30 schema, report binding) | Tests |
 | R4b | Cross-zone consistency | Geometric only; F1, F8 fixed; F2 labelled; shafts never evaluated | Tests |
 | R5 | Hard limits and honest infeasibility disclosure | Implemented; F3 and F4 corrected; discovery updated for the new routes and the operations they do not cover | Tests |
-| R6 | Evidence classes `conceptual` / `assumption_based` / `professionally_reviewed` (reported roadmap wording) | **Partial**: B35 uses seven assurance levels; mapping proposed (report §5.2), not approved | — |
+| R6 | Evidence classes `conceptual` / `assumption_based` / `professionally_reviewed` (reported roadmap wording) | **Implemented** as an additive per-domain `evidenceClass`: what a computed result rests on, `null` when nothing is computed, `professionally_reviewed` never assigned by software. The seven assurance levels are kept. The definitions are the backend's own (design §2.1); the canonical definitions are unavailable. | `engineering.test.ts` R6 tests |
 | R7 | No certification, compliance or approval claims | Implemented | Tests |
-| R8 | Research-specified formulas, thresholds, rates, CPWD factor | **Blocked on missing source** | §6 |
+| R8 | Research-specified formulas, thresholds, rates, CPWD factor | **Excluded from the Phase 35 release** (owner instruction, 2026-10-12): it stays explicitly unsupported until verified editions and the research exist | §6 |
 | N1 | Correct deterministic quantities (storey height, volume) | Fixed (`model-height-v2`) | Regression tests |
 
 ## 4. B35 versus B36–B46

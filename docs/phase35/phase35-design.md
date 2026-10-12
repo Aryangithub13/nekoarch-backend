@@ -27,6 +27,19 @@ Every domain states the level of assurance its question needs, not a level the b
 | `VALIDATED_STRUCTURAL_ANALYSIS` | Validated solvers with real load cases and boundary conditions | No |
 | `PROFESSIONAL_DESIGN_AND_APPROVAL` | Qualified engineers and the competent authority | Never by software |
 
+### 2.1 Evidence classes (R6)
+
+Each domain result also carries `evidenceClass`. It answers a different question from the assurance level: **what does the computed result rest on?** The assurance level states what the question needs, so the two are never mapped onto each other.
+
+| `evidenceClass` | Assigned when | Domains in B35 |
+|---|---|---|
+| `conceptual` | The domain is computed from the stored model alone (exact geometry) | `HEIGHT_AND_STOREYS`, `AREAS_AND_VOLUME`, `SITE_AND_GEOMETRY`, `BASE_SLENDERNESS`, when computed |
+| `assumption_based` | The domain is computed and rests on caller-supplied values (rates, adjustments, declared context) | `PRELIMINARY_COST`, when computed |
+| `professionally_reviewed` | A recorded professional review exists | **Never assigned by software.** It needs a recorded review (a B38 evidence package) and a reviewer identity. |
+| `null` | Nothing is computed, so there is no result to classify | Every blocked domain (loads, solvers, compliance, certification) |
+
+The class labels are the roadmap's wording as reported in the B36 handoff. The definitions above are this backend's own, because the canonical roadmap text is unavailable. Report §5.2's earlier proposal mapped *assurance levels* to classes; that is withdrawn, because it would have labelled an uncomputed domain (for example `VERTICAL_TRANSPORT` at `PRELIMINARY_CALCULATION`) as `conceptual`.
+
 ## 3. Domains
 
 | Domain | Level | Outcome in B35 |

@@ -295,6 +295,13 @@ describe('Phase 35.1 regeneration preflight (refuses generator-driven regenerati
     expect(r.dependencies.every(d => d.impact === 'WOULD_REQUIRE_RECOMPUTATION')).toBe(true);
   });
 
+  it('says the preflight only plans preservation and points to the operations that enforce it; it never says no regeneration exists', () => {
+    const r = preflight(supertall(), { ...LOW_HIGH, target: { kind: 'ZONE', zoneKey: 'HIGH' } });
+    expect(r.preservation.notRepresented.find(n => n.item === 'LOCK_ENFORCEMENT')!.detail)
+      .toBe('This preflight plans preservation only. The deterministic operations at zones/regeneration enforce it on their candidates; generator-driven regeneration does not exist');
+    expect(r.roadmapDestination.detail).toContain('generator-driven multi-storey regeneration');
+  });
+
   it('refuses a section (storey range) and preserves the storeys below and above it', () => {
     const r = preflight(supertall(), { target: { kind: 'SECTION', fromLevelId: 'storey-10', toLevelId: 'storey-20' } });
     expect(r.refusal.code).toBe('SECTION_GEOMETRY_REGENERATION_UNSUPPORTED');
