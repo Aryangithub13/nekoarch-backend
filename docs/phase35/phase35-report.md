@@ -50,6 +50,8 @@ Status of prior phases as established here: B31–B34 are implemented and their 
 
 **Defect found during self-review.** The cost report capped `warnings` at 200. At the input limits (64 synthetic, undated, unscoped components on an envelope-based model), about 333 warnings are possible. That would have failed response validation and returned 500 instead of a report. The bound is now derived from the input limits, and a regression test exercises the worst case (it fails with the old bound).
 
+**Defect found during integration review (fixed in a separate commit on top of `b63e5e0`).** The jurisdiction safeguard could be bypassed by omission. A rate whose source stated no jurisdiction and no date (for example an overseas cost-book figure) was still counted towards a `COMPLETE` estimate with a `completeTotal`, with only warnings. A complete total now also requires every priced rate and every adjustment to state its jurisdiction and an effective or retrieval date. Otherwise the estimate is `PARTIAL`, and the missing items are listed as requirements. Adjustments now carry the same date and jurisdiction warnings as components. The warning bound is re-derived (64 × 5 + 16 × 2 + 16 = 368). A regression test fails without the fix.
+
 ## D. Supported and unsupported
 
 **Supported:**
@@ -84,7 +86,7 @@ Status of prior phases as established here: B31–B34 are implemented and their 
 | `npm run build` | exit 0 |
 | `npm run typecheck` | exit 0 |
 | `npm run lint` | exit 0 |
-| `vitest run apps/api/tests/engineering.test.ts` | **19/19** |
+| `vitest run apps/api/tests/engineering.test.ts` | **20/20** (19 in `b63e5e0`; the regression test for the jurisdiction/date fix is the 20th) |
 | `vitest run apps/api/tests/engineering.integration.test.ts` (embedded PostgreSQL, real HTTP, real worker-isolated reference inspector) | **3/3** |
 | `vitest run apps/api/tests/modernization.test.ts` (route catalog, anonymous inventory, OpenAPI drift) | 6/6 |
 | Full `vitest run` with B35 | See E.2 |
@@ -100,7 +102,8 @@ Both runs used `vitest run` as the unprivileged `nobody` user, on the same conta
 | Run | Files | Tests |
 |---|---|---|
 | Baseline `d1c11bb` (pre-B35, separate worktree) | 11 failed, 75 passed (86) | **57 failed**, 2 664 passed (2 721) |
-| B35 final code | 11 failed, 77 passed (88) | **57 failed**, 2 686 passed (2 743) |
+| B35 `b63e5e0` | 11 failed, 77 passed (88) | **57 failed**, 2 686 passed (2 743) |
+| B35 + jurisdiction/date fix (re-run against a fresh baseline) | 11 failed, 77 passed (88) | **57 failed**, 2 687 passed (2 744) |
 
 The failing-test sets are **identical**: 0 new failures and 0 fixed. The 22 added tests all pass. The 57 pre-existing failures fall into two groups:
 

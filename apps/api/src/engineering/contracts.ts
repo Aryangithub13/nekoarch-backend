@@ -134,8 +134,10 @@ export const CostReportSchema = z.object({ costVersion: z.literal(FORMULAS.cost)
   pricedTotal: money.nullable(), completeTotal: money.nullable(),
   taxBasis: z.enum(['INCLUSIVE_OF_GST', 'EXCLUSIVE_OF_GST', 'GST_ADDED_BY_ADJUSTMENT', 'MIXED_OR_UNKNOWN']),
   scopes: z.array(z.object({ scope: CostScopeSchema, status: z.enum(['PRICED', 'UNPRICED', 'EXCLUDED_BY_USER']), lineCodes: z.array(code), reason: z.string().nullable() }).strict()),
-  evidenceClasses: z.array(z.string()), // Bound: ≤ 5 per component (jurisdiction, date, evidence class, area basis, rejection) + ≤ 13 estimate-level warnings.
-  warnings: z.array(z.object({ code: z.string().max(60), ref: z.string().max(70).nullable() }).strict()).max(ASSESSMENT_LIMITS.costComponents * 5 + 16),
+  evidenceClasses: z.array(z.string()),
+  // Bound: ≤ 5 per component (jurisdiction, date, evidence class, area basis, rejection), ≤ 2 per adjustment (jurisdiction, date), ≤ 13 estimate-level.
+  warnings: z.array(z.object({ code: z.string().max(60), ref: z.string().max(70).nullable() }).strict())
+    .max(ASSESSMENT_LIMITS.costComponents * 5 + ASSESSMENT_LIMITS.costAdjustments * 2 + 16),
   assumptions: z.array(z.string().max(300)), claims: z.object(Object.fromEntries(Object.keys(NOT_CLAIMED_COST).map(k => [k, z.literal('NOT_CLAIMED')])) as
     Record<keyof typeof NOT_CLAIMED_COST, z.ZodLiteral<'NOT_CLAIMED'>>).strict() }).strict();
 export type CostReport = z.infer<typeof CostReportSchema>;

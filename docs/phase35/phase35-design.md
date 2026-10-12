@@ -110,13 +110,13 @@ Verified source ingestion (retrieved text, extracted and reviewed requirements, 
 - `NOTHING_PRICED`.
 - `NEGATIVE_TOTAL`.
 
-**Complete total.** `completeTotal` is returned only when all of these hold: no line is rejected; every elemental scope is priced or explicitly excluded with a reason; a jurisdiction is declared; the GST basis is consistent (`INCLUSIVE_OF_GST`, `EXCLUSIVE_OF_GST` or `GST_ADDED_BY_ADJUSTMENT`); and every overhead and profit treatment is known. Otherwise the result is `PARTIAL`: it has a `pricedTotal`, lists unpriced scopes, and `completeTotal` is `null`.
+**Complete total.** `completeTotal` is returned only when all of these hold: no line is rejected; every elemental scope is priced or explicitly excluded with a reason; a jurisdiction is declared; every priced rate and every adjustment states its own jurisdiction and an effective or retrieval date (otherwise its applicability to the site is unestablished, so it is reported as the requirement `cost.*.source.jurisdiction` or `cost.*.source.effectiveDate`); the GST basis is consistent (`INCLUSIVE_OF_GST`, `EXCLUSIVE_OF_GST` or `GST_ADDED_BY_ADJUSTMENT`); and every overhead and profit treatment is known. Otherwise the result is `PARTIAL`: it has a `pricedTotal`, lists unpriced scopes, and `completeTotal` is `null`.
 
 **Money.** Amounts round half-up to two minor digits per line and per adjustment, using the Phase 15 rule. Exact fractions are returned alongside.
 
 **Warnings.** Warnings cover synthetic rates, non-authoritative rates, undated rates, rates with no stated jurisdiction, envelope-based area bases and a missing contingency.
 
-**India safeguards.** No rate, index, location factor or GST factor is built in. The CPWD-related `0.973` factor from the research brief is **not** implemented: its source and scope were not available to verify. A caller can still express any such factor as an explicitly sourced adjustment. RSMeans or other foreign cost books are rejected by the jurisdiction rule when the site is in India.
+**India safeguards.** No rate, index, location factor or GST factor is built in. A foreign rate cannot reach a complete total by leaving its jurisdiction unstated: it is then priced only as part of a `PARTIAL` estimate. The CPWD-related `0.973` factor from the research brief is **not** implemented: its source and scope were not available to verify. A caller can still express any such factor as an explicitly sourced adjustment. RSMeans or other foreign cost books are rejected by the jurisdiction rule when the site is in India.
 
 The estimate is `CONCEPTUAL_PARAMETRIC`. Its `claims` (tender, contractor quotation, bill of quantities, final budget, official rate verification) are all `NOT_CLAIMED`.
 

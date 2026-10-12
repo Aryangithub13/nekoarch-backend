@@ -50,6 +50,11 @@ function costBlockers(cost: CostReport | null, requested: boolean, jurisdiction:
   if (cost.taxBasis === 'MIXED_OR_UNKNOWN') out.push(conflict('cost.components[].includes.gst', 'GST_TREATMENT_MIXED_OR_UNKNOWN', 'State whether every rate includes GST, consistently'));
   if (cost.lines.some(l => l.status === 'PRICED' && l.includes.overheadAndProfit === 'UNKNOWN'))
     out.push(conflict('cost.components[].includes.overheadAndProfit', 'OVERHEAD_PROFIT_TREATMENT_UNKNOWN', 'State whether every rate includes overhead and profit'));
+  const applied = [...cost.lines.filter(l => l.status === 'PRICED'), ...cost.adjustments];
+  if (applied.some(x => x.source.jurisdiction === null))
+    out.push(missing('cost.*.source.jurisdiction', 'RATE_JURISDICTION_REQUIRED', 'State the jurisdiction of every priced rate and adjustment; an unstated one cannot be checked against the site'));
+  if (applied.some(x => x.source.effectiveDate === null && x.source.retrievedOn === null))
+    out.push(missing('cost.*.source.effectiveDate', 'RATE_DATE_REQUIRED', 'State an effective or retrieval date for every priced rate and adjustment'));
   return out;
 }
 

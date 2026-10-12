@@ -218,6 +218,20 @@ describe('Phase 35 conceptual cost arithmetic', () => {
     const ok = cost(costRequest({ components: [official({ issuer: 'Issuer (test)', reference: 'TEST-REF-1', effectiveDate: '2026-04-01' })] })).lines[0]!;
     expect(ok).toMatchObject({ status: 'PRICED', source: { evidenceClass: 'USER_ASSERTED_OFFICIAL_SCHEDULE', verification: 'NOT_VERIFIED_BY_BACKEND' } });
   });
+  it('withholds a complete total when a priced rate or adjustment does not state its jurisdiction or date', () => {
+    const run = (source: Record<string, unknown>, contingency: Record<string, unknown> = {}) => assess(authored(), costRequest({
+      components: [component('ALL', 'WHOLE_BUILDING', '300', { source })], adjustments: [adjustment('CONT', 'CONTINGENCY', 1, '5', contingency)] }));
+    expect(run(testSource()).cost).toMatchObject({ status: 'COMPLETE', completeTotal: '15120.00' }); // 48 × 300 = 14 400.00; + 5 % = 15 120.00
+    // An overseas benchmark that simply omits its jurisdiction and date must not slip into a complete total.
+    const overseas = run({ kind: 'MARKET_BENCHMARK', title: 'Overseas cost book (test)' });
+    expect(overseas.cost).toMatchObject({ status: 'PARTIAL', pricedTotal: '15120.00', completeTotal: null });
+    expect(domain(overseas, 'PRELIMINARY_COST').status).toBe('PARTIALLY_EVALUATED');
+    expect(overseas.requirements.map(r => r.inputPath)).toEqual(expect.arrayContaining(['cost.*.source.jurisdiction', 'cost.*.source.effectiveDate']));
+    expect(run(testSource({ retrievedOn: undefined })).cost).toMatchObject({ status: 'PARTIAL', completeTotal: null }); // stated jurisdiction, no date
+    const adjustmentUnscoped = run(testSource(), { source: { kind: 'USER_SUPPLIED', title: 'Contingency policy (test)', retrievedOn: '2026-10-01' } });
+    expect(adjustmentUnscoped.cost).toMatchObject({ status: 'PARTIAL', completeTotal: null });
+    expect(adjustmentUnscoped.cost!.warnings).toContainEqual({ code: 'RATE_JURISDICTION_UNKNOWN', ref: 'CONT' });
+  });
   it('labels synthetic and non-authoritative rates and flags undated or unscoped sources', () => {
     const c = cost(costRequest({ components: [component('SYN', 'SUPERSTRUCTURE', '1', { source: { kind: 'SYNTHETIC', title: 'Demo' } }),
       component('BENCH', 'ENVELOPE', '1', { source: testSource({ kind: 'THIRD_PARTY_CALCULATOR', title: 'Online calculator (test)' }) })] }));
@@ -230,8 +244,10 @@ describe('Phase 35 conceptual cost arithmetic', () => {
     envelope.slabs = []; // plates fall back to level envelopes, adding the area-basis warning to every line
     const components = Array.from({ length: 64 }, (_, i) => component(`S${i}`, i % 2 ? 'SUPERSTRUCTURE' : 'ENVELOPE', '1',
       { basis: i % 3 ? 'GROSS_FLOOR_AREA_M2' : 'GROSS_VOLUME_M3', source: { kind: 'SYNTHETIC', title: 'Demo', jurisdiction: i % 5 ? null : 'US' } }));
-    const c = cost({ cost: { currency: 'INR', components } }, envelope);
+    const adjustments = Array.from({ length: 16 }, (_, i) => adjustment(`A${i}`, 'OTHER', i, '1', { source: { kind: 'SYNTHETIC', title: 'Demo' } }));
+    const c = cost({ cost: { currency: 'INR', components, adjustments } }, envelope);
     expect(c.lines).toHaveLength(64);
+    expect(c.adjustments).toHaveLength(16);
     expect(c.warnings.length).toBeGreaterThan(200);
   });
   it('refuses a volume-based line when the volume is undetermined', () => {

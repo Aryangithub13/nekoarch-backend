@@ -20,7 +20,7 @@ export const ASSUMPTIONS = [
   'Quantities come from the verified model: gross floor area and plot area from the Phase 34 verifier, gross volume as Σ plate area × storey height.',
   'Money rounds half-up to two minor digits per line and per adjustment; subtotals sum the rounded amounts.',
   'Rates, taxes and adjustments are caller supplied. No official rate, index, GST factor or location factor is built in or inferred.',
-  'A complete total is withheld unless every elemental scope is priced or explicitly excluded, no line is rejected, a jurisdiction is declared and the GST and overhead/profit treatment is known.',
+  'A complete total is withheld unless every elemental scope is priced or explicitly excluded, no line is rejected, a jurisdiction is declared, every priced rate and adjustment states its jurisdiction and an effective or retrieval date, and the GST and overhead/profit treatment is known.',
 ];
 
 export function conceptualCost(input: CostInput, q: CostQuantities, jurisdiction: string | null): CostReport {
@@ -64,6 +64,8 @@ export function conceptualCost(input: CostInput, q: CostQuantities, jurisdiction
     const magnitude = a.kind === 'PERCENT' ? basis.mul(R(a.value)).div(R('100')) : R(a.value), amount = a.direction === 'DEDUCT' ? R('0').sub(magnitude) : magnitude;
     const rounded = moneyString(amount);
     running = running.add(R(rounded));
+    if (!a.source.jurisdiction) warn('RATE_JURISDICTION_UNKNOWN', a.code);
+    if (!a.source.effectiveDate && !a.source.retrievedOn) warn('RATE_DATE_UNKNOWN', a.code);
     adjustments.push({ code: a.code, label: a.label, category: a.category, kind: a.kind, direction: a.direction, basis: a.basis, value: a.value, basisAmount: moneyString(basis),
       amount: rounded, amountExact: amount.exact(), source: sourceOut(a.source) });
   }
@@ -86,8 +88,11 @@ export function conceptualCost(input: CostInput, q: CostQuantities, jurisdiction
   const ohpKnown = priced.every(l => l.includes.overheadAndProfit !== 'UNKNOWN');
   if (!ohpKnown) warn('OVERHEAD_PROFIT_TREATMENT_UNKNOWN');
 
+  // A rate or adjustment whose jurisdiction or date is unstated has unestablished applicability, so it cannot support a complete total.
+  const sourced = [...priced, ...adjustments].every(x => x.source.jurisdiction !== null && (x.source.effectiveDate !== null || x.source.retrievedOn !== null));
   const blocked = blockedReasons.length > 0;
-  const complete = !blocked && lines.every(l => l.status === 'PRICED') && scopes.every(s => s.status !== 'UNPRICED') && jurisdiction !== null && taxBasis !== 'MIXED_OR_UNKNOWN' && ohpKnown;
+  const complete = !blocked && lines.every(l => l.status === 'PRICED') && scopes.every(s => s.status !== 'UNPRICED') && jurisdiction !== null && taxBasis !== 'MIXED_OR_UNKNOWN' && ohpKnown
+    && sourced;
   const total = blocked ? null : moneyString(running);
   return CostReportSchema.parse({ costVersion: FORMULAS.cost, estimateClass: 'CONCEPTUAL_PARAMETRIC', currency: input.currency, priceBasisDate: input.priceBasisDate ?? null,
     status: blocked ? 'BLOCKED' : complete ? 'COMPLETE' : 'PARTIAL', blockedReasons, lines, baseSubtotal: blocked ? null : moneyString(base), adjustments: blocked ? [] : adjustments,
