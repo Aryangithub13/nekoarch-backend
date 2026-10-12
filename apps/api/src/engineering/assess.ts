@@ -7,9 +7,10 @@ import { ASSESSMENT_VERSION, AssessmentReportSchema, DOMAIN_STATUSES, FORMULAS, 
 import { SOURCES, candidates, type SourceKey } from './sources.js';
 import { areaString, baseGeometry, doubled, grossVolume2, storeyHeights, toM2, toM3 } from './geometry.js';
 import { conceptualCost } from './cost.js';
+import { bimProfile } from './capability-limits.js';
 
 export type Evidence = AssessmentReport['evidence'][number];
-export type RelatedService = DomainResult['relatedServices'][number] & { serviceId: 'STRUCTURAL_ANALYSIS' | 'BUILDING_SYSTEMS_ANALYSIS' | 'SPECIALIZED_KNOWLEDGE' | 'COMPLEX_VERIFICATION' | 'QUANTITY_TAKEOFF' };
+export type RelatedService = Omit<DomainResult['relatedServices'][number], 'modelSupport' | 'refusalCode'> & { serviceId: 'STRUCTURAL_ANALYSIS' | 'BUILDING_SYSTEMS_ANALYSIS' | 'SPECIALIZED_KNOWLEDGE' | 'COMPLEX_VERIFICATION' | 'QUANTITY_TAKEOFF' };
 export type AssessmentInput = {
   ids: { projectId: string; revisionId: string; modelHash: string }; model: BuildingModelV2; request: AssessmentRequest;
   brief: { version: number; briefHash: string | null; floors: number | null }; evidence: Evidence[]; related: RelatedService[]; generatedAt: string;
@@ -22,7 +23,11 @@ export const LIMITATIONS = [
   'Named standards are candidates for identification only: none has been retrieved or verified, so every determination that depends on one is blocked.',
   'Evidence documents are recorded as user-declared; their contents are not read or interpreted.',
   'Nothing here is a code-compliance determination, an engineering certification, a statutory approval or a statement that a building is safe to build.',
+  'Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated, and no part of it can be regenerated.',
+  'BIM-derived services (BIM, structural, environmental, building systems including egress and lifts, knowledge, scene and appearance revision) refuse models outside the bounded BIM profile of at most two storeys; relatedServices[].modelSupport states this for the assessed model.',
 ];
+/** Related services that read the revision through the bounded BIM source profile (bim/core sourceModel). */
+const BIM_GATED = new Set(['STRUCTURAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE']);
 
 const missing = (inputPath: string, code: string, detail: string): Blocker => ({ kind: 'MISSING_INPUT', code, detail, inputPath, sourceIds: [] });
 const solver = (code: string, detail: string): Blocker => ({ kind: 'NO_VALIDATED_SOLVER', code, detail, inputPath: null, sourceIds: [] });
@@ -122,8 +127,13 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
       : { kind: 'SOURCE_NOT_VERIFIED', code: 'GOVERNING_SOURCE_NOT_IDENTIFIED', detail: country ? `${what}: no governing source is catalogued for jurisdiction ${country}`
         : `${what}: the governing source depends on the undeclared jurisdiction`, inputPath: null, sourceIds: [] }];
   };
+  // The verifier runs inside this assessment, so it is SUPPORTED; BIM-gated services are asked through the real gate; anything else makes no claim.
+  const profile = bimProfile(model);
+  const support = (serviceId: RelatedService['serviceId']) => serviceId === 'COMPLEX_VERIFICATION' ? { modelSupport: 'SUPPORTED' as const, refusalCode: null }
+    : !BIM_GATED.has(serviceId) ? { modelSupport: 'NOT_CHECKED' as const, refusalCode: null }
+    : profile.supported ? { modelSupport: 'SUPPORTED' as const, refusalCode: null } : { modelSupport: 'REFUSED' as const, refusalCode: profile.refusalCode };
   const services = (...serviceIds: RelatedService['serviceId'][]) => related.filter(r => serviceIds.includes(r.serviceId)).map(({ serviceId, route, artifactsForRevision, note }) =>
-    ({ serviceId, route, artifactsForRevision, note }));
+    ({ serviceId, route, artifactsForRevision, note, ...support(serviceId) }));
   const definitions: [Domain, DomainResult['assuranceLevel'], boolean, Blocker[], DomainResult['relatedServices']][] = [
     ['HEIGHT_AND_STOREYS', 'GEOMETRIC_VERIFICATION', true, height.storeyCount ? H : [missing('model.levels', 'STOREYS_REQUIRED', 'At least one storey level')], []],
     ['AREAS_AND_VOLUME', 'GEOMETRIC_VERIFICATION', true, volume2 === null ? H : [], []],

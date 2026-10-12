@@ -92,8 +92,9 @@ export type SourceReference = z.infer<typeof SourceReferenceSchema>;
 export const BlockerSchema = z.object({ kind: z.enum(BLOCKER_KINDS), code: z.string().max(60), detail: z.string().max(400), inputPath: z.string().max(100).nullable(),
   sourceIds: z.array(z.string().max(60)).max(8) }).strict();
 export type Blocker = z.infer<typeof BlockerSchema>;
+/** Phase 35.1: `modelSupport` says whether that service can process the assessed model at all (REFUSED: its typed refusal code); NOT_CHECKED makes no claim. */
 export const RelatedServiceSchema = z.object({ serviceId: z.string().max(60), route: z.string().max(200), artifactsForRevision: z.number().int().min(0).nullable(),
-  note: z.string().max(300) }).strict();
+  note: z.string().max(300), modelSupport: z.enum(['SUPPORTED', 'REFUSED', 'NOT_CHECKED']), refusalCode: z.string().max(60).nullable() }).strict();
 export const DomainResultSchema = z.object({ domain: DomainSchema, assuranceLevel: z.enum(ASSURANCE_LEVELS), status: z.enum(DOMAIN_STATUSES),
   blockers: z.array(BlockerSchema).max(16), relatedServices: z.array(RelatedServiceSchema).max(4) }).strict();
 export type DomainResult = z.infer<typeof DomainResultSchema>;

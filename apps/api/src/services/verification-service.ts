@@ -17,7 +17,7 @@ export async function readRevisionModel(repository: Repository, projectId: strin
   if (detail.projectId !== projectId || detail.id !== revisionId) throw new ApiError(404, 'REVISION_NOT_FOUND', 'Revision not found');
   const model = detail.model as BuildingModelV2, hash = modelHash(model);
   if (detail.identity && detail.identity.modelHash !== hash) throw new ApiError(422, 'VERIFICATION_SOURCE_MISMATCH', 'Stored revision identity differs from its model');
-  return { model, hash };
+  return { model, hash, revisionNumber: detail.revisionNumber, parentRevisionId: detail.parentRevisionId };
 }
 
 /** Derived on read: deterministic for (model, declared limits); nothing is stored. */
