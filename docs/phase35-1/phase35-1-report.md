@@ -4,6 +4,8 @@
 
 **Release decision: BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS** (§14). No tag was created.
 
+**Remediation round 2 (§15)** fixes the correctness defects found after this report was first written (N1, F1, F8) and the disclosure defects (F2, F3, F4, F5, F7). F6 is an unresolved numbering gap, not a known defect. §9 and §12 below are corrected: CI does run.
+
 Legend used throughout:
 - **Inspected**: read in the repository or GitHub.
 - **Executed**: run in this session, with the output recorded.
@@ -190,15 +192,14 @@ Candidate `0c2e41cf0bf8f64374c7fe05c1c3a3e520135be0`, Linux container.
 
 ## 9. CI
 
-- **No GitHub Actions run exists for this repository, so none exists for this candidate.** GitHub returns 0 workflows and 0 runs, and `GET …/actions/workflows/backend-ci.yml` returns **404** although the file is on the default branch.
-- Inferred cause: Actions is disabled in the repository settings. A YAML error would still register the workflow. **Owner action:** Settings → Actions → General → allow actions.
-- Workflow changes (`0c2e41c`): the workflow now
-  - builds pushes to `phase31/development`;
-  - runs the complete `npx vitest run` in place of subsets that omitted the references, jobs, account and verification suites;
-  - uses a Node matrix of `22.22.0` and `22.23.2`;
-  - adds `npm audit --omit=dev --audit-level=high` and the `en_US.UTF-8` locale;
-  - runs the container build and smoke test once.
-- The YAML parses. **It has not run.**
+**Correction.** This section first said that no GitHub Actions run existed and that Actions appeared to be disabled. **That was wrong.** Opening PR #7 triggered Backend CI [run 38246257012](https://github.com/Aryangithub13/nekoarch-backend/actions/runs/38246257012) on `c245253`, and it passed:
+- `backend (node 22.22.0)` and `backend (node 22.23.2)` each ran `npm ci`, `npm audit --omit=dev --audit-level=high`, build, typecheck, lint and the complete `npx vitest run` (91/91 files, 2,786/2,786 tests on the 22.22.0 leg, read from the job log);
+- the 22.23.2 leg also built the container and passed its smoke test;
+- `supabase-acceptance` was skipped (it runs only on `workflow_dispatch`).
+
+Commit `0c2e41c`'s message repeats the wrong claim; history is not rewritten, so this section is the correction. The CI result for the remediation-round-2 head is recorded in its pull request or hand-off, not in this file, because this file is part of that head.
+
+Workflow changes (`0c2e41c`): the workflow builds pushes to `phase31/development`; runs the complete `npx vitest run` in place of subsets that omitted the references, jobs, account and verification suites; uses a Node matrix of `22.22.0` and `22.23.2`; adds `npm audit --omit=dev --audit-level=high` and the `en_US.UTF-8` locale; and runs the container build and smoke test once.
 
 ## 10. Independent review
 
@@ -245,7 +246,7 @@ Candidate `0c2e41cf0bf8f64374c7fe05c1c3a3e520135be0`, Linux container.
 **Reproducibility**
 - [ ] Re-run the full suite on 22.22.0 and 22.23.2 as non-root.
 - [ ] Confirm the counts in §8.
-- [ ] Confirm an Actions run once enabled.
+- [ ] Confirm a green Actions run on the head under review.
 
 ## 11. Migrations and hosted environment
 
@@ -263,7 +264,7 @@ These are in addition to the unmet requirements in §5:
 - No validated engineering solver exists.
 - Standards are unverified; there is no official rate data.
 - The canonical roadmap and the V2 research are absent from the repository.
-- CI has never run.
+- CI has run once on `c245253` (green); the remediation-round-2 head needs its own run.
 - There has been no independent review.
 - Hosted migrations are unverified.
 - The frontend is not integrated (deferred, not a blocker).
@@ -327,7 +328,7 @@ Where the two differ, `a7e3da4` (canonical-roadmap-sourced) should govern. The f
 |---|---|---|
 | 1 | Owner | Commit the canonical roadmap (and the V2 research, if it exists) to the repository, or paste the exact B35 section, so the mandatory scope can be confirmed |
 | 2 | Owner | Decide R3: fund a multi-storey regeneration path within B35, or approve the §5.1 amendment with a named destination phase. Decide R1 processing partitioning and the R6 evidence-class mapping (§5.2) the same way. |
-| 3 | Owner | Enable GitHub Actions. Then a green run on this PR's head is required. |
+| 3 | Owner | A green Actions run on the final head is required (Actions is enabled; see §9). |
 | 4 | Independent reviewer | Complete §10 on this PR |
 | 5 | Owner | Merge the PR (not done by this agent) |
 | 6 | Authorized operator | Read-only hosted migration check (§11). This is a deployment gate. |
@@ -335,3 +336,34 @@ Where the two differ, `a7e3da4` (canonical-roadmap-sourced) should govern. The f
 **Tag.** If steps 1–5 all resolve in favour of release, the proposed tag is **`backend-v1-phase35-complete`**, the existing naming convention. It would go on the merge commit of this PR into `phase31/development`.
 
 That tag would include B35 (`e93479b`), the PR #5 schema pins, and B35.1, with any approved amendment recorded. **No tag was created.** It waits for explicit authorization.
+
+## 15. Remediation round 2 (correctness and disclosure)
+
+Base: `c245253`. Two code commits and one documentation commit; no migration, no new route, no B36 work.
+
+### 15.1 Findings
+
+The findings come from the implementing session's own review (not independent). PR #7's description lists F1–F5 and F7; that session's final report also lists F8, and numbers none as F6.
+
+| # | Finding | Fix | Regression evidence |
+|---|---|---|---|
+| **N1** | B35 storey height used a declared floor-to-floor height unconditionally, while the model defines it as the distance to the next represented level of any kind. The same QA-accepted geometry gave 16 719.36 m³ (declared) or 19 103.232 m³ (undeclared). | `model-height-v2` (design §4.3): measured to the next storey floor (uppermost: lowest roof above); declared basis only where it reaches that level; never overrides geometry; `NOT_DETERMINED` when only a datum lies above the uppermost storey. Building height, volume, volume-priced cost lines and zone quantities follow. | `engineering.test.ts` "Phase 35.1 storey heights across represented levels": both arrangements pass the save-gate QA and now give 19 103.232 m³; intermediate roof; datum above the top; contradictory declaration; identical volume-priced cost lines. |
+| **F1** | Stair-opening, stair-footprint and envelope checks compared rings vertex by vertex; QA compares regions by containment. An extra collinear vertex gave a false `INCONSISTENT`. | `sameRegion` (exact box and area, then `ringContains` both ways); the opening check applies `QA_STAIR_VOID_MISSING` and `QA_STAIR_SOLID_INTERFERENCE` at the upper storey. | `engineering-zones.test.ts` "remediation" block: collinear void (QA PASS → zone PASS); rotated, reversed, collinear footprint and envelope; a void 1 mm short still FAILs, as QA does; flights ending at or passing through the upper storey; region tests incl. same box and area, different shape. |
+| **F2** | `INTERFACE_ELEVATION` and `STAIR_SLAB_VOID` PASS results restated QA rules without saying so. | Details now say *restates acceptance QA … not independent evidence*; others say *cross-zone observation* or *not evaluated*; a zone limitation states it. | "F2: labels which checks restate acceptance QA…" |
+| **F3** | `BIM_PROFILE_MAX_STOREYS` listed all of `SELECTIVE_REVISION` with a 422 outcome. | Removed; new `SELECTIVE_REVISION_APPEARANCE_PROFILE` row: 200 preflight `UNSUPPORTED` / `SCENE_UNSUPPORTED_MODEL`; restore not gated. | "F3: …" runs the real planner: a 4-storey appearance change is `UNSUPPORTED`; a restore is `AWAITING_CONSENT`. |
+| **F4** | `modelSupport: SUPPORTED` and `availableForThisModel: true` came from the first BIM gate only. | `PRELIMINARY_ELIGIBLE`; the preflight alternative carries `eligibility`. Both fields were new in this unreleased PR. | Updated capability and skin tests. |
+| **F5** | Retention tests called observed behaviour "intended". | Relabelled as characterization; the conflicting design documents are cited; no behaviour change. | `database.test.ts` (unchanged assertions). |
+| **F6** | **Unknown.** No description exists in PR #7, its comments, commits, documents or the implementing session's recoverable transcript; the numbering skips from F5 to F7. | None. Not claimed resolved. | Owner or the original author must confirm whether a sixth finding existed. |
+| **F7** | The exterior-skin preflight did not list the target zone's interior among things to preserve. | `preservation.targetInterior` (design §5). Regeneration still refuses with `UNSUPPORTED`; preservation stays planned, not enforced. | "F7: lists everything inside the target zone…" |
+| **F8** | The zone floor-height check compared with the next storey; QA compares with the next represented level. A datum between zones gave a false FAIL. | Compared with the next represented level; intermediate levels named. | "F8: a datum between zones…" (also equal zone quantities declared or not, summing to B35); "F8: still fails a declared height that misses…" |
+
+Against the unmodified `c245253` calculation code, 9 of the new regression tests fail (F1 ×3, F8 ×2, N1 ×4); with the fixes all pass.
+
+### 15.2 Impact on earlier results
+
+Both reports are derived on read and nothing stores them, so no stored result becomes stale and no migration or recomputation job is needed. Only models with a datum or roof level between a storey and the level its height is measured to produce different numbers; a client holding an older response can recognise it by `engine.formulas.height: model-height-v1`. The fields renamed for F4 and added for F7 exist only on this unreleased branch.
+
+### 15.3 What this round does not change
+
+Partial regeneration is still not implemented, processing partitioning is still not implemented, and the canonical roadmap and Phase 35 V2 research are still absent. The release decision in §14 stands: **BLOCKED ON OWNER DECISION OR EXTERNAL ACCESS**.
+

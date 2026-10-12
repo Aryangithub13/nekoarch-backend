@@ -57,8 +57,8 @@ Every domain states the level of assurance its question needs, not a level the b
 
 | Quantity | Formula id | Definition | Units and precision |
 |---|---|---|---|
-| Storey height | `model-height-v1` | Declared floor-to-floor height. Otherwise the next storey's elevation minus this one. For the uppermost storey only, the lowest roof level above it. Otherwise `NOT_DETERMINED`. | Integer mm |
-| Building height | `model-height-v1` | Top of the uppermost storey minus the lowest storey floor. `null` if the uppermost storey height is undetermined. | Integer mm |
+| Storey height | `model-height-v2` (B35.1; `model-height-v1` before it) | v2: the next storey's elevation minus this one; for the uppermost storey, the lowest roof level above it; a declared floor-to-floor height is the basis only where it reaches that same level (or, for the uppermost storey, where no level is represented above it). v1 used a declared height unconditionally, which understated storeys with a datum or roof level above them (`docs/phase35-1/phase35-1-design.md` §4.3). v1 text: Declared floor-to-floor height. Otherwise the next storey's elevation minus this one. For the uppermost storey only, the lowest roof level above it. Otherwise `NOT_DETERMINED`. | Integer mm |
+| Building height | `model-height-v2` | Top of the uppermost storey minus the lowest storey floor. `null` if the uppermost storey height is undetermined. | Integer mm |
 | Gross floor area, plot, FAR, coverage | Phase 34 `complex-verification-v1` | Taken unchanged from the verifier's bases | Exact mm²; ratios as reduced fraction + `HALF_UP_4` |
 | Gross volume | `gross-area-volume-v1` | Σ over storeys of gross plate area × storey height. `null` if any storey height is undetermined. | Exact mm³ string; m³ for display (6 dp, half-up) |
 | Minimum base width | `convex-hull-min-width-v1` | Minimum caliper width of the convex hull of the lowest storey envelope: min over hull edges of the farthest vertex distance from the edge line, compared exactly on squared rationals | Floored integer mm |

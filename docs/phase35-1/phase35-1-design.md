@@ -49,6 +49,7 @@ The BIM gate sits in front of these services, each of which refuses with its own
 
 - **Capability discovery** (`GET /api/capabilities`) gains two additive arrays:
   - `modelLimits[]` gives `{ limitId, value, unit, enforcedBy, onExceed, appliesTo[] }` for the limits above, plus `ZONE_ASSESSMENT_MAX_ZONES` (64).
+  - **Correction (F3, remediation round 2).** `BIM_PROFILE_MAX_STOREYS` no longer lists `SELECTIVE_REVISION`. Selective revision is gated only for appearance changes, and it refuses through its preflight: a separate `SELECTIVE_REVISION_APPEARANCE_PROFILE` row states `200 preflight with status UNSUPPORTED and blocker SCENE_UNSUPPORTED_MODEL`, and that `RESTORE` is not gated (neither its planning nor its execution projects BIM).
   - `unsupportedOperations[]` gives `{ operationId, status: UNSUPPORTED, reason, detail, preflightRoute }` for these operations:
     - `SUPERTALL_GENERATION`
     - `PARTITIONED_MODEL_PROCESSING`
@@ -58,8 +59,8 @@ The BIM gate sits in front of these services, each of which refuses with its own
     - `VALIDATED_ENGINEERING_SOLVERS`
 - **Discovery service list.** A `ZONE_ASSESSMENT` service is added (`DERIVED_ON_READ`). The preflight is deliberately not listed as a service, because it produces no output.
 - **B35 assessment.** Each `relatedServices[]` entry gains `modelSupport` and `refusalCode`:
-  - `SUPPORTED` or `REFUSED` comes from the real BIM gate, for the BIM-gated services (structural, building systems, knowledge);
-  - the verifier, which runs inside the assessment, is `SUPPORTED`;
+  - `REFUSED` or `PRELIMINARY_ELIGIBLE` comes from the real BIM source gate (`bim/core.sourceModel`), for the BIM-gated services (structural, building systems, knowledge). **Correction (F4):** that gate is only the first one; BIM projection, BIM validation and each service's own checks can still refuse an admitted model, so an admitted model is `PRELIMINARY_ELIGIBLE`, never `SUPPORTED`. A refusal by the gate is final;
+  - the verifier, which runs inside the assessment and processes any valid model within its operation budget, is `SUPPORTED`;
   - quantity takeoff is `NOT_CHECKED`, which makes no claim.
 - **Domain statuses are unchanged.** A refusing related service does not make a domain "more" or "less" supported; it is disclosed next to it.
 - **Limitations.** Two lines are added to the B35 `limitations`: the 2-floor generation limit and the BIM-profile limit.
@@ -97,7 +98,15 @@ zoneId = sha256("zone-identity-v1\n" + orderedStoreyLevelIds.join("\n"))
 
 ### 4.3 Per-zone quantities
 
-These use the B35 storey rows (`model-height-v1`) and the B34 plates (`gross-area-volume-v1`).
+These use the B35 storey rows (`model-height-v2`) and the B34 plates (`gross-area-volume-v1`).
+
+**Storey heights (N1, `model-height-v2`, remediation round 2).** Building Model V2 defines `floorToFloorHeightMm` as the distance to the next represented level of **any** kind (schema invariant `invariants.ts`, QA rule `QA_LEVEL_HEIGHT_MISMATCH`). `model-height-v1` nevertheless used a declared height as the storey height unconditionally, so a datum or roof level between two storeys shortened the lower storey: a QA-accepted 4-storey tower with a datum 2 000 mm above storey 1 gave 16 719.36 m³ when storey 1 declared its height and 19 103.232 m³ when it did not. `model-height-v2`:
+- measures a storey to the next storey floor, and the uppermost storey to the lowest roof level above it;
+- uses the declared height as the basis (`DECLARED_FLOOR_TO_FLOOR`) only where it reaches exactly that level, so its value is then identical; it never overrides contradictory geometry;
+- uses a declared height for the uppermost storey only when no level at all is represented above it;
+- otherwise reports `NOT_DETERMINED` (for example, only a datum above the uppermost storey): the top is never taken from a datum.
+
+Models without intermediate levels produce identical rows. Everything derived from storey heights follows: B35 building height, gross volume and the volume-based cost basis, and zone height and volume. No result is persisted (both reports are derived on read), so nothing stored becomes stale; a client that kept an earlier response can recognise it by `engine.formulas.height: model-height-v1`.
 
 | Quantity | Definition |
 |---|---|
@@ -124,14 +133,18 @@ The checks run between adjacent zones: the uppermost storey L of the lower zone 
 
 | Check | Rule | Outcomes |
 |---|---|---|
-| `INTERFACE_ELEVATION` | If L declares a floor-to-floor height: `L.elevation + L.floorToFloor = U.elevation` exactly. A height derived from U's own elevation is not independent evidence. | `PASS` / `FAIL`; `NOT_EVALUATED` (`FLOOR_TO_FLOOR_NOT_DECLARED`) |
-| `STAIR_CONNECTION` | At least one stair spans the interface (from ≤ L, to ≥ U) | `PASS` / `WARNING` (no rule applied; lifts are not modelled) |
-| `STAIR_SLAB_VOID` | Every spanning stair has a void in U's floor slab whose vertices equal its footprint (the Phase 23 stair/void convention) | `PASS` / `FAIL`; `NOT_EVALUATED` (`NO_STAIR_ACROSS_INTERFACE`, `NO_FLOOR_SLAB_AT_UPPER_LEVEL`) |
-| `STAIR_FOOTPRINT_CONTINUITY` | Some flight arriving at L has exactly the footprint of some flight leaving U | `PASS` / `WARNING` (transfer or scissor stairs may be intended; no rule applied); `NOT_EVALUATED` (`NO_ADJACENT_FLIGHTS`) |
-| `ENVELOPE_CONTINUITY` | L and U level boundaries compared exactly | Always `INFO` (`UNCHANGED` or `CHANGED`); a setback is not a fault |
-| `SHAFT_CONTINUITY` | — | Always `NOT_EVALUATED` (`SHAFTS_NOT_REPRESENTED`): Building Model V2 has no shaft, lift or riser element |
+| Check | Evidence class (F2) | Rule | Outcomes |
+|---|---|---|---|
+| `INTERFACE_ELEVATION` | **Restates acceptance QA** | If L declares a floor-to-floor height, it reaches the **next represented level** of any kind exactly (the Building Model V2 invariant, `QA_LEVEL_HEIGHT_MISMATCH`). A datum or roof level between the zones is named in `entityIds`; it does not end storey L. (F8: it used to be compared with U, a false FAIL when a datum lay between.) | `PASS` / `FAIL` (only a schema-bypassing model); `NOT_EVALUATED` (`FLOOR_TO_FLOOR_NOT_DECLARED`) |
+| `STAIR_CONNECTION` | Cross-zone observation | At least one stair spans the interface (from ≤ L, to ≥ U) | `PASS` / `WARNING` (no rule applied; lifts are not modelled) |
+| `STAIR_SLAB_VOID` | **Restates acceptance QA** | QA's own opening rules applied at U: a flight ending at U needs a U floor slab at offset 0 with a void **containing** its whole footprint (`QA_STAIR_VOID_MISSING`); a slab at U whose top lies within a flight's rise and overlaps it needs a containing void (`QA_STAIR_SOLID_INTERFERENCE`). (F1: it used to require vertex-equal voids, a false FAIL for an equivalent opening.) | `PASS` / `FAIL`; `NOT_EVALUATED` (`NO_STAIR_ACROSS_INTERFACE`; `NO_SLAB_AT_UPPER_LEVEL` when U has no slab and no flight ends there) |
+| `STAIR_FOOTPRINT_CONTINUITY` | Cross-zone observation | Some flight arriving at L covers exactly the same region as some flight leaving U | `PASS` / `WARNING` (transfer or scissor stairs may be intended; no rule applied); `NOT_EVALUATED` (`NO_ADJACENT_FLIGHTS`) |
+| `ENVELOPE_CONTINUITY` | Cross-zone observation | L and U level boundaries compared as regions | Always `INFO` (`UNCHANGED` or `CHANGED`); a setback is not a fault |
+| `SHAFT_CONTINUITY` | Not evaluated | — | Always `NOT_EVALUATED` (`SHAFTS_NOT_REPRESENTED`): Building Model V2 has no shaft, lift or riser element |
 
-Ring comparison is exact and cyclic, in either orientation.
+**Evidence classes (F2).** Every stored revision passed acceptance QA when it was saved, so a `PASS` from a check marked *restates acceptance QA* confirms an invariant that already held: it is **not** independent cross-zone evidence, and its `detail` says so. *Cross-zone observations* report what the geometry shows and apply no rule. *Not evaluated* means the model does not represent what the check needs. No check here is a new engineering verification.
+
+**Region comparison (F1).** Rings are compared as regions (`sameRegion`): exact bounding box and area first, then `ringContains` (the predicate QA uses) in both directions. The start vertex, the orientation and redundant collinear vertices therefore do not matter, while a 1 mm difference or a different shape with the same box and area does.
 
 **No tolerance and no threshold is introduced.** Every comparison is exact equality on the model's integer millimetres, or the absence of a represented element.
 
@@ -190,9 +203,10 @@ For a valid target the report always has `status: UNSUPPORTED`, with `refusal.co
 | `preservation.preservedZones` | The other declared zones; for a section, the storeys below and above it |
 | `preservation.crossBoundaryStairs` | Stairs with one end inside the target |
 | `preservation.represented` / `notRepresented` | What the model can and cannot preserve: shafts, lifts and risers, load paths, lock enforcement |
+| `preservation.targetInterior` | **Exterior-skin targets only (F7; `null` otherwise).** Everything inside the target zone that a skin change must leave untouched, with exact counts and the first 16 ids: `SPACES` (room identities), `INTERIOR_WALLS` (interior and partition), `UNCLASSIFIED_WALLS` (preserved, and to be classified before any skin change), `INTERIOR_OPENINGS`, `SLABS` (with their voids), `COLUMNS`, `STAIRS` (within or connecting to the zone), `LEVELS` (elevations, floor-to-floor heights, envelopes), `DIMENSIONS`, and, for a façade subset with resolvable orientation, `EXTERIOR_WALLS_ON_OTHER_FACADES`. Dependent artifacts are in `dependencies`. This corrects the contract only: regeneration still refuses, and preservation stays planned, not enforced. |
 | `dependencies` | Every derived artifact family (the Phase 30 list plus verification and the engineering assessment): `WOULD_REQUIRE_RECOMPUTATION` |
 | `missingCapabilities` | `NO_MULTI_STOREY_GENERATOR` and `GEOMETRY_REVISION_OPERATION_UNSUPPORTED` always; `BIM_PROFILE_EXCEEDED` from the real gate; `FACADE_ORIENTATION_UNKNOWN` when it applies |
-| `alternatives` | Skin only: Phase 30 `APPEARANCE_MODIFY`, with `availableForThisModel` from the real BIM gate. It changes appearance only and does not regenerate geometry. |
+| `alternatives` | Skin only: Phase 30 `APPEARANCE_MODIFY`, with `eligibility: PRELIMINARY_ELIGIBLE \| REFUSED` from the real BIM source gate (F4: it replaces `availableForThisModel`, which overstated a first-gate result as availability; the appearance preflight can still refuse). It changes appearance only and does not regenerate geometry. |
 | `roadmapDestination` | `{ phase: null, status: OWNER_DECISION_REQUIRED }`. The canonical roadmap was unavailable, so no phase is guessed. |
 | `claims` | `regenerationPerformed`, `revisionCreated`, `preservationEnforced`, `engineeringValidity`: all `NOT_CLAIMED` |
 
@@ -208,13 +222,13 @@ On Node 22.22.0, a worker started with `execArgv: ['--import', 'tsx']` runs with
 
 **Production is unchanged.** Compiled workers still start from `dist/*.js`, with `execArgv: []` and no `workerData`. The bootstrap is outside `tsconfig.build.json` (`src/**/*.ts`), so it never reaches `dist` or the image. The supported engine range (`>=22`) is unchanged.
 
-## 7. Retention semantics (unchanged, now pinned)
+## 7. Retention behaviour (unchanged, characterized; policy undecided)
 
-Project hard deletion is not exposed, and account deletion leaves retained, ownerless history (`docs/phase12-design.md` §2).
+**This section records observed behaviour. It is not an approved deletion or erasure policy (F5).** The design documents disagree: `docs/phase12-design.md` §2 says project hard deletion is not exposed and account deletion leaves retained, ownerless history, while the Phase 31 and 32 designs describe these children as cascading with their project. The policy is an open owner decision.
 
 The B31–B33 children (references, including tombstones; jobs; briefs) declare `ON DELETE CASCADE`, but their guards refuse row deletion, so such a project cannot be deleted even by a privileged role.
 
-`supabase/tests/database.test.ts` now pins this behaviour. No trigger, cascade or bypass is added. A future erasure feature needs its own reviewed migration and policy.
+`supabase/tests/database.test.ts` characterizes this behaviour so that any change to it is deliberate; it does not endorse it. No trigger, cascade or bypass is added. A future erasure feature needs an owner-approved policy and its own reviewed migration.
 
 ## 8. Out of scope (unchanged by B35.1)
 

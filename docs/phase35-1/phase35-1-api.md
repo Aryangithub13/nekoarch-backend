@@ -41,7 +41,7 @@ The assessment route does not refuse an invalid declaration. It returns `200` wi
 
 | Field | Content |
 |---|---|
-| `zoneAssessmentVersion`, `engine` | `zone-assessment-v1`; `zone-identity-v1`; verifier version; formulas `model-height-v1` and `gross-area-volume-v1` |
+| `zoneAssessmentVersion`, `engine` | `zone-assessment-v1`; `zone-identity-v1`; verifier version; formulas `model-height-v2` and `gross-area-volume-v1` |
 | `projectId`, `revisionId`, `modelHash`, `inputHash`, `resultHash`, `generatedAt` | Identity and audit. `resultHash` excludes `currency` and `generatedAt`. |
 | `sourceRevision` | `{ revisionId, revisionNumber, parentRevisionId, modelHash }` |
 | `currency` | `{ status: CURRENT \| STALE, artifactRevisionId, projectCurrentRevisionId }` (the scene artifact convention) |
@@ -80,21 +80,22 @@ Their rules are in [design §4.4](phase35-1-design.md#44-interface-checks).
 | `status`, `refusal` | `UNSUPPORTED`; `{ code: ZONE_ \| SECTION_ \| EXTERIOR_SKIN_GEOMETRY_REGENERATION_UNSUPPORTED, detail }` |
 | `declaration` | As above (always `VALID` here, because an invalid declaration is a 422) |
 | `target` | `{ kind, zoneKey \| null, zoneId, levelIds, facades \| null, elements, exteriorWallsInScope \| null }` |
-| `preservation` | `{ status: PLANNED_NOT_ENFORCED, preservedZones[], crossBoundaryStairs[≤16], crossBoundaryStairCount, represented[], notRepresented[] }` |
+| `preservation` | `{ status: PLANNED_NOT_ENFORCED, preservedZones[], crossBoundaryStairs[≤16], crossBoundaryStairCount, represented[], notRepresented[], targetInterior }`. `targetInterior` is `null` except for `EXTERIOR_SKIN` targets, where it is `{ zoneKey, zoneId, levelIds, items[{ item, count, entityIds[≤16], detail }] }` with items `SPACES`, `INTERIOR_WALLS`, `UNCLASSIFIED_WALLS`, `INTERIOR_OPENINGS`, `SLABS`, `COLUMNS`, `STAIRS`, `LEVELS`, `DIMENSIONS` and, for a façade subset with resolvable orientation, `EXTERIOR_WALLS_ON_OTHER_FACADES` |
 | `dependencies[]` | `{ artifact, impact: WOULD_REQUIRE_RECOMPUTATION, detail }` for each of these artifacts: `BIM`, `SCENE_3D`, `QUANTITY_TAKEOFF`, `CONSTRUCTION_CALCULATION`, `BOQ_COST`, `STRUCTURAL_ANALYSIS`, `ENVIRONMENTAL_ANALYSIS`, `BUILDING_SYSTEMS_ANALYSIS`, `SPECIALIZED_KNOWLEDGE`, `DESIGN_OPTIMIZATION`, `COMPLEX_VERIFICATION` and `ENGINEERING_ASSESSMENT` |
 | `missingCapabilities[]` | `NO_MULTI_STOREY_GENERATOR`, `GEOMETRY_REVISION_OPERATION_UNSUPPORTED`, `BIM_PROFILE_EXCEEDED`, `FACADE_ORIENTATION_UNKNOWN` |
-| `alternatives[]` | Skin targets only: `{ operation: APPEARANCE_MODIFY, availableForThisModel, route: /api/projects/:projectId/revision-operations, detail }` |
+| `alternatives[]` | Skin targets only: `{ operation: APPEARANCE_MODIFY, eligibility: PRELIMINARY_ELIGIBLE \| REFUSED, route: /api/projects/:projectId/revision-operations, detail }`. `PRELIMINARY_ELIGIBLE` means only that the BIM source gate admits the model; the appearance preflight can still refuse it. |
 | `roadmapDestination` | `{ phase: null, status: OWNER_DECISION_REQUIRED, detail }` |
 | `claims` | `regenerationPerformed`, `revisionCreated`, `preservationEnforced` and `engineeringValidity`, all `NOT_CLAIMED` |
 
 ## Changes to existing responses (additive)
 
 **`GET /api/capabilities`** gains two arrays and one service row:
-- `modelLimits[]`: `BUILDING_MODEL_MAX_LEVELS` (256), `GENERATION_MAX_FLOORS` (2), `BIM_PROFILE_MAX_STOREYS` (2) and `ZONE_ASSESSMENT_MAX_ZONES` (64). Each row is `{ limitId, value, unit, enforcedBy, onExceed, appliesTo[] }`.
+- `modelLimits[]`: `BUILDING_MODEL_MAX_LEVELS` (256), `GENERATION_MAX_FLOORS` (2), `BIM_PROFILE_MAX_STOREYS` (2; BIM-derived services and the scene), `SELECTIVE_REVISION_APPEARANCE_PROFILE` (2; appearance changes only, refused by a 200 `UNSUPPORTED` preflight; restore is not gated) and `ZONE_ASSESSMENT_MAX_ZONES` (64). Each row is `{ limitId, value, unit, enforcedBy, onExceed, appliesTo[] }`.
 - `unsupportedOperations[]`: `SUPERTALL_GENERATION`, `PARTITIONED_MODEL_PROCESSING`, `ZONE_GEOMETRY_REGENERATION`, `SECTION_GEOMETRY_REGENERATION`, `EXTERIOR_SKIN_GEOMETRY_REGENERATION` and `VALIDATED_ENGINEERING_SOLVERS`. Each row is `{ operationId, status: UNSUPPORTED, reason, detail, preflightRoute \| null }`.
 - `services[]` gains `ZONE_ASSESSMENT` (`zone-assessment-v1`, `DERIVED_ON_READ`, route `ZONES`).
 
 **`GET`/`POST …/engineering-assessment` (B35)** changes as follows. `assessmentVersion` is unchanged.
-- `domains[].relatedServices[]` gains two **required** fields: `modelSupport: SUPPORTED | REFUSED | NOT_CHECKED` and `refusalCode: string | null`. Clients that validate strictly against the old schema must accept the new fields.
-- `limitations[]` gains two lines: the 2-floor generation limit and the BIM-profile limit.
+- `domains[].relatedServices[]` gains two **required** fields: `modelSupport: SUPPORTED | PRELIMINARY_ELIGIBLE | REFUSED | NOT_CHECKED` and `refusalCode: string | null`. BIM-gated services are `REFUSED` or `PRELIMINARY_ELIGIBLE` (the BIM source gate is only the first gate); `SUPPORTED` is used only for the verifier. Clients that validate strictly against the old schema must accept the new fields.
+- `limitations[]` gains three lines: the 2-floor generation limit, the BIM-profile limit and the storey-height rule across intermediate levels.
+- `engine.formulas.height` is `model-height-v2` (it was `model-height-v1`): a datum or roof level between two storeys no longer shortens the lower storey. See the design §4.3.
 - Because the report content changed, its `resultHash` for a given revision differs from B35. Nothing stored these hashes, because the assessment is derived on read.
