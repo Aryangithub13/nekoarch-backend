@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { BuildingModelV2 } from '@designflow/shared';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
-import { tower } from '../../../test-support/tower-fixtures.js';
+import { ArchitecturalBuildingModelV2Schema } from '@designflow/shared';
+import { tower, withIntermediateLevel } from '../../../test-support/tower-fixtures.js';
+import { revisionQaReport } from '../src/services/project-service.js';
 import { floorDistance } from '../src/verification/geometry.js';
 import { convexHull, heightToWidth, minimumWidth2, storeyHeights } from '../src/engineering/geometry.js';
 import { assessModel, domainStatus, type AssessmentInput } from '../src/engineering/assess.js';
@@ -67,6 +69,56 @@ describe('Phase 35 storey heights', () => {
     const r = assess(gap);
     expect(r.height.storeys[1]).toMatchObject({ storeyHeightMm: 4000, storeyHeightBasis: 'NEXT_STOREY_ELEVATION' });
     expect(finding(r, 'STOREY_HEIGHT_DECLARED')).toMatchObject({ status: 'WARNING', entityIds: ['storey-1'], measured: '2/3 declared' });
+  });
+});
+
+describe('Phase 35.1 storey heights across represented levels (N1, model-height-v2)', () => {
+  const plates = (m: BuildingModelV2) => verifyModel(m, ids, null).bases.levels;
+  const datumAbove1 = (declare: boolean) => withIntermediateLevel(tower({ storeys: 4 }), { storey: 1, offsetMm: 2000, declare });
+  const saveGate = (m: BuildingModelV2) => revisionQaReport(ArchitecturalBuildingModelV2Schema.parse(m), null, null);
+
+  it('measures a storey to the next storey floor across an intermediate datum, whether or not its floor-to-floor height is declared', () => {
+    for (const declare of [true, false]) {
+      expect(ArchitecturalBuildingModelV2Schema.safeParse(datumAbove1(declare)).success).toBe(true);
+      expect(saveGate(datumAbove1(declare))).toMatchObject({ status: 'PASS', summary: { errors: 0 } });
+    }
+    const [declared, undeclared, plain] = [assess(datumAbove1(true)), assess(datumAbove1(false)), assess(tower({ storeys: 4 }))];
+    expect(declared.height.storeys[1]).toMatchObject({ levelId: 'storey-1', storeyHeightMm: 4000, storeyHeightBasis: 'NEXT_STOREY_ELEVATION' });
+    expect(declared.height).toEqual(undeclared.height);
+    // model-height-v1 counted storey-1 of `declared` as 2 000 mm tall: 16 719.36 m³ against 19 103.232 m³ for the same geometry undeclared.
+    expect([declared, undeclared, plain].map(r => r.areas.grossVolumeM3)).toEqual(['19103.232', '19103.232', '19103.232']);
+    expect(declared.engine.formulas.height).toBe('model-height-v2');
+    expect(declared.limitations.some(l => l.includes('A datum or roof level between two storeys does not end the lower storey'))).toBe(true);
+  });
+
+  it('keeps the declared basis where the declared height reaches the measured level, so models without intermediate levels are unchanged', () => {
+    const h = storeyHeights(tower({ storeys: 4 }), plates(tower({ storeys: 4 })));
+    expect(h.storeys.map(s => [s.storeyHeightMm, s.storeyHeightBasis])).toEqual(Array(4).fill([4000, 'DECLARED_FLOOR_TO_FLOOR']));
+    expect(h.heightMm).toBe(16_000);
+  });
+
+  it('does not let an intermediate roof level end a storey, and never takes a datum above the uppermost storey as its top', () => {
+    const podium = withIntermediateLevel(tower({ storeys: 4 }), { storey: 1, offsetMm: 2000, kind: 'roof', declare: true });
+    expect(storeyHeights(podium, plates(podium)).storeys[1]).toMatchObject({ storeyHeightMm: 4000, storeyHeightBasis: 'NEXT_STOREY_ELEVATION' });
+    for (const declare of [true, false]) {
+      const capped = withIntermediateLevel(tower({ storeys: 3 }), { storey: 2, offsetMm: 2000, declare });
+      expect(storeyHeights(capped, plates(capped))).toMatchObject({ heightMm: null, storeys: [{}, {}, { storeyHeightMm: null, storeyHeightBasis: 'NOT_DETERMINED' }] });
+      capped.levels.push({ id: 'roof', name: 'Roof', index: 4, kind: 'roof', elevationMm: 12_500, floorToFloorHeightMm: null, boundary: capped.levels[0]!.boundary });
+      expect(storeyHeights(capped, plates(capped))).toMatchObject({ heightMm: 12_500, storeys: [{}, {}, { storeyHeightMm: 4500, storeyHeightBasis: 'ROOF_LEVEL_ELEVATION' }] });
+    }
+  });
+
+  it('never lets a declared floor-to-floor height override contradictory geometry', () => {
+    const m = tower({ storeys: 3 }); m.levels[1]!.floorToFloorHeightMm = 3000; // schema-invalid on purpose: the next storey is 4 000 mm above
+    expect(ArchitecturalBuildingModelV2Schema.safeParse(m).success).toBe(false);
+    expect(storeyHeights(m, plates(m)).storeys[1]).toMatchObject({ storeyHeightMm: 4000, storeyHeightBasis: 'NEXT_STOREY_ELEVATION' });
+  });
+
+  it('prices volume-based cost lines on the corrected volume, identically for both arrangements', () => {
+    const body = costRequest({ components: [component('VOL', 'SUPERSTRUCTURE', '1', { basis: 'GROSS_VOLUME_M3' })] });
+    const [declared, undeclared] = [assess(datumAbove1(true), body), assess(datumAbove1(false), body)];
+    expect(declared.cost!.lines).toEqual(undeclared.cost!.lines);
+    expect(declared.cost!.lines[0]).toMatchObject({ basis: 'GROSS_VOLUME_M3', status: 'PRICED', amount: '19103.23' });
   });
 });
 

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { ArchitecturalBuildingModelV2Schema, type BuildingModelV2 } from '@designflow/shared';
+import { ArchitecturalBuildingModelV2Schema, RingMmSchema, type BuildingModelV2, type Point2Mm } from '@designflow/shared';
 import { BLUEPRINT_LIMITS } from '@designflow/generator';
-import { tower } from '../../../test-support/tower-fixtures.js';
+import { tower, withIntermediateLevel } from '../../../test-support/tower-fixtures.js';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
-import { assessZones, preflightZoneRegeneration, sameRing, zoneId, ZoneRequestError, type ZoneContext } from '../src/engineering/zones.js';
+import { assessZones, preflightZoneRegeneration, sameRegion, zoneId, ZoneRequestError, type ZoneContext } from '../src/engineering/zones.js';
+import { revisionQaReport } from '../src/services/project-service.js';
 import { ZoneAssessmentRequestSchema, ZonePreflightRequestSchema, ZONE_LIMITS } from '../src/engineering/zone-contracts.js';
 import { MODEL_LIMITS, UNSUPPORTED_OPERATIONS, bimProfile } from '../src/engineering/capability-limits.js';
 import { assessModel } from '../src/engineering/assess.js';
@@ -152,11 +153,90 @@ describe('Phase 35.1 interface checks', () => {
     expect(checks(zones(m, LOW_HIGH)).ENVELOPE_CONTINUITY).toMatchObject({ status: 'INFO', measured: 'CHANGED' });
   });
 
-  it('compares rings exactly in either orientation and from any start vertex', () => {
+  it('compares regions exactly: any start vertex, either orientation, redundant collinear vertices; a 1 mm or shape difference is different', () => {
     const a = [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 5 }, { x: 0, z: 5 }];
-    expect(sameRing(a, [a[2]!, a[3]!, a[0]!, a[1]!])).toBe(true);
-    expect(sameRing(a, [...a].reverse())).toBe(true);
-    expect(sameRing(a, [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 6 }, { x: 0, z: 5 }])).toBe(false);
+    expect(sameRegion(a, [a[2]!, a[3]!, a[0]!, a[1]!])).toBe(true);
+    expect(sameRegion(a, [...a].reverse())).toBe(true);
+    expect(sameRegion(a, [a[0]!, { x: 4, z: 0 }, a[1]!, { x: 10, z: 3 }, a[2]!, a[3]!])).toBe(true);
+    expect(sameRegion(a, [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 6 }, { x: 0, z: 5 }])).toBe(false);
+    expect(sameRegion(a, [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 5 }, { x: 1, z: 5 }])).toBe(false);
+    // Same bounding box and the same area, but mirrored L-shapes: only the containment test can tell them apart.
+    const l1 = [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 5 }, { x: 5, z: 5 }, { x: 5, z: 10 }, { x: 0, z: 10 }];
+    const l2 = [{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 10 }, { x: 5, z: 10 }, { x: 5, z: 5 }, { x: 0, z: 5 }];
+    expect([sameRegion(l1, l2), sameRegion(l1, [...l1.slice(3), ...l1.slice(0, 3)].reverse())]).toEqual([false, true]);
+    // Degenerate rings (retraced edges, zero area) never reach a check: the model schema refuses them.
+    expect(RingMmSchema.safeParse([{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 5, z: 0 }]).success).toBe(false);
+    expect(RingMmSchema.safeParse([{ x: 0, z: 0 }, { x: 10, z: 0 }, { x: 10, z: 5 }, { x: 10, z: 2 }, { x: 0, z: 5 }]).success).toBe(false);
+  });
+});
+
+describe('Phase 35.1 remediation: equivalent geometry and represented levels (F1, F8, N1)', () => {
+  const checks = (r: ReturnType<typeof zones>, i = 0) => Object.fromEntries(r.interfaces[i]!.checks.map(c => [c.check, c]));
+  const four = () => tower({ storeys: 4 }), LH = { zones: [z('LOW', 0, 1), z('HIGH', 2, 3)] };
+  const saveGate = (m: BuildingModelV2) => revisionQaReport(ArchitecturalBuildingModelV2Schema.parse(m), null, null);
+  /** The same ring with one extra vertex on its first edge (integer midpoint in these fixtures). */
+  const collinear = (ring: Point2Mm[]) => [ring[0]!, { x: (ring[0]!.x + ring[1]!.x) / 2, z: (ring[0]!.z + ring[1]!.z) / 2 }, ...ring.slice(1)];
+
+  it('F1: accepts a stair opening with an extra collinear vertex, as acceptance QA does', () => {
+    const m = four(), slab = m.slabs.find(s => s.id === 'storey-2-floor')!;
+    slab.footprint.voids = [collinear(slab.footprint.voids[0]!)];
+    expect(saveGate(m)).toMatchObject({ status: 'PASS', summary: { errors: 0 } });
+    const r = zones(m, LH);
+    expect(checks(r).STAIR_SLAB_VOID).toMatchObject({ status: 'PASS', entityIds: ['stair-1'] });
+    expect(r.status).toBe('PARTIAL');
+  });
+
+  it('F1: treats an equivalent stair footprint or envelope as the same region from any start vertex and in either orientation', () => {
+    const m = four(), above = m.stairs.find(s => s.id === 'stair-2')!, upper = m.levels.find(l => l.id === 'storey-2')!;
+    const fp = collinear(above.footprint); above.footprint = [...fp.slice(2), ...fp.slice(0, 2)].reverse();
+    upper.boundary = collinear(upper.boundary).reverse();
+    const c = checks(zones(m, LH));
+    expect(c.STAIR_FOOTPRINT_CONTINUITY!.status).toBe('PASS');
+    expect(c.ENVELOPE_CONTINUITY).toMatchObject({ status: 'INFO', measured: 'UNCHANGED' });
+  });
+
+  it('F1: still fails an opening that misses part of the flight (with QA), and still warns on a footprint 1 mm away', () => {
+    const m = four(), slab = m.slabs.find(s => s.id === 'storey-2-floor')!;
+    slab.footprint.voids = [slab.footprint.voids[0]!.map(p => (p.x === 2400 ? { ...p, x: 2401 } : p))];
+    expect(saveGate(m).findings.map(f => f.code)).toContain('QA_STAIR_VOID_MISSING');
+    expect(checks(zones(m, LH)).STAIR_SLAB_VOID).toMatchObject({ status: 'FAIL', entityIds: ['stair-1'] });
+    const moved = four(), s2 = moved.stairs.find(s => s.id === 'stair-2')!;
+    s2.footprint = s2.footprint.map(p => ({ ...p, z: p.z + 1 }));
+    expect(checks(zones(moved, LH)).STAIR_FOOTPRINT_CONTINUITY!.status).toBe('WARNING');
+  });
+
+  it('F1: applies the QA endpoint and interference rules to a flight ending at, or passing through, the upper storey', () => {
+    const noFloor = four(); noFloor.slabs = noFloor.slabs.filter(s => s.id !== 'storey-2-floor');
+    expect(checks(zones(noFloor, LH)).STAIR_SLAB_VOID).toMatchObject({ status: 'FAIL', entityIds: ['stair-1'] }); // QA_STAIR_VOID_MISSING
+    const through = (voided: boolean) => {
+      const m = four(), s1 = m.stairs.find(s => s.id === 'stair-1')!; s1.toLevelId = 'storey-3';
+      if (!voided) m.slabs.find(s => s.id === 'storey-2-floor')!.footprint.voids = [];
+      return checks(zones(m, LH)).STAIR_SLAB_VOID!;
+    };
+    expect([through(true).status, through(false).status]).toEqual(['PASS', 'FAIL']); // QA_STAIR_SOLID_INTERFERENCE at the intermediate plate
+    const open = four(); open.stairs.find(s => s.id === 'stair-1')!.toLevelId = 'storey-3'; open.slabs = open.slabs.filter(s => s.levelId !== 'storey-2');
+    expect(checks(zones(open, LH)).STAIR_SLAB_VOID).toMatchObject({ status: 'NOT_EVALUATED', blocker: { code: 'NO_SLAB_AT_UPPER_LEVEL' } });
+  });
+
+  it('F8: a datum between zones does not fail the interface, and zone heights and volumes do not depend on declaring the height', () => {
+    const declared = withIntermediateLevel(four(), { storey: 1, offsetMm: 2000, declare: true });
+    const undeclared = withIntermediateLevel(four(), { storey: 1, offsetMm: 2000, declare: false });
+    expect(saveGate(declared)).toMatchObject({ status: 'PASS', summary: { errors: 0 } });
+    const r = zones(declared, LH), u = zones(undeclared, LH);
+    expect(checks(r).INTERFACE_ELEVATION).toMatchObject({ status: 'PASS', entityIds: ['storey-1', 'datum-above-1', 'storey-2'], measured: '6000', required: '6000' });
+    expect(r.status).toBe('PARTIAL');
+    expect(checks(u).INTERFACE_ELEVATION).toMatchObject({ status: 'NOT_EVALUATED', blocker: { code: 'FLOOR_TO_FLOOR_NOT_DECLARED' } });
+    expect(r.zones).toEqual(u.zones);
+    // Independent arithmetic: 4 000 mm storeys, 1.2 × 10⁹ mm² plates, a 24 × 280 mm by 1 200 mm stair void in every plate above the first.
+    const VOID4 = 24n * 280n * 1200n;
+    expect(r.zones.map(x => [x.heightMm, x.grossVolumeMm3])).toEqual([[8000, String(4000n * (2n * PLATE - VOID4))], [8000, String(4000n * 2n * (PLATE - VOID4))]]);
+    const b35 = assessModel({ ids, model: declared, request: AssessmentRequestSchema.parse({}), brief: { version: 0, briefHash: null, floors: null }, evidence: [], related: [], generatedAt: 'x' });
+    expect(BigInt(r.zones[0]!.grossVolumeMm3!) + BigInt(r.zones[1]!.grossVolumeMm3!)).toBe(BigInt(b35.areas.grossVolumeMm3!));
+  });
+
+  it('F8: still fails a declared height that misses the next represented level (a model that bypassed the schema)', () => {
+    const m = withIntermediateLevel(four(), { storey: 1, offsetMm: 2000, declare: true }); m.levels.find(l => l.id === 'storey-1')!.floorToFloorHeightMm = 2500;
+    expect(checks(zones(m, LH)).INTERFACE_ELEVATION).toMatchObject({ status: 'FAIL', measured: '6500', required: '6000' });
   });
 });
 

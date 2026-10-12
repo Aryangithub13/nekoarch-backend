@@ -40,3 +40,20 @@ export function tower({ storeys, storeyHeightMm = 4000, widthMm = 40_000, depthM
     dimensions: [], specifications: [], provenance: { creationMode: 'authored', measurementVersion: 'mm-exact/1' },
   } as BuildingModelV2;
 }
+
+export type IntermediateLevel = { storey: number; offsetMm: number; kind?: 'datum' | 'roof'; declare: boolean };
+
+/**
+ * Inserts a datum or roof level `offsetMm` above `storey-<storey>`, re-indexing the levels above it, and lowers that storey's walls to fit below
+ * it (the same geometry either way). With `declare`, the storey's floor-to-floor height is the distance to the inserted level, as the schema
+ * requires (it reaches the next represented level of any kind); without it, the storey declares none. Test geometry only.
+ */
+export function withIntermediateLevel(model: BuildingModelV2, { storey, offsetMm, kind = 'datum', declare }: IntermediateLevel): BuildingModelV2 {
+  const m = structuredClone(model), below = m.levels.find(l => l.id === `storey-${storey}`)!;
+  for (const l of m.levels) if (l.index > below.index) l.index += 1;
+  m.levels.push({ id: `${kind}-above-${storey}`, name: `${kind} above storey ${storey}`, index: below.index + 1, kind, elevationMm: below.elevationMm + offsetMm,
+    floorToFloorHeightMm: null, boundary: below.boundary });
+  below.floorToFloorHeightMm = declare ? offsetMm : null;
+  for (const w of m.walls) if (w.levelId === below.id && (w.baseOffsetMm ?? 0) + (w.heightMm ?? 0) > offsetMm) w.heightMm = offsetMm - (w.baseOffsetMm ?? 0);
+  return m;
+}

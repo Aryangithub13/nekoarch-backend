@@ -38694,7 +38694,7 @@
               "height": {
                "type": "string",
                "enum": [
-                "model-height-v1"
+                "model-height-v2"
                ]
               },
               "areaVolume": {
@@ -40811,7 +40811,7 @@
               "height": {
                "type": "string",
                "enum": [
-                "model-height-v1"
+                "model-height-v2"
                ]
               },
               "areaVolume": {
@@ -42439,7 +42439,7 @@
               "height": {
                "type": "string",
                "enum": [
-                "model-height-v1"
+                "model-height-v2"
                ]
               },
               "areaVolume": {
@@ -43161,7 +43161,7 @@
               "height": {
                "type": "string",
                "enum": [
-                "model-height-v1"
+                "model-height-v2"
                ]
               },
               "areaVolume": {

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { BuildingModelV2, Point2Mm } from '@designflow/shared';
+import { abs, ringContains, ringsOverlap, signedArea2, type BuildingModelV2, type Point2Mm } from '@designflow/shared';
 import { costHash } from '@designflow/boq-cost';
 import { verifyModel } from '../verification/verify.js';
 import { VERIFIER_VERSION } from '../verification/contracts.js';
@@ -30,16 +30,19 @@ export const ZONE_LIMITATIONS = [
 /** Stable zone identity: depends only on the ordered storey level ids, so the same storeys keep the same zone id across revisions and keys. */
 export const zoneId = (levelIds: readonly string[]) => createHash('sha256').update(`${ZONE_IDENTITY_VERSION}\n${levelIds.join('\n')}`).digest('hex');
 
-/** Exact cyclic ring equality in either orientation (the Phase 23 stair/void convention compares vertices exactly). */
-export function sameRing(a: readonly Point2Mm[], b: readonly Point2Mm[]): boolean {
-  if (a.length !== b.length || !a.length) return false;
-  const n = a.length, eq = (p: Point2Mm, q: Point2Mm) => p.x === q.x && p.z === q.z;
-  for (let offset = 0; offset < n; offset++) for (const dir of [1, -1]) {
-    let ok = true;
-    for (let i = 0; i < n && ok; i++) ok = eq(a[i]!, b[((offset + dir * i) % n + n) % n]!);
-    if (ok) return true;
-  }
-  return false;
+const bounds = (ring: readonly Point2Mm[]) => ring.reduce((b, p) => ({ minX: Math.min(b.minX, p.x), maxX: Math.max(b.maxX, p.x), minZ: Math.min(b.minZ, p.z),
+  maxZ: Math.max(b.maxZ, p.z) }), { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity });
+
+/**
+ * Exact region equality of two simple rings: the same closed region whatever the start vertex, the orientation or any redundant collinear
+ * vertex. It uses the containment predicate acceptance QA uses (ringContains, integer arithmetic, no tolerance) in both directions, after exact
+ * bounding-box and area rejections; two rings that each fill the same bounding box (rectangles, as QA requires of stair footprints) are equal.
+ */
+export function sameRegion(a: readonly Point2Mm[], b: readonly Point2Mm[]): boolean {
+  const ba = bounds(a), bb = bounds(b), area = abs(signedArea2(a));
+  if (ba.minX !== bb.minX || ba.maxX !== bb.maxX || ba.minZ !== bb.minZ || ba.maxZ !== bb.maxZ || area !== abs(signedArea2(b))) return false;
+  if (area === 2n * BigInt(ba.maxX - ba.minX) * BigInt(ba.maxZ - ba.minZ)) return true;
+  return ringContains(a, b) && ringContains(b, a);
 }
 
 /** Canonical form of a declaration list for hashing: order by key (keys are unique), so listing order never changes a hash. */
@@ -132,47 +135,66 @@ function interfaceChecks(model: BuildingModelV2, storeys: readonly Storey[], low
   const lo = at(lower.levelId)!, hi = at(upper.levelId)!;
   const spanning = model.stairs.filter(s => { const f = at(s.fromLevelId), t = at(s.toLevelId); return f !== undefined && t !== undefined && f <= lo && t >= hi; })
     .sort((a, b) => a.id < b.id ? -1 : 1);
-  const levelOf = new Map(model.levels.map(l => [l.id, l]));
+  const levelOf = new Map(model.levels.map(l => [l.id, l])), lowerLevel = levelOf.get(lower.levelId)!, upperLevel = levelOf.get(upper.levelId)!;
   const out: InterfaceCheck[] = [];
 
-  out.push(lower.storeyHeightBasis === 'DECLARED_FLOOR_TO_FLOOR'
-    ? (lower.elevationMm + lower.storeyHeightMm! === upper.elevationMm
-      ? check('INTERFACE_ELEVATION', 'PASS', 'The lower storey\'s declared floor-to-floor height reaches the upper storey\'s elevation exactly',
-        { entityIds: [lower.levelId, upper.levelId], measured: String(lower.elevationMm + lower.storeyHeightMm!), required: String(upper.elevationMm) })
-      : check('INTERFACE_ELEVATION', 'FAIL', 'The lower storey\'s declared floor-to-floor height does not reach the upper storey\'s elevation',
-        { entityIds: [lower.levelId, upper.levelId], measured: String(lower.elevationMm + lower.storeyHeightMm!), required: String(upper.elevationMm) }))
-    : blocked('INTERFACE_ELEVATION', 'FLOOR_TO_FLOOR_NOT_DECLARED', 'The lower storey declares no floor-to-floor height; its height is derived from the upper storey, so there is no independent value to compare'));
+  // A declared floor-to-floor height reaches the next represented level of any kind (Building Model V2 invariant, QA_LEVEL_HEIGHT_MISMATCH);
+  // a datum or roof level may lie between the zones without ending the lower storey.
+  const declared = lowerLevel.floorToFloorHeightMm;
+  const between = model.levels.filter(l => l.index > lowerLevel.index && l.index < upperLevel.index).sort((a, b) => a.index - b.index);
+  const following = between[0] ?? upperLevel;
+  if (declared === null) out.push(blocked('INTERFACE_ELEVATION', 'FLOOR_TO_FLOOR_NOT_DECLARED', 'The lower storey declares no floor-to-floor height, so there is no declared value to compare'));
+  else {
+    const reach = lowerLevel.elevationMm + declared, via = between.length ? ` (the ${following.kind} level ${following.id}, between the zones; the lower storey continues to the upper storey floor)` : '';
+    out.push(check('INTERFACE_ELEVATION', reach === following.elevationMm ? 'PASS' : 'FAIL', reach === following.elevationMm
+      ? `The lower storey's declared floor-to-floor height reaches the next represented level exactly${via}`
+      : `The lower storey's declared floor-to-floor height does not reach the next represented level${via}`,
+    { entityIds: [lower.levelId, ...between.map(l => l.id), upper.levelId].slice(0, ZONE_LIMITS.listedElementIds), measured: String(reach), required: String(following.elevationMm) }));
+  }
 
   out.push(spanning.length
     ? check('STAIR_CONNECTION', 'PASS', 'At least one modelled stair crosses this interface', { entityIds: spanning.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id), measured: String(spanning.length) })
     : check('STAIR_CONNECTION', 'WARNING', 'No modelled stair crosses this interface. Lifts and shafts are not represented in the model; no circulation or egress rule is applied', { measured: '0' }));
 
-  const upperFloors = model.slabs.filter(s => s.levelId === upper.levelId && s.kind === 'floor');
+  // The opening rules of acceptance QA, applied at the upper storey: QA_STAIR_VOID_MISSING (a flight ending here needs a floor at its endpoint
+  // elevation with a void containing the whole flight) and QA_STAIR_SOLID_INTERFERENCE (a slab whose top lies within the flight's rise and
+  // overlaps it needs a containing void). Containment, not vertex equality: an equivalent opening with other vertices is the same opening.
+  const upperSlabs = model.slabs.filter(s => s.levelId === upper.levelId);
+  const contained = (slab: BuildingModelV2['slabs'][number], stair: BuildingModelV2['stairs'][number]) => slab.footprint.voids.some(v => ringContains(v, stair.footprint));
+  const opened = (stair: BuildingModelV2['stairs'][number]) => {
+    const from = levelOf.get(stair.fromLevelId)!, to = levelOf.get(stair.toLevelId)!;
+    const endpoint = stair.toLevelId !== upper.levelId || upperSlabs.some(p => p.kind === 'floor' && p.topOffsetMm === 0 && contained(p, stair));
+    return endpoint && upperSlabs.every(p => {
+      const top = upperLevel.elevationMm + p.topOffsetMm;
+      return !(top > from.elevationMm && top <= to.elevationMm && ringsOverlap(p.footprint.outer, stair.footprint)) || contained(p, stair);
+    });
+  };
   if (!spanning.length) out.push(blocked('STAIR_SLAB_VOID', 'NO_STAIR_ACROSS_INTERFACE', 'No stair crosses this interface, so there is no stair opening to check'));
-  else if (!upperFloors.length) out.push(blocked('STAIR_SLAB_VOID', 'NO_FLOOR_SLAB_AT_UPPER_LEVEL', 'The upper storey has no floor slab in the model, so its stair openings cannot be checked'));
+  else if (!upperSlabs.length && !spanning.some(s => s.toLevelId === upper.levelId))
+    out.push(blocked('STAIR_SLAB_VOID', 'NO_SLAB_AT_UPPER_LEVEL', 'The upper storey has no slab in the model, so no stair opening is required there or can be checked'));
   else {
-    const missingVoid = spanning.filter(s => !upperFloors.some(slab => slab.footprint.voids.some(v => sameRing(v, s.footprint))));
+    const missingVoid = spanning.filter(s => !opened(s));
     out.push(missingVoid.length
-      ? check('STAIR_SLAB_VOID', 'FAIL', 'A stair crossing this interface has no floor-slab void at the upper storey whose vertices equal its footprint (the Phase 23 stair/void convention)',
+      ? check('STAIR_SLAB_VOID', 'FAIL', 'A stair crossing this interface has no slab void at the upper storey containing its whole flight where acceptance QA requires one',
         { entityIds: missingVoid.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id), measured: String(missingVoid.length), required: '0' })
-      : check('STAIR_SLAB_VOID', 'PASS', 'Every stair crossing this interface has a matching floor-slab void at the upper storey',
+      : check('STAIR_SLAB_VOID', 'PASS', 'Every stair crossing this interface has a slab void at the upper storey containing its whole flight where acceptance QA requires one',
         { entityIds: spanning.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id) }));
   }
 
   const below = model.stairs.filter(s => s.toLevelId === lower.levelId), above = model.stairs.filter(s => s.fromLevelId === upper.levelId);
   if (!below.length || !above.length) out.push(blocked('STAIR_FOOTPRINT_CONTINUITY', 'NO_ADJACENT_FLIGHTS', 'There is no flight arriving at the lower storey or no flight leaving the upper storey to compare'));
   else {
-    const continuous = below.some(b => above.some(a => sameRing(a.footprint, b.footprint)));
+    const continuous = below.some(b => above.some(a => sameRegion(a.footprint, b.footprint)));
     out.push(continuous
-      ? check('STAIR_FOOTPRINT_CONTINUITY', 'PASS', 'A stair footprint below the interface recurs exactly above it')
+      ? check('STAIR_FOOTPRINT_CONTINUITY', 'PASS', 'A stair footprint below the interface recurs above it (the same region exactly)')
       : check('STAIR_FOOTPRINT_CONTINUITY', 'WARNING', 'No stair footprint below the interface recurs exactly above it. This may be intended (for example a transfer or scissor stair); no rule is applied',
         { entityIds: [...below, ...above].slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id) }));
   }
 
-  const lowerBoundary = levelOf.get(lower.levelId)!.boundary, upperBoundary = levelOf.get(upper.levelId)!.boundary;
-  out.push(check('ENVELOPE_CONTINUITY', 'INFO', sameRing(lowerBoundary, upperBoundary)
-    ? 'The level envelope is identical across the interface' : 'The level envelope changes across the interface (for example a setback); no rule is applied',
-  { entityIds: [lower.levelId, upper.levelId], measured: sameRing(lowerBoundary, upperBoundary) ? 'UNCHANGED' : 'CHANGED' }));
+  const unchanged = sameRegion(lowerLevel.boundary, upperLevel.boundary);
+  out.push(check('ENVELOPE_CONTINUITY', 'INFO', unchanged
+    ? 'The level envelope is the same region across the interface' : 'The level envelope changes across the interface (for example a setback); no rule is applied',
+  { entityIds: [lower.levelId, upper.levelId], measured: unchanged ? 'UNCHANGED' : 'CHANGED' }));
 
   out.push(blocked('SHAFT_CONTINUITY', 'SHAFTS_NOT_REPRESENTED', 'Building Model V2 has no shaft, lift or riser elements, and slab voids are not classified, so shaft continuity cannot be evaluated'));
   return out;

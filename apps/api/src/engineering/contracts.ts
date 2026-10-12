@@ -4,7 +4,7 @@ import { CurrencySchema } from '@designflow/boq-cost';
 // Normative specification: docs/phase35/phase35-design.md. Literals change only with semantics.
 export const ASSESSMENT_VERSION = 'engineering-assessment-v1';
 export const SOURCE_REGISTRY_VERSION = 'engineering-source-registry-v1';
-export const FORMULAS = Object.freeze({ height: 'model-height-v1', areaVolume: 'gross-area-volume-v1', baseWidth: 'convex-hull-min-width-v1', cost: 'conceptual-cost-v1' });
+export const FORMULAS = Object.freeze({ height: 'model-height-v2', areaVolume: 'gross-area-volume-v1', baseWidth: 'convex-hull-min-width-v1', cost: 'conceptual-cost-v1' });
 export const ASSESSMENT_LIMITS = Object.freeze({ bodyBytes: 65_536, evidence: 16, costComponents: 64, costAdjustments: 16, excludedScopes: 16 });
 export const NOT_CLAIMED_ENGINEERING = Object.freeze({ structuralSafety: 'NOT_CLAIMED', codeCompliance: 'NOT_CLAIMED', statutoryApproval: 'NOT_CLAIMED',
   professionalCertification: 'NOT_CLAIMED', constructionReadiness: 'NOT_CLAIMED' } as const);
