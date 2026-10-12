@@ -2,7 +2,7 @@
 
 **Final status (superseded by §16, the Phase 35 completion round):** the owner-brief Phase 35 scope is implemented and verified, **except** validated engineering solvers (R2 beyond typed boundaries), the evidence-class mapping (R6) and the research-specified values (R8). The scope still could not be confirmed against the canonical roadmap, which remains unavailable.
 
-**Release decision: NO-GO for merge or tag until the gates in §17.6 pass** (human review, scope of record). No tag was created. Earlier sections record the state at their time; §16 supersedes them where they differ.
+**Release decision: NO-GO for merge or tag until the independent human review in §17.6 is complete.** The scope of record was accepted by the owner (§17.2). No tag was created. Earlier sections record the state at their time; §16 supersedes them where they differ.
 
 **Remediation round 2 (§15)** fixes the correctness defects found after this report was first written (N1, F1, F8) and the disclosure defects (F2, F3, F4, F5, F7). F6 is an unresolved numbering gap, not a known defect. §9 and §12 below are corrected: CI does run.
 
@@ -543,8 +543,10 @@ Base: `7caf74d`. Commits: `28077fa` (R6 and disclosure fixes), and this document
 
 A third search found no new branch, tag, commit, upload or attachment. The canonical 46-phase roadmap, its Phase 35 section, the 56-phase frontend roadmap and the Phase 35 V2 research remain **unavailable**.
 
-The minimum owner decision needed to fix the accepted Phase 35 scope is:
+The minimum owner decision needed to fix the accepted Phase 35 scope was:
 > **Accept the owner briefs R1–R8, as delivered and limited in §16–§17, as the Phase 35 scope of record.**
+
+**Owner decision, 2026-10-12: accepted.** R1–R8 as delivered is the Phase 35 scope of record. R2 validated solvers and R8 research values stay explicitly unsupported. The roadmap text itself remains unavailable; if it is committed later, it should be checked against this scope.
 
 ### 17.3 Standards and evidence-class decision
 
@@ -597,16 +599,16 @@ Not run: Node 24 and 26; Phase 30 frontend integration verification (**deferred*
 
 ### 17.6 Verdict
 
-**NO-GO for merge or tag.** Code, tests, contract, container and local database evidence all pass. Two gates are open:
+**NO-GO for merge or tag.** Code, tests, contract, container and local database evidence all pass, and the scope is accepted. One gate is open: the independent human review.
 
 | # | Gate | State | What closes it |
 |---|---|---|---|
 | 1 | Independent **human** review | **Open.** Requested from `shubham-0`; no review yet | A human reviewer completes the PR #7 checklist and records approval or changes |
-| 2 | Phase 35 scope of record | **Open** (roadmap unavailable) | Owner decision: accept R1–R8, as delivered and limited in §16–§17, as the Phase 35 scope |
+| 2 | Phase 35 scope of record | **Closed:** the owner accepted R1–R8 as delivered (2026-10-12) | — |
 | 3 | Standards and evidence classes | **Closed:** R6 implemented; R2 solvers and R8 values excluded and explicitly unsupported per the owner's instruction | — |
 | 4 | Version, provenance, deletion and migration review | **Closed** (§17.4) | — |
 | 5 | CI, suite, OpenAPI, smoke, local Supabase | **Closed** (§17.5) | — |
 | 6 | Merge and tag `backend-v1-phase35-complete` | Waits on 1–2, then explicit owner authorization | — |
 | 7 | Hosted migrations 0018–0024 | Deployment gate, separate from the code tag | An authorized operator: read-only check, then staging, then production |
 
-Once gates 1 and 2 close, the owner's explicit authorization is required to merge PR #7 into `phase31/development` and tag the merge commit `backend-v1-phase35-complete`.
+Once gate 1 closes, the owner's explicit authorization is required to merge PR #7 into `phase31/development` and tag the merge commit `backend-v1-phase35-complete`. The duplicate PRs #8 and #9 are closed.
