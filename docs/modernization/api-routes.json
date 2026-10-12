@@ -116,6 +116,16 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/actions/:actionId/decisions",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/conversations/:conversationId/context",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/conversations/:conversationId/messages",
   "anonymous": 401
  },
@@ -126,7 +136,17 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/rebase",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/conversations/:conversationId/tools",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/conversations/:conversationId/turns",
   "anonymous": 401
  },
  {

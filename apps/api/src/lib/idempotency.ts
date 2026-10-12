@@ -64,3 +64,20 @@ export async function durableCommand<T>(request: FastifyRequest, repository: Rep
   }
   return run(context);
 }
+
+/**
+ * Phase 36: the same durable receipts for a write that a server-side coordinator (a confirmed conversation action) performs on an existing route's
+ * behalf. `operation` is that route's template (already allowed by the receipt table); the key is derived from the action and step, so a retried
+ * confirmation replays the stored result instead of repeating the write.
+ */
+export async function internalCommand<T>(repository: Repository, operation: string, key: string, input: unknown,
+  run: (context: IdempotencyContext) => Promise<T>): Promise<{ result: T; replayed: boolean }> {
+  if (!repository.lookupIdempotency) throw new ApiError(503, 'IDEMPOTENCY_UNAVAILABLE', 'Retry protection is unavailable');
+  const context = { operation, keyHash: hash(`conversation-action:${key}`), fingerprint: hash(canonical(input)) };
+  const cached = await repository.lookupIdempotency(context);
+  if (cached) {
+    if (cached.fingerprint !== context.fingerprint) throw new ApiError(409, 'IDEMPOTENCY_CONFLICT', 'The idempotency key was used for a different request');
+    return { result: cached.response as T, replayed: true };
+  }
+  return { result: await run(context), replayed: false };
+}

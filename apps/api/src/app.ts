@@ -107,7 +107,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     plansRoutes(scope, backend);
     projectsRoutes(scope, backend, options.env);
     requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
-    conversationsRoutes(scope, backend, options.env, options.conversationProvider);
+    conversationsRoutes(scope, backend, options.env, options.conversationProvider, pools.appearance);
     takeoffsRoutes(scope, backend, options.env);
     bimRoutes(scope, backend);
     structuralRoutes(scope, backend, options.env);
