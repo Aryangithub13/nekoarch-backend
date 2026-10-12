@@ -86,6 +86,11 @@ export type ZoneAssessmentReport = z.infer<typeof ZoneAssessmentReportSchema>;
 // ---------------------------------------------------------------- regeneration preflight (planning only; never executes)
 export const NOT_CLAIMED_PREFLIGHT = Object.freeze({ regenerationPerformed: 'NOT_CLAIMED', revisionCreated: 'NOT_CLAIMED', preservationEnforced: 'NOT_CLAIMED',
   engineeringValidity: 'NOT_CLAIMED' } as const);
+/** What an exterior-skin change would have to leave untouched inside its target zone (F7). Counts are exact; ids are the first 16, sorted. */
+export const INTERIOR_PRESERVATION_ITEMS = ['SPACES', 'INTERIOR_WALLS', 'UNCLASSIFIED_WALLS', 'INTERIOR_OPENINGS', 'SLABS', 'COLUMNS', 'STAIRS', 'LEVELS', 'DIMENSIONS',
+  'EXTERIOR_WALLS_ON_OTHER_FACADES'] as const;
+const preservedItem = z.object({ item: z.enum(INTERIOR_PRESERVATION_ITEMS), count: z.number().int().min(0), entityIds: z.array(entityId).max(ZONE_LIMITS.listedElementIds),
+  detail: z.string().max(300) }).strict();
 export const ZonePreflightReportSchema = z.object({
   preflightVersion: z.literal(ZONE_PREFLIGHT_VERSION), projectId: uuid, revisionId: uuid, modelHash: hash, inputHash: hash, resultHash: hash, generatedAt: z.string(),
   sourceRevision: SourceRevisionSchema, currency: CurrencySchema,
@@ -101,10 +106,13 @@ export const ZonePreflightReportSchema = z.object({
     crossBoundaryStairs: z.array(z.object({ stairId: entityId, fromLevelId: entityId, toLevelId: entityId }).strict()).max(ZONE_LIMITS.listedElementIds),
     crossBoundaryStairCount: z.number().int().min(0),
     represented: z.array(z.string().max(60)).max(16), notRepresented: z.array(z.object({ item: z.string().max(60), detail: z.string().max(300) }).strict()).max(16),
+    /** EXTERIOR_SKIN targets only (null otherwise): the target zone's interior and every other part of it outside the requested skin. */
+    targetInterior: z.object({ zoneKey: ZoneKeySchema, zoneId: hash, levelIds: z.array(entityId).max(256),
+      items: z.array(preservedItem).max(INTERIOR_PRESERVATION_ITEMS.length) }).strict().nullable(),
   }).strict(),
   dependencies: z.array(z.object({ artifact: z.string().max(60), impact: z.literal('WOULD_REQUIRE_RECOMPUTATION'), detail: z.string().max(300) }).strict()).max(16),
   missingCapabilities: z.array(ZoneBlockerSchema).max(8),
-  alternatives: z.array(z.object({ operation: z.string().max(60), availableForThisModel: z.boolean(), route: z.string().max(200), detail: z.string().max(300) }).strict()).max(4),
+  alternatives: z.array(z.object({ operation: z.string().max(60), eligibility: z.enum(['PRELIMINARY_ELIGIBLE', 'REFUSED']), route: z.string().max(200), detail: z.string().max(300) }).strict()).max(4),
   roadmapDestination: z.object({ phase: z.null(), status: z.literal('OWNER_DECISION_REQUIRED'), detail: z.string().max(400) }).strict(),
   claims: notClaimed(NOT_CLAIMED_PREFLIGHT),
 }).strict();

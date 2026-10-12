@@ -39368,6 +39368,7 @@
                  "type": "string",
                  "enum": [
                   "SUPPORTED",
+                  "PRELIMINARY_ELIGIBLE",
                   "REFUSED",
                   "NOT_CHECKED"
                  ]
@@ -41485,6 +41486,7 @@
                  "type": "string",
                  "enum": [
                   "SUPPORTED",
+                  "PRELIMINARY_ELIGIBLE",
                   "REFUSED",
                   "NOT_CHECKED"
                  ]
@@ -44311,6 +44313,78 @@
               "additionalProperties": false
              },
              "maxItems": 16
+            },
+            "targetInterior": {
+             "type": "object",
+             "properties": {
+              "zoneKey": {
+               "$ref": "#/components/properties/declaration/properties/issues/items/properties/zoneKeys/items"
+              },
+              "zoneId": {
+               "$ref": "#/components/properties/modelHash"
+              },
+              "levelIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/declaration/properties/issues/items/properties/levelIds/items"
+               },
+               "maxItems": 256
+              },
+              "items": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "item": {
+                  "type": "string",
+                  "enum": [
+                   "SPACES",
+                   "INTERIOR_WALLS",
+                   "UNCLASSIFIED_WALLS",
+                   "INTERIOR_OPENINGS",
+                   "SLABS",
+                   "COLUMNS",
+                   "STAIRS",
+                   "LEVELS",
+                   "DIMENSIONS",
+                   "EXTERIOR_WALLS_ON_OTHER_FACADES"
+                  ]
+                 },
+                 "count": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "entityIds": {
+                  "type": "array",
+                  "items": {
+                   "$ref": "#/components/properties/declaration/properties/issues/items/properties/levelIds/items"
+                  },
+                  "maxItems": 16
+                 },
+                 "detail": {
+                  "type": "string",
+                  "maxLength": 300
+                 }
+                },
+                "required": [
+                 "item",
+                 "count",
+                 "entityIds",
+                 "detail"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 10
+              }
+             },
+             "required": [
+              "zoneKey",
+              "zoneId",
+              "levelIds",
+              "items"
+             ],
+             "additionalProperties": false,
+             "nullable": true
             }
            },
            "required": [
@@ -44319,7 +44393,8 @@
             "crossBoundaryStairs",
             "crossBoundaryStairCount",
             "represented",
-            "notRepresented"
+            "notRepresented",
+            "targetInterior"
            ],
            "additionalProperties": false
           },
@@ -44383,8 +44458,12 @@
               "type": "string",
               "maxLength": 60
              },
-             "availableForThisModel": {
-              "type": "boolean"
+             "eligibility": {
+              "type": "string",
+              "enum": [
+               "PRELIMINARY_ELIGIBLE",
+               "REFUSED"
+              ]
              },
              "route": {
               "type": "string",
@@ -44397,7 +44476,7 @@
             },
             "required": [
              "operation",
-             "availableForThisModel",
+             "eligibility",
              "route",
              "detail"
             ],

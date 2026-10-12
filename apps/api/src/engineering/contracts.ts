@@ -92,9 +92,14 @@ export type SourceReference = z.infer<typeof SourceReferenceSchema>;
 export const BlockerSchema = z.object({ kind: z.enum(BLOCKER_KINDS), code: z.string().max(60), detail: z.string().max(400), inputPath: z.string().max(100).nullable(),
   sourceIds: z.array(z.string().max(60)).max(8) }).strict();
 export type Blocker = z.infer<typeof BlockerSchema>;
-/** Phase 35.1: `modelSupport` says whether that service can process the assessed model at all (REFUSED: its typed refusal code); NOT_CHECKED makes no claim. */
+/**
+ * Phase 35.1: `modelSupport` says how far the assessed model is known to be processable by that service. REFUSED: the BIM source gate refuses it
+ * (refusalCode is that gate's typed code; the refusal is final). PRELIMINARY_ELIGIBLE: it passes that first gate only; BIM projection, BIM
+ * validation or the service's own checks may still refuse it. SUPPORTED: the service processes any valid model (checks beyond its operation
+ * budget become NOT_EVALUATED). NOT_CHECKED: no claim is made.
+ */
 export const RelatedServiceSchema = z.object({ serviceId: z.string().max(60), route: z.string().max(200), artifactsForRevision: z.number().int().min(0).nullable(),
-  note: z.string().max(300), modelSupport: z.enum(['SUPPORTED', 'REFUSED', 'NOT_CHECKED']), refusalCode: z.string().max(60).nullable() }).strict();
+  note: z.string().max(300), modelSupport: z.enum(['SUPPORTED', 'PRELIMINARY_ELIGIBLE', 'REFUSED', 'NOT_CHECKED']), refusalCode: z.string().max(60).nullable() }).strict();
 export const DomainResultSchema = z.object({ domain: DomainSchema, assuranceLevel: z.enum(ASSURANCE_LEVELS), status: z.enum(DOMAIN_STATUSES),
   blockers: z.array(BlockerSchema).max(16), relatedServices: z.array(RelatedServiceSchema).max(4) }).strict();
 export type DomainResult = z.infer<typeof DomainResultSchema>;

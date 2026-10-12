@@ -7,7 +7,7 @@ import { wallFacade } from '../revision/appearance.js';
 import { FORMULAS } from './contracts.js';
 import { areaString, doubled, storeyHeights, type Height } from './geometry.js';
 import { bimProfile } from './capability-limits.js';
-import { FACADES, NOT_CLAIMED_PREFLIGHT, NOT_CLAIMED_ZONES, ZONE_ASSESSMENT_VERSION, ZONE_IDENTITY_VERSION, ZONE_LIMITS, ZONE_PREFLIGHT_VERSION,
+import { FACADES, INTERIOR_PRESERVATION_ITEMS, NOT_CLAIMED_PREFLIGHT, NOT_CLAIMED_ZONES, ZONE_ASSESSMENT_VERSION, ZONE_IDENTITY_VERSION, ZONE_LIMITS, ZONE_PREFLIGHT_VERSION,
   ZoneAssessmentReportSchema, ZonePreflightReportSchema, type ElementCounts, type InterfaceCheck, type ZoneAssessmentReport, type ZoneAssessmentRequest,
   type ZoneDeclaration, type ZonePreflightReport, type ZonePreflightRequest, type ZoneResult } from './zone-contracts.js';
 
@@ -22,7 +22,8 @@ export type ResolvedZone = { key: string; start: number; end: number; storeys: S
 export const ZONE_LIMITATIONS = [
   'Zone assessment is geometric analysis of the stored model. It groups storeys for analysis only: it does not partition, generate or regenerate the model, and BIM-derived services still process (or refuse) the whole model.',
   'Interface checks compare only geometry the model represents. Building Model V2 has no shaft, lift or riser elements, so their continuity is never evaluated.',
-  'An interface elevation is checked only where the lower storey declares its floor-to-floor height; a height derived from the next storey is not independent evidence.',
+  'An interface elevation is checked only where the lower storey declares its floor-to-floor height, which reaches the next represented level of any kind (a datum or roof level may lie between zones).',
+  'INTERFACE_ELEVATION and STAIR_SLAB_VOID restate acceptance-QA rules that every stored revision passed when it was saved: a PASS confirms an existing invariant and is not independent cross-zone evidence. The other checks are cross-zone observations to which no rule is applied.',
   'Façade groupings need a site north that is a multiple of 90°; otherwise they are reported as not resolved.',
   'No structural, wind, seismic, fire-safety, vertical-transport or code-compliance determination is made or implied by any zone result.',
 ];
@@ -145,16 +146,16 @@ function interfaceChecks(model: BuildingModelV2, storeys: readonly Storey[], low
   const following = between[0] ?? upperLevel;
   if (declared === null) out.push(blocked('INTERFACE_ELEVATION', 'FLOOR_TO_FLOOR_NOT_DECLARED', 'The lower storey declares no floor-to-floor height, so there is no declared value to compare'));
   else {
-    const reach = lowerLevel.elevationMm + declared, via = between.length ? ` (the ${following.kind} level ${following.id}, between the zones; the lower storey continues to the upper storey floor)` : '';
+    const reach = lowerLevel.elevationMm + declared, via = between.length ? ` (a ${following.kind} level between the zones, listed in entityIds; the lower storey continues to the upper storey floor)` : '';
     out.push(check('INTERFACE_ELEVATION', reach === following.elevationMm ? 'PASS' : 'FAIL', reach === following.elevationMm
-      ? `The lower storey's declared floor-to-floor height reaches the next represented level exactly${via}`
-      : `The lower storey's declared floor-to-floor height does not reach the next represented level${via}`,
+      ? `Restates acceptance QA (QA_LEVEL_HEIGHT_MISMATCH, the floor-to-floor invariant), not independent evidence: the declared floor-to-floor height reaches the next represented level exactly${via}`
+      : `Violates the floor-to-floor invariant that acceptance QA enforces (QA_LEVEL_HEIGHT_MISMATCH): the declared floor-to-floor height does not reach the next represented level${via}`,
     { entityIds: [lower.levelId, ...between.map(l => l.id), upper.levelId].slice(0, ZONE_LIMITS.listedElementIds), measured: String(reach), required: String(following.elevationMm) }));
   }
 
   out.push(spanning.length
-    ? check('STAIR_CONNECTION', 'PASS', 'At least one modelled stair crosses this interface', { entityIds: spanning.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id), measured: String(spanning.length) })
-    : check('STAIR_CONNECTION', 'WARNING', 'No modelled stair crosses this interface. Lifts and shafts are not represented in the model; no circulation or egress rule is applied', { measured: '0' }));
+    ? check('STAIR_CONNECTION', 'PASS', 'Cross-zone observation: at least one modelled stair crosses this interface. No circulation or egress rule is applied', { entityIds: spanning.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id), measured: String(spanning.length) })
+    : check('STAIR_CONNECTION', 'WARNING', 'Cross-zone observation: no modelled stair crosses this interface. Lifts and shafts are not represented in the model; no circulation or egress rule is applied', { measured: '0' }));
 
   // The opening rules of acceptance QA, applied at the upper storey: QA_STAIR_VOID_MISSING (a flight ending here needs a floor at its endpoint
   // elevation with a void containing the whole flight) and QA_STAIR_SOLID_INTERFERENCE (a slab whose top lies within the flight's rise and
@@ -175,9 +176,9 @@ function interfaceChecks(model: BuildingModelV2, storeys: readonly Storey[], low
   else {
     const missingVoid = spanning.filter(s => !opened(s));
     out.push(missingVoid.length
-      ? check('STAIR_SLAB_VOID', 'FAIL', 'A stair crossing this interface has no slab void at the upper storey containing its whole flight where acceptance QA requires one',
+      ? check('STAIR_SLAB_VOID', 'FAIL', 'Violates acceptance QA (QA_STAIR_VOID_MISSING / QA_STAIR_SOLID_INTERFERENCE): a stair crossing this interface has no slab void at the upper storey containing its whole flight where QA requires one',
         { entityIds: missingVoid.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id), measured: String(missingVoid.length), required: '0' })
-      : check('STAIR_SLAB_VOID', 'PASS', 'Every stair crossing this interface has a slab void at the upper storey containing its whole flight where acceptance QA requires one',
+      : check('STAIR_SLAB_VOID', 'PASS', 'Restates acceptance QA (QA_STAIR_VOID_MISSING / QA_STAIR_SOLID_INTERFERENCE), not independent evidence: every stair crossing this interface has a slab void at the upper storey containing its whole flight where QA requires one',
         { entityIds: spanning.slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id) }));
   }
 
@@ -186,17 +187,18 @@ function interfaceChecks(model: BuildingModelV2, storeys: readonly Storey[], low
   else {
     const continuous = below.some(b => above.some(a => sameRegion(a.footprint, b.footprint)));
     out.push(continuous
-      ? check('STAIR_FOOTPRINT_CONTINUITY', 'PASS', 'A stair footprint below the interface recurs above it (the same region exactly)')
-      : check('STAIR_FOOTPRINT_CONTINUITY', 'WARNING', 'No stair footprint below the interface recurs exactly above it. This may be intended (for example a transfer or scissor stair); no rule is applied',
+      ? check('STAIR_FOOTPRINT_CONTINUITY', 'PASS', 'Cross-zone observation: a stair footprint below the interface recurs above it (the same region exactly). No rule is applied')
+      : check('STAIR_FOOTPRINT_CONTINUITY', 'WARNING', 'Cross-zone observation: no stair footprint below the interface recurs above it. This may be intended (for example a transfer or scissor stair); no rule is applied',
         { entityIds: [...below, ...above].slice(0, ZONE_LIMITS.listedElementIds).map(s => s.id) }));
   }
 
   const unchanged = sameRegion(lowerLevel.boundary, upperLevel.boundary);
   out.push(check('ENVELOPE_CONTINUITY', 'INFO', unchanged
-    ? 'The level envelope is the same region across the interface' : 'The level envelope changes across the interface (for example a setback); no rule is applied',
+    ? 'Cross-zone observation: the level envelope is the same region across the interface; no rule is applied'
+    : 'Cross-zone observation: the level envelope changes across the interface (for example a setback); no rule is applied',
   { entityIds: [lower.levelId, upper.levelId], measured: unchanged ? 'UNCHANGED' : 'CHANGED' }));
 
-  out.push(blocked('SHAFT_CONTINUITY', 'SHAFTS_NOT_REPRESENTED', 'Building Model V2 has no shaft, lift or riser elements, and slab voids are not classified, so shaft continuity cannot be evaluated'));
+  out.push(blocked('SHAFT_CONTINUITY', 'SHAFTS_NOT_REPRESENTED', 'Not evaluated: Building Model V2 has no shaft, lift or riser elements, and slab voids are not classified, so shaft continuity cannot be evaluated'));
   return out;
 }
 
@@ -241,6 +243,31 @@ export class ZoneRequestError extends Error {
   constructor(readonly code: 'ZONE_DECLARATION_INVALID' | 'ZONE_TARGET_NOT_FOUND' | 'SECTION_TARGET_INVALID', message: string, readonly issues: string[]) { super(message); }
 }
 
+type PreservedItem = NonNullable<ZonePreflightReport['preservation']['targetInterior']>['items'][number];
+const preserved = (item: typeof INTERIOR_PRESERVATION_ITEMS[number], xs: readonly { id: string }[], detail: string): PreservedItem =>
+  ({ item, count: xs.length, entityIds: xs.map(x => x.id).sort().slice(0, ZONE_LIMITS.listedElementIds), detail });
+
+/** F7: everything inside the target zone that an exterior-skin change must leave untouched; the exterior walls in scope are the only exception. */
+function targetInterior(model: BuildingModelV2, levelIds: ReadonlySet<string>, facades: readonly Facade[]): PreservedItem[] {
+  const on = (x: { levelId: string }) => levelIds.has(x.levelId), walls = model.walls.filter(on);
+  const exterior = walls.filter(w => w.classification === 'exterior'), exteriorIds = new Set(exterior.map(w => w.id));
+  const items = [
+    preserved('SPACES', model.spaces.filter(on), 'Room identities, classifications, boundaries and occupancy'),
+    preserved('INTERIOR_WALLS', walls.filter(w => w.classification === 'interior' || w.classification === 'partition'), 'Interior and partition walls, with their paths, thicknesses and heights'),
+    preserved('UNCLASSIFIED_WALLS', walls.filter(w => w.classification === 'unspecified'), 'Walls classified neither exterior nor interior: preserved, and they would have to be classified before any skin change'),
+    preserved('INTERIOR_OPENINGS', model.openings.filter(o => on(o) && !exteriorIds.has(o.wallId)), 'Doors and windows in walls that are not exterior walls'),
+    preserved('SLABS', model.slabs.filter(on), 'Floor, roof and ceiling slabs, including their stair and other voids'),
+    preserved('COLUMNS', model.columns.filter(on), 'Columns, as geometry (no structural load path is represented)'),
+    preserved('STAIRS', model.stairs.filter(s => levelIds.has(s.fromLevelId) || levelIds.has(s.toLevelId)), 'Stairs within or connecting to the target storeys, with their landings and connections'),
+    preserved('LEVELS', model.levels.filter(l => levelIds.has(l.id)), 'Storey elevations, floor-to-floor heights and level envelopes'),
+    preserved('DIMENSIONS', model.dimensions.filter(d => d.levelId !== undefined && levelIds.has(d.levelId)), 'Dimension annotations on the target storeys'),
+  ];
+  if (facades.length < FACADES.length && northResolvable(model))
+    items.push(preserved('EXTERIOR_WALLS_ON_OTHER_FACADES', exterior.filter(w => { const f = wallFacade(model, w); return f === null || !facades.includes(f); }),
+      'Exterior walls, and their openings, outside the requested façades'));
+  return items;
+}
+
 const DEPENDENT_ARTIFACTS = ['BIM', 'SCENE_3D', 'QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS',
   'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'DESIGN_OPTIMIZATION', 'COMPLEX_VERIFICATION', 'ENGINEERING_ASSESSMENT'];
 
@@ -274,7 +301,7 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
     { code: 'NO_MULTI_STOREY_GENERATOR', detail: 'Generation is limited to two floors, and no generator regenerates part of a building in place' },
     { code: 'GEOMETRY_REVISION_OPERATION_UNSUPPORTED', detail: 'Selective revision (Phase 30) refuses geometry changes; it changes exterior wall appearance only' },
   ];
-  if (!profile.supported) missingCapabilities.push({ code: 'BIM_PROFILE_EXCEEDED', detail: `The model is outside the bounded BIM profile (${profile.refusalCode}), so no BIM-derived service can process it` });
+  if (!profile.eligible) missingCapabilities.push({ code: 'BIM_PROFILE_EXCEEDED', detail: `The model is outside the bounded BIM profile (${profile.refusalCode}), so no BIM-derived service can process it` });
   let exteriorWallsInScope: number | null = null;
   if (t.kind === 'EXTERIOR_SKIN') {
     const exterior = model.walls.filter(w => targetSet.has(w.levelId) && w.classification === 'exterior');
@@ -296,6 +323,7 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
       crossBoundaryStairs: crossing.slice(0, ZONE_LIMITS.listedElementIds).map(s => ({ stairId: s.id, fromLevelId: s.fromLevelId, toLevelId: s.toLevelId })),
       crossBoundaryStairCount: crossing.length,
       represented: ['LEVELS', 'SPACES', 'WALLS', 'OPENINGS', 'SLABS', 'COLUMNS', 'STAIRS'],
+      targetInterior: t.kind === 'EXTERIOR_SKIN' ? { zoneKey: target.key!, zoneId: zoneId(targetIds), levelIds: targetIds, items: targetInterior(model, targetSet, facades!) } : null,
       notRepresented: [
         { item: 'SHAFTS_LIFTS_AND_RISERS', detail: 'Not modelled, so their continuity across the target boundary cannot be planned' },
         { item: 'STRUCTURAL_LOAD_PATHS', detail: 'Columns exist as geometry only; no load path through the target is represented' },
@@ -305,8 +333,9 @@ export function preflightZoneRegeneration(ctx: ZoneContext, request: ZonePreflig
     dependencies: DEPENDENT_ARTIFACTS.map(artifact => ({ artifact, impact: 'WOULD_REQUIRE_RECOMPUTATION' as const,
       detail: 'Derived from the building geometry; any regenerated geometry would make results for this revision inapplicable to the new one' })),
     missingCapabilities,
-    alternatives: t.kind === 'EXTERIOR_SKIN' ? [{ operation: 'APPEARANCE_MODIFY', availableForThisModel: profile.supported, route: '/api/projects/:projectId/revision-operations',
-      detail: profile.supported ? 'Changes exterior wall finish (appearance only) as a new revision; it does not regenerate geometry'
+    alternatives: t.kind === 'EXTERIOR_SKIN' ? [{ operation: 'APPEARANCE_MODIFY', eligibility: profile.eligible ? 'PRELIMINARY_ELIGIBLE' as const : 'REFUSED' as const,
+      route: '/api/projects/:projectId/revision-operations',
+      detail: profile.eligible ? 'Changes exterior wall finish (appearance only) as a new revision; it does not regenerate geometry. The model passes the BIM source gate only: its own preflight may still refuse it'
         : 'Appearance changes need the scene, which needs the bounded BIM profile; this model is outside it' }] : [],
     roadmapDestination: { phase: null, status: 'OWNER_DECISION_REQUIRED' as const,
       detail: 'The canonical roadmap was not available to this implementation, so the phase that delivers multi-storey geometry regeneration is not named here; the owner must assign it' },

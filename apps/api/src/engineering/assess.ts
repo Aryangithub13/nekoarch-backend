@@ -25,7 +25,7 @@ export const LIMITATIONS = [
   'Evidence documents are recorded as user-declared; their contents are not read or interpreted.',
   'Nothing here is a code-compliance determination, an engineering certification, a statutory approval or a statement that a building is safe to build.',
   'Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated, and no part of it can be regenerated.',
-  'BIM-derived services (BIM, structural, environmental, building systems including egress and lifts, knowledge, scene and appearance revision) refuse models outside the bounded BIM profile of at most two storeys; relatedServices[].modelSupport states this for the assessed model.',
+  'BIM-derived services (BIM, structural, environmental, building systems including egress and lifts, knowledge, scene and appearance revision) refuse models outside the bounded BIM profile of at most two storeys; relatedServices[].modelSupport reports REFUSED for the assessed model, or PRELIMINARY_ELIGIBLE where only that first gate is known to pass.',
 ];
 /** Related services that read the revision through the bounded BIM source profile (bim/core sourceModel). */
 const BIM_GATED = new Set(['STRUCTURAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE']);
@@ -133,7 +133,7 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
   const profile = bimProfile(model);
   const support = (serviceId: RelatedService['serviceId']) => serviceId === 'COMPLEX_VERIFICATION' ? { modelSupport: 'SUPPORTED' as const, refusalCode: null }
     : !BIM_GATED.has(serviceId) ? { modelSupport: 'NOT_CHECKED' as const, refusalCode: null }
-    : profile.supported ? { modelSupport: 'SUPPORTED' as const, refusalCode: null } : { modelSupport: 'REFUSED' as const, refusalCode: profile.refusalCode };
+    : profile.eligible ? { modelSupport: 'PRELIMINARY_ELIGIBLE' as const, refusalCode: null } : { modelSupport: 'REFUSED' as const, refusalCode: profile.refusalCode };
   const services = (...serviceIds: RelatedService['serviceId'][]) => related.filter(r => serviceIds.includes(r.serviceId)).map(({ serviceId, route, artifactsForRevision, note }) =>
     ({ serviceId, route, artifactsForRevision, note, ...support(serviceId) }));
   const definitions: [Domain, DomainResult['assuranceLevel'], boolean, Blocker[], DomainResult['relatedServices']][] = [

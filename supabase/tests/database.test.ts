@@ -291,10 +291,12 @@ describe('versioned rates, seed completeness and historical provenance', () => {
   });
 });
 
-// Documented intent (docs/phase12-design.md §2, docs/PHASE12.md): project deletion is not exposed and account deletion leaves inaccessible,
-// retained history. The children below declare `on delete cascade` to projects, but their guards refuse row deletion, so a project holding
-// such history cannot be hard-deleted even by a privileged role. Pinned here so a future erasure feature must change this deliberately.
-describe('retained project history and guarded deletion (B35.1 regression)', () => {
+// Characterization of observed behaviour, not an approved deletion or erasure policy (that decision is open; see docs/phase35-1/phase35-1-report.md).
+// The design documents disagree: docs/phase12-design.md §2 and docs/PHASE12.md say project deletion is not exposed and account deletion leaves
+// inaccessible history, while the Phase 31 and 32 designs describe these children as cascading with the project. What the schema does today:
+// the children declare `on delete cascade`, but their guards refuse row deletion, so a project holding such history cannot be hard-deleted even by
+// a privileged role. These tests record that, so any future change to it is deliberate and visible; they do not endorse it.
+describe('retained project history and guarded deletion (B35.1 characterization of current behaviour)', () => {
   const sha = (s: string) => createHash('sha256').update(s).digest('hex');
   const newProject = async (title: string, ownerId = owner) =>
     (await db.pool.query<{ id: string }>('insert into public.projects(owner_id,title) values ($1,$2) returning id', [ownerId, title])).rows[0]!.id;

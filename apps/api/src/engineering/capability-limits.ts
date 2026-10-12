@@ -15,7 +15,12 @@ export const MODEL_LIMITS = Object.freeze([
     onExceed: '400 VALIDATION_ERROR at the generation route', appliesTo: ['GENERATION'] },
   { limitId: 'BIM_PROFILE_MAX_STOREYS', value: 2, unit: 'levels', enforcedBy: 'Bounded BIM source profile (bim/core sourceModel), with element-count and orthogonality limits',
     onExceed: '422 BIM_UNSUPPORTED_MODEL, surfaced as STRUCTURAL_/ENVIRONMENTAL_/BUILDING_SYSTEMS_/KNOWLEDGE_SOURCE_UNSUPPORTED or SCENE_UNSUPPORTED_MODEL',
-    appliesTo: ['BIM', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'SCENE_3D', 'SELECTIVE_REVISION'] },
+    appliesTo: ['BIM', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'SCENE_3D'] },
+  // Selective revision is gated only for appearance changes, and it refuses through its preflight rather than with an error; RESTORE does not
+  // use this profile (revision/plan.ts restore branch, revision-service restore execution).
+  { limitId: 'SELECTIVE_REVISION_APPEARANCE_PROFILE', value: 2, unit: 'levels', enforcedBy: 'Selective revision appearance planning (BIM projection of the base revision, revision/plan.ts)',
+    onExceed: '200 preflight with status UNSUPPORTED and blocker SCENE_UNSUPPORTED_MODEL (not an error response); RESTORE is not gated by this profile',
+    appliesTo: ['SELECTIVE_REVISION_APPEARANCE_MODIFY'] },
   { limitId: 'ZONE_ASSESSMENT_MAX_ZONES', value: ZONE_LIMITS.zones, unit: 'zones', enforcedBy: 'Zone assessment request schema', onExceed: '400 VALIDATION_ERROR',
     appliesTo: ['ZONE_ASSESSMENT'] },
 ].map(l => Object.freeze(l)));
@@ -41,15 +46,19 @@ export const UNSUPPORTED_OPERATIONS = Object.freeze([
     preflightRoute: null },
 ].map(o => Object.freeze(o)));
 
-export type BimProfile = { supported: true; refusalCode: null } | { supported: false; refusalCode: string };
+export type BimProfile = { eligible: true; refusalCode: null } | { eligible: false; refusalCode: string };
 
-/** Asks the actual BIM source gate (not a copy of its rules) whether this model is inside the bounded profile every BIM-derived service needs. */
+/**
+ * Asks the actual BIM source gate (bim/core sourceModel, not a copy of its rules) whether this model is inside the bounded profile every
+ * BIM-derived service needs. This is the first gate only: a model it admits can still be refused later by BIM projection, BIM validation or the
+ * service's own input checks, so `eligible` is preliminary eligibility, never final support. A refusal here is final.
+ */
 export function bimProfile(model: BuildingModelV2): BimProfile {
   try {
     sourceModel(model);
-    return { supported: true, refusalCode: null };
+    return { eligible: true, refusalCode: null };
   } catch (error) {
-    if (error instanceof BimError) return { supported: false, refusalCode: error.code };
+    if (error instanceof BimError) return { eligible: false, refusalCode: error.code };
     throw error;
   }
 }

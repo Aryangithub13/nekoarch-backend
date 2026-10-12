@@ -5,6 +5,7 @@ import { tower, withIntermediateLevel } from '../../../test-support/tower-fixtur
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { assessZones, preflightZoneRegeneration, sameRegion, zoneId, ZoneRequestError, type ZoneContext } from '../src/engineering/zones.js';
 import { revisionQaReport } from '../src/services/project-service.js';
+import { buildIntent, planRevision, type PlanContext } from '../src/revision/plan.js';
 import { ZoneAssessmentRequestSchema, ZonePreflightRequestSchema, ZONE_LIMITS } from '../src/engineering/zone-contracts.js';
 import { MODEL_LIMITS, UNSUPPORTED_OPERATIONS, bimProfile } from '../src/engineering/capability-limits.js';
 import { assessModel } from '../src/engineering/assess.js';
@@ -122,6 +123,14 @@ describe('Phase 35.1 interface checks', () => {
     expect(r.status).toBe('PARTIAL'); // shaft continuity is never evaluated, so a multi-zone result is never fully CONSISTENT
     expect(r.claims).toEqual({ structuralAdequacy: 'NOT_CLAIMED', windOrSeismicPerformance: 'NOT_CLAIMED', fireAndLifeSafety: 'NOT_CLAIMED',
       verticalTransportAdequacy: 'NOT_CLAIMED', codeCompliance: 'NOT_CLAIMED' });
+  });
+
+  it('F2: labels which checks restate acceptance QA, which are cross-zone observations, and which are not evaluated', () => {
+    const c = checks(zones(supertall(), LOW_HIGH)), r = zones(supertall(), LOW_HIGH);
+    for (const k of ['INTERFACE_ELEVATION', 'STAIR_SLAB_VOID'] as const) expect(c[k]!.detail).toMatch(/^Restates acceptance QA \(QA_[A-Z_]+.*not independent evidence/);
+    for (const k of ['STAIR_CONNECTION', 'STAIR_FOOTPRINT_CONTINUITY', 'ENVELOPE_CONTINUITY'] as const) expect(c[k]!.detail).toMatch(/^Cross-zone observation: .*no .*rule is applied/i);
+    expect(c.SHAFT_CONTINUITY!.detail).toMatch(/^Not evaluated: /);
+    expect(r.limitations.some(l => l.startsWith('INTERFACE_ELEVATION and STAIR_SLAB_VOID restate acceptance-QA rules'))).toBe(true);
   });
 
   it('fails a declared floor-to-floor height that does not reach the next zone, and does not evaluate a derived one', () => {
@@ -298,11 +307,33 @@ describe('Phase 35.1 regeneration preflight (refusal, not regeneration)', () => 
     expect(tall.refusal.code).toBe('EXTERIOR_SKIN_GEOMETRY_REGENERATION_UNSUPPORTED');
     expect(tall.target.exteriorWallsInScope).toBeNull();
     expect(tall.missingCapabilities.map(m => m.code)).toContain('FACADE_ORIENTATION_UNKNOWN');
-    expect(tall.alternatives).toEqual([expect.objectContaining({ operation: 'APPEARANCE_MODIFY', availableForThisModel: false })]);
+    expect(tall.alternatives).toEqual([expect.objectContaining({ operation: 'APPEARANCE_MODIFY', eligibility: 'REFUSED' })]);
     const small = preflight(tower({ storeys: 2 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' } });
     expect(small.status).toBe('UNSUPPORTED');
     expect(small.target.exteriorWallsInScope).toBe(8);
-    expect(small.alternatives[0]!.availableForThisModel).toBe(true);
+    // F4: the BIM source gate is only the first gate, so this is preliminary eligibility, never "available".
+    expect(small.alternatives[0]).toMatchObject({ eligibility: 'PRELIMINARY_ELIGIBLE', detail: expect.stringContaining('its own preflight may still refuse it') });
+  });
+
+  it('F7: lists everything inside the target zone that an exterior-skin change must preserve, and nothing for zone or section targets', () => {
+    const m = tower({ storeys: 4 }), Z = { zones: [z('LOW', 0, 1), z('HIGH', 2, 3)] };
+    m.walls.push({ id: 'storey-2-partition', levelId: 'storey-2', path: { start: { x: 20_000, z: 5000 }, end: { x: 20_000, z: 25_000 } }, pathReference: 'centerline',
+      thicknessMm: 100, heightMm: 3000, baseOffsetMm: 0, classification: 'partition', spaceIds: ['storey-2-office'] });
+    const skin = preflight(m, { ...Z, target: { kind: 'EXTERIOR_SKIN', zoneKey: 'HIGH' } });
+    expect(skin.status).toBe('UNSUPPORTED');
+    expect(skin.preservation.status).toBe('PLANNED_NOT_ENFORCED');
+    expect(skin.preservation.preservedZones.map(p => p.zoneKey)).toEqual(['LOW']);
+    const items = Object.fromEntries(skin.preservation.targetInterior!.items.map(i => [i.item, [i.count, i.entityIds]]));
+    expect(skin.preservation.targetInterior).toMatchObject({ zoneKey: 'HIGH', levelIds: ['storey-2', 'storey-3'] });
+    expect(items).toEqual({ SPACES: [2, ['storey-2-office', 'storey-3-office']], INTERIOR_WALLS: [1, ['storey-2-partition']], UNCLASSIFIED_WALLS: [0, []],
+      INTERIOR_OPENINGS: [0, []], SLABS: [2, ['storey-2-floor', 'storey-3-floor']], COLUMNS: [0, []], STAIRS: [2, ['stair-1', 'stair-2']],
+      LEVELS: [2, ['storey-2', 'storey-3']], DIMENSIONS: [0, []] });
+    // A façade subset preserves the other façades' exterior walls too, once site north makes façades resolvable.
+    m.site!.northMilliDegrees = 0;
+    const north = preflight(m, { ...Z, target: { kind: 'EXTERIOR_SKIN', zoneKey: 'HIGH', facades: ['NORTH'] } });
+    expect([north.target.exteriorWallsInScope, north.preservation.targetInterior!.items.find(i => i.item === 'EXTERIOR_WALLS_ON_OTHER_FACADES')!.count]).toEqual([2, 6]);
+    expect(preflight(m, { ...Z, target: { kind: 'ZONE', zoneKey: 'HIGH' } }).preservation.targetInterior).toBeNull();
+    expect(preflight(m, { target: { kind: 'SECTION', fromLevelId: 'storey-1', toLevelId: 'storey-2' } }).preservation.targetInterior).toBeNull();
   });
 
   it('refuses an invalid declaration, an undeclared zone or a reversed section with typed errors', () => {
@@ -318,7 +349,7 @@ describe('Phase 35.1 capability disclosure', () => {
   it('discovers the enforced limits and the unsupported tall-building operations with stable identifiers', () => {
     const d = discovery();
     expect(d.modelLimits.map(l => [l.limitId, l.value])).toEqual([['BUILDING_MODEL_MAX_LEVELS', 256], ['GENERATION_MAX_FLOORS', 2], ['BIM_PROFILE_MAX_STOREYS', 2],
-      ['ZONE_ASSESSMENT_MAX_ZONES', 64]]);
+      ['SELECTIVE_REVISION_APPEARANCE_PROFILE', 2], ['ZONE_ASSESSMENT_MAX_ZONES', 64]]);
     expect(d.unsupportedOperations.map(o => [o.operationId, o.status])).toEqual([['SUPERTALL_GENERATION', 'UNSUPPORTED'], ['PARTITIONED_MODEL_PROCESSING', 'UNSUPPORTED'],
       ['ZONE_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['SECTION_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['EXTERIOR_SKIN_GEOMETRY_REGENERATION', 'UNSUPPORTED'],
       ['VALIDATED_ENGINEERING_SOLVERS', 'UNSUPPORTED']]);
@@ -330,11 +361,25 @@ describe('Phase 35.1 capability disclosure', () => {
     expect(MODEL_LIMITS.find(l => l.limitId === 'ZONE_ASSESSMENT_MAX_ZONES')!.value).toBe(ZONE_LIMITS.zones);
     expect(UNSUPPORTED_OPERATIONS.filter(o => o.preflightRoute).every(o => o.preflightRoute!.endsWith('/engineering-assessment/zones/regeneration-preflight'))).toBe(true);
     // The BIM profile limit is the real gate's: 2 storeys pass, 3 are refused.
-    expect([bimProfile(tower({ storeys: 2 })), bimProfile(tower({ storeys: 3 }))]).toEqual([{ supported: true, refusalCode: null },
-      { supported: false, refusalCode: 'BIM_UNSUPPORTED_MODEL' }]);
+    expect([bimProfile(tower({ storeys: 2 })), bimProfile(tower({ storeys: 3 }))]).toEqual([{ eligible: true, refusalCode: null },
+      { eligible: false, refusalCode: 'BIM_UNSUPPORTED_MODEL' }]);
   });
 
-  it('marks BIM-gated related services as REFUSED for a tall model and SUPPORTED for one inside the profile, without changing domain statuses', () => {
+  it('F3: the selective-revision limit gates appearance changes through a preflight refusal (not an error), and does not gate restore', () => {
+    const rev = (id: string, revisionNumber: number, storeys: number) => ({ id, revisionNumber, parentRevisionId: null, model: tower({ storeys }), generatorVersion: null });
+    const source = rev('33333333-3333-4333-8333-333333333333', 1, 3), base = rev('22222222-2222-4222-8222-222222222222', 2, 4);
+    const c: PlanContext = { projectId: ids.projectId, base, baseAppearance: null, baseOutputs: [], source: { ...source, appearance: null, outputs: [] } };
+    const appearance = planRevision(c, buildIntent({ text: 'Make the exterior walls darker.' }, base, []));
+    expect(appearance).toMatchObject({ status: 'UNSUPPORTED', kind: 'APPEARANCE_MODIFY', blockers: [expect.objectContaining({ code: 'SCENE_UNSUPPORTED_MODEL' })] });
+    const restore = planRevision(c, buildIntent({ operation: { kind: 'RESTORE', sourceRevisionId: source.id } }, base, [{ id: source.id, revisionNumber: 1 }]));
+    expect(restore).toMatchObject({ status: 'AWAITING_CONSENT', kind: 'RESTORE' });
+    const rows = Object.fromEntries(MODEL_LIMITS.map(l => [l.limitId, l]));
+    expect(rows.BIM_PROFILE_MAX_STOREYS!.appliesTo).not.toContain('SELECTIVE_REVISION');
+    expect(rows.SELECTIVE_REVISION_APPEARANCE_PROFILE).toMatchObject({ value: 2, appliesTo: ['SELECTIVE_REVISION_APPEARANCE_MODIFY'] });
+    expect(rows.SELECTIVE_REVISION_APPEARANCE_PROFILE!.onExceed).toMatch(/^200 preflight with status UNSUPPORTED and blocker SCENE_UNSUPPORTED_MODEL .*RESTORE is not gated/);
+  });
+
+  it('marks BIM-gated related services REFUSED for a tall model and only PRELIMINARY_ELIGIBLE inside the profile (F4), without changing domain statuses', () => {
     const related = [{ serviceId: 'BUILDING_SYSTEMS_ANALYSIS' as const, route: '/r', artifactsForRevision: 0, note: 'n' },
       { serviceId: 'QUANTITY_TAKEOFF' as const, route: '/t', artifactsForRevision: null, note: 'n' }, { serviceId: 'COMPLEX_VERIFICATION' as const, route: '/v', artifactsForRevision: null, note: 'n' }];
     const run = (model: BuildingModelV2) => assessModel({ ids, model, request: AssessmentRequestSchema.parse({}), brief: { version: 0, briefHash: null, floors: null }, evidence: [],
@@ -344,7 +389,7 @@ describe('Phase 35.1 capability disclosure', () => {
     expect(support(tall, 'VERTICAL_TRANSPORT')).toEqual([['BUILDING_SYSTEMS_ANALYSIS', 'REFUSED', 'BIM_UNSUPPORTED_MODEL']]);
     expect(support(tall, 'PRELIMINARY_COST')).toEqual([['QUANTITY_TAKEOFF', 'NOT_CHECKED', null]]);
     expect(support(tall, 'SITE_AND_GEOMETRY')).toEqual([['COMPLEX_VERIFICATION', 'SUPPORTED', null]]);
-    expect(support(small, 'FIRE_AND_LIFE_SAFETY')).toEqual([['BUILDING_SYSTEMS_ANALYSIS', 'SUPPORTED', null]]);
+    expect(support(small, 'FIRE_AND_LIFE_SAFETY')).toEqual([['BUILDING_SYSTEMS_ANALYSIS', 'PRELIMINARY_ELIGIBLE', null]]);
     expect(tall.domains.find(d => d.domain === 'FIRE_AND_LIFE_SAFETY')!.status).toBe('REQUIRES_INPUTS');
     expect(tall.limitations.some(l => l.includes('limited to two floors'))).toBe(true);
   });
