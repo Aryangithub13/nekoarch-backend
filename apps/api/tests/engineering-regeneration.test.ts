@@ -181,6 +181,14 @@ describe('Phase 35 FENESTRATION regeneration of an exterior skin', () => {
       .toEqual(['DIMENSION_DEPENDS_ON_REPLACED_ENTITY']);
   });
 
+  it('refuses a candidate that exceeds acceptance QA\'s own resource budget, exactly as the save route would refuse the model', () => {
+    // 256 storeys × 24 windows: the save route's QA reports QA_RESOURCE_LIMIT, so the candidate is never offered for commit.
+    const r = run(tower({ storeys: 256 }), { target: { kind: 'EXTERIOR_SKIN', zoneKey: 'ALL' }, operation: { kind: 'FENESTRATION', window: { ...rule, gapMm: 4000 } } });
+    expect([r.status, r.candidate, r.commit, r.refusals.map(x => x.code)]).toEqual(['REFUSED', null, null, ['QA_REJECTED']]);
+    expect(r.qa!.findings.map(f => f.code)).toContain('QA_RESOURCE_LIMIT');
+    expect(r.preservation!.check).toMatchObject({ status: 'WITHIN_SCOPE', added: 6143 });
+  }, 60_000);
+
   it('rejects mismatched target and operation kinds, and out-of-range rules, at the schema boundary', () => {
     const bad = [
       { target: { kind: 'ZONE', zoneKey: 'ALL' }, operation: { kind: 'FENESTRATION', window: rule } },

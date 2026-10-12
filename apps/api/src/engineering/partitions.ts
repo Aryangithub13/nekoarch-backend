@@ -61,7 +61,8 @@ export function partitionZones(ctx: ZoneContext, request: PartitionRequest): Par
     return refs.size === 1 && !refs.has(-1) ? [...refs][0]! : null;
   };
   const interfaceStairs = model.stairs.filter(s => levelZone.get(s.fromLevelId) !== levelZone.get(s.toLevelId)).sort((a, b) => a.id < b.id ? -1 : 1);
-  const interfaceDimensions = model.dimensions.filter(d => dimensionZone(d) === null).map(d => d.id).sort();
+  const zoneOfDimension = new Map(model.dimensions.map(d => [d.id, dimensionZone(d)])); // resolved once, not once per partition
+  const interfaceDimensions = model.dimensions.filter(d => zoneOfDimension.get(d.id) === null).map(d => d.id).sort();
   const wholePlates = new Map(verification.bases.levels.map(p => [p.levelId, p]));
   const storeyHeight = new Map(height.storeys.map(s => [s.levelId, s.storeyHeightMm]));
   const seen = new Map<string, number>();
@@ -70,7 +71,7 @@ export function partitionZones(ctx: ZoneContext, request: PartitionRequest): Par
     const inZone = (levelId: string) => levelZone.get(levelId) === k, on = <T extends { levelId: string }>(xs: readonly T[]) => xs.filter(x => inZone(x.levelId));
     const base: Model = { ...model, levels: model.levels.filter(l => inZone(l.id)), spaces: on(model.spaces), walls: on(model.walls), openings: on(model.openings),
       slabs: on(model.slabs), columns: on(model.columns), stairs: model.stairs.filter(s => inZone(s.fromLevelId) && inZone(s.toLevelId)),
-      dimensions: model.dimensions.filter(d => dimensionZone(d) === k) };
+      dimensions: model.dimensions.filter(d => zoneOfDimension.get(d.id) === k) };
     const refs = specRefs(base);
     const { parametricArchitecture: _p, ...rest } = { ...base, specifications: model.specifications.filter(s => refs.has(s.id)) };
     // The parametric submodel describes the whole building; it is kept only when the partition is the whole building.

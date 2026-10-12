@@ -124,7 +124,7 @@ Other refusals:
 After the operation, in order:
 1. The candidate must parse as Building Model V2 (`CANDIDATE_SCHEMA_INVALID`).
 2. Preservation must hold (`PRESERVATION_VIOLATION`).
-3. If it differs from the base, it must pass acceptance QA (`QA_REJECTED`). The QA is `revisionQaReport(model, null, null)`, exactly what the supplied-revision save runs.
+3. If it differs from the base, it must pass acceptance QA (`QA_REJECTED`). The QA is `revisionQaReport(model, null, null)`, exactly what the supplied-revision save runs. This includes QA's own resource budget. For example, 24 windows on each of 256 storeys exceeds it (`QA_RESOURCE_LIMIT`), so that candidate is refused, as its save would be.
 
 ## 6. Verification report
 
