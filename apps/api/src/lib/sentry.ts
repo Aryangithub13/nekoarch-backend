@@ -11,7 +11,7 @@ const conversation = `${project}/conversations/:conversationId`;
 const safeRoutes = new Set([
   '<unmatched>', '/health/live', '/health/ready', '/api/capabilities', '/api/regions', '/api/estimates',
   '/api/plans', '/api/plans/generate', '/api/plans/:id', '/api/projects', project, `${project}/public`,
-  `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision, `${revision}/overview`,
+  `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision, `${revision}/overview`, `${revision}/dependency-graph`,
   `${project}/workflows`, `${project}/workflows/plan`, `${project}/workflows/:workflowRunId`,
   `${project}/conversations`, conversation, `${conversation}/messages`, `${conversation}/proposals/approve`, `${conversation}/tools`,
   // Phase 36

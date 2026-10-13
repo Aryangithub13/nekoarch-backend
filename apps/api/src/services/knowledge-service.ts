@@ -17,6 +17,8 @@ import { evaluate, staticOutcome } from '../knowledge/evaluate.js';
 import { detectConflicts } from '../knowledge/conflicts.js';
 import { validateKnowledgeModel, validateKnowledgeResults } from '../knowledge/validate.js';
 
+/** The knowledge inputHash: the binding plus the stored input (packs, sources, scope). Also recomputed by the Phase 37 dependency graph. */
+export const knowledgeInputHash = (binding: unknown, stored: unknown) => digest({ version: KNOWLEDGE_ANALYSIS_VERSION, binding, input: stored });
 export const KNOWLEDGE_ROOT = '/api/projects/:projectId/revisions/:revisionId/knowledge';
 export const KNOWLEDGE_ANALYSIS_OPERATION = `${KNOWLEDGE_ROOT}/analyses`;
 
@@ -84,7 +86,7 @@ export async function createKnowledgeAnalysis(repository: Repository, userId: st
     const stored = { version: KNOWLEDGE_INPUT_VERSION, packs: input.packs, sources: input.sources, scope: input.scope };
     const packs = p.packs.map(({ pack, checksum }) => ({ packId: pack.packId, version: pack.version, checksum, pack, rulesTotal: pack.rules.length,
       rulesSelected: pack.rules.filter(r => input.scope.disciplines.includes(r.discipline)).length }));
-    const draft = { binding: p.binding, inputHash: digest({ version: KNOWLEDGE_ANALYSIS_VERSION, binding: p.binding, input: stored }), factsHash: digest(p.facts), input: stored, packs,
+    const draft = { binding: p.binding, inputHash: knowledgeInputHash(p.binding, stored), factsHash: digest(p.facts), input: stored, packs,
       facts: p.facts, ...evaluation };
     const validated = performance.now();
     const results = validateKnowledgeResults({ ...draft, claims: CLAIMS }, { binding: p.binding,

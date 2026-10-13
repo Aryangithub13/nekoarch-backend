@@ -43,6 +43,8 @@ import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
 import { COMPUTE_ROOT, GATEWAY_VERSION, PROVIDERS } from '../compute/contracts.js';
+import { DEPENDENCY_GRAPH_VERSION } from '../contracts/dependency-graph.js';
+import { DEPENDENCY_GRAPH_ROUTE } from './dependency-graph-service.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -83,6 +85,8 @@ export const SERVICES = Object.freeze([
   // Phase 36 (first slice): quote → explicit consent → durable job for SCENE_COMPILE and OPTIMIZATION_STUDY on the local pools only. Remote execution
   // is disabled; a successful job is a software-validated artifact, never an engineering validation.
   { serviceId: 'COMPUTE_GATEWAY', version: GATEWAY_VERSION, persistence: 'CONSENTED_DISPATCH_RECORD', route: COMPUTE_ROOT, workflowCapability: null },
+  // Phase 37: read-only provenance graph of a revision's stored artifacts with fail-closed freshness (CURRENT, STALE_*, UNVERIFIED). Provenance, never correctness.
+  { serviceId: 'DEPENDENCY_GRAPH', version: DEPENDENCY_GRAPH_VERSION, persistence: 'DERIVED_ON_READ', route: DEPENDENCY_GRAPH_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

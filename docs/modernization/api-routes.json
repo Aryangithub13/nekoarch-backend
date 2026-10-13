@@ -386,6 +386,11 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/dependency-graph",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment",
   "anonymous": 401
  },
