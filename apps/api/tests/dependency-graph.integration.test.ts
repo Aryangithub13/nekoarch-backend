@@ -216,4 +216,26 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     // Unchanged state reads cleanly through the same two rounds.
     expect((await dependencyGraph(repo, a.projectId, a.revision.id)).complete).toBe(true);
   }, 120_000);
+
+  it('M6: per-artifact detail reads run with a bounded number in flight, and the graph is identical to an unbounded read', async () => {
+    const repo = backend.repository('owner');
+    const reference = await dependencyGraph(repo, a.projectId, a.revision.id, { readConcurrency: 1000 });
+    for (const width of [1, 3]) {
+      let inFlight = 0, peak = 0, reads = 0;
+      // Detail reads carry no page limit; listings (bounded and fixed per round) do.
+      const watch = (rpc: (name: never, args: Record<string, unknown>) => Promise<unknown>) => (async (name: never, args: Record<string, unknown>) => {
+        if ('p_limit' in args) return rpc(name, args);
+        inFlight++; reads++; peak = Math.max(peak, inFlight);
+        try { return await rpc(name, args); } finally { inFlight--; }
+      }) as never;
+      const watched: Repository = { ...repo, takeoffRpc: watch(repo.takeoffRpc!), constructionRpc: watch(repo.constructionRpc!), costRpc: watch(repo.costRpc!),
+        structuralRpc: watch(repo.structuralRpc!), environmentalRpc: watch(repo.environmentalRpc!), systemsRpc: watch(repo.systemsRpc!),
+        knowledgeRpc: watch(repo.knowledgeRpc!), optimizationRpc: watch(repo.optimizationRpc!), sceneRpc: watch(repo.sceneRpc!) };
+      expect(await dependencyGraph(watched, a.projectId, a.revision.id, { readConcurrency: width })).toEqual(reference);
+      // One detail read per non-revision node, never more than `width` at once.
+      expect(reads).toBe(reference.nodes.filter(n => !['REVISION', 'ACCEPTANCE_QA'].includes(n.family)).length);
+      expect(reads).toBeGreaterThan(width);
+      expect(peak).toBe(width);
+    }
+  }, 120_000);
 });
