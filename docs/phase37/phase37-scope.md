@@ -154,7 +154,9 @@ Nodes are evaluated in dependency order. For each node, the first matching rule 
 1. An own check fails → `UNVERIFIED`, cause = the check code.
 2. Any dependency (any edge kind) is `UNVERIFIED` → `UNVERIFIED`, cause `UPSTREAM_UNVERIFIED` → that dependency.
 3. Any `DERIVED_FROM` dependency is `STALE_*` → `STALE_UPSTREAM_STALE`, cause `UPSTREAM_STALE` → that dependency.
-4. The node's revision is not the project's current revision → `STALE_SOURCE_CHANGED`, cause `SOURCE_REVISION_SUPERSEDED`, naming the current revision.
+4. The node's revision is not the project's current revision → `STALE_SOURCE_CHANGED`, cause `SOURCE_REVISION_SUPERSEDED`, pointing at the `REVISION` node. The current revision is reported in `inputIdentity.projectCurrentRevisionId`.
+
+Rule 1 includes `UPSTREAM_PRESENT`. Every node that names a `DERIVED_FROM` input carries this check, and so does any node with a dependency that has no node. A failed `UPSTREAM_PRESENT` check is reported as `UPSTREAM_MISSING`, pointing at the missing node id.
 5. Otherwise → `CURRENT`.
 
 Further rules:
@@ -229,7 +231,7 @@ Each criterion maps to at least one automated test. Criteria marked (−) are ne
 | AC1 | The route returns `dependency-graph-v1` with `complete: true`, `inputIdentity`, `graphHash`, `families` (11, in fixed order), `nodes`, `edges`, `notRepresented` and `claims` | Integration |
 | AC2 | On a fresh current revision with no artifacts: `REVISION` and `ACCEPTANCE_QA` are `CURRENT`, and every artifact family is `NOT_GENERATED` | Integration |
 | AC3 | After takeoff → construction → cost on the current revision, all three nodes are `CURRENT`, and the edges match the stored ids exactly | Integration |
-| AC4 | After a new revision is committed, the old revision's takeoff is `STALE_SOURCE_CHANGED` and its construction and cost are `STALE_UPSTREAM_STALE`. Each cause chain ends in `SOURCE_REVISION_SUPERSEDED`, naming the new current revision | Integration |
+| AC4 | After a new revision is committed, the old revision's takeoff is `STALE_SOURCE_CHANGED` and its construction and cost are `STALE_UPSTREAM_STALE`. Each cause chain ends in `SOURCE_REVISION_SUPERSEDED`, and `inputIdentity.projectCurrentRevisionId` names the new current revision | Integration |
 | AC5 | A systems analysis referencing a stale structural analysis is `STALE_UPSTREAM_STALE`; one with null references is `STALE_SOURCE_CHANGED` | Unit |
 | AC6 (−) | Inconsistent hashes give `UNVERIFIED` with the specific cause, and the state propagates to every dependent as `UPSTREAM_UNVERIFIED`, never `CURRENT`. Cases: model-hash mismatch, fingerprint mismatch, construction-report hash mismatch, revision-identity mismatch | Unit, plus one tampered-row integration case |
 | AC7 (−) | A missing dependency (a referenced id with no node) gives `UNVERIFIED` / `UPSTREAM_MISSING` | Unit |
