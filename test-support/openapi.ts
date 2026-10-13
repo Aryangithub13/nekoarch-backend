@@ -29,6 +29,9 @@ import { DownloadLinkRequestSchema, DownloadLinkSchema, DownloadTokenSchema, REF
   ReferenceUploadQuerySchema, ReferenceUsageSchema, ValidateResponseSchema } from '../apps/api/src/references/contracts.js';
 import { DiffReportSchema, DiffRequestSchema, VerificationReportSchema, VerificationRequestSchema } from '../apps/api/src/verification/contracts.js';
 import { AssessmentReportSchema, AssessmentRequestSchema } from '../apps/api/src/engineering/contracts.js';
+import { ZoneAssessmentReportSchema, ZoneAssessmentRequestSchema, ZonePreflightReportSchema, ZonePreflightRequestSchema } from '../apps/api/src/engineering/zone-contracts.js';
+import { RegenerationReportSchema, RegenerationRequestSchema, RegenerationVerificationReportSchema } from '../apps/api/src/engineering/regeneration-contracts.js';
+import { PartitionReportSchema, PartitionRequestSchema } from '../apps/api/src/engineering/partition-contracts.js';
 import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
@@ -125,6 +128,14 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${R}/verification/diff`]: { body: DiffRequestSchema, response: DiffReportSchema },
   // Phase 35 engineering assessment (computed on read).
   [`GET ${R}/engineering-assessment`]: { query: empty, response: AssessmentReportSchema }, [`POST ${R}/engineering-assessment`]: { body: AssessmentRequestSchema, response: AssessmentReportSchema },
+  // Phase 35.1 zone assessment and regeneration preflight (computed on read; the preflight refuses generator-driven regeneration).
+  [`GET ${R}/engineering-assessment/zones`]: { query: empty, response: ZoneAssessmentReportSchema },
+  [`POST ${R}/engineering-assessment/zones`]: { body: ZoneAssessmentRequestSchema, response: ZoneAssessmentReportSchema },
+  [`POST ${R}/engineering-assessment/zones/regeneration-preflight`]: { body: ZonePreflightRequestSchema, response: ZonePreflightReportSchema },
+  // Phase 35 deterministic regeneration (candidate only), its verification on a committed revision, and partitioned processing (all computed on read).
+  [`POST ${R}/engineering-assessment/zones/regeneration`]: { body: RegenerationRequestSchema, response: RegenerationReportSchema },
+  [`POST ${R}/engineering-assessment/zones/regeneration/verification`]: { body: RegenerationRequestSchema, response: RegenerationVerificationReportSchema },
+  [`POST ${R}/engineering-assessment/zones/partitions`]: { body: PartitionRequestSchema, response: PartitionReportSchema },
 };
 
 /** Draft-07 JSON Schema for one Zod contract (shared by the document and the conformance test). */

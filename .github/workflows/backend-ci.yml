@@ -30,7 +30,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+      # Embedded PostgreSQL (integration and migration-replay suites) runs as the non-root runner user and needs this locale.
+      - run: sudo locale-gen en_US.UTF-8
       - run: npm ci
+      # Production dependency advisories (high and above) fail the job.
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run build
       - run: npm run typecheck
       - run: npm run lint

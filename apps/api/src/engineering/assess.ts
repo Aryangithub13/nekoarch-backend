@@ -7,9 +7,10 @@ import { ASSESSMENT_VERSION, AssessmentReportSchema, DOMAIN_STATUSES, FORMULAS, 
 import { SOURCES, candidates, type SourceKey } from './sources.js';
 import { areaString, baseGeometry, doubled, grossVolume2, storeyHeights, toM2, toM3 } from './geometry.js';
 import { conceptualCost } from './cost.js';
+import { bimProfile } from './capability-limits.js';
 
 export type Evidence = AssessmentReport['evidence'][number];
-export type RelatedService = DomainResult['relatedServices'][number] & { serviceId: 'STRUCTURAL_ANALYSIS' | 'BUILDING_SYSTEMS_ANALYSIS' | 'SPECIALIZED_KNOWLEDGE' | 'COMPLEX_VERIFICATION' | 'QUANTITY_TAKEOFF' };
+export type RelatedService = Omit<DomainResult['relatedServices'][number], 'modelSupport' | 'refusalCode'> & { serviceId: 'STRUCTURAL_ANALYSIS' | 'BUILDING_SYSTEMS_ANALYSIS' | 'SPECIALIZED_KNOWLEDGE' | 'COMPLEX_VERIFICATION' | 'QUANTITY_TAKEOFF' };
 export type AssessmentInput = {
   ids: { projectId: string; revisionId: string; modelHash: string }; model: BuildingModelV2; request: AssessmentRequest;
   brief: { version: number; briefHash: string | null; floors: number | null }; evidence: Evidence[]; related: RelatedService[]; generatedAt: string;
@@ -19,10 +20,16 @@ export const LIMITATIONS = [
   'Preliminary assessment of a building concept. It establishes what can be calculated deterministically from the model and the declared inputs, and what cannot.',
   'No structural load, load combination, wind, seismic, soil, foundation, member, drift, stability, dynamic or collapse value is derived, assumed or approximated.',
   'Heights are measured from the lowest storey floor in the model; the model carries no ground or road level, so no statutory height is derived.',
+  'A storey height runs from its floor to the next storey floor (the uppermost: to the lowest roof level above it). A datum or roof level between two storeys does not end the lower storey; a declared floor-to-floor height reaches the next represented level of any kind and is the basis only where that is the same level.',
   'Named standards are candidates for identification only: none has been retrieved or verified, so every determination that depends on one is blocked.',
   'Evidence documents are recorded as user-declared; their contents are not read or interpreted.',
   'Nothing here is a code-compliance determination, an engineering certification, a statutory approval or a statement that a building is safe to build.',
+  'Generation is limited to two floors. A taller model can be supplied and assessed, but it cannot be generated; parts of it can be regenerated only by the deterministic zone operations (TYPICAL_FLOOR storey layouts, FENESTRATION windows), never by a generator.',
+  'evidenceClass says what a computed result rests on: conceptual (the stored model alone) or assumption_based (caller-supplied rates or other declared inputs). It is null where nothing is computed, and professionally_reviewed is never assigned by software (it needs a recorded professional review).',
+  'BIM-derived services (BIM, structural, environmental, building systems including egress and lifts, knowledge, scene and appearance revision) refuse models outside the bounded BIM profile of at most two storeys; relatedServices[].modelSupport reports REFUSED for the assessed model, or PRELIMINARY_ELIGIBLE where only that first gate is known to pass.',
 ];
+/** Related services that read the revision through the bounded BIM source profile (bim/core sourceModel). */
+const BIM_GATED = new Set(['STRUCTURAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE']);
 
 const missing = (inputPath: string, code: string, detail: string): Blocker => ({ kind: 'MISSING_INPUT', code, detail, inputPath, sourceIds: [] });
 const solver = (code: string, detail: string): Blocker => ({ kind: 'NO_VALIDATED_SOLVER', code, detail, inputPath: null, sourceIds: [] });
@@ -31,6 +38,15 @@ const review = (detail: string, code = 'QUALIFIED_ENGINEER_REVIEW'): Blocker => 
 const conflict = (inputPath: string, code: string, detail: string): Blocker => ({ kind: 'INPUT_CONFLICT', code, detail: detail.slice(0, 400), inputPath, sourceIds: [] });
 
 /** Precedence (design §5): unsupported, then what the caller can supply, then sources, solvers and review. Computed domains are (partially) evaluated. */
+/** Computed domains whose result rests on caller-supplied values rather than on the stored model alone. */
+const ASSUMPTION_BASED_DOMAINS: ReadonlySet<Domain> = new Set(['PRELIMINARY_COST']);
+/**
+ * R6 evidence class of a domain's result. It classifies what a computed result rests on, not the assurance level the question needs (a domain
+ * that computes nothing has no result to classify). professionally_reviewed requires a recorded review and is never assigned here.
+ */
+export const evidenceClass = (domain: Domain, computed: boolean): DomainResult['evidenceClass'] =>
+  !computed ? null : ASSUMPTION_BASED_DOMAINS.has(domain) ? 'assumption_based' : 'conceptual';
+
 export function domainStatus(computed: boolean, blockers: Blocker[]): DomainResult['status'] {
   if (computed) return blockers.length ? 'PARTIALLY_EVALUATED' : 'EVALUATED';
   const any = (...kinds: Blocker['kind'][]) => blockers.some(b => kinds.includes(b.kind));
@@ -73,11 +89,12 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
     findings.push({ findingId, domain, status, entityIds: entityIds.slice(0, 16), measured, required, detail });
   add('STOREY_COUNT', 'HEIGHT_AND_STOREYS', height.storeyCount ? 'INFO' : 'NOT_EVALUATED', 'Number of storey levels in the model', String(height.storeyCount));
   add('BUILDING_HEIGHT', 'HEIGHT_AND_STOREYS', height.heightMm === null ? 'NOT_EVALUATED' : 'INFO',
-    'Top of the uppermost storey above the lowest storey floor; undetermined unless the uppermost storey has a floor-to-floor height or a roof level above it',
+    'Top of the uppermost storey above the lowest storey floor; undetermined unless a roof level is represented above the uppermost storey, or it declares a floor-to-floor height and no level is represented above it',
     height.heightMm === null ? null : `${height.heightMm} mm`);
   const undeclared = height.storeys.filter(s => s.storeyHeightBasis !== 'DECLARED_FLOOR_TO_FLOOR');
   add('STOREY_HEIGHT_DECLARED', 'HEIGHT_AND_STOREYS', !height.storeyCount ? 'NOT_EVALUATED' : undeclared.length ? 'WARNING' : 'PASS',
-    undeclared.length ? 'Some storeys have no declared floor-to-floor height; their height comes from the next level or is undetermined' : 'Every storey declares its floor-to-floor height',
+    undeclared.length ? 'Some storey heights do not come from a declared floor-to-floor height (none is declared, or it reaches an intermediate datum or roof level); they come from the next storey or a roof level, or are undetermined'
+      : 'Every storey height comes from its declared floor-to-floor height',
     `${height.storeyCount - undeclared.length}/${height.storeyCount} declared`, null, undeclared.map(s => s.levelId));
   const declared = request.declared;
   if (declared?.heightMm !== undefined) {
@@ -114,7 +131,7 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
   const S = request.structuralSystem ? [] : [missing('structuralSystem.primaryMaterial', 'STRUCTURAL_SYSTEM_REQUIRED', 'Primary structural material and system (not inferred from the architecture)')];
   const G = has('GEOTECHNICAL_INVESTIGATION') ? [] : [missing('evidence[GEOTECHNICAL_INVESTIGATION]', 'GEOTECHNICAL_INVESTIGATION_REQUIRED',
     'A site geotechnical investigation; no soil property or bearing capacity is ever assumed')];
-  const H = height.heightMm === null ? [missing('model.levels', 'BUILDING_HEIGHT_UNDETERMINED', 'A floor-to-floor height for the uppermost storey, or a roof level above it')] : [];
+  const H = height.heightMm === null ? [missing('model.levels', 'BUILDING_HEIGHT_UNDETERMINED', 'A roof level above the uppermost storey (or, if no level is represented above it, its floor-to-floor height)')] : [];
   const src = (keys: SourceKey[], what: string): Blocker[] => {
     const found = candidates(country, keys);
     return [found.length ? { kind: 'SOURCE_NOT_VERIFIED', code: 'CANDIDATE_SOURCE_NOT_VERIFIED', detail: `${what}: candidate governing documents are named but not retrieved, read or verified`,
@@ -122,8 +139,13 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
       : { kind: 'SOURCE_NOT_VERIFIED', code: 'GOVERNING_SOURCE_NOT_IDENTIFIED', detail: country ? `${what}: no governing source is catalogued for jurisdiction ${country}`
         : `${what}: the governing source depends on the undeclared jurisdiction`, inputPath: null, sourceIds: [] }];
   };
+  // The verifier runs inside this assessment, so it is SUPPORTED; BIM-gated services are asked through the real gate; anything else makes no claim.
+  const profile = bimProfile(model);
+  const support = (serviceId: RelatedService['serviceId']) => serviceId === 'COMPLEX_VERIFICATION' ? { modelSupport: 'SUPPORTED' as const, refusalCode: null }
+    : !BIM_GATED.has(serviceId) ? { modelSupport: 'NOT_CHECKED' as const, refusalCode: null }
+    : profile.eligible ? { modelSupport: 'PRELIMINARY_ELIGIBLE' as const, refusalCode: null } : { modelSupport: 'REFUSED' as const, refusalCode: profile.refusalCode };
   const services = (...serviceIds: RelatedService['serviceId'][]) => related.filter(r => serviceIds.includes(r.serviceId)).map(({ serviceId, route, artifactsForRevision, note }) =>
-    ({ serviceId, route, artifactsForRevision, note }));
+    ({ serviceId, route, artifactsForRevision, note, ...support(serviceId) }));
   const definitions: [Domain, DomainResult['assuranceLevel'], boolean, Blocker[], DomainResult['relatedServices']][] = [
     ['HEIGHT_AND_STOREYS', 'GEOMETRIC_VERIFICATION', true, height.storeyCount ? H : [missing('model.levels', 'STOREYS_REQUIRED', 'At least one storey level')], []],
     ['AREAS_AND_VOLUME', 'GEOMETRIC_VERIFICATION', true, volume2 === null ? H : [], []],
@@ -161,7 +183,7 @@ export function assessModel(input: AssessmentInput): AssessmentReport {
       [review('Engineering certification and statutory approval are given only by qualified professionals and the competent authority', 'CERTIFICATION_AND_STATUTORY_APPROVAL')], []],
   ];
   const domains: DomainResult[] = definitions.filter(([d]) => inScope(d)).map(([domain, assuranceLevel, computed, blockers, relatedServices]) =>
-    ({ domain, assuranceLevel, status: domainStatus(computed, blockers), blockers: blockers.slice(0, 24), relatedServices }));
+    ({ domain, assuranceLevel, status: domainStatus(computed, blockers), evidenceClass: evidenceClass(domain, computed), blockers: blockers.slice(0, 24), relatedServices }));
 
   const requirements = new Map<string, { inputPath: string; detail: string; neededFor: Domain[] }>();
   for (const d of domains) for (const b of d.blockers) if (b.inputPath && (b.kind === 'MISSING_INPUT' || b.kind === 'INPUT_CONFLICT')) {

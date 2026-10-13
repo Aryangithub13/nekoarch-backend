@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { asPrincipal, createTestUser, seedTestDatabase, startTestDatabase } from '../../test-support/postgres.js';
@@ -296,5 +296,59 @@ describe('versioned rates, seed completeness and historical provenance', () => {
     await db.pool.query("insert into public.rate_table_versions(version_label,effective_date) values ('newer', current_date)");
     expect((await db.pool.query('select rate_table_version from public.cost_estimates')).rows[0].rate_table_version).toBe(version);
     expect((await db.pool.query('select count(*)::int as count from public.rate_table_entries')).rows[0].count).toBe(9);
+  });
+});
+
+// Characterization of observed behaviour, not an approved deletion or erasure policy (that decision is open; see docs/phase35-1/phase35-1-report.md).
+// The design documents disagree: docs/phase12-design.md §2 and docs/PHASE12.md say project deletion is not exposed and account deletion leaves
+// inaccessible history, while the Phase 31 and 32 designs describe these children as cascading with the project. What the schema does today:
+// the children declare `on delete cascade`, but their guards refuse row deletion, so a project holding such history cannot be hard-deleted even by
+// a privileged role. These tests record that, so any future change to it is deliberate and visible; they do not endorse it.
+describe('retained project history and guarded deletion (B35.1 characterization of current behaviour)', () => {
+  const sha = (s: string) => createHash('sha256').update(s).digest('hex');
+  const newProject = async (title: string, ownerId = owner) =>
+    (await db.pool.query<{ id: string }>('insert into public.projects(owner_id,title) values ($1,$2) returning id', [ownerId, title])).rows[0]!.id;
+  const insertReference = async (projectId: string) => {
+    const h = sha(projectId);
+    const provenance = { sourceKind: 'USER_UPLOAD', uploadedBy: owner, original: { sha256: h, bytes: 10 }, stored: { sha256: h, bytes: 10 },
+      inspection: { inspectorVersion: 'reference-inspector-v1', verdict: 'ACCEPTED', detectedMediaType: 'image/png', declaredMediaType: 'image/png',
+        malwareScan: { status: 'NOT_PERFORMED', reason: 'NO_SCANNER_CONFIGURED' },
+        claims: { malwareFree: 'NOT_CLAIMED', contentAccuracy: 'NOT_CLAIMED', drawingScale: 'NOT_CLAIMED', siteConditions: 'NOT_CLAIMED', ownershipOrLicence: 'NOT_CLAIMED' } } };
+    return (await db.pool.query<{ id: string }>(`insert into public.project_references(project_id,uploaded_by,status,purpose,media_type,original_sha256,original_bytes,
+      stored_sha256,stored_bytes,storage_locator,inspector_version,provenance_json) values ($1,$2,'ACTIVE','OTHER','image/png',$3,10,$3,10,'postgres-bytea','reference-inspector-v1',$4)
+      returning id`, [projectId, owner, h, provenance])).rows[0]!.id;
+  };
+  const remove = (projectId: string) => db.pool.query('delete from public.projects where id = $1', [projectId]);
+
+  it('deletes a project that holds no retained history', async () => {
+    const id = await newProject('empty');
+    await remove(id);
+    expect((await db.pool.query('select 1 from public.projects where id = $1', [id])).rowCount).toBe(0);
+  });
+
+  it('refuses to cascade-delete a project holding a reference, a tombstoned reference, a durable job or a brief', async () => {
+    const withReference = await newProject('reference');
+    await insertReference(withReference);
+    await expect(remove(withReference)).rejects.toMatchObject({ code: '23514', message: 'References are retained as tombstones' });
+    const withTombstone = await newProject('tombstone');
+    await db.pool.query(`update public.project_references set status = 'DELETED' where id = $1`, [await insertReference(withTombstone)]);
+    await expect(remove(withTombstone)).rejects.toMatchObject({ code: '23514', message: 'References are retained as tombstones' });
+    const withJob = await newProject('job');
+    await db.pool.query(`insert into public.project_jobs(project_id,owner_id,kind,status,job_version,request_json,input_hash,progress_json)
+      values ($1,$2,'SCENE_COMPILE','QUEUED','durable-job-v1','{"kind":"SCENE_COMPILE"}',$3,'{"percent":0}')`, [withJob, owner, sha('job')]);
+    await expect(remove(withJob)).rejects.toMatchObject({ code: '23514', message: 'Jobs are retained' });
+    const withBrief = await newProject('brief');
+    await db.pool.query(`insert into public.project_briefs(project_id,version,brief_json,brief_hash,created_by) values ($1,1,'{}',$2,$3)`, [withBrief, sha('brief'), owner]);
+    await expect(remove(withBrief)).rejects.toMatchObject({ code: '23514', message: 'Architectural history is immutable' });
+    expect((await db.pool.query('select count(*)::int as count from public.projects where id = any($1)', [[withReference, withTombstone, withJob, withBrief]])).rows[0].count).toBe(4);
+  });
+
+  it('keeps a deleted account\'s project and its retained history, with ownership removed', async () => {
+    const id = await newProject('orphaned');
+    await insertReference(id);
+    await db.pool.query('delete from auth.users where id = $1', [owner]);
+    const row = (await db.pool.query('select owner_id from public.projects where id = $1', [id])).rows[0];
+    expect(row).toEqual({ owner_id: null });
+    expect((await db.pool.query('select count(*)::int as count from public.project_references where project_id = $1', [id])).rows[0].count).toBe(1);
   });
 });

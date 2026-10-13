@@ -123,7 +123,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     computeRoutes(scope, backend, options.env, runner);
     accountRoutes(scope, backend, options.env);
     verificationRoutes(scope, backend);
-    engineeringRoutes(scope, backend);
+    engineeringRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

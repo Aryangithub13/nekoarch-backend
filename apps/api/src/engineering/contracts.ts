@@ -4,7 +4,7 @@ import { CurrencySchema } from '@designflow/boq-cost';
 // Normative specification: docs/phase35/phase35-design.md. Literals change only with semantics.
 export const ASSESSMENT_VERSION = 'engineering-assessment-v1';
 export const SOURCE_REGISTRY_VERSION = 'engineering-source-registry-v1';
-export const FORMULAS = Object.freeze({ height: 'model-height-v1', areaVolume: 'gross-area-volume-v1', baseWidth: 'convex-hull-min-width-v1', cost: 'conceptual-cost-v1' });
+export const FORMULAS = Object.freeze({ height: 'model-height-v2', areaVolume: 'gross-area-volume-v1', baseWidth: 'convex-hull-min-width-v1', cost: 'conceptual-cost-v1' });
 export const ASSESSMENT_LIMITS = Object.freeze({ bodyBytes: 65_536, evidence: 16, costComponents: 64, costAdjustments: 16, excludedScopes: 16 });
 export const NOT_CLAIMED_ENGINEERING = Object.freeze({ structuralSafety: 'NOT_CLAIMED', codeCompliance: 'NOT_CLAIMED', statutoryApproval: 'NOT_CLAIMED',
   professionalCertification: 'NOT_CLAIMED', constructionReadiness: 'NOT_CLAIMED' } as const);
@@ -14,6 +14,8 @@ export const NOT_CLAIMED_COST = Object.freeze({ tender: 'NOT_CLAIMED', contracto
 /** The seven assurance levels a result can belong to (design §2). A domain states the level its question needs, not a level it reached. */
 export const ASSURANCE_LEVELS = ['CONCEPT_FEASIBILITY', 'GEOMETRIC_VERIFICATION', 'PRELIMINARY_CALCULATION', 'PRELIMINARY_COST_ESTIMATE', 'CODE_APPLICABILITY',
   'VALIDATED_STRUCTURAL_ANALYSIS', 'PROFESSIONAL_DESIGN_AND_APPROVAL'] as const;
+/** R6 evidence classes (the roadmap's reported wording). Defined in docs/phase35/phase35-design.md §2.1; professionally_reviewed is never assigned by software. */
+export const EVIDENCE_CLASSES = ['conceptual', 'assumption_based', 'professionally_reviewed'] as const;
 export const DOMAINS = ['HEIGHT_AND_STOREYS', 'AREAS_AND_VOLUME', 'SITE_AND_GEOMETRY', 'BASE_SLENDERNESS', 'PRELIMINARY_COST', 'GRAVITY_LOADS', 'WIND_LOADS',
   'SEISMIC_LOADS', 'GEOTECHNICAL_AND_FOUNDATIONS', 'LATERAL_DRIFT_AND_STABILITY', 'DYNAMIC_RESPONSE', 'MEMBER_DESIGN', 'PROGRESSIVE_COLLAPSE', 'FIRE_AND_LIFE_SAFETY',
   'VERTICAL_TRANSPORT', 'CODE_COMPLIANCE', 'CERTIFICATION_AND_APPROVAL'] as const;
@@ -92,9 +94,16 @@ export type SourceReference = z.infer<typeof SourceReferenceSchema>;
 export const BlockerSchema = z.object({ kind: z.enum(BLOCKER_KINDS), code: z.string().max(60), detail: z.string().max(400), inputPath: z.string().max(100).nullable(),
   sourceIds: z.array(z.string().max(60)).max(8) }).strict();
 export type Blocker = z.infer<typeof BlockerSchema>;
+/**
+ * Phase 35.1: `modelSupport` says how far the assessed model is known to be processable by that service. REFUSED: the BIM source gate refuses it
+ * (refusalCode is that gate's typed code; the refusal is final). PRELIMINARY_ELIGIBLE: it passes that first gate only; BIM projection, BIM
+ * validation or the service's own checks may still refuse it. SUPPORTED: the service processes any valid model (checks beyond its operation
+ * budget become NOT_EVALUATED). NOT_CHECKED: no claim is made.
+ */
 export const RelatedServiceSchema = z.object({ serviceId: z.string().max(60), route: z.string().max(200), artifactsForRevision: z.number().int().min(0).nullable(),
-  note: z.string().max(300) }).strict();
+  note: z.string().max(300), modelSupport: z.enum(['SUPPORTED', 'PRELIMINARY_ELIGIBLE', 'REFUSED', 'NOT_CHECKED']), refusalCode: z.string().max(60).nullable() }).strict();
 export const DomainResultSchema = z.object({ domain: DomainSchema, assuranceLevel: z.enum(ASSURANCE_LEVELS), status: z.enum(DOMAIN_STATUSES),
+  evidenceClass: z.enum(EVIDENCE_CLASSES).nullable(),
   blockers: z.array(BlockerSchema).max(16), relatedServices: z.array(RelatedServiceSchema).max(4) }).strict();
 export type DomainResult = z.infer<typeof DomainResultSchema>;
 export const FINDING_IDS = ['STOREY_COUNT', 'BUILDING_HEIGHT', 'STOREY_HEIGHT_DECLARED', 'DECLARED_HEIGHT', 'DECLARED_STOREYS', 'BRIEF_FLOORS', 'GEOMETRY_VERIFICATION',

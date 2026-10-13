@@ -376,6 +376,36 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/partitions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration-preflight",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration/verification",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/environmental/analyses",
   "anonymous": 401
  },

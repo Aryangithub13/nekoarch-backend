@@ -2,8 +2,15 @@ import type { Repository } from '../lib/repository.js';
 import { ApiError } from '../lib/errors.js';
 import { assessModel, type Evidence, type RelatedService } from '../engineering/assess.js';
 import type { AssessmentRequest } from '../engineering/contracts.js';
+import type { ZoneAssessmentRequest, ZonePreflightRequest } from '../engineering/zone-contracts.js';
+import { REGENERATION_ROUTE, ZoneRequestError, assessZones, preflightZoneRegeneration, type ZoneContext } from '../engineering/zones.js';
+import type { RegenerationRequest } from '../engineering/regeneration-contracts.js';
+import { regenerate, verifyRegeneration, type QaRunner } from '../engineering/regeneration.js';
+import type { PartitionRequest } from '../engineering/partition-contracts.js';
+import { partitionZones } from '../engineering/partitions.js';
+import { revisionQaReport } from './project-service.js';
 import { VERIFICATION_ROOT, readRevisionModel } from './verification-service.js';
-import { currentBrief } from './account-service.js';
+import { currentBrief, projectContext } from './account-service.js';
 import { readReference } from './reference-service.js';
 import { STRUCTURAL_ROOT, structuralStatus } from './structural-service.js';
 import { SYSTEMS_ROOT, systemsStatus } from './systems-service.js';
@@ -11,6 +18,12 @@ import { KNOWLEDGE_ROOT, knowledgeStatus } from './knowledge-service.js';
 import { TAKEOFF_OPERATION } from './takeoff-service.js';
 
 export const ENGINEERING_ROOT = '/api/projects/:projectId/revisions/:revisionId/engineering-assessment';
+export const ZONES_ROOT = `${ENGINEERING_ROOT}/zones`;
+export const ZONE_PREFLIGHT_ROUTE = `${ZONES_ROOT}/regeneration-preflight`;
+export const ZONE_REGENERATION_ROUTE = `${ZONES_ROOT}/regeneration`;
+export const ZONE_REGENERATION_VERIFICATION_ROUTE = `${ZONE_REGENERATION_ROUTE}/verification`;
+export const ZONE_PARTITIONS_ROUTE = `${ZONES_ROOT}/partitions`;
+if (ZONE_REGENERATION_ROUTE !== REGENERATION_ROUTE) throw new Error('Zone regeneration route constants disagree');
 
 /** A declared evidence reference must be a live reference of this project (RLS-scoped read); its contents are never read or interpreted. */
 async function resolveEvidence(repository: Repository, projectId: string, request: AssessmentRequest): Promise<Evidence[]> {
@@ -49,4 +62,58 @@ export async function assessRevision(repository: Repository, projectId: string, 
   const current = brief.current;
   return assessModel({ ids: { projectId, revisionId, modelHash: hash }, model, request, evidence, related, generatedAt: now.toISOString(),
     brief: { version: current?.version ?? 0, briefHash: current?.briefHash ?? null, floors: current?.brief.program.floors ?? null } });
+}
+
+/**
+ * Phase 35.1: zone assessment and regeneration preflight are derived on read from the stored revision (RLS-scoped, model-hash checked) and store
+ * nothing. Freshness follows the scene convention: CURRENT only while the assessed revision is the project's current revision.
+ */
+async function zoneContext(repository: Repository, projectId: string, revisionId: string, now: Date): Promise<ZoneContext> {
+  const { model, hash, revisionNumber, parentRevisionId } = await readRevisionModel(repository, projectId, revisionId);
+  const projectCurrentRevisionId = (await projectContext(repository, projectId)).currentRevision?.id ?? null;
+  return { ids: { projectId, revisionId, modelHash: hash }, model, generatedAt: now.toISOString(),
+    sourceRevision: { revisionId, revisionNumber, parentRevisionId, modelHash: hash },
+    currency: { status: projectCurrentRevisionId === revisionId ? 'CURRENT' : 'STALE', artifactRevisionId: revisionId, projectCurrentRevisionId } };
+}
+
+export async function assessRevisionZones(repository: Repository, projectId: string, revisionId: string, request: ZoneAssessmentRequest, now = new Date()) {
+  return assessZones(await zoneContext(repository, projectId, revisionId, now), request);
+}
+
+export async function preflightRevisionZoneRegeneration(repository: Repository, projectId: string, revisionId: string, request: ZonePreflightRequest, now = new Date()) {
+  const context = await zoneContext(repository, projectId, revisionId, now);
+  try { return preflightZoneRegeneration(context, request); }
+  catch (error) {
+    if (error instanceof ZoneRequestError) throw new ApiError(422, error.code, error.message, { zones: error.issues });
+    throw error;
+  }
+}
+
+/** Supplied revisions are accepted with exactly this QA (saveProjectRevision with no requirements), so a candidate that passes it can be saved. */
+const supplyQa: QaRunner = model => revisionQaReport(model, null, null);
+const zoneRequest = <T>(run: () => T): T => {
+  try { return run(); }
+  catch (error) {
+    if (error instanceof ZoneRequestError) throw new ApiError(422, error.code, error.message, { zones: error.issues });
+    throw error;
+  }
+};
+
+/** Phase 35 regeneration: a candidate derived on read from the stored revision; nothing is committed or stored by this call. */
+export async function regenerateRevisionZone(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, saveBodyLimitBytes: number, now = new Date()) {
+  const context = await zoneContext(repository, projectId, revisionId, now);
+  return zoneRequest(() => regenerate(context, request, { qa: supplyQa, saveBodyLimitBytes }));
+}
+
+/** Recomputes the stated regeneration from the revision's parent (owner-scoped reads of both) and compares it with the committed revision. */
+export async function verifyRevisionRegeneration(repository: Repository, projectId: string, revisionId: string, request: RegenerationRequest, saveBodyLimitBytes: number, now = new Date()) {
+  const committed = await readRevisionModel(repository, projectId, revisionId);
+  const parent = committed.parentRevisionId ? await zoneContext(repository, projectId, committed.parentRevisionId, now) : null;
+  return zoneRequest(() => verifyRegeneration({ ids: { projectId, revisionId, modelHash: committed.hash }, model: committed.model }, parent, request, { qa: supplyQa, saveBodyLimitBytes }, now.toISOString()));
+}
+
+/** Phase 35 partitioned processing, derived on read from the stored revision. */
+export async function partitionRevisionZones(repository: Repository, projectId: string, revisionId: string, request: PartitionRequest, now = new Date()) {
+  const context = await zoneContext(repository, projectId, revisionId, now);
+  return zoneRequest(() => partitionZones(context, request));
 }

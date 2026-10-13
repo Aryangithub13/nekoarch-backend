@@ -9,20 +9,29 @@ const B = BigInt;
 /** Inverse of areaString: an exact mm² string back to the doubled-area integer. */
 export const doubled = (area: string) => B(area.split('.')[0]!) * 2n + (area.endsWith('.5') ? 1n : 0n);
 
+type HeightBasis = 'DECLARED_FLOOR_TO_FLOOR' | 'NEXT_STOREY_ELEVATION' | 'ROOF_LEVEL_ELEVATION' | 'NOT_DETERMINED';
+
 /**
- * Storey heights from the model's own levels (formula model-height-v1). A storey's height is its declared floor-to-floor height, else the
- * distance to the next storey, else (uppermost only) to the lowest roof level above it; otherwise it is NOT_DETERMINED. Nothing is assumed.
+ * Storey heights from the model's own levels (formula model-height-v2, B35.1). Building Model V2 defines `floorToFloorHeightMm` as the distance
+ * to the next represented level of any kind (schema invariant and QA_LEVEL_HEIGHT_MISMATCH), so a datum or roof level between two storeys does
+ * not end the lower storey. A storey's height is measured to the next storey floor; the uppermost storey's to the lowest roof level above it.
+ * A declared floor-to-floor height is the basis only where it reaches exactly that level (the value is then identical) or, for the uppermost
+ * storey, where no level is represented above it at all. It never overrides contradictory geometry. Otherwise the height is NOT_DETERMINED.
+ * model-height-v1 used a declared height unconditionally, understating storeys that have an intermediate datum or roof level above them.
  * Height is measured from the lowest storey floor: the model carries no ground or road level, so a statutory height is never derived.
  */
 export function storeyHeights(model: BuildingModelV2, plates: readonly Plate[]) {
   const storeys = model.levels.filter(l => l.kind === 'storey').sort((a, b) => a.elevationMm - b.elevationMm);
   const plateOf = new Map(plates.map(p => [p.levelId, p]));
   const roofAbove = (level: Level) => model.levels.filter(l => l.kind === 'roof' && l.elevationMm > level.elevationMm).sort((a, b) => a.elevationMm - b.elevationMm)[0];
+  // The level a declared floor-to-floor height refers to: the next one by index (index and elevation order agree in a valid model).
+  const nextRepresented = (level: Level) => model.levels.filter(l => l.index > level.index).sort((a, b) => a.index - b.index)[0];
   const rows = storeys.map((level, i) => {
-    const next = storeys[i + 1], roof = next ? undefined : roofAbove(level);
-    const [storeyHeightMm, storeyHeightBasis] = level.floorToFloorHeightMm !== null ? [level.floorToFloorHeightMm, 'DECLARED_FLOOR_TO_FLOOR' as const]
-      : next ? [next.elevationMm - level.elevationMm, 'NEXT_STOREY_ELEVATION' as const]
-      : roof ? [roof.elevationMm - level.elevationMm, 'ROOF_LEVEL_ELEVATION' as const] : [null, 'NOT_DETERMINED' as const];
+    const next = storeys[i + 1], reached = next ?? roofAbove(level), declared = level.floorToFloorHeightMm, following = nextRepresented(level);
+    const declaredReaches = (target: Level) => declared !== null && following?.id === target.id && level.elevationMm + declared === target.elevationMm;
+    const [storeyHeightMm, storeyHeightBasis]: [number | null, HeightBasis] = reached
+      ? [reached.elevationMm - level.elevationMm, declaredReaches(reached) ? 'DECLARED_FLOOR_TO_FLOOR' : next ? 'NEXT_STOREY_ELEVATION' : 'ROOF_LEVEL_ELEVATION']
+      : declared !== null && !following ? [declared, 'DECLARED_FLOOR_TO_FLOOR'] : [null, 'NOT_DETERMINED'];
     // B34 always reports a plate for every storey; a missing one would be a contract break, not a zero area.
     const plate = plateOf.get(level.id);
     if (!plate) throw new Error(`No verified plate for storey ${level.id}`);

@@ -33,8 +33,12 @@ import { JOB_ROOT } from './job-service.js';
 import { CONTEXT_ROUTE } from './account-service.js';
 import { VERIFICATION_ROOT } from './verification-service.js';
 import { VERIFIER_VERSION } from '../verification/contracts.js';
-import { ENGINEERING_ROOT } from './engineering-service.js';
+import { ENGINEERING_ROOT, ZONES_ROOT, ZONE_PARTITIONS_ROUTE, ZONE_REGENERATION_ROUTE } from './engineering-service.js';
 import { ASSESSMENT_VERSION } from '../engineering/contracts.js';
+import { ZONE_ASSESSMENT_VERSION } from '../engineering/zone-contracts.js';
+import { REGENERATION_VERSION } from '../engineering/regeneration-contracts.js';
+import { PARTITION_VERSION } from '../engineering/partition-contracts.js';
+import { MODEL_LIMITS, UNSUPPORTED_OPERATIONS } from '../engineering/capability-limits.js';
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
@@ -69,6 +73,13 @@ export const SERVICES = Object.freeze([
   // Phase 35: preliminary engineering assessment (height, areas, volume, base width, conceptual cost arithmetic) and a truthful map of what needs inputs,
   // verified sources, a validated solver or professional review. No structural, wind, seismic or foundation value is produced.
   { serviceId: 'ENGINEERING_ASSESSMENT', version: ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ENGINEERING_ROOT, workflowCapability: null },
+  // Phase 35.1: geometric zone assessment of a stored revision (validated vertical zones, per-zone quantities, interface checks). Analysis only.
+  { serviceId: 'ZONE_ASSESSMENT', version: ZONE_ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ZONES_ROOT, workflowCapability: null },
+  // Phase 35: deterministic regeneration of a zone, section or exterior skin (TYPICAL_FLOOR, FENESTRATION) as a QA-accepted, preservation-checked candidate that is
+  // committed through the supplied-revision route and verified afterwards; and partitioned processing of each zone as its own model. What they do not cover is
+  // listed under unsupportedOperations.
+  { serviceId: 'ZONE_REGENERATION', version: REGENERATION_VERSION, persistence: 'CANDIDATE_THEN_SUPPLIED_REVISION', route: ZONE_REGENERATION_ROUTE, workflowCapability: null },
+  { serviceId: 'ZONE_PARTITIONS', version: PARTITION_VERSION, persistence: 'DERIVED_ON_READ', route: ZONE_PARTITIONS_ROUTE, workflowCapability: null },
   // Phase 36 (first slice): quote → explicit consent → durable job for SCENE_COMPILE and OPTIMIZATION_STUDY on the local pools only. Remote execution
   // is disabled; a successful job is a software-validated artifact, never an engineering validation.
   { serviceId: 'COMPUTE_GATEWAY', version: GATEWAY_VERSION, persistence: 'CONSENTED_DISPATCH_RECORD', route: COMPUTE_ROOT, workflowCapability: null },
@@ -87,7 +98,9 @@ export const MEDIA = Object.freeze([
   { media: 'RENDERED_WALKTHROUGH_VIDEO', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER' },
 ].map(m => Object.freeze(m)));
 
-export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES, computeProviders: PROVIDERS });
+/** Phase 35.1 adds `modelLimits` (enforced execution limits and their typed refusals) and `unsupportedOperations`; Phase 36 adds `computeProviders`. All additive. */
+export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES,
+  modelLimits: MODEL_LIMITS, unsupportedOperations: UNSUPPORTED_OPERATIONS, computeProviders: PROVIDERS });
 
 type Item = { id: string; createdAt: string };
 const href = (route: string, projectId: string, revisionId: string) => route.replace(':projectId', projectId).replace(':revisionId', revisionId);
