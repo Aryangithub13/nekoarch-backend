@@ -8,8 +8,10 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: backend-${{ github.workflow }}-${{ github.ref }}
-  # Superseded PR runs are cancelled; branch pushes are not, so every merged commit keeps its own result.
+  # A pull request shares one group, so a new push cancels its superseded run. Every other event gets its own group
+  # (run_id): within a shared group GitHub cancels an older *pending* run even without cancel-in-progress, which would
+  # drop the result for one of several quick merges into phase31/development.
+  group: backend-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   backend:
@@ -36,11 +38,20 @@ jobs:
       # compute, references, account, verification and repair suites. It replaces the per-area subsets, which omitted 15 files.
       # supabase.live.test.ts needs a real Supabase stack and stays excluded by that config (see supabase-acceptance below).
       - run: npx vitest run
-      # The image's Node version comes from the Dockerfile, not the matrix, so build and smoke-test it once.
-      - if: matrix.node == '22.23.3'
-        run: docker build -t designflow-api:ci .
-      - if: matrix.node == '22.23.3'
-        run: node scripts/smoke-container.mjs designflow-api:ci
+  # The production image builds itself (npm ci and build inside the Dockerfile) and its Node version comes from the Dockerfile,
+  # so it is built and smoke-tested once, in its own job and check, independent of the test matrix.
+  container:
+    name: container smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      # The smoke script runs on the host and uses only Node built-ins.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.3'
+      - run: docker build -t designflow-api:ci .
+      - run: node scripts/smoke-container.mjs designflow-api:ci
   # Explicit opt-in release gate: runs only against an ephemeral local Docker stack.
   supabase-acceptance:
     if: github.event_name == 'workflow_dispatch'
