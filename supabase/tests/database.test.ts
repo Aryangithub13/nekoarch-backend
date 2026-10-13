@@ -73,11 +73,11 @@ const PHASE31_33_FOREIGN_KEYS: string[] = [
 ];
 
 describe('migration replay and relational integrity on real PostgreSQL', () => {
-  it('replays all migrations into exactly thirty-seven public tables with RLS enabled', async () => {
+  it('replays all migrations into exactly thirty-eight public tables with RLS enabled', async () => {
     const result = await db.pool.query<{ relname: string; relrowsecurity: boolean }>(`
       select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
       where n.nspname = 'public' and c.relkind = 'r' order by relname`);
-    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_briefs', 'project_compute_dispatches', 'project_job_events', 'project_jobs', 'project_library', 'project_reference_blobs', 'project_reference_events', 'project_references', 'project_revision_appearances', 'project_revision_building_systems_analyses', 'project_revision_candidate_artifacts', 'project_revision_candidate_blobs', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_environmental_analyses', 'project_revision_operation_events', 'project_revision_operations', 'project_revision_optimization_studies', 'project_revision_qa_runs', 'project_revision_scene_artifacts', 'project_revision_scene_blobs', 'project_revision_specialized_knowledge_analyses', 'project_revision_structural_analyses', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions', 'user_settings']);
+    expect(result.rows.map(row => row.relname)).toEqual(['architectural_conversations', 'cost_estimates', 'generation_logs', 'idempotency_records', 'plans', 'profiles', 'project_audit_events', 'project_briefs', 'project_compute_dispatches', 'project_job_events', 'project_jobs', 'project_library', 'project_reference_blobs', 'project_reference_events', 'project_references', 'project_revision_appearances', 'project_revision_building_systems_analyses', 'project_revision_candidate_artifacts', 'project_revision_candidate_blobs', 'project_revision_construction_calculations', 'project_revision_cost_estimates', 'project_revision_environmental_analyses', 'project_revision_evidence_packages', 'project_revision_operation_events', 'project_revision_operations', 'project_revision_optimization_studies', 'project_revision_qa_runs', 'project_revision_scene_artifacts', 'project_revision_scene_blobs', 'project_revision_specialized_knowledge_analyses', 'project_revision_structural_analyses', 'project_revision_takeoffs', 'project_revisions', 'project_workflow_runs', 'projects', 'rate_table_entries', 'rate_table_versions', 'user_settings']);
     expect(result.rows.every(row => row.relrowsecurity)).toBe(true);
   });
 
@@ -86,8 +86,15 @@ describe('migration replay and relational integrity on real PostgreSQL', () => {
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and connamespace = 'public'::regnamespace`);
     // 34 through 0016, plus exactly the five 0017 knowledge-table, two 0018 optimization-table, three 0019 scene-table, eleven 0020 revision-operation and
-    // ten 0021–0023 reference/job/account references pinned below, and the three 0025 compute-dispatch references.
-    expect(result.rows).toHaveLength(68);
+    // ten 0021–0023 reference/job/account references pinned below, the three 0025 compute-dispatch references and the two 0027 evidence-package references.
+    expect(result.rows).toHaveLength(70);
+    const evidence = await db.pool.query<{ definition: string }>(`
+      select pg_get_constraintdef(oid) as definition from pg_constraint
+      where contype = 'f' and conrelid = 'public.project_revision_evidence_packages'::regclass order by 1`);
+    expect(evidence.rows.map(row => row.definition)).toEqual([
+      'FOREIGN KEY (project_revision_id) REFERENCES project_revisions(id)',
+      'FOREIGN KEY (project_revision_id, acceptance_qa_id) REFERENCES project_revision_qa_runs(revision_id, id)',
+    ]);
     const compute = await db.pool.query<{ definition: string }>(`
       select pg_get_constraintdef(oid) as definition from pg_constraint
       where contype = 'f' and conrelid = 'public.project_compute_dispatches'::regclass`);
