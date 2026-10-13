@@ -2,95 +2,102 @@
 
 | Field | Value |
 |---|---|
+| Revision | **r2, 2026-10-13.** Re-based on the owner-designated authoritative roadmap. r1 is `4fb5919`. Changes are listed in "Revision log" at the end |
+| Authoritative roadmap | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`) |
 | Date of inspection | 2026-10-13 |
 | Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` |
-| Inputs | [../audit/AI-training-architecture-audit-2026-10-13.md](../audit/AI-training-architecture-audit-2026-10-13.md) (findings G1–G13), re-checked against the baseline; [authoritative-roadmap-reconciliation.md](authoritative-roadmap-reconciliation.md) |
-| Status | Every priority and remedy here is **PROPOSED**. None is an original roadmap acceptance criterion |
+| Inputs | [authoritative-roadmap-reconciliation.md](authoritative-roadmap-reconciliation.md) (r2); [../audit/AI-training-architecture-audit-2026-10-13.md](../audit/AI-training-architecture-audit-2026-10-13.md) (findings G1–G13), re-checked against the baseline |
+| Status | Priorities and remedies are **PROPOSED**. Where a risk restates a roadmap deliverable or gate, the roadmap line is cited (ROADMAP Lnnn) and that requirement is **roadmap text**, not a proposal |
 
 ## How to read this register
 
 | Column | Values |
 |---|---|
-| **Status** | **CONFIRMED**: re-verified on `ea2b5d0` for this register. **NEEDS VERIFICATION**: plausible or reported, not proven here |
+| **Status** | **CONFIRMED**: re-verified on `ea2b5d0` for this register. **NEEDS VERIFICATION**: plausible or reported, not proven here. **RESOLVED**: closed by evidence; kept for traceability |
 | **Confidence** | High, Medium, Low |
-| **Priority** | **P0**: blocks a release or dependent work. **P1**: required foundation before AI features ship. **P2**: data, evaluation and specialisation. **P3**: advanced or scale work |
+| **Priority** | **P0**: blocks a release or dependent work. **P1**: required before the owning roadmap phase can pass its gate. **P2**: data, evaluation, specialisation. **P3**: advanced or scale work |
+| **Owner** | The roadmap phase whose deliverables or gate cover the risk |
 | Verification procedures | All read-only or local-only. None touches production, hosted databases, secrets or branch history unless the step says "authorized operator" |
 
 ## Summary
 
-| ID | Area | Title | Status | Priority |
-|---|---|---|---|---|
-| R01 | Governance | Original roadmap unrecoverable; Phases 39–46 acceptance criteria unknown | CONFIRMED | P0 |
-| R02 | Governance | Knowledge-base registers stale and unmerged | CONFIRMED | P0 |
-| R03 | Database | Hosted Supabase migration state unverified (`0018`–`0027`) | NEEDS VERIFICATION | P0 (release) |
-| R04 | Database | `0026` and `0027` lack any local Supabase acceptance receipt; CI skips that job | CONFIRMED | P0 (release) |
-| R05 | AI | No AI output evaluation (no golden set, metrics or gate) | CONFIRMED | P1 (blocks enabling any model) |
-| R06 | AI | Orchestrator hard-wired to one capability, schema and prompt | CONFIRMED | P1 |
-| R07 | AI | No provider spend ledger or budget ceiling; rate and circuit state per process | CONFIRMED | P1 (blocks any metered provider) |
-| R08 | AI | Privacy: no consent or retention model for AI data capture; reference→AI path unbuilt | CONFIRMED | P1 |
-| R09 | AI | AI provenance lacks prompt and schema version; AI outputs are not graph nodes | CONFIRMED | P1 |
-| R10 | AI | Prompt-injection input filter is a regex blocklist | CONFIRMED | P1 |
-| R11 | Geometry | ≤ 2-storey generation, BIM, scene and systems; no phase owns a multi-storey generator | CONFIRMED | P2 (roadmap decision now) |
-| R12 | Engineering | No validated solvers or sourced standards; research queue empty | CONFIRMED | Ongoing boundary |
-| R13 | Cost | Rates are synthetic or user-supplied only | CONFIRMED | P2 |
-| R14 | Performance | Phase 37 graph read fan-out; the cap is unmerged | CONFIRMED (code); load impact NEEDS VERIFICATION | P1 |
-| R15 | Governance | Duplicate Phase 36 label; Phase 38 and Phase 40 conflicts | CONFIRMED | P0 (owner ruling) |
-| R16 | Contracts | Workflow capability registry marks shipped outputs `PLANNED` | CONFIRMED (code); intent NEEDS VERIFICATION | P1 |
-| R17 | Maintainability | Four separate deterministic NL grammars | CONFIRMED | P2 |
-| R18 | Compute | Gateway later slices undecided (remote, sweeper, budgets, solver kinds) | CONFIRMED | P1 (before Phase 43) |
-| R19 | Review | Several merges lack independent human review | CONFIRMED (per merge messages) | P1 |
-| R20 | Evidence | Phases 31–38 untagged; Phases 37 and 38 have no report document; test counts not read from logs | CONFIRMED | P1 |
-| R21 | Frontend | Backend–frontend contract verification not performed | CONFIRMED | P1 (before F-integration) |
-| R22 | Process | Session branch `main` has history unrelated to the default branch | CONFIRMED | P0 (process) |
+| ID | Area | Title | Owner | Status | Priority |
+|---|---|---|---|---|---|
+| R01 | Governance | Roadmap recovered; residual unverified provenance (B31–B34 quotes; B01–B04 Git evidence) | — | **Mostly RESOLVED**; residue NEEDS VERIFICATION | P2 |
+| R02 | Governance | Knowledge-base registers stale, unmerged, and now superseded by the roadmap | — | CONFIRMED | P0 (process) |
+| R03 | Database | Hosted Supabase migration state unverified (`0018`–`0027`) | B46 (§K DoD) | NEEDS VERIFICATION | P0 (release) |
+| R04 | Database | `0026` and `0027` have no local Supabase acceptance receipt; CI skips that job | B41 (early), B38 | CONFIRMED | P0 (release) |
+| R05 | AI | No AI output evaluation | **B43** ("evaluation before accepting provider-produced geometry or analysis", L361) | CONFIRMED | P1 (blocks enabling any model) |
+| R06 | AI | Orchestrator hard-wired to one capability, schema and prompt | **B43** (vendor-neutral capability registry, L367) | CONFIRMED | P1 |
+| R07 | AI | No provider spend ledger or budget; rate and circuit state per process | B32 (`ProviderCharge`, L160), B43 (explainable costs, L363) | CONFIRMED | P1 (blocks any metered provider) |
+| R08 | AI | No consent or retention model for AI data capture; reference→AI path unbuilt | B33 (L178–179), B41 (L332), B43 (L362) | CONFIRMED | P1 |
+| R09 | AI | AI provenance lacks prompt and schema version; AI outputs are not graph nodes | B37 (L248), B43 (L361) | CONFIRMED | P1 |
+| R10 | AI | Prompt-injection input filter is a regex blocklist | B31 (L145), B41 | CONFIRMED | P1 |
+| R11 | Geometry | ≤ 2-storey generation, BIM, scene and systems | B35 (L213–214), B40 (L300), B45 (L399) | CONFIRMED | P2 (ownership decision now) |
+| R12 | Engineering | No validated solvers or sourced standards; research queue empty | B35–B37; preserved by A4 (L50) | CONFIRMED | Ongoing boundary |
+| R13 | Cost | Rates are synthetic or user-supplied only | B15 (L77), B39 Budget (L291) | CONFIRMED | P2 |
+| R14 | Performance | Dependency-graph read fan-out; the cap is unmerged | B37 | CONFIRMED (code); load NEEDS VERIFICATION | P1 |
+| R15 | Governance | Duplicate Phase 36 label; Phase 38/40 conflicts | — | **RESOLVED** by roadmap §C | — |
+| R16 | Contracts | Workflow capability registry marks shipped outputs `PLANNED` | B16 audit (§D row 16), B29, B39 | CONFIRMED (code); intent NEEDS VERIFICATION | P1 |
+| R17 | Maintainability | Four separate deterministic NL grammars | B41 | CONFIRMED | P2 |
+| R18 | Compute | B36 roadmap gate not met (no solver kinds, remote, fan-out, cache, sweeper) | **B36** | CONFIRMED | P1 |
+| R19 | Review | Several merges lack independent human review | all | CONFIRMED (per merge messages) | P1 |
+| R20 | Evidence | B31–B38 untagged (§K DoD requires a phase tag); B37/B38 have no report document; test counts not read from logs | all | CONFIRMED | P1 |
+| R21 | Frontend | Backend–frontend contract verification not performed | B45, B46 | CONFIRMED | P1 |
+| R22 | Process | Session branch `main` has history unrelated to the default branch | — | CONFIRMED | P0 (process) |
+| R23 | Roadmap gate | **B37 Unified Project Manifest v2 and invalidation vocabulary missing**; B39's gate depends on them | **B37** | CONFIRMED | **P0 for B39** |
+| R24 | Roadmap gate | B38 deliverables partial (sections/elevations, PDF/DXF, layers/dimensions) | B38 | CONFIRMED | P2 |
+| R25 | Security | B31 requires malware scanning and quarantine; the scan is `NOT_PERFORMED` | **B31** | CONFIRMED | P1 (before production uploads, S3) |
+| R26 | Reliability | B32 gate (kill/restart worker, budget, SSE or polling) only partly met; no background sweeper | **B32**, B36 | CONFIRMED | P1 (before production jobs, S4) |
+| R27 | Sequencing | B41 conversational work delivered before B39/B40 under the old number "36" | B41 | CONFIRMED | P2 |
+| R28 | Definition of Done | No staging proof of a live user workflow for any phase B29+ (§K L788) | all; B46 | CONFIRMED | P0 (release) |
 
 ---
 
 ## Governance and evidence
 
-### R01: Original roadmap unrecoverable; Phases 39–46 acceptance criteria unknown
+### R01: Roadmap recovered; residual unverified provenance
 
 - **Evidence.**
-  - All 118 commits on 34 refs were searched; no original roadmap or `PLAN.md` exists.
-  - `docs/phase36/phase36-handoff.md` §1 places it at `~/Downloads/` on the owner's machine.
-  - See the reconciliation document, §2.
+  - The owner supplied the roadmap on 2026-10-13. It is stored verbatim at `docs/sources/…Frontend_Optimized.md` (sha256 `0ebc4479…3a03`).
+  - It corroborates `docs/phase36/phase36-handoff.md` §1/§9 and `docs/phase30/phase30-report.md` §K (reconciliation §2.2).
+  - **Residue:** the italic "Roadmap mapping" quotes in `docs/phase31–34/*-design.md` do not occur in it (0 string hits). B01–B04 have no commits or tags.
 - **Confidence:** High.
-- **Impact:** Phases 39–46 could be built against the wrong scope. A "complete" status for any phase cannot be measured against original criteria.
-- **Status:** CONFIRMED.
-- **Priority:** P0.
+- **Impact:** Phase identity and gates for B29–B46 are now known. Only the provenance of those four quotes and the Git evidence for B01–B04 remain open.
+- **Status:** mostly RESOLVED. The residue NEEDS VERIFICATION.
+- **Priority:** P2.
 - **Dependencies:** owner.
 - **Safe verification:**
-  1. The owner commits the original file under `docs/sources/` with a sha256 checksum.
-  2. Diff it against the reconciliation document's §3 and §5.
-  3. Record the differences.
+  1. The owner states which text the B31–B34 sessions quoted, or confirms that the stored copy supersedes it.
+  2. Record the B01–B04 evidence as "reported by roadmap" only.
 
-### R02: Knowledge-base registers stale and unmerged
+### R02: Knowledge-base registers stale, unmerged, and now superseded
 
 - **Evidence.**
   - `docs/roadmap-research-baseline` @ `56764c5` has no PR and is unmerged.
-  - Its `status-register.md` describes `5476f41`, reports a typecheck failure fixed by #11, and lists Phases 37–38 as not started.
+  - Its registers describe `5476f41`.
+  - Its reconstructed phase index conflicts with the authoritative roadmap for B32 (label), B38, B40 and B41–B45.
 - **Confidence:** High.
-- **Impact:** Agents following the knowledge-base "read first" rule act on wrong state.
+- **Impact:** Agents following that branch's "read first" rule would plan against a superseded index.
 - **Status:** CONFIRMED.
-- **Priority:** P0.
-- **Dependencies:** owner decision on merge.
-- **Safe verification:** `git diff origin/phase31/development...origin/docs/roadmap-research-baseline --stat` (docs-only), then a docs-only PR after owner approval.
+- **Priority:** P0 (process).
+- **Dependencies:** owner decision.
+- **Safe verification:** a docs-only update on that branch that points to the authoritative roadmap and this register, or closure of the branch. No deletion without explicit instruction.
 
-### R15: Duplicate Phase 36 label; Phase 38 and Phase 40 conflicts
+### R15: Duplicate Phase 36 label; Phase 38 and Phase 40 conflicts — RESOLVED
 
-- **Evidence:**
+- **Evidence:** ROADMAP §C (L430–455) maps the original 40-phase numbering to the 46-phase plan:
 
-  | Conflict | Sources |
+  | Old (40-phase) | New (46-phase) |
   |---|---|
-  | Phase 36 | `docs/phase36/` (gateway; roadmap condensed in handoff §1) vs `docs/phase36-conversational-ai/phase36-design.md:10` (owner brief 2026-10-12) |
-  | Phase 38 | Handoff §9 "evidence packages and exports (B38)" vs owner brief "Phase 38 provider routing" |
-  | Phase 40 | Owner draft r1 "audit and readiness review" vs handoff §9 "specialist AI workers (B39–43)" |
+  | 36 Conversational AI Expansion | **B41** |
+  | 38 Intelligent API & Model Routing Expansion | **B43** |
+  | 40 End-to-End System Benchmark & Verification | **B46** |
 
-- **Confidence:** High that the conflicts exist. The resolution is UNRESOLVED.
-- **Impact:** Phase numbering errors, and a Phase 39/40 sequencing error.
-- **Status:** CONFIRMED.
-- **Priority:** P0.
-- **Dependencies:** owner.
-- **Safe verification:** owner ruling recorded in a decisions register. No code or migration renames (PROPOSED).
+  The owner's 2026-10-12 labels "Phase 36 Conversational AI" and "Phase 38 provider routing" used the old numbers. B36 = Cloud Engineering Compute Gateway; B38 = Construction Documentation & Engineering Evidence; B40 = Autonomous Large-Scale Project Integration.
+- **Confidence:** High.
+- **Status:** RESOLVED. Nothing in code, migrations or paths is renamed. Documents relabel the conversational work as "early partial B41".
+- **Residual:** see R27 (sequencing).
 
 ### R19: Several merges lack independent human review
 
@@ -103,7 +110,7 @@
 - **Status:** CONFIRMED (per commit messages).
 - **Priority:** P1.
 - **Dependencies:** a reviewer.
-- **Safe verification:** a review of `24e9535`, `2ef4796` and `ea2b5d0` diffs. Read-only; could be part of a Phase 40 audit.
+- **Safe verification:** a review of `24e9535`, `2ef4796` and `ea2b5d0` diffs. Read-only; could be part of the release-slice S0 source-truth audit (ROADMAP L721).
 
 ### R20: Phases 31–38 untagged; Phases 37 and 38 have no report document; test counts not read from logs
 
@@ -178,7 +185,8 @@
 - **Status:** CONFIRMED.
 - **Priority:** P1. It must exist before any provider is enabled by default.
 - **Dependencies:** none.
-- **Safe verification:** see [next-phase-readiness.md](next-phase-readiness.md) §4, workstream WS2. Offline golden evaluation over recorded responses; no network in CI.
+- **Owner (roadmap):** B43, which requires "evaluation before accepting provider-produced geometry or analysis" (L361).
+- **Safe verification:** an offline golden evaluation over recorded responses, with no network in CI. Planned as B43 groundwork in [next-phase-readiness.md](next-phase-readiness.md) §6. Not part of the B37/B39 next step.
 
 ### R06: Orchestrator hard-wired to one capability, schema and prompt
 
@@ -188,10 +196,10 @@
   - `conversation.ts:46`: the capability is fixed to `ARCHITECTURAL_INTENT_EXTRACTION`.
   - `apps/api/src/ai/orchestration/registry.ts:3`: 10 of 11 capabilities are `PLANNED`.
 - **Confidence:** High.
-- **Impact:** Each Phase 39/41/43 module would fork routing or bypass the privacy and budget controls.
+- **Impact:** Each B41/B43 model-backed capability would fork routing or bypass the privacy and budget controls. B39 specialists reuse deterministic engines (L292) and do not need this to start.
 - **Status:** CONFIRMED.
 - **Priority:** P1.
-- **Dependencies:** Phase 39 scope approval.
+- **Dependencies:** B43 (vendor-neutral capability registry, L367).
 - **Safe verification:** a refactor behind the existing interface. The existing `ai-*`, `conversations*` and `conversation-turns*` tests must pass unchanged.
 
 ### R07: No provider spend ledger or budget ceiling; rate and circuit state per process
@@ -255,13 +263,13 @@
 
 ## Geometry, engineering and cost (existing limits to preserve)
 
-### R11: ≤ 2-storey generation, BIM, scene and systems; no phase owns a multi-storey generator
+### R11: ≤ 2-storey generation, BIM, scene and systems
 
 - **Evidence.**
   - `packages/generator/src/blueprint/input.ts:7` `maxFloors: 2`.
   - `packages/shared/src/building-v2/parametric.ts:12`.
   - Scene: `SCENE_UNSUPPORTED_MODEL` above the BIM profile.
-  - `docs/phase35-1/phase-1-46-reconciliation.md` §4: "no phase owns" it.
+  - The roadmap places large and multi-storey work in B35 ("multi-storey/large-site model partitioning", L213), B40 ("Autonomous Large-Scale Project Integration", L300) and B45 (large-scene delivery, L399). **No roadmap line explicitly assigns a generator for more than 2 floors.** That assignment is UNVERIFIED and remains an owner decision.
 - **Confidence:** High.
 - **Impact:** Large and multi-storey product goals are unreachable, but the limits fail closed (correct behaviour).
 - **Status:** CONFIRMED.
@@ -330,15 +338,18 @@
 - **Dependencies:** a golden set first, to pin behaviour.
 - **Safe verification:** consolidate only behind byte-identical golden outputs.
 
-### R18: Gateway later slices undecided (remote, sweeper, budgets, solver kinds)
+### R18: B36 roadmap gate not met (no solver kinds, remote placement, fan-out/fan-in, content-addressed cache or sweeper)
 
 - **Evidence.**
   - `apps/api/src/compute/contracts.ts`: `remoteExecution: z.literal('DISABLED')`, cost `FREE`/0, eligible kinds `SCENE_COMPILE` and `OPTIMIZATION_STUDY` only.
   - KB roadmap §4.3 D1–D7 and G7, G8, G12.
 - **Confidence:** High.
-- **Impact:** Remote AI providers (Phase 43) and solver offload cannot run.
+- **Impact:**
+  - The B36 gate (ROADMAP L242: "large solver workloads … validated numerical/engineering output contracts, capped cost, abort/recovery") is unmet.
+  - Remote AI providers (B43) and solver offload cannot run.
+  - The B39 Structural specialist must return typed `requires_review` or `unsupported` results until this is done.
 - **Status:** CONFIRMED.
-- **Priority:** P1 before Phase 43.
+- **Priority:** P1. Required before the B36 gate and B43. Not required for a B39 slice that uses typed statuses.
 - **Dependencies:** owner decisions D1–D7.
 - **Safe verification:** keep the startup fail-closed test for any attempt to enable remote execution.
 
@@ -351,11 +362,87 @@
 - **Confidence:** High.
 - **Impact:** Unknown frontend assumptions, for example about AI capability status and polling vs push.
 - **Status:** CONFIRMED (not done).
-- **Priority:** P1, before frontend integration of Phase 39 outputs.
+- **Priority:** P1, before frontend integration of B39 outputs.
 - **Dependencies:** frontend repository access, owner.
 - **Safe verification:** a read-only comparison of the frontend API client against `docs/modernization/openapi.json`.
 
 ---
+
+### R23: B37 Unified Project Manifest v2 and invalidation vocabulary missing; B39's gate depends on them
+
+- **Evidence.**
+  - ROADMAP B37 (L250–261) requires an artifact dependency graph, invalidation states `current, stale, pending, blocked, not_applicable, verified`, and a "Unified Project Manifest v2".
+  - The baseline has a read-only `dependency-graph-v1` with states `CURRENT`, `STALE_SOURCE_CHANGED`, `STALE_UPSTREAM_STALE` and `UNVERIFIED` (`apps/api/src/contracts/dependency-graph.ts:8-9`), and `project-overview-v1` (`services/overview-service.ts:54`). No manifest v2 exists.
+  - ROADMAP B39 gate (L297): "feed resulting changes to shared **B37 manifest**".
+  - §I rule 4 (L736).
+- **Confidence:** High.
+- **Impact:** B39 cannot pass its gate. Specialist outputs would have no single revision-pinned manifest in which to report freshness, which risks mixed-revision views (roadmap scenario 17, L747).
+- **Status:** CONFIRMED.
+- **Priority:** **P0 for B39.**
+- **Dependencies:** none blocking. Merging `phase37/read-cap` (R14) is advisable first.
+- **Safe verification:** a B37 completion slice. Manifest v2 is derived on read (no migration expected; PROPOSED), with a documented mapping from implemented states to roadmap states. The existing `dependency-graph*`, `overview*` and `modernization` drift tests must pass unchanged.
+
+### R24: B38 deliverables partial
+
+- **Evidence.** ROADMAP B38 (L270–278) lists section/elevation drawings, PDF/SVG/DXF/IFC "where supported", layers, dimension primitives and scale. The baseline provides:
+  - SVG plans, schedules and evidence packages;
+  - PDF/DXF explicitly `NO_PDF_WRITER` / `NO_VALIDATED_DXF_WRITER`;
+  - no sections, elevations or dimensions (`docs/phase38/phase38-scope.md` §4, §6).
+- **Confidence:** High.
+- **Impact:** Frontend F33/F34/F39 tooling is limited. The B38 gate is met for the formats that are supported.
+- **Status:** CONFIRMED.
+- **Priority:** P2.
+- **Dependencies:** an owner decision on a PDF/DXF dependency (licence, validator).
+- **Safe verification:** the existing `documents*` tests. Any new writer needs an independent validator.
+
+### R25: B31 requires malware scanning and quarantine; the scan is `NOT_PERFORMED`
+
+- **Evidence.**
+  - ROADMAP B31 (L145, L146, L152): "malware scanning/quarantine", state `quarantined`, "malicious/mislabeled/oversized files are quarantined".
+  - `apps/api/src/references/contracts.ts:59`: `malwareScan: {status: 'NOT_PERFORMED', reason: 'NO_SCANNER_CONFIGURED'}`.
+  - Claims `malwareFree: 'NOT_CLAIMED'`.
+  - Structurally invalid files are refused, not quarantined.
+- **Confidence:** High.
+- **Impact:** Production uploads (release slice S3) are not roadmap-complete. The disclosure is honest.
+- **Status:** CONFIRMED.
+- **Priority:** P1 before production uploads.
+- **Dependencies:** an owner choice of scanner (a self-hostable open-source option keeps cost low; licence and resources to be verified).
+- **Safe verification:** a local scanner in CI with an EICAR-style test fixture. No production change.
+
+### R26: B32 gate only partly met; no background sweeper
+
+- **Evidence.**
+  - ROADMAP B32 (L160–168): `ProviderCharge`, SSE or tested polling, worker kill/restart recovery, budget enforcement.
+  - The baseline has leases, fencing, retries, polling and owner-read recovery. The background sweeper was deferred to B36 (`docs/phase32/phase32-design.md` §12). There is no `ProviderCharge`.
+- **Confidence:** High.
+- **Impact:** A job orphaned while its owner is offline is recovered only on the next owner read.
+- **Status:** CONFIRMED.
+- **Priority:** P1 before production jobs (S4).
+- **Dependencies:** B36 decision D2 (non-user execution identity).
+- **Safe verification:** a kill/restart integration test on embedded Postgres (local).
+
+### R27: B41 delivered before B39/B40 under the old number "36"
+
+- **Evidence.** `24e9535` and `0026_conversation_turns.sql` implement turn classification, memory and confirmed actions. ROADMAP §I places B41 in S7 after B39/B40 (L728). §C L448 maps old 36 → B41.
+- **Confidence:** High.
+- **Impact:** When B39 specialists and B40 agents exist, B41's typed actions (`OPERATION_KINDS`) will need extension. Labels in documents differ from the roadmap.
+- **Status:** CONFIRMED.
+- **Priority:** P2.
+- **Dependencies:** B39.
+- **Safe verification:** keep the existing `conversation-turns*` tests as a regression net. No renames.
+
+### R28: No staging proof of a live user workflow (roadmap Definition of Done)
+
+- **Evidence.**
+  - ROADMAP §K (L788): every phase needs "staging proof of at least one live user workflow … phase tag and clean checked baseline".
+  - There is no staging or deployment evidence in `docs/**`.
+  - No tags exist for B31–B38.
+- **Confidence:** High.
+- **Impact:** Under the roadmap's own Definition of Done, no phase from B29 onward is done.
+- **Status:** CONFIRMED.
+- **Priority:** P0 for any release claim.
+- **Dependencies:** R03, R04; an owner-authorized staging environment.
+- **Safe verification:** an authorized operator deploys to a disposable staging project (never production) and records one live workflow per phase. Tags only with owner authorization.
 
 ## Explicit tracking matrix (requested areas)
 
@@ -367,3 +454,13 @@
 | Provenance | R09, R20 | `AiProvenance` in conversation state; Phase 37 hashes; Phase 38 signed packages | No prompt version or hash; AI outputs not graph nodes |
 | Hosted DB migrations | R03, R04 | Migration replay on embedded Postgres in CI | Hosted state unknown; `0026`/`0027` not run through local Supabase |
 | Geometry and engineering limits | R11, R12, R13 | Fail-closed limits, typed blockers, `NOT_CLAIMED` claims | Scale and validation are intentionally absent; must not be weakened |
+
+## Revision log
+
+- **r1 (`4fb5919`):** R01–R22, written before the roadmap was available.
+- **r2 (this revision):**
+  - Every risk is tied to its owning roadmap phase.
+  - R01 is mostly resolved (roadmap recovered); R15 is resolved by §C numbering.
+  - R05 and R06 are re-mapped from "Phase 39" to **B43**. R11's "no phase owns" claim is narrowed.
+  - R18 is re-framed against the B36 gate.
+  - R23–R28 are added, from the roadmap's B31, B32, B37, B38, B41 and §K requirements.

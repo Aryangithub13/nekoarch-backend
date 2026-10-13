@@ -2,144 +2,155 @@
 
 | Field | Value |
 |---|---|
-| Date of inspection | 2026-10-13 |
+| Revision | **r2, 2026-10-13.** Re-based on the authoritative roadmap. r1 (`4fb5919`) recommended a "Phase 39 slice 1: AI capability foundation"; that recommendation is **withdrawn** (§1.2) |
+| Authoritative roadmap | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`), cited as ROADMAP Lnnn |
 | Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` |
-| Inputs | [authoritative-roadmap-reconciliation.md](authoritative-roadmap-reconciliation.md) (§3 phase status, §4 conflicts, §5 scope determination); [post-audit-risk-register.md](post-audit-risk-register.md) (risks R01–R22); [../audit/AI-training-architecture-audit-2026-10-13.md](../audit/AI-training-architecture-audit-2026-10-13.md) |
-| Status | **Recommendation only.** Nothing here is authorized. Every acceptance criterion below is **PROPOSED**, because no original Phase 39 criteria were recovered (R01) |
+| Date of inspection | 2026-10-13 |
+| Inputs | [authoritative-roadmap-reconciliation.md](authoritative-roadmap-reconciliation.md) r2 (§4.3, §7); [post-audit-risk-register.md](post-audit-risk-register.md) r2 |
+| Status | **Recommendation only; nothing is authorized.** Acceptance criteria are labelled **ROADMAP** (quoted or condensed from the roadmap, with line) or **PROPOSED** (a measurable test added here; not roadmap text) |
 
 ## 1. Recommendation
 
-The next implementation phase should be **Phase 39**, conditional on the four owner decisions in §2. Phase 39 is the first phase after the merged baseline. Its *theme* is supported by two independent repository sources:
+### 1.1 Next step
 
-| Source | Strength | What it says |
+**Next implementation step: a B37 completion slice. Then B39.**
+
+**Why:**
+1. **B39 is the next new roadmap phase** (ROADMAP §C L446; §I S7 L728), and its gate is explicit:
+   > "Execute one supported request for each of six modules using real backend adapters; show common revision IDs and invariant locks; feed resulting changes to shared **B37 manifest** and affected-cost/engineering freshness checks." (L297)
+2. **The B37 manifest does not exist yet.**
+   - B37 requires a "Unified Project Manifest v2" (L257).
+   - It also requires formal invalidation states `current, stale, pending, blocked, not_applicable, verified` (L251).
+   - The baseline has `project-overview-v1` and `dependency-graph-v1`, whose states differ (R23).
+3. **§I rule 4 (L736):** "B37 dependency propagation prevents changes from leaking across BIM, structure, MEP, quantities, cost and reports; until then block unsupported impact or mark outputs stale."
+4. **The B37 completion slice is small and low-risk:**
+   - derived on read;
+   - no provider, credential or spend;
+   - no migration expected (PROPOSED; to be confirmed by its scope document).
+5. **B39, B40 and B41 all consume the B37 manifest** (L297, L311, L330 "durable conversation links to … current accepted/candidate revision"). Building it once avoids three incompatible variants.
+
+**Alternative (owner choice):** start B39 now and treat `project-overview-v1` + `dependency-graph-v1` as the "B37 manifest" for its gate. The roadmap wording (L257 "Evolve the Phase-29 overview into a Unified Project Manifest v2") does not support this, so it would be an owner waiver. Record it if chosen.
+
+### 1.2 Withdrawn from r1
+
+| r1 recommendation | Roadmap evidence | New owner |
 |---|---|---|
-| `docs/phase36/phase36-handoff.md` §9 (`a7e3da4`) | Written with the original roadmap present | "specialist AI workers (B39–43)" |
-| `docs/phase30/phase30-report.md` §K; `docs/modernization/modernization-report.md` §E and §I | Later-phase assignments | "Interior/exterior AI modules, generative alternatives, provider routing → 39, 43"; "F51–F54 … AI modules → planned (B39)" |
+| "Phase 39 slice 1: AI capability foundation" (capability descriptor registry, versioned prompts, golden evaluation, privacy floors) | B39 is six specialist workflows that **reuse deterministic engines** and forbid "LLM invented dimensions" (L292). The capability registry, per-operation schema checks, provider evaluation and privacy/region routing are **B43** (L357–371) | **B43** (groundwork may be done earlier as a separate, approved slice; §6) |
+| "Phase 40 = audit, may run in parallel with 39" | B40 = Autonomous Large-Scale Project Integration, which consumes B39 (L300–315) | B40 is sequential after B39. Audit work maps to release slice S0 (L721) and B46 |
 
-Phase 39's deliverables and acceptance criteria are **not** recoverable. The plan in §4 is therefore a PROPOSED first slice: the AI capability foundation that every reading of Phases 39–43 needs. It is not a reconstruction of the original Phase 39.
-
-### 1.1 Why not another phase first
+### 1.3 Why not another phase first
 
 | Candidate | Why not next | Evidence |
 |---|---|---|
-| Phase 36 gateway, later slices | Blocked on owner decisions D1–D7 (provider, sweeper identity, callbacks, budget, privacy) and rulings on G7, G8 and G12 | R18; KB roadmap §4.2–4.3 |
-| Phase 40 | **Role UNRESOLVED** (conflict C5). If it is an audit, it is read-only and can run in parallel with 39. If it is an AI phase, it follows 39 | Reconciliation §4 C5 |
-| Phase 41 or 43 | Depend on 39's provider and capability contracts. Phase 43 also needs remote placement, which is a schema literal `DISABLED` | `apps/api/src/compute/contracts.ts` |
-| Phase 44 | Touches every owner-scoped RLS policy and RPC (`0006`–`0027`). Unsafe alongside any schema work | Reconciliation §5 |
-| Phase 45 | Theme Medium for push progress only. Touches jobs, scene and `http-protection.ts` | Reconciliation §5 |
-| Phase 46 | Last by definition | — |
+| Finish B36 (solver kinds, remote, fan-out/fan-in, cache, sweeper) | Needs owner decisions D1–D7 and validated solvers (none exist). B39 can proceed with typed `requires_review` / `unsupported` statuses for the Structural module | R18; ROADMAP L242, L293 |
+| Finish B38 (sections/elevations, PDF/DXF) | Not a B39 prerequisite. A PDF/DXF dependency needs an owner decision | R24 |
+| B31 malware scanning, B32 sweeper | Required for production uploads and jobs (S3, S4). Not a code prerequisite of B37/B39 | R25, R26 |
+| B40, B42, B43 | Depend on B39 (L311, L735) or on B43's routing/evaluation stack | ROADMAP §I |
+| B44 | Touches every owner-scoped RLS policy and RPC (`0006`–`0027`) | — |
+| B45, B46 | B45 precedes B46 (L737). B46 needs a deployed backend (L427) | — |
 
 ## 2. Decisions required before implementation begins
 
-| # | Decision | Why it blocks | Recommended default (PROPOSED) |
+| # | Decision | Recommended default (PROPOSED) |
+|---|---|---|
+| D-1 | Adopt this reconciliation (r2) and carry `docs/sources/` and `docs/roadmap/` into `phase31/development` through a docs-only PR | Yes |
+| D-2 | B37 completion slice first (§1.1), or the waiver alternative | B37 completion first |
+| D-3 | Merge `phase37/read-cap` (`0bf1c89`) before extending B37 (R14) | Yes, after review and CI |
+| D-4 | For B39: confirm the module order in §5.2 and the interior meaning (finishes and furnishings as specifications on V2 spaces, per L289) | As in §5.2 |
+| D-5 | Release-only gates, not blocking development: hosted check (R03), Supabase acceptance for `0026`/`0027` (R04), staging proof (R28) | Schedule with an authorized operator |
+
+## 3. Pre-implementation checklist (PROPOSED)
+
+1. Base the branch on `phase31/development` @ `ea2b5d0` or later, never on `main` (R22).
+2. Read the roadmap's B37/B39 sections, §D rows 13–17 and 23 (L478–488), §E (L509–585) and §I (L717–738).
+3. Write `docs/phase37/phase37-completion-scope.md` before code, as the B37/B38 sessions did. Mark each criterion ROADMAP or PROPOSED.
+4. Preserve all historical tags, migrations and paths. Labels such as "phase36-conversational-ai" are kept (C3).
+
+## 4. B37 completion slice
+
+### 4.1 Scope (ROADMAP L248–262, condensed)
+
+- Unified Project Manifest v2.
+- Formal invalidation semantics with reason codes and source/target revision identity.
+- Per-discipline freshness.
+- "Every module resolves one coherent accepted/candidate revision".
+- Machine-readable `diff`, `lineage`, `source`, `units`, coordinate system, `completeness`, `last_verified` and `missing_reason` metadata.
+
+### 4.2 Acceptance criteria
+
+| ID | Criterion | Basis | Measured by (PROPOSED) |
 |---|---|---|---|
-| D-A | Confirm Phase 39 as "specialist AI modules and provider routing", and resolve conflict C4: Phase 38 = documentation/evidence, provider routing = 39 | Without it, 39 is built on an unconfirmed theme (R01, R15) | Confirm |
-| D-B | Rule on Phase 40's role (C5) | Determines whether 39 and 40 run in parallel | Treat 40 as a read-only readiness audit of `ea2b5d0`, plus a delta after 39 |
-| D-C | AI policy: allowed providers (local-only or a named free tier), privacy floor, whether user text may be stored for evaluation, and budget unit and ceiling | Privacy (R08), spend (R07), dataset capture | Local OpenAI-compatible endpoint only; `LOCAL_ONLY`; no storage of user text; metered providers stay refused (`allowMetered:false`) |
-| D-D | What "interior/exterior design" outputs mean | Determines slice 2 | Structured specifications attached to Building Model V2 entity IDs (finishes, materials, furnishing schedule), not images. Deferred to slice 2 |
+| M1 | Manifest v2 exposes: project and revision identity; canonical building/site and coordinate frame; editable vs derived artifacts; capability/configuration; module availability; per-discipline freshness; verification status; access policy | **ROADMAP** L257 | Zod contract; integration test per field family |
+| M2 | Invalidation states `current, stale, pending, blocked, not_applicable, verified`, each with reason codes and source/target revision identity | **ROADMAP** L251 | Contract test. A documented, tested mapping from `dependency-graph-v1` states; `UNVERIFIED` stays fail-closed (never mapped to `verified` or `current`) |
+| M3 | One coherent revision per manifest: no module mixes accepted revision N with candidate N+1 | **ROADMAP** L258; scenario 17 (L747) | Test that commits a revision during manifest assembly and expects a refusal or consistent output (reuse the Phase 37 two-round consistency check) |
+| M4 | Gate: any accepted targeted edit identifies all dependent outputs needing regeneration, revalidation or stale labelling; no lost model↔3D linkage | **ROADMAP** L262 | Exterior-appearance edit fixture (B30): every derived artifact of the base is reported stale with a reason; scene artifacts are linked by revision and model hash |
+| M5 | Additive only: `project-overview-v1`, `dependency-graph-v1`, Phase 38 documents and evidence responses unchanged | **ROADMAP** A4 L51; §D upgrade workflow L504 | Existing `overview`, `dependency-graph*`, `documents*`, `evidence*` tests unchanged |
+| M6 | Bounded reads (no more than 8 in flight per request, as in `0bf1c89`) and a time budget | PROPOSED (R14) | In-flight counter test |
+| M7 | Engineering flags unchanged; the manifest never upgrades `REQUIRES_SOLVER`, `NO_VALIDATED_SOLVER`, `NOT_CLAIMED` | **ROADMAP** A4 L50; H L710 | Byte-identical assessment fields in the manifest fixture |
+| M8 | Release gates: build, typecheck, lint, full suite on Node 22.22.0 and 22.23.3, container smoke, `npm audit --omit=dev --audit-level=high`, route catalog and OpenAPI drift | **ROADMAP** §K L788 (tests); PROPOSED commands | CI on the PR head |
+| M9 | Phase tag and staging proof | **ROADMAP** §K L788 | Owner-authorized; recorded as pending if not done (R28) |
 
-Not blocking for slice 1, but **blocking any release or deployment**:
-- **R03:** read-only hosted migration check by an authorized operator.
-- **R04:** a `workflow_dispatch` run of `supabase-acceptance` on `ea2b5d0`.
+### 4.3 Migration
 
-Recommended housekeeping before slice 1 (owner authorization required):
-- **R02:** refresh and merge the knowledge-base registers.
-- **R14:** review and merge `phase37/read-cap`.
-- **R22:** base every branch on `phase31/development`, not `main`.
+None expected: the manifest is derived on read from existing owner-scoped reads (PROPOSED). If the scope document finds that a persisted manifest is required, that is a new migration needing owner approval (next free number: `0028`).
 
-## 3. Dependencies (VERIFIED interfaces on `ea2b5d0`)
+## 5. B39 (after B37 completion)
 
-| Dependency | Location | What Phase 39 uses it for |
+### 5.1 Scope (ROADMAP L285–297)
+
+- One typed specialist request envelope covering: project and base revision, scope and locks, references, output configuration, provenance, quote and budget, jobs, dependency impacts, and the immutable candidate/approval lifecycle.
+- Six modules: Interior, Exterior, Blueprint, Structural, Materials, Budget.
+- Reuse of B6/B10/B19/B22/B24–B28 engines and the B30 guards.
+- Typed statuses: `unsupported`, `requires_review`, `degraded_provider`, `stale_dependency`, `partial`.
+
+**Gate (L297):** see §1.1. Scenarios 33–38 and 46 (L763–768, L779).
+
+### 5.2 Module readiness on the baseline (VERIFIED components; order PROPOSED)
+
+| Order | Module | Existing engine | Gap | Expected status vocabulary |
+|---|---|---|---|---|
+| 1 | Blueprint | B10/B19/B22 generators; B11 QA; B34 verifier | Envelope adapter. Limited to 2 floors and 24 rooms (`BLUEPRINT_LIMITS`) | `unsupported` above 2 floors |
+| 2 | Materials | B13 takeoff; B14 recipes | Envelope adapter; substitution provenance | `partial` when a recipe is missing |
+| 3 | Budget | B15 BOQ | Rates are synthetic or user-supplied only (R13). "Absence of rates is not represented as zero" (L768) | `partial` / `requires_review` |
+| 4 | Exterior | B30 exterior appearance (`APPEARANCE_MODIFY`, 4 façades) | Massing "only where supported" (L289): unsupported | `unsupported` for geometry changes |
+| 5 | Structural | B24 bounded frame solver; B35 blockers | No validated solver (R12, R18) | `requires_review` / `unsupported`. Never certified (L290) |
+| 6 | Interior | **No interior operation exists.** The conversational design records "no operation for … interior finishes" (`docs/phase36-conversational-ai/phase36-report.md` §6) | New typed operation over V2 space specifications | `unsupported` until implemented |
+
+### 5.3 Migration requirements (evidence-based; not authorized)
+
+| Need | Evidence | Migration |
 |---|---|---|
-| Phase 21 orchestrator | `apps/api/src/ai/orchestration/{orchestrator,registry,transport,conversation}.ts`; `contracts/ai-orchestration.ts` | Routing, privacy, retries, circuit, fallback. To be generalized (R06) |
-| Phase 18/20 interpreters | `ai/architectural-interpreter.ts`, `ai/conversation-planner.ts`, `ai/fallback-parser.ts` | Deterministic baselines for evaluation |
-| B31 references | `apps/api/src/references/*` | **Not consumed in slice 1.** A later slice needs untrusted-content handling (R10) |
-| B33 brief/context | `apps/api/src/account/*`, `0023` | Not consumed in slice 1 (Phase 41 per the weak assignment) |
-| B32 jobs / B36 gateway | `apps/api/src/jobs/*`, `apps/api/src/compute/*` | Not used in slice 1. An AI job kind would need a forward migration of the SQL `check (kind in …)` (`phase36-handoff.md` §3) |
-| B37 graph / B38 evidence | `services/dependency-graph-service.ts`, `services/evidence-service.ts` | Not changed in slice 1. AI artifacts as graph nodes come in a later slice |
-| Discovery | `services/overview-service.ts` (`aiCapabilities`) | Capability status reporting (R16) |
+| Persist an interior-finish (or other new) specialist operation as a revision operation | `0020_revision_operations.sql:9` `kind text check (kind in ('APPEARANCE_MODIFY','RESTORE'))` | A forward migration re-creating the check as a superset (`0028`, if first) |
+| Run specialists as durable or gateway jobs | `0022_durable_jobs.sql:8` and `0025_compute_gateway.sql:10` constrain `kind` with SQL `check` lists | A forward superset migration |
+| Synchronous, derived-on-read modules (Blueprint, Materials, Budget reading existing artifacts) | Existing routes and tables | None expected |
 
-## 4. Phase 39, slice 1: AI capability foundation (PROPOSED plan)
+Each migration needs: owner approval, a migration-replay pin (`supabase/tests/database.test.ts`), a local Supabase receipt, and no hosted application without authorization.
 
-**Scope.**
-- Make the AI layer able to host more than one capability safely and measurably.
-- No new user-facing AI feature is enabled by default.
-- No provider, credential or paid account is added.
-- No migration.
-- No change to engineering blockers or claims.
+## 6. Later, separately approved: B43 groundwork (relocated from r1)
 
-### 4.1 Workstreams
+These items remain valid technical findings (R05–R10). Under the roadmap they belong to **B43** (L357–371) and B41. They can be scheduled as a distinct, approved slice. They are **not** part of the next step:
+- the capability registry;
+- versioned prompts;
+- privacy floors;
+- per-operation schema checks;
+- offline golden evaluation;
+- spend ledger.
 
-| WS | Topic | Change (PROPOSED) | Primary files |
-|---|---|---|---|
-| WS1 | Capability-specific schemas | A versioned descriptor per capability: `{capability, inputSchema, outputSchema, promptId, promptVersion, privacyFloor, maxOutputTokens, deterministicFallback?}`. A generic `execute(capability, input)` routes and validates against the descriptor's output schema. The existing `interpret()` and `orchestrate()` become thin wrappers with byte-identical behavior | `ai/orchestration/*`, `contracts/ai-orchestration.ts`, new `ai/capabilities/*` |
-| WS2 | Offline golden evaluation | A repository-authored, CC0 golden set of briefs with expected outputs (including Hinglish and adversarial/injection cases). An `eval:ai` script runs the deterministic baseline and any configured adapter over **recorded** responses. Reports are keyed by commit, dataset hash, model ID and prompt hash. No network in CI | new `test-support/ai-eval/**`, `scripts/eval-ai.ts`, `package.json` script |
-| WS3 | Versioned prompts | Prompts move from inline constants (for example `INTENT_SYSTEM_PROMPT`) to a registry with an ID, a version and a sha256 of the exact text. Any change to the text without a version bump fails a test | `ai/conversation-provider.ts`, new `ai/prompts/*` |
-| WS4 | Privacy enforcement | Each descriptor declares a privacy floor. Routing refuses a route below the floor *before* any adapter call. `LOCAL_ONLY` descriptors can never reach a `REMOTE_OPENAI_COMPATIBLE` adapter, whatever the policy | `orchestrator.ts` `routes()` |
-| WS5 | Provider failure behavior | Keep the existing semantics (retries ≤ policy, circuit, `ALL_PROVIDERS_FAILED`, deterministic fallback). Make them per-capability. A capability with no deterministic fallback fails closed with a typed error; it never returns partial or unvalidated output | `orchestrator.ts` |
-| WS6 | Provenance | Add `promptId`, `promptVersion`, `promptHash`, `outputSchemaVersion` and `descriptorVersion` to `AiProvenanceSchema` as **optional** fields. Stored conversation states without them still parse | `contracts/ai-orchestration.ts` |
-
-**Parallelism inside the slice.** WS2 (data and script only) and the WS3 prompt inventory can proceed independently of WS1. WS4, WS5 and WS6 build on WS1.
-
-### 4.2 Measurable acceptance criteria (PROPOSED; not original criteria)
-
-| ID | Criterion | How it is measured |
-|---|---|---|
-| A1 | No regression: every existing test passes unchanged | `npx vitest run` on Node 22.22.0 and 22.23.3. Zero modified assertions in `ai-*`, `conversations*`, `conversation-turns*` and `interpretation*` tests (diff review) |
-| A2 | Compatibility: for `ARCHITECTURAL_INTENT_EXTRACTION`, the outputs and provenance of the existing paths are byte-identical apart from the new optional fields | New snapshot test over the existing fixture adapters |
-| A3 | Each descriptor validates output against its own schema. A wrong-shape output yields `PROVIDER_SCHEMA_VIOLATION` and fallback (or a typed failure) | Unit tests per descriptor, including one negative case each |
-| A4 | Privacy floor: 0 adapter invocations for any request whose floor forbids the route | Test with a spy adapter, extending `ai-orchestration.test.ts:37` |
-| A5 | Prompt integrity: changing prompt text without a version bump fails a test. Provenance carries the prompt hash | Unit test |
-| A6 | Golden set: at least the existing grammar's supported intents, at least one Hinglish case, and at least 10 injection cases. Every record has a licence (CC0 or project-authored) and a hash | Script and schema check |
-| A7 | Baseline report: `eval:ai` run on the deterministic baseline produces a report recording schema-valid rate, field exact match, invented-value count and injection violations | Report committed under `docs/phase39/` |
-| A8 | Injection: 0 out-of-schema fields, 0 approvals and 0 tool calls across the injection cases | `eval:ai` |
-| A9 | Engineering boundaries unchanged: Phase 35 assessment, evidence-package claims and compute claims stay byte-identical on the existing fixtures | Existing `engineering*`, `evidence*` and `compute*` tests |
-| A10 | Discovery is truthful: `aiCapabilities` reports exactly the descriptors registered as `AVAILABLE`; nothing new is `AVAILABLE` without a descriptor, tests and an evaluation report | Modernization route-catalog and OpenAPI drift tests; discovery test |
-| A11 | No migration, environment variable or dependency is added (or each is explicitly approved) | `git diff --stat` on `supabase/migrations`, `.env.example`, `package-lock.json` |
-| A12 | Release gates as per the KB roadmap §5: build, typecheck, lint, full suite on both Node versions, container smoke, `npm audit --omit=dev --audit-level=high` | CI run on the PR head |
-
-### 4.3 Migrations
-
-**Slice 1 needs none.**
-- Prompts and descriptors live in code.
-- Provenance stays in the existing conversation state JSON.
-- Evaluation artifacts are repository files.
-
-Migrations later slices would need, identified from evidence and **not authorized**:
-
-| Need | Why a migration | Number |
-|---|---|---|
-| A persisted AI spend ledger and budget enforcement (R07) | No table holds usage | Next free: `0028` |
-| An AI job kind | `durable_jobs.kind` is a SQL `check` constraint (`phase36-handoff.md` §3) | — |
-| AI-derived artifacts as revision-bound, graph-visible records (R09) | Same pattern as `0014`–`0019` | — |
-
-Each requires owner approval, a migration-replay pin and a local Supabase receipt.
-
-### 4.4 Out of scope for slice 1
-
-- Interior/exterior modules (D-D).
-- Reference or brief consumption (Phase 41 per the weak assignment; needs R10 hardening).
-- Image, render or 3D generation (Phase 43).
-- Remote providers and metered spend (D-C, R07, R18).
-- Fine-tuning and dataset capture from users (D-C).
-- Multi-storey generation (R11).
-- Any change to engineering blockers (R12).
-
-## 5. Execution allocation (PROPOSED; requires D-B)
+## 7. Two-account allocation (PROPOSED)
 
 | | Account A | Account B |
 |---|---|---|
-| Branch | `phase39/ai-capability-foundation` from `ea2b5d0` | `phase40/readiness-audit` from `ea2b5d0` (only if D-B rules 40 = audit) |
-| Owns | `apps/api/src/ai/**`, `contracts/ai-orchestration.ts`, `test-support/ai-eval/**`, `docs/phase39/**`, and the shared hotspots: `lib/http-protection.ts`, `services/overview-service.ts`, `docs/modernization/openapi.json` and `api-routes.json`, the Sentry allowlist, `package.json`, the CI workflow | `docs/phase40/**` only |
-| Migrations | None in slice 1; `0028` reserved to A | None |
-| Merge order | After CI is green | Docs-only, any time; then a delta audit of A's merge |
+| Work | B37 completion slice (code) | B39 **scope document only**: envelope contract against §E (L509–585); module inventory (§5.2); migration plan (§5.3). No code |
+| Branch | `phase37/manifest-v2` from `phase31/development` | `phase39/scope` from `phase31/development` |
+| Owns | `apps/api/src/{graph,services/dependency-graph-service.ts,services/overview-service.ts,contracts/dependency-graph.ts}` plus new manifest files; generated `docs/modernization/*.json`; `lib/http-protection.ts`; Sentry allowlist | `docs/phase39/**` only |
+| Migrations | None | None (it plans `0028`; does not write it) |
+| Order | Merge after CI and owner review | Docs PR any time. B39 implementation starts after A merges |
 
-If D-B rules that Phase 40 is an AI phase, Account B should instead do read-only verification of R03, R04, R14 and R19 (no code). There is no second code stream this round.
+Not recommended in parallel: B39 code before the manifest v2 contract exists (shared contract), and anything touching RLS (B44).
 
-## 6. Unresolved questions
+## 8. What remains unverified before implementation
 
-1. D-A to D-D (§2).
-2. Commit the original roadmap to `docs/sources/` (R01); this would resolve most open items.
-3. Who performs the hosted check (R03), and when?
-4. Should the knowledge-base branch be merged (R02), and should `phase37/read-cap` be merged (R14)?
-5. Should `main` be retired or realigned with the default branch (R22)? Do not rewrite history without explicit instruction.
+- The B31–B34 quote provenance (C9) and B01–B04 Git evidence: these do not block.
+- Hosted database state, Supabase acceptance for `0026`/`0027`, staging proof: these block release, not development.
+- Frontend contract conformance (the frontend repository was not inspected).
+- Whether the owner waives the B37 manifest v2 requirement for B39 (D-2).
