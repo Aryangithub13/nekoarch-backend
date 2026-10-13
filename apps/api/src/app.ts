@@ -43,6 +43,8 @@ import { reportError } from './lib/sentry.js';
 import { plansRoutes } from './routes/plans.js';
 import { estimatesRoutes } from './routes/estimates.js';
 import { regionsRoutes } from './routes/regions.js';
+import { documentsRoutes } from './routes/documents.js';
+import { evidenceRoutes } from './routes/evidence.js';
 
 export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool; scenePool?: ScenePool; appearancePool?: AppearancePool; inspectionPool?: InspectionPool }) {
   const backend = options.backend ?? createSupabaseBackend(options.env);
@@ -124,6 +126,8 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     accountRoutes(scope, backend, options.env);
     verificationRoutes(scope, backend);
     engineeringRoutes(scope, backend, options.env);
+    documentsRoutes(scope, backend);
+    evidenceRoutes(scope, backend, options.env);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

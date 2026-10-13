@@ -38,6 +38,8 @@ import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSch
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
+import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
+import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
@@ -64,6 +66,13 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/revisions/generate`]: { body: GenerateRevisionRequestSchema, response: RevisionCommitResponseSchema, status: 201 },
   [`GET ${R}`]: { response: ProjectRevisionDetailSchema }, [`GET ${R}/overview`]: { query: empty, response: null },
   [`GET ${R}/dependency-graph`]: { query: empty, response: DependencyGraphSchema },
+  [`GET ${R}/documents`]: { query: DocumentsQuerySchema, response: DocumentsManifestSchema },
+  [`GET ${R}/documents/plan-sheets/:levelId`]: { query: DocumentsQuerySchema, media: 'image/svg+xml' },
+  [`GET ${R}/documents/schedules`]: { query: DocumentsQuerySchema, response: SchedulesResponseSchema },
+  [`GET ${R}/documents/schedules/:schedule/csv`]: { query: DocumentsQuerySchema, media: 'text/csv' },
+  [`POST ${R}/evidence-packages`]: { body: EvidenceCreateRequestSchema, response: EvidenceDetailSchema, status: 201 },
+  [`GET ${R}/evidence-packages`]: { query: EvidencePageQuerySchema, response: EvidenceListSchema },
+  [`GET ${R}/evidence-packages/:packageId`]: { query: EvidenceReadQuerySchema, response: EvidenceDetailSchema },
   [`POST ${P}/workflows/plan`]: { body: WorkflowRequestSchema, response: z.object({ projectId: z.string().uuid(), sourceRevisionId: z.string().uuid().nullable(), inputFingerprint: z.string(), plan: WorkflowPlanSchema }).strict() },
   [`POST ${P}/workflows`]: { body: WorkflowRequestSchema, response: WorkflowRunSchema, status: 201 }, [`GET ${P}/workflows`]: { query: PageQuerySchema, response: null },
   [`GET ${P}/workflows/:workflowRunId`]: { response: WorkflowRunSchema },

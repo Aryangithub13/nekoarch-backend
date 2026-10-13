@@ -391,6 +391,26 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/documents",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/documents/plan-sheets/:levelId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/documents/schedules",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/documents/schedules/:schedule/csv",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/engineering-assessment",
   "anonymous": 401
  },
@@ -452,6 +472,21 @@
  {
   "method": "POST",
   "url": "/api/projects/:projectId/revisions/:revisionId/environmental/validate",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/evidence-packages",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/evidence-packages",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/evidence-packages/:packageId",
   "anonymous": 401
  },
  {

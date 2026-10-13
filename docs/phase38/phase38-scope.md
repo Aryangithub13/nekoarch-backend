@@ -110,7 +110,12 @@ The working title "Construction Documentation & Engineering Evidence" agrees wit
      - verifies the HMAC envelope (`verify_envelope`), ownership, the revision and accepted QA;
      - recomputes the model hash from the stored model, and the content, graph and assessment hashes with `cost_hash`;
      - for `CURRENT_REVISION`, rechecks **inside the write transaction** that the revision is still the project's current revision. A commit landing mid-generation makes the write fail with 409; it is never stored as current.
+     - rebuilds the `evidenceIndex` assessment domains (status, assurance level, evidence class, blocker kinds) and computed artifacts (node, state, kind) from the embedded assessment and graph, and refuses any difference. A summary can never restate a flag differently from its source.
+     - requires `professionalReview: NOT_RECORDED` and all claims `NOT_CLAIMED` before the table `CHECK` is reached, so a violation is a typed 422, not a 500.
      - Identical inputs converge on one row (`unique (project_revision_id, input_hash)`, advisory lock).
+   - **Service-side consistency.** The graph, assessment and documents come from separate reads. The service refuses with 409 `EVIDENCE_READ_INCONSISTENT` in either of two cases:
+     - the documents' current-revision read differs from the graph's;
+     - the assessment's per-revision analysis counts differ from the graph's nodes (an analysis committed mid-assembly).
    - **`evidence_read`.** `get` and `list`, owner-scoped.
    - **Atomicity.** A failed write leaves no row, because the insert is one statement in one transaction. No hosted database is touched.
 4. **Read.**
