@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Revision | **r2, 2026-10-13.** Re-based on the authoritative roadmap. r1 (`4fb5919`) recommended a "Phase 39 slice 1: AI capability foundation"; that recommendation is **withdrawn** (§1.2) |
+| Revision | **r3, 2026-10-13: PR #16 update (§9).** r2 text is unchanged except where marked *[r3]*. **r2, 2026-10-13.** Re-based on the authoritative roadmap. r1 (`4fb5919`) recommended a "Phase 39 slice 1: AI capability foundation"; that recommendation is **withdrawn** (§1.2) |
 | Authoritative roadmap | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`), cited as ROADMAP Lnnn |
-| Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` |
+| Baseline | r2: `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359`. *[r3]* Re-inspected at `d0cd38bc043d692b87b4a73204d1f7e2cb7600fc` (PR #16 merged); see §9 |
 | Date of inspection | 2026-10-13 |
 | Inputs | [authoritative-roadmap-reconciliation.md](authoritative-roadmap-reconciliation.md) r2 (§4.3, §7); [post-audit-risk-register.md](post-audit-risk-register.md) r2 |
 | Status | **Recommendation only; nothing is authorized.** Acceptance criteria are labelled **ROADMAP** (quoted or condensed from the roadmap, with line) or **PROPOSED** (a measurable test added here; not roadmap text) |
@@ -13,7 +13,7 @@
 
 ### 1.1 Next step
 
-**Next implementation step: a B37 completion slice. Then B39.**
+**Next implementation step: a B37 completion slice. Then B39.** *[r3] Unchanged after PR #16. The sequence is: finish B37, implement and verify B39, then begin B40 (§9.2).*
 
 **Why:**
 1. **B39 is the next new roadmap phase** (ROADMAP §C L446; §I S7 L728), and its gate is explicit:
@@ -57,7 +57,7 @@
 | D-2 | B37 completion slice first (§1.1), or the waiver alternative | B37 completion first |
 | D-3 | Merge `phase37/read-cap` (`0bf1c89`) before extending B37 (R14) | Yes, after review and CI |
 | D-4 | For B39: confirm the module order in §5.2 and the interior meaning (finishes and furnishings as specifications on V2 spaces, per L289) | As in §5.2 |
-| D-5 | Release-only gates, not blocking development: hosted check (R03), Supabase acceptance for `0026`/`0027` (R04), staging proof (R28) | Schedule with an authorized operator |
+| D-5 | Release-only gates, not blocking development: hosted check (R03), Supabase acceptance for `0026`/`0027` (R04; *[r3]* now `0026`–`0028`), staging proof (R28) | Schedule with an authorized operator |
 
 ## 3. Pre-implementation checklist (PROPOSED)
 
@@ -92,7 +92,7 @@
 
 ### 4.3 Migration
 
-None expected: the manifest is derived on read from existing owner-scoped reads (PROPOSED). If the scope document finds that a persisted manifest is required, that is a new migration needing owner approval (next free number: `0028`).
+None expected: the manifest is derived on read from existing owner-scoped reads (PROPOSED). If the scope document finds that a persisted manifest is required, that is a new migration needing owner approval (next free number: `0028`; *[r3]* `0028` is now taken by PR #16, so the next free number is `0029`; see §9.3).
 
 ## 5. B39 (after B37 completion)
 
@@ -120,7 +120,7 @@ None expected: the manifest is derived on read from existing owner-scoped reads 
 
 | Need | Evidence | Migration |
 |---|---|---|
-| Persist an interior-finish (or other new) specialist operation as a revision operation | `0020_revision_operations.sql:9` `kind text check (kind in ('APPEARANCE_MODIFY','RESTORE'))` | A forward migration re-creating the check as a superset (`0028`, if first) |
+| Persist an interior-finish (or other new) specialist operation as a revision operation | `0020_revision_operations.sql:9` `kind text check (kind in ('APPEARANCE_MODIFY','RESTORE'))` | A forward migration re-creating the check as a superset (`0028`, if first; *[r3]* `0029` at the earliest, and only with schema evidence; see §9.3) |
 | Run specialists as durable or gateway jobs | `0022_durable_jobs.sql:8` and `0025_compute_gateway.sql:10` constrain `kind` with SQL `check` lists | A forward superset migration |
 | Synchronous, derived-on-read modules (Blueprint, Materials, Budget reading existing artifacts) | Existing routes and tables | None expected |
 
@@ -143,7 +143,7 @@ These items remain valid technical findings (R05–R10). Under the roadmap they 
 | Work | B37 completion slice (code) | B39 **scope document only**: envelope contract against §E (L509–585); module inventory (§5.2); migration plan (§5.3). No code |
 | Branch | `phase37/manifest-v2` from `phase31/development` | `phase39/scope` from `phase31/development` |
 | Owns | `apps/api/src/{graph,services/dependency-graph-service.ts,services/overview-service.ts,contracts/dependency-graph.ts}` plus new manifest files; generated `docs/modernization/*.json`; `lib/http-protection.ts`; Sentry allowlist | `docs/phase39/**` only |
-| Migrations | None | None (it plans `0028`; does not write it) |
+| Migrations | None | None (it plans `0028`, *[r3]* now `0029`; does not write it) |
 | Order | Merge after CI and owner review | Docs PR any time. B39 implementation starts after A merges |
 
 Not recommended in parallel: B39 code before the manifest v2 contract exists (shared contract), and anything touching RLS (B44).
@@ -151,6 +151,59 @@ Not recommended in parallel: B39 code before the manifest v2 contract exists (sh
 ## 8. What remains unverified before implementation
 
 - The B31–B34 quote provenance (C9) and B01–B04 Git evidence: these do not block.
-- Hosted database state, Supabase acceptance for `0026`/`0027`, staging proof: these block release, not development.
+- Hosted database state, Supabase acceptance for `0026`/`0027` (*[r3]* and `0028`), staging proof: these block release, not development.
 - Frontend contract conformance (the frontend repository was not inspected).
 - Whether the owner waives the B37 manifest v2 requirement for B39 (D-2).
+
+## 9. r3 update: PR #16 and the B39 scope correction (2026-10-13)
+
+### 9.1 What changed on the development branch (VERIFIED)
+
+- **PR #16 merged.** `phase31/development` moved from `ea2b5d0` to `d0cd38b` (merge of PR #16, tested head `99fe815`). It was labelled "Phase 39" and was planned before this roadmap reached the development branch.
+- **Classification under the roadmap:**
+  - **B43 groundwork:** capability-typed routing over the Phase 21 policy, and `PROVIDER_OUTPUT_UNSAFE`. This is the r1 "AI capability foundation" that §1.2 relocated to B43, delivered in part.
+  - **B41/B43 groundwork:** consumption of brief fields and reference metadata.
+  - **Reusable for B39:** partial, advisory Interior/Exterior concepts. They are **not** the B39 modules.
+  - **Supporting persistence:** migration `0028_design_concepts.sql`.
+- **Full record:** [phase39-scope.md §0](../phase39/phase39-scope.md#0-classification-under-the-authoritative-roadmap-correction-r2).
+- **B39 stays NI (not implemented).** Missing: the Blueprint, Structural, Materials and Budget specialists; the shared typed request envelope; the typed statuses `unsupported` / `requires_review` / `degraded_provider` / `stale_dependency` / `partial`; the candidate/approval lifecycle; B37 manifest and freshness integration; and the L297 gate.
+- **CI** (both green; **CI passing does not complete a phase**):
+
+  | Run | Commit | Node 22.22.0 and 22.23.3 | Container smoke |
+  |---|---|---|---|
+  | 38434523761 | `99fe815` | 104/104 files, 3,021/3,021 tests each | Passed |
+  | 38436385119 | `d0cd38b` | 104/104 files, 3,021/3,021 tests each | Passed |
+
+### 9.2 Sequence (unchanged by PR #16)
+
+1. **B37 completion** (§4): Unified Project Manifest v2, invalidation states, per-discipline freshness. Risk R23 is still P0 for B39. *Owner alternative:* a recorded waiver (D-2).
+2. **B39: implement and verify** (§5) against ROADMAP L297.
+   - Reuse from PR #16 where it fits: the output guard, the persistence and charge-protection pattern, and the advisory Interior/Exterior content as a sub-output.
+   - The modules themselves must reuse the deterministic engines and B30 guards (L292).
+   - Decision D-6 below.
+3. **B40** only after B39's gate is met: B40 "consume[s] the six tested specialist operations delivered at B39" (L311; §I rule 3, L735).
+4. **B43 routing work** stays a separately approved slice (§6). PR #16 does not complete it.
+
+### 9.3 Migration numbering
+
+- `0028` is taken by `0028_design_concepts.sql`. The next free number is **`0029`**.
+- **No `0029` is approved or automatic.** It is a possibility only if a scope document shows schema evidence. Examples are the `0020` revision-operation `kind` check (§5.3) or the `0022` / `0025` job-kind checks.
+- Like every migration it needs owner approval, a migration-replay pin, a local Supabase receipt, and no hosted application without authorization.
+
+### 9.4 Release gates (separate from development; none has passed)
+
+| Gate | Scope | Evidence on record |
+|---|---|---|
+| Local Supabase acceptance | Migrations `0026`, `0027`, `0028` | **None.** The `supabase-acceptance` job is `workflow_dispatch`-only and was skipped in runs 38434523761 and 38436385119 |
+| Hosted migration-history verification | Read-only, by an authorized operator (R03) | **None.** Hosted state is REPORTED at `0017`; `0018`–`0028` are unverified |
+| Staging proof of at least one live user workflow | ROADMAP L788 | **None** |
+| Phase tag | ROADMAP L788 | **None.** No tag contains `d0cd38b`, and no B39 tag is appropriate while B39 is not implemented |
+
+### 9.5 Decisions
+
+- **D-1 (proposed by the documentation PR that adds this section).** Carry `docs/sources/`, `docs/roadmap/` and the linked AI audit into `phase31/development` byte for byte. Blob ids equal those on `main` @ `5472193`. Owner merge is required.
+- **D-6 (new).** Accept the §9.1 classification of PR #16, and state whether B39 should reuse the design-concept routes as an advisory sub-output or supersede them with the specialist envelope.
+- **D-7 (new; proposed, not implemented).** Optional runtime clarification in discovery, so a client cannot mistake `INTERIOR_DESIGN_CONCEPT` / `EXTERIOR_DESIGN_CONCEPT` (`AVAILABLE`, `advisory: true`) for the B39 F49/F50 modules.
+  - **The change:** an additive field on each `aiCapabilities` entry, `{ maturity: 'ADVISORY_PRECURSOR', specialistModule: null }`, and on the `DESIGN_CONCEPTS` service, `{ roadmapStatus: 'NOT_B39_SPECIALIST' }`.
+  - **What it touches:** an API-contract change requiring regenerated OpenAPI and updated discovery tests.
+  - **Interim:** [the design-concept API reference](../phase39/phase39-api.md#frontend-guidance-what-discovery-does-and-does-not-mean) gives documentation-only frontend guidance.

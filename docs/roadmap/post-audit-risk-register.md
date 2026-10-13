@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Revision | **r2, 2026-10-13.** Re-based on the owner-designated authoritative roadmap. r1 is `4fb5919`. Changes are listed in "Revision log" at the end |
+| Revision | **r3, 2026-10-13: PR #16 addendum at the end; r2 rows unchanged.** **r2, 2026-10-13.** Re-based on the owner-designated authoritative roadmap. r1 is `4fb5919`. Changes are listed in "Revision log" at the end |
 | Authoritative roadmap | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`) |
 | Date of inspection | 2026-10-13 |
 | Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` |
@@ -464,3 +464,30 @@
   - R05 and R06 are re-mapped from "Phase 39" to **B43**. R11's "no phase owns" claim is narrowed.
   - R18 is re-framed against the B36 gate.
   - R23–R28 are added, from the roadmap's B31, B32, B37, B38, B41 and §K requirements.
+
+## r3 addendum: after PR #16 (`phase31/development` @ `d0cd38b`)
+
+PR #16 (merge `d0cd38b`, labelled "Phase 39") delivered **B43 groundwork** (capability-typed routing), **B41/B43 groundwork** (brief-field and reference-metadata use) and **partial, advisory Interior/Exterior concepts that B39 may reuse**, with migration `0028`. **B39 remains NI.** See [phase39-scope.md §0](../phase39/phase39-scope.md#0-classification-under-the-authoritative-roadmap-correction-r2).
+
+### Changes to existing risks
+
+The r2 rows above are kept as written. Their current state:
+
+| Risk | r3 status (VERIFIED at `d0cd38b` unless noted) |
+|---|---|
+| R03 | The range is now `0018`–`0028`. The hosted state is still unverified |
+| R04 | Now `0026`, `0027` **and `0028`** lack a local Supabase acceptance receipt. `supabase-acceptance` was skipped in CI runs 38434523761 and 38436385119 |
+| R05 | **Open.** No golden set or evaluation. All PR #16 provider tests use deterministic test doubles. No live model has been exercised |
+| R06 | **Partly mitigated, still B43.** The orchestrator now runs capability-typed tasks (instructions, bounded data, validator) and intent extraction is a wrapper. Still missing: a descriptor registry, versioned or hashed prompts, per-capability privacy floors, budget classes |
+| R07 | **Partly mitigated for one feature.** Design-concept sets have replay-based charge protection, single flight and a per-owner SQL quota of 50 provider sets per 24 hours. There is no general spend ledger, budget or cross-process limit |
+| R08 | **Open.** Concepts use reference **metadata only** and withhold the address and budget, but there is no consent or retention model |
+| R09 | **Open.** Concept sets record provider, model, guard and template versions but no prompt hash, and are not dependency-graph or manifest nodes |
+| R16 | **Unchanged.** Workflow `INTERIOR_DESIGN` / `EXTERIOR_DESIGN` are still `PLANNED`. The new concept capabilities are separate AI capabilities |
+| R23 | **Unchanged: P0 for B39.** No manifest v2 exists |
+
+### New risks
+
+| ID | Area | Risk | Owner | Status | Priority |
+|---|---|---|---|---|---|
+| R29 | Governance | Work merged under the label "Phase 39" is B43/B41 groundwork plus a partial advisory precursor. Code comments, test names and the `0028` header still say "Phase 39" (left unchanged: documentation-only correction; no history relabelling) | Docs (this addendum); owner decision D-6 | CONFIRMED | P1 (until D-6) |
+| R30 | Contracts | Discovery lists `INTERIOR_DESIGN_CONCEPT` / `EXTERIOR_DESIGN_CONCEPT` as `AVAILABLE` (`advisory: true`). A client could mistake them for the B39 F49/F50 modules (ROADMAP L669–670) | Docs guidance now; optional runtime change D-7 (proposed, not implemented) | CONFIRMED (code) | P2 |

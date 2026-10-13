@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Revision | **r2, 2026-10-13.** Reconciled against the owner-designated authoritative roadmap. r1 (`4fb5919`, same date) was written before the roadmap was available; its changes are listed in §10 |
+| Revision | **r3, 2026-10-13: PR #16 addendum (§11); r2 text unchanged.** **r2, 2026-10-13.** Reconciled against the owner-designated authoritative roadmap. r1 (`4fb5919`, same date) was written before the roadmap was available; its changes are listed in §10 |
 | Authoritative source | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) |
 | Source details | Supplied by the owner on 2026-10-13 as "`NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized(2).md`", stored verbatim. 802 lines, 83 009 bytes. sha256 `0ebc44799401f6719006b792ea39e7caac5a2cd4efd0d6b6552e7505e3520a03` ([`SHA256SUMS`](../sources/SHA256SUMS)). Document date: 8 October 2026 |
 | Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` (default branch; Phase 38 merged). Unchanged since r1 (re-checked 2026-10-13) |
@@ -356,3 +356,13 @@ B33 library operations and B30 compare/restore are foundations. Roles, comments,
   - The conversational "Phase 36" is re-identified as an early partial **B41**.
   - The Definition-of-Done rule (staging proof, tag) is applied.
   - Superseded material is listed (§6).
+
+## 11. r3 addendum: PR #16 (`phase31/development` @ `d0cd38b`)
+
+- **Baseline moved.** `ea2b5d0` became `d0cd38b` (PR #16, tested head `99fe815`; merge tree identical). PR #16 was planned before this roadmap reached the development branch.
+- **Classification.** PR #16 (merge `d0cd38b`, labelled "Phase 39") delivered **B43 groundwork** (capability-typed routing), **B41/B43 groundwork** (brief-field and reference-metadata use) and **partial, advisory Interior/Exterior concepts that B39 may reuse**, with migration `0028`. **B39 remains NI.** See [phase39-scope.md §0](../phase39/phase39-scope.md#0-classification-under-the-authoritative-roadmap-correction-r2).
+- **B39 (L283–297): still NI.** All six module deliverables, the envelope, the typed statuses, the candidate/approval lifecycle, the B37 manifest integration and the L297 gate are unmet. The Interior and Exterior concept routes are advisory and do not satisfy L289.
+- **B41 and B43: unchanged ratings.** B41 stays "PI, delivered early" and B43 stays "NI beyond the B21 foundation". PR #16 adds groundwork but completes no B41 or B43 deliverable or gate.
+- **CI evidence (not completion).** Runs 38434523761 (`99fe815`) and 38436385119 (`d0cd38b`): both Node lines 104/104 files and 3,021/3,021 tests; container smoke passed; `supabase-acceptance` skipped.
+- **Sequence unchanged (§7).** B37 completion, then B39, then B40. See [next-phase-readiness.md §9](next-phase-readiness.md#9-r3-update-pr-16-and-the-b39-scope-correction-2026-10-13).
+- **This copy.** These documents and the roadmap source were carried into `phase31/development` byte for byte from `main` @ `5472193`, which has no common ancestor with the development branch. Blob ids are identical and the roadmap sha256 is verified against `SHA256SUMS`. Only the r3 addenda differ.

@@ -1,6 +1,85 @@
-# Phase 39: AI Design Modules, Provider Routing and Brief Consumption — Scope and Acceptance
+# PR #16 ("Phase 39" design concepts and provider routing): scope record and roadmap classification
 
-**Status:** scope of record for implementation. Written 2026-10-13, before any Phase 39 code.
+**Status (corrected r2, 2026-10-13):**
+- **This is not the B39 scope**, and **B39 is not complete.** PR #16 (merge `d0cd38b`) was planned and merged under the label "Phase 39" before the authoritative roadmap reached the development branch.
+- §0 classifies what it delivered against the authoritative roadmap.
+- §1–§7 are kept as the **historical record** of the slice as planned on 2026-10-13. Statements that the roadmap supersedes are marked **[Superseded]** in place.
+
+**Authority:** [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`), cited as ROADMAP Lnnn, and [reconciliation r2](../roadmap/authoritative-roadmap-reconciliation.md).
+
+---
+
+## 0. Classification under the authoritative roadmap (correction r2)
+
+**Evidence classes in this section:**
+- **VERIFIED:** read from the code or Git at `d0cd38b`.
+- **CI:** a GitHub Actions run conclusion and its job logs.
+- **CLAIM:** stated by the implementing session, not independently verified.
+- **ROADMAP:** roadmap text.
+
+### 0.1 What the roadmap assigns
+
+| Topic | Roadmap phase | Source |
+|---|---|---|
+| Six Specialized Architectural AI Workflows: Interior, Exterior, Blueprint, Structural, Materials, Budget | **B39** | ROADMAP L283–297 |
+| Capability-based routing, per-operation provider provenance, privacy and region policy, schema checks, safe fallback, provider evaluation, cost | **B43** (old 38, "Intelligent API & Model Routing Expansion") | ROADMAP L355–372, numbering table L450 |
+| Brief and reference use in AI flows, scoped retrieval with consent | **B41** (L330–332) with **B43** (L362); the context bundle is B33 | ROADMAP |
+| Autonomous Large-Scale Project Integration, which consumes the six tested B39 operations | **B40** | ROADMAP L300–315, L311, §I rule 4 L735 |
+
+**Q4 is resolved by the roadmap:** provider routing is **B43**, not B38 and not B39 (reconciliation r2, C4).
+
+### 0.2 Classification of PR #16
+
+| PR #16 component | Classification | Evidence |
+|---|---|---|
+| Capability-typed routing over the Phase 21 policy (`ai/orchestration/{orchestrator,registry,tasks,transport}.ts`), `PROVIDER_OUTPUT_UNSAFE` | **B43 groundwork.** It is not B39 and does not complete B43: there is no vendor-neutral capability registry, provider evaluation, region policy, spend ledger or user-supplied credentials | VERIFIED (code) |
+| Brief-field and reference-metadata consumption | **B41/B43 groundwork** (bounded, metadata only, no consent or retention model) | VERIFIED (code) |
+| `INTERIOR_DESIGN_CONCEPT` / `EXTERIOR_DESIGN_CONCEPT` advisory concepts, 1–3 alternatives, deterministic templates, output guard | **Partial, advisory Interior/Exterior functionality that B39 may reuse.** It is not the B39 Interior or Exterior module | VERIFIED (code) |
+| `0028_design_concepts.sql` (immutable concept sets, signed write, replay-based charge protection, provider quota) | **Supporting persistence.** The roadmap does not name it; it is additive | VERIFIED (code) |
+
+### 0.3 B39 deliverables that are missing (ROADMAP L285–297)
+
+| Deliverable | State at `d0cd38b` (VERIFIED) |
+|---|---|
+| Blueprint, Structural, Materials and Budget specialists | **Absent** |
+| Interior: "furnishings/finishes and bounded interior layout edits, independent spatial/egress checks, interior-only outputs" (L289) | **Absent.** Concepts are advisory text, and no interior operation exists |
+| Exterior: "façade materials, massing only where supported, glazing/canopy constraints and exterior-only outputs" (L289) | **Partial.** An advisory concept plus a proposed Phase 30 `APPEARANCE_MODIFY` (four visual presets) that is **never executed** here |
+| One typed specialist request envelope (project/base revision, scope/locks, references, output config, provenance, quote/budget, jobs, dependency impacts, candidate/approval lifecycle) | **Absent** |
+| Typed statuses `unsupported`, `requires_review`, `degraded_provider`, `stale_dependency`, `partial` | **Absent.** None occurs in `apps/api/src` |
+| Immutable candidate/approval lifecycle | **Absent** for concepts. The exterior proposal relies on the existing B30 route, if a client submits it |
+| B37 manifest and freshness integration | **Absent.** Concept sets are not dependency-graph or overview nodes, and B37 Unified Project Manifest v2 does not exist (risk R23) |
+| Per-module role and cost policies, scenario fixtures (scenarios 33–38, 46) | **Absent** |
+| **Gate (L297):** "Execute one supported request for each of six modules using real backend adapters; show common revision IDs and invariant locks; feed resulting changes to shared B37 manifest and affected-cost/engineering freshness checks" | **Not met** |
+
+### 0.4 Evidence
+
+- **VERIFIED:**
+  - Merge `d0cd38b` has parents `ea2b5d0` and `99fe815`, and its tree equals the tested head `99fe815`.
+  - `0028_design_concepts.sql` sha256 is `59e0ad5176010af78ed218dc457694f24c4da923c98cf751aef35a0e99fdd37a`.
+  - Runtime responses never name "Phase 39" or "B39". The label appears only in code comments and test names.
+- **CI:**
+
+  | Run | Commit | Node 22.22.0 | Node 22.23.3 | Container smoke | `supabase-acceptance` |
+  |---|---|---|---|---|---|
+  | PR run 38434523761 | `99fe815` | 104/104 files, 3,021/3,021 tests | 104/104 files, 3,021/3,021 tests | Passed | Skipped (dispatch-only) |
+  | Post-merge run 38436385119 | `d0cd38b` | 104/104 files, 3,021/3,021 tests | 104/104 files, 3,021/3,021 tests | Passed | Skipped (dispatch-only) |
+
+  **CI passing does not make a phase complete.**
+- **CLAIM** (implementing session): local runs on both Node lines matched CI; the guard and credential handling behave as tested. There is **no** live-provider, local-Supabase, hosted or staging evidence.
+- **Outstanding release gates** (not passed; no evidence exists):
+  - local Supabase acceptance for `0026`–`0028`;
+  - authorized read-only hosted migration-history verification;
+  - staging proof of a live workflow (ROADMAP L788);
+  - a phase tag.
+
+### 0.5 Labelling that remains
+
+- Code comments, test names and the `0028` header comment say "Phase 39". They are left unchanged: this correction is documentation-only, and Git history and migrations are never relabelled.
+- Read "Phase 39" in those places as **"the PR #16 slice"**, classified in §0.2.
+
+---
+
+*The sections below are the historical scope record of the PR #16 slice, as planned on 2026-10-13. Where they say "Phase 39", read "the PR #16 slice".*
 
 **Base:** `phase31/development` at `ea2b5d0` (Phase 38 merged as PR #15). Citations refer to that commit unless a branch is named.
 
@@ -43,16 +122,16 @@ Every one of these is a **later-phase assignment written by an implementing sess
 
 ### 1.3 Conflicts and unknowns
 
-- **Q4, provider-routing placement (UNKNOWN which is right).** The owner's draft roadmap r1 (`docs/roadmap/archive/…owner-draft-r1-2026-10-13.md` on the unmerged `docs/roadmap-research-baseline` @ `56764c5`, lines 82–83) labels **Phase 38 "Provider routing"** and **Phase 39 "Additional backend capability / integration — UNKNOWN"**. The repository assigns documentation exports to 38 (implemented, PR #15) and provider routing to "39, 43". The reconciled roadmap r3 on the same branch (§3, row 39; §3.1 item 3) records the conflict without resolving it; decisions register Q4 is open. This phase follows the repository assignment, as Phase 38 did. **Q4 remains open.**
-- **Split between B39, B41 and B43 (UNKNOWN).** The repository mentions "39, 43" for AI modules and providers, "B39/B41" (once) for brief consumption and "B39/B43" for render/panorama/video providers. The boundary below (structured concepts here; image, render, panorama and video providers later) is PROPOSED, chosen so that nothing in Phase 39 forecloses either reading.
-- **Original acceptance criteria (UNKNOWN).** The canonical 46-phase roadmap was never recovered. The criteria in §5 are PROPOSED.
+- **[Superseded: resolved by the authoritative roadmap. Provider routing is B43 (L355–372, L450); see §0.1.]** **Q4, provider-routing placement (UNKNOWN which is right).** The owner's draft roadmap r1 (`docs/roadmap/archive/…owner-draft-r1-2026-10-13.md` on the unmerged `docs/roadmap-research-baseline` @ `56764c5`, lines 82–83) labels **Phase 38 "Provider routing"** and **Phase 39 "Additional backend capability / integration — UNKNOWN"**. The repository assigns documentation exports to 38 (implemented, PR #15) and provider routing to "39, 43". The reconciled roadmap r3 on the same branch (§3, row 39; §3.1 item 3) records the conflict without resolving it; decisions register Q4 is open. This phase follows the repository assignment, as Phase 38 did. **Q4 remains open.**
+- **[Superseded: resolved by the roadmap. B39 = six specialist workflows; B41 = conversational context and brief use; B43 = routing, providers and media; see §0.1.]** **Split between B39, B41 and B43 (UNKNOWN).** The repository mentions "39, 43" for AI modules and providers, "B39/B41" (once) for brief consumption and "B39/B43" for render/panorama/video providers. The boundary below (structured concepts here; image, render, panorama and video providers later) is PROPOSED, chosen so that nothing in Phase 39 forecloses either reading.
+- **[Superseded: the roadmap is now recovered. The B39 gate is ROADMAP L297, and it is not met; see §0.3.]** **Original acceptance criteria (UNKNOWN).** The canonical 46-phase roadmap was never recovered. The criteria in §5 are PROPOSED.
 - **Phase 35 research (UNKNOWN, unverified).** `docs/research/NekoArch_Phase35_Engineering_Research_Enhanced_v2_2026-10.md` exists only on the unmerged branch and is a reconstructed framework with no verified sources. Phase 39 uses none of it, and introduces no standard, clause, factor, rate or citation.
 
 ---
 
-## 2. Smallest defensible scope (proposed)
+## 2. Smallest defensible scope (proposed) — [Superseded as a definition of B39; see §0]
 
-Phase 39 delivers one vertical slice that exercises every assigned item once, using only what the repository already has:
+The PR #16 slice delivers one vertical slice that exercises every item the repository had assigned, using only what the repository already has. Under the roadmap, the "provider routing" row is B43 groundwork and the brief and reference rows are B41/B43 groundwork:
 
 | Assigned item | Phase 39 delivers | Deferred, and why |
 |---|---|---|
@@ -183,7 +262,9 @@ The key is supplied as `AI_PROVIDER_<NAME>_API_KEY` in the server environment. *
 
 ---
 
-## 5. Acceptance criteria (proposed; each has automated tests)
+## 5. Acceptance criteria of the PR #16 slice (proposed; each has automated tests)
+
+**These are not the roadmap's B39 gate** (L297, §0.3). Meeting them in CI does not complete B39.
 
 | # | Criterion |
 |---|---|
@@ -220,7 +301,7 @@ The key is supplied as `AI_PROVIDER_<NAME>_API_KEY` in the server environment. *
 
 ## 7. Open questions for the owner
 
-1. Q4: provider routing in Phase 38 (owner draft r1) or 39/43 (repository). This phase follows the repository.
+1. [Resolved by the roadmap: provider routing is B43.] Q4: provider routing in Phase 38 (owner draft r1) or 39/43 (repository). This phase follows the repository.
 2. Which provider, if any, to enable for concepts, and whether remote, metered use is acceptable (privacy and cost policy).
 3. Whether the per-owner quota of 50 provider-sourced sets per 24 hours is the right default.
 4. Whether reference content analysis (vision or OCR) belongs in B41 or B43, and under what data-transfer consent.
