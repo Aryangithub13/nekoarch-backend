@@ -1,10 +1,11 @@
 import { AiProviderError, AiRequestSchema, AiProvenanceSchema, AiUsageSchema, type AiAttempt, type AiFailureCode, type AiPolicy, type AiProvenance } from '../../contracts/ai-orchestration.js';
 import { ConversationIntentSchema, CONVERSATION_LIMITS, type ConversationIntent } from '../../contracts/conversations.js';
-import { AI_CAPABILITIES, createRegistry, type AiAdapter, type AiRequest, type ModelRoute } from './registry.js';
+import { AI_CAPABILITIES, AiTaskRequestSchema, createRegistry, type AiAdapter, type AiRequest, type AiDispatchResult, type AiTask, type AiTaskRequest, type AiTaskResult, type ModelRoute } from './registry.js';
 
 type Health = { failures: number; openUntil: number; active: number; halfOpen: boolean; windowStart: number; requests: number; state: 'AVAILABLE' | 'DEGRADED' | 'UNAVAILABLE' | 'DISABLED' | 'UNKNOWN' };
 const transient = new Set<AiFailureCode>(['PROVIDER_UNAVAILABLE','PROVIDER_TIMEOUT','PROVIDER_RATE_LIMITED']);
 const zeroUsage = {inputTokens:null,outputTokens:null,totalTokens:null,estimatedCostUsd:null};
+const INTENT_TASK: AiTask<ConversationIntent> = {outputBytes:CONVERSATION_LIMITS.outputBytes,parse(raw){const parsed=ConversationIntentSchema.safeParse(raw);if(!parsed.success)throw new AiProviderError('PROVIDER_SCHEMA_VIOLATION');return parsed.data;}};
 /** Process-local, bounded state. No prompts, credentials or owner data retained. */
 export class AiOrchestrator {
   readonly registry: ReturnType<typeof createRegistry>;
@@ -15,7 +16,7 @@ export class AiOrchestrator {
   }
   status() { return this.registry.providers.map(p => { const h=this.health.get(p.config.providerId)!; return {providerId:p.config.providerId,state:h.state,circuit:h.openUntil ? (h.halfOpen?'HALF_OPEN':'OPEN'):'CLOSED',active:h.active,requestsInWindow:h.requests}; }); }
   /** Selection is entirely server-owned; callers cannot provide endpoint/model/vendor payloads. */
-  routes(request: AiRequest): {route:ModelRoute; failure:AiFailureCode|null}[] {
+  routes(request: AiRequest | AiTaskRequest): {route:ModelRoute; failure:AiFailureCode|null}[] {
     const bytes=Buffer.byteLength(JSON.stringify({text:request.text,context:request.context}));
     return this.registry.models.slice().sort((a,b)=>a.provider.config.priority-b.provider.config.priority || a.model.priority-b.model.priority || a.provider.config.providerId.localeCompare(b.provider.config.providerId,'en') || a.model.modelId.localeCompare(b.model.modelId,'en')).map(({provider,model},position)=>{
       const p=provider.config, h=this.health.get(p.providerId)!;
@@ -33,16 +34,40 @@ export class AiOrchestrator {
     const start=performance.now(), policy=this.registry.policy;
     const validated=AiRequestSchema.safeParse(request);if(!validated.success)throw new AiProviderError('PROVIDER_POLICY_REJECTED');
     if (callerSignal?.aborted) throw new AiProviderError('REQUEST_CANCELLED');
-    if (AI_CAPABILITIES.find(c=>c.capability===request.capability)?.status!=='AVAILABLE') throw new AiProviderError('CAPABILITY_UNSUPPORTED');
+    // Only intent extraction has this schema and deterministic parser; every other capability is a typed task (run).
+    if (request.capability!=='ARCHITECTURAL_INTENT_EXTRACTION' || AI_CAPABILITIES.find(c=>c.capability===request.capability)?.status!=='AVAILABLE') throw new AiProviderError('CAPABILITY_UNSUPPORTED');
     // Validation copies context so malicious in-process adapters cannot mutate authoritative state.
     const safeContext={intent:ConversationIntentSchema.parse(request.context.intent),questions:request.context.questions.slice()};
     if(request.text.length>CONVERSATION_LIMITS.text || safeContext.questions.length>24 || safeContext.questions.some(q=>q.length>300)) throw new AiProviderError('PROVIDER_POLICY_REJECTED');
+    const run=await this.dispatch({...request,context:safeContext},INTENT_TASK,callerSignal);
+    const finish=(intent:ConversationIntent,providerId:string,modelId:string,position:number,usage:AiProvenance['usage'],fallback:boolean)=>({intent,provenance:AiProvenanceSchema.parse({requestId:request.requestId,capability:request.capability,privacyClass:request.privacyClass,providerId,modelId,routingReason:fallback?'DETERMINISTIC':position?'SECONDARY':'PREFERRED',fallbackPosition:position,latencyMs:performance.now()-start,status:fallback?'FALLBACK':'SUCCESS',intentSource:fallback?'DETERMINISTIC':'PROVIDER',requests:run.requests,attempts:run.attempts,usage})});
+    if(run.ok)return finish(run.output,run.providerId,run.modelId,run.position,run.usage,false);
+    if(callerSignal?.aborted)throw new AiProviderError('REQUEST_CANCELLED');
+    if(!policy.deterministicFallback)throw new AiProviderError('ALL_PROVIDERS_FAILED');
+    return finish(ConversationIntentSchema.parse(deterministic),'deterministic','bounded-conversation-v1',this.registry.models.length,null,true);
+  }
+  /**
+   * Phase 39: one capability-typed task (server-owned instructions, bounded data, its own validator) over the same routes and failure policy.
+   * There is no fallback here: an unsuccessful routing returns `ok: false` with every attempt, and the caller decides, explicitly, what follows.
+   */
+  async run<T>(request: AiTaskRequest, task: AiTask<T>, callerSignal?: AbortSignal): Promise<AiTaskResult<T>> {
+    const start=performance.now();
+    if(!AiTaskRequestSchema.safeParse(request).success)throw new AiProviderError('PROVIDER_POLICY_REJECTED');
+    if (callerSignal?.aborted) throw new AiProviderError('REQUEST_CANCELLED');
+    if (request.capability==='ARCHITECTURAL_INTENT_EXTRACTION' || AI_CAPABILITIES.find(c=>c.capability===request.capability)?.status!=='AVAILABLE') throw new AiProviderError('CAPABILITY_UNSUPPORTED');
+    if (Buffer.byteLength(JSON.stringify({text:request.text,context:request.context}))>CONVERSATION_LIMITS.contextBytes) throw new AiProviderError('PROVIDER_POLICY_REJECTED');
+    const run=await this.dispatch({...request,context:structuredClone(request.context)},task,callerSignal);
+    if(!run.ok && callerSignal?.aborted)throw new AiProviderError('REQUEST_CANCELLED');
+    return {...run,latencyMs:Math.round(performance.now()-start)};
+  }
+  /** The routing loop shared by every capability: ordered routes, per-attempt deadlines inside one total deadline, bounded transient retries, circuits. */
+  private async dispatch<T>(request: AiRequest | AiTaskRequest, task: AiTask<T>, callerSignal?: AbortSignal): Promise<AiDispatchResult<T>> {
+    const policy=this.registry.policy;
     const timeout=AbortSignal.timeout(Math.max(1,Math.min(policy.timeoutMs,request.timeoutMs)));
     const signal=AbortSignal.any([timeout,...(callerSignal?[callerSignal]:[])]);
     const attempts:AiAttempt[]=[]; let calls=0;
     const record=(event:AiAttempt)=>{attempts.push(event);try{this.observe?.({...event,requestId:request.requestId});}catch{/* Operational observers cannot change results. */}};
-    const finish=(intent:ConversationIntent,providerId:string,modelId:string,position:number,usage:AiProvenance['usage'],fallback:boolean)=>({intent,provenance:AiProvenanceSchema.parse({requestId:request.requestId,capability:request.capability,privacyClass:request.privacyClass,providerId,modelId,routingReason:fallback?'DETERMINISTIC':position?'SECONDARY':'PREFERRED',fallbackPosition:position,latencyMs:performance.now()-start,status:fallback?'FALLBACK':'SUCCESS',intentSource:fallback?'DETERMINISTIC':'PROVIDER',requests:calls,attempts,usage})});
-    for (const {route,failure} of this.routes({...request,context:safeContext})) {
+    for (const {route,failure} of this.routes(request)) {
       const {provider,model,position}=route, p=provider.config, h=this.health.get(p.providerId)!;
       const base={providerId:p.providerId,modelId:model.modelId,capability:request.capability,routingReason:position?'SECONDARY' as const:'PREFERRED' as const,fallbackPosition:position};
       if(failure) {record({...base,attempt:0,latencyMs:0,status:'SKIPPED',failure,usage:null});continue;}
@@ -57,23 +82,22 @@ export class AiOrchestrator {
         const attemptSignal=AbortSignal.any([signal,AbortSignal.timeout(Math.min(p.timeoutMs,request.timeoutMs))]);
         let failureCode:AiFailureCode|null=null;
         try {
-          const response=await bounded(provider.adapter.execute({...request,context:structuredClone(safeContext),timeoutMs:Math.min(p.timeoutMs,request.timeoutMs)},model,attemptSignal),attemptSignal);
+          const response=await bounded(provider.adapter.execute({...request,context:structuredClone(request.context),timeoutMs:Math.min(p.timeoutMs,request.timeoutMs)} as AiRequest | AiTaskRequest,model,attemptSignal),attemptSignal);
           if(attemptSignal.aborted)throw new AiProviderError('PROVIDER_TIMEOUT');
           if(response.finishReason!=='stop')throw new AiProviderError('PROVIDER_RESPONSE_INVALID');
           let json:string;
           try{json=typeof response.output==='string'?response.output:JSON.stringify(response.output);}catch{throw new AiProviderError('PROVIDER_RESPONSE_INVALID');}
           if(!json)throw new AiProviderError('PROVIDER_RESPONSE_INVALID');
-          if(Buffer.byteLength(json)>CONVERSATION_LIMITS.outputBytes)throw new AiProviderError('PROVIDER_RESPONSE_TOO_LARGE');
+          if(Buffer.byteLength(json)>task.outputBytes)throw new AiProviderError('PROVIDER_RESPONSE_TOO_LARGE');
           let raw:unknown;try{raw=JSON.parse(json);}catch{throw new AiProviderError('PROVIDER_RESPONSE_INVALID');}
-          const parsed=ConversationIntentSchema.safeParse(raw);
-          if(!parsed.success)throw new AiProviderError('PROVIDER_SCHEMA_VIOLATION');
+          const output=task.parse(raw);
           const usage=AiUsageSchema.safeParse(response.usage??zeroUsage);
           if(!usage.success)throw new AiProviderError('PROVIDER_RESPONSE_INVALID');
           const acceptedUsage={...usage.data,estimatedCostUsd:null as number|null};
           if(acceptedUsage.inputTokens!==null && acceptedUsage.outputTokens!==null && model.inputUsdPerMillion!==undefined && model.outputUsdPerMillion!==undefined) acceptedUsage.estimatedCostUsd=(acceptedUsage.inputTokens*model.inputUsdPerMillion+acceptedUsage.outputTokens*model.outputUsdPerMillion)/1000000;
           h.failures=0;h.openUntil=0;h.state='AVAILABLE';
           record({...base,attempt:calls,latencyMs:performance.now()-began,status:'SUCCESS',failure:null,usage:acceptedUsage});
-          return finish(parsed.data,p.providerId,model.modelId,position,acceptedUsage,false);
+          return {ok:true,output,providerId:p.providerId,modelId:model.modelId,position,usage:acceptedUsage,requests:calls,attempts};
         }catch(error){
           failureCode=callerSignal?.aborted?'REQUEST_CANCELLED':attemptSignal.aborted?'PROVIDER_TIMEOUT':error instanceof AiProviderError?error.code:'PROVIDER_UNAVAILABLE';
           if(failureCode!=='REQUEST_CANCELLED'){h.failures++;h.state='DEGRADED';if(probe || h.failures>=policy.circuitThreshold || failureCode==='PROVIDER_AUTH_FAILED'){h.openUntil=Date.now()+policy.circuitCooldownMs;h.state='UNAVAILABLE';}}
@@ -85,9 +109,7 @@ export class AiOrchestrator {
       }
       if(calls>=policy.maxAttempts || signal.aborted)break;
     }
-    if(callerSignal?.aborted)throw new AiProviderError('REQUEST_CANCELLED');
-    if(!policy.deterministicFallback)throw new AiProviderError('ALL_PROVIDERS_FAILED');
-    return finish(ConversationIntentSchema.parse(deterministic),'deterministic','bounded-conversation-v1',this.registry.models.length,null,true);
+    return {ok:false,requests:calls,attempts};
   }
 }
 /** Settles even an uncooperative adapter; supported transports also abort their I/O. */

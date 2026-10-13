@@ -70,11 +70,14 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     // The workflow registry still reports SCENE_3D as a planned workflow step; discovery does not contradict it.
     expect(CAPABILITIES.find(c => c.capabilityId === 'SCENE_3D')?.implementationStatus).toBe('PLANNED');
   });
-  it('never presents a render, panorama or video as available, and only intent extraction among AI capabilities', () => {
+  it('never presents a render, panorama or video as available, and only intent extraction and the Phase 39 design concepts among AI capabilities', () => {
     // Phase 30 adds the bounded exterior appearance variant (still a visual 3D model, never a render).
     expect(MEDIA.filter(m => m.status === 'AVAILABLE').map(m => m.media)).toEqual(['INTERACTIVE_3D_MODEL', 'APPEARANCE_VARIANT_3D_MODEL']);
     for (const m of MEDIA.filter(m => m.status === 'UNSUPPORTED')) expect([m.serviceId, m.provider, m.mimeType, typeof m.reason]).toEqual([null, null, null, 'string']);
-    expect(AI_CAPABILITIES.filter(c => c.status === 'AVAILABLE').map(c => c.capability)).toEqual(['ARCHITECTURAL_INTENT_EXTRACTION']);
+    // Phase 39 concepts are structured advisory text; image, render and 3D generation stay planned.
+    expect(AI_CAPABILITIES.filter(c => c.status === 'AVAILABLE').map(c => c.capability)).toEqual(['ARCHITECTURAL_INTENT_EXTRACTION', 'INTERIOR_DESIGN_CONCEPT', 'EXTERIOR_DESIGN_CONCEPT']);
+    for (const c of ['INTERIOR_VISUALIZATION', 'EXTERIOR_VISUALIZATION', 'IMAGE_CONCEPT_GENERATION', 'MODEL_3D_GENERATION', 'DOCUMENT_ANALYSIS', 'ENGINEERING_ASSISTANCE'])
+      expect(AI_CAPABILITIES.find(x => x.capability === c)?.status).toBe('PLANNED');
   });
 
   it('R01-G3: the OpenAPI document is regenerated from the live routes and Zod contracts without drift, and the mapping is complete and not stale', () => {
