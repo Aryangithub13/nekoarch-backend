@@ -19,6 +19,8 @@ Nothing is stored or run.
 | Status | Code | When |
 |---|---|---|
 | 400 | `VALIDATION_ERROR`, or the engine's own input codes | Malformed body or invalid engine input |
+| 400 | `COMPUTE_REQUEST_TOO_LARGE` | The job request exceeds 64 KiB |
+| 401 | `UNAUTHORIZED` (standard) | No session |
 | 404 | `PROJECT_NOT_FOUND` / `REVISION_NOT_FOUND` | Not the owner's project or revision |
 | 422 | `COMPUTE_PLACEMENT_DISABLED` | `placement: REMOTE` |
 | 422 | `COMPUTE_KIND_UNSUPPORTED` | `REVISION_EXECUTE`, or a kind removed by policy |
@@ -28,7 +30,23 @@ Nothing is stored or run.
 
 Body (≤ 81 920 bytes): `{ "quote": <the quote, unmodified>, "consent": { "quoteHash": "<quote.quoteHash>", "acceptQuote": true, "acceptLocalExecution": true } }`. Rate group: `generate`.
 
-Response `202` (new) or `200` (repeated consent; `replayed: true`): `{ job: <B32 JobDetail>, dispatch: <consent record>, replayed }`, with a `Location` header pointing to the polling URL.
+Response `202` (new) or `200` (repeated consent; `replayed: true`): `{ job: <B32 JobDetail>, dispatch: <consent record>, replayed }`, with a `Location` header pointing to the polling URL and `Retry-After: 1`.
+
+Checks run in this order, and each refusal happens before any write:
+1. Authentication (401).
+2. Body schema (400).
+3. Project ownership (404).
+4. Consent names the quote.
+5. Quote signature, which binds user, project and every quote field.
+6. Expiry.
+7. Current policy (placement, kind, request size).
+8. The engine's read-only validator.
+9. The source revision and model hash.
+10. In one SQL transaction: owner limits, quote-hash replay or conflict, the nested B32 submission (its limits and dedup), then the consent record.
+
+- **Repeats:** a repeated consent within the quote's lifetime replays; four simultaneous first consents give one `202` and three `200` replays for one job. After expiry, a repeat gets `409 COMPUTE_QUOTE_EXPIRED` and nothing runs.
+- **Deduplication:** if the same work is already active in the project, B32 deduplicates. The response is `202` with `job.deduplicated: true` for the existing job, and a new consent record points at that job.
+- **Dispatch:** the job is dispatched in-process after the commit. If that dispatch is lost, the next poll starts it.
 
 | Status | Code | When |
 |---|---|---|
@@ -36,16 +54,17 @@ Response `202` (new) or `200` (repeated consent; `replayed: true`): `{ job: <B32
 | 404 | `PROJECT_NOT_FOUND` | Not the owner's project |
 | 409 | `COMPUTE_CONSENT_MISMATCH` | `consent.quoteHash` ≠ `quote.quoteHash` |
 | 409 | `COMPUTE_QUOTE_INVALID` | Quote altered, issued to another user or project, or signed by another server |
-| 409 | `COMPUTE_QUOTE_EXPIRED` | Past `expiresAt` (default TTL 900 s) |
+| 409 | `COMPUTE_QUOTE_EXPIRED` | Past `expiresAt` (default TTL 900 s, API server clock), including a repeat of an already accepted consent |
 | 409 | `COMPUTE_QUOTE_STALE` | The source revision no longer matches (defensive: revisions are immutable, so a signed quote normally cannot become stale) |
-| 409 | `COMPUTE_QUOTE_CONFLICT` | Quote hash already used for different work (defensive) |
+| 409 | `COMPUTE_QUOTE_CONFLICT` | Quote hash already recorded for different input or another project (defensive; SQL `P3602`) |
 | 422 | `COMPUTE_PLACEMENT_DISABLED` / `COMPUTE_KIND_UNSUPPORTED` | Policy changed since the quote |
-| 429 | `COMPUTE_LIMIT_EXCEEDED` | Owner-wide active or daily consent limit |
-| 429 | `JOB_LIMIT_EXCEEDED` | B32 per-project limit |
+| 429 | `COMPUTE_LIMIT_EXCEEDED` | Owner-wide gateway limit: active gateway jobs (`maxActivePerOwner`) or consents in the last 24 h (`maxConsentedPerOwnerPerDay`, database clock). Counts gateway consent records only |
+| 429 | `JOB_LIMIT_EXCEEDED` | B32 per-project limit (≤ 4 active, ≤ 120 submissions per hour), enforced inside the consent transaction; nothing is recorded |
+| 503 | `COMPUTE_UNAVAILABLE` | Server commit key not configured |
 
 ## `GET /api/projects/:projectId/compute/jobs/:jobId`
 
-Polling. The response is `{ gatewayVersion, job, dispatches[], resultCheck { status: PENDING | ACCEPTED_BY_SERVICE_VALIDATOR | NO_RESULT, detail }, claims }`. Like every B32 read, it recovers jobs whose worker was lost. A job without a consent record → `404 COMPUTE_JOB_NOT_FOUND`.
+Polling; the owner only (another user → 404, anonymous → 401). The response is `{ gatewayVersion, job, dispatches[], resultCheck { status: PENDING | ACCEPTED_BY_SERVICE_VALIDATOR | NO_RESULT, detail }, claims }`. Like every B32 read, it recovers jobs whose worker was lost. A job without a consent record → `404 COMPUTE_JOB_NOT_FOUND`.
 
 **Cancellation:** `POST /api/projects/:projectId/jobs/:jobId/cancel` (B32, unchanged).
 
