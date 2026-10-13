@@ -22,16 +22,16 @@
 | R4 controlled operations | `conversation/actions.ts`: Phase 30 preflight/execute/approve, Phase 35 regenerate/save/verify, Phase 20 approval route | appearance, restore and zone-regeneration scenarios |
 | R5 preservation and revision safety | Scope conflicts from entity-level diffs; Phase 30 locks; recomputed-candidate hash check; post-commit verification; SQL `advance`/`rebase` fencing | "coordinates a Phase 35 zone regeneration…", "refuses stale revisions…", "fences advance and rebase in SQL…" |
 | R6 capability-aware orchestration | Phase 21 orchestrator only for `ARCHITECTURAL_INTENT_EXTRACTION`; other AI capabilities stay `PLANNED` | "returns stable statuses on provider failure and never lets malformed model output through…" |
-| R7 contracts and persistence | Additive optional state fields; migration `0025`; OpenAPI and route catalog regenerated | upgrade test `0024`→`0025`; `modernization.test.ts` |
+| R7 contracts and persistence | Additive optional state fields; migration `0026`; OpenAPI and route catalog regenerated | upgrade test `0025`→`0026`; `modernization.test.ts` |
 | R8 engineering evidence | Phase 35 assessment passed through unchanged; fixed disclosures; never `professionally_reviewed` | "answers … engineering questions…" (matches the Phase 35 route) |
 | R9 history, alternatives, conflicts | Suggestions and option selection; revision and candidate comparison; conflicts with constraints and accepted decisions; explicit supersede/release | constraint, comparison and supersede assertions |
 | R10 observability and recovery | Structured logs without text or secrets; action-keyed receipts; reconciliation of lost conversation updates | "keeps history and context bounded and logs…", "never loses or duplicates a commit…" (fault injection) |
 
-Acceptance criteria 1–19 map to the integration and unit tests above. AC 20 (full suite, build, typecheck, lint) is covered in §4. AC 18: migration replay (`supabase/tests/database.test.ts`, which now includes `0025`) and the populated-upgrade test pass on embedded PostgreSQL. The Supabase Docker acceptance is reported in §5.
+Acceptance criteria 1–19 map to the integration and unit tests above. AC 20 (full suite, build, typecheck, lint) is covered in §4. AC 18: migration replay (`supabase/tests/database.test.ts`, which now includes `0026`) and the populated-upgrade test pass on embedded PostgreSQL. The Supabase Docker acceptance is reported in §5.
 
 ## 3. Changes
 
-- **New:** `apps/api/src/contracts/conversation-memory.ts`, `contracts/conversation-turns.ts`, `conversation/{interpret,memory,context,turns,actions}.ts`, `supabase/migrations/0025_conversation_turns.sql`, `apps/api/tests/conversation-turns{,.integration}.test.ts`, `docs/phase36-conversational-ai/*`.
+- **New:** `apps/api/src/contracts/conversation-memory.ts`, `contracts/conversation-turns.ts`, `conversation/{interpret,memory,context,turns,actions}.ts`, `supabase/migrations/0026_conversation_turns.sql`, `apps/api/tests/conversation-turns{,.integration}.test.ts`, `docs/phase36-conversational-ai/*`.
 - **Changed (additive):**
   - `contracts/conversations.ts`: optional `memory`, `turns` and `actions`; the `turnsOnly` opt-in.
   - `routes/conversations.ts`: four routes, and two guards that apply only to conversations using Phase 36 constraints.
@@ -42,7 +42,7 @@ Acceptance criteria 1–19 map to the integration and unit tests above. AC 20 (f
   - `lib/sentry.ts`: route allowlist.
   - `app.ts`: the appearance pool is passed to the conversation routes.
   - `test-support/openapi.ts`; `docs/modernization/{api-routes,openapi}.json` (regenerated with `UPDATE_ROUTE_CATALOG=1`).
-- **Migration:** `0025` only replaces `conversation_write`. It changes no table, column, constraint, policy or stored row, and earlier migrations are byte-identical. **It is not applied to any hosted database.** The hosted database is believed to be at `0017` (B31–B33 reports) and needs `0018`–`0024` first.
+- **Migration:** `0026` only replaces `conversation_write`. It changes no table, column, constraint, policy or stored row, and earlier migrations are byte-identical. **It is not applied to any hosted database.** The hosted database is believed to be at `0017` (B31–B33 reports) and needs `0018`–`0024` first.
 - **OpenAPI:** four new paths; `POST /conversations` gains the optional `turnsOnly`; `Conversation` gains optional fields. Two Phase 30 operations show changed `$ref` targets only; their semantics are identical (verified by inlining).
 
 ## 4. Verification (local, non-root, `LANG=en_US.UTF-8`, Node 22.22.0)
@@ -82,4 +82,8 @@ See design §5. In short: there are no generative free-text answers, because the
 - **Owner decision:** Phase 36 numbering (Conversational AI vs. Compute Gateway). Then commit the roadmap to `docs/roadmap/`.
 - **Owner decision:** whether this branch is reviewed on top of PR #7 (its base) or rebased after Phase 35 merges.
 - **Owner:** supply the V2 research set, or confirm it does not exist.
-- **Next:** an independent review of this branch, then CI on both Node versions once a pull request is authorized. Hosted migration `0025` must wait for the hosted state of `0018`–`0024` to be confirmed.
+- **Next:** an independent review of this branch, then CI on both Node versions once a pull request is authorized. Hosted migration `0026` must wait for the hosted state of `0018`–`0025` to be confirmed.
+
+## Migration renumbering (0025 → 0026)
+
+This migration was written and first verified as `0025_conversation_turns.sql`. The Phase 36 compute gateway's `0025_compute_gateway.sql` reached `phase31/development` first (PR #10), and the Supabase CLI keys migrations on their numeric prefix, so two `0025` files would collide. The migration is renamed to `0026_conversation_turns.sql` with no change to its SQL. The populated-upgrade test now starts from every migration before `0026` (including `0025_compute_gateway.sql` once this branch carries it). The two migrations touch disjoint objects: `0025_compute_gateway.sql` does not reference `conversation_write`. `evidence/final-vitest.txt` is kept unchanged as the record of the run made under the old number.

@@ -448,7 +448,7 @@ describe('Phase 36 conversational turns on PostgreSQL', () => {
     expect([modelHash(restored.model), restored.parentRevisionId]).toEqual([modelHash(a.model), b.id]);
   }, 120_000);
 
-  it('fences advance and rebase in SQL: signed input, state version, live leases and revision ancestry (0025)', async () => {
+  it('fences advance and rebase in SQL: signed input, state version, live leases and revision ancestry (0026)', async () => {
     const { projectId, revision: a } = await project('Phase 36 SQL');
     const c = await conversation(projectId, a.id);
     const repo = new ConversationRepository(createPgBackend(db.pool, { owner: ownerId }).repository('owner'), ownerId, secret);
@@ -479,11 +479,11 @@ describe('Phase 36 conversational turns on PostgreSQL', () => {
   }, 120_000);
 });
 
-describe('Phase 36 migration 0025 upgrades a populated 0024 database without changing stored conversations', () => {
+describe('Phase 36 migration 0026 upgrades a populated 0025 database without changing stored conversations', () => {
   let db: Awaited<ReturnType<typeof startTestDatabase>>;
   afterAll(async () => { await db?.stop(); });
   it('keeps Phase 20 rows and flows identical, then serves turns and rebase', async () => {
-    db = await startTestDatabase({ migrations: name => name < '0025' });
+    db = await startTestDatabase({ migrations: name => name < '0026' });
     const ownerId = await createTestUser(db.pool), secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret as string;
     const app = buildApp({ env: env(secret, { LOG_LEVEL: 'silent' }), backend: createPgBackend(db.pool, { owner: ownerId }), captureError: () => undefined });
     await app.ready();
@@ -494,11 +494,11 @@ describe('Phase 36 migration 0025 upgrades a populated 0024 database without cha
       expect((await app.inject({ method: 'POST', url: `${url}/messages`, headers: owner, payload: { messageId: randomUUID(), expectedVersion: 0, baseRevisionId: null, text: '30 by 50 feet 3BHK' } })).statusCode).toBe(200);
       const before = (await db.pool.query('select state::text, md5(state::text) digest from architectural_conversations where id=$1', [conversationId])).rows[0];
       expect(JSON.parse(before.state)).not.toHaveProperty('memory');
-      // Before 0025 the new actions do not exist.
+      // Before 0026 the new actions do not exist.
       const repo = new ConversationRepository(createPgBackend(db.pool, { owner: ownerId }).repository('owner'), ownerId, secret);
       await expect(repo.write('rebase', { projectId, conversationId, expectedVersion: 1, state: JSON.parse(before.state) })).rejects.toBeDefined();
 
-      const sql = await readFile(new URL('../../../supabase/migrations/0025_conversation_turns.sql', import.meta.url), 'utf8');
+      const sql = await readFile(new URL('../../../supabase/migrations/0026_conversation_turns.sql', import.meta.url), 'utf8');
       await db.pool.query(`begin;\n${sql}\ncommit;`);
       expect((await db.pool.query('select md5(state::text) digest from architectural_conversations where id=$1', [conversationId])).rows[0].digest).toBe(before.digest);
       const read = (await app.inject({ url, headers: owner })).json();
