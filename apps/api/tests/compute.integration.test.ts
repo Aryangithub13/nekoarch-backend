@@ -250,7 +250,7 @@ describe('Phase 36 compute gateway (first slice) on PostgreSQL', () => {
     expect(racing.map(r => r.statusCode).sort()).toEqual([200, 200, 200, 202]);
     expect(new Set(racing.map(r => r.json().job.id)).size).toBe(1);
     expect(racing.filter(r => r.json().replayed).length).toBe(3);
-    const jobId = racing[0].json().job.id;
+    const jobId = racing.find(r => r.statusCode === 202)!.json().job.id;
     await settle(`${jobs}/${jobId}`);
     expect(await counts(projectId)).toEqual({ jobs: 1, dispatches: 1, scenes: 1 });
     // The same quote hash for different input, or on another of the owner's projects: P3602 → 409 COMPUTE_QUOTE_CONFLICT, nothing written.
