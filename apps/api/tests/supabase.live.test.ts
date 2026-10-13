@@ -163,6 +163,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const revisionOps = await admin.from('project_revision_operations').select('project_id').in('project_id', ownedIds);
       if (revisionOps.error) failures.push('read protected revision-operation projects');
       for (const row of revisionOps.data ?? []) protectedIds.add(row.project_id);
+      // Phase 36 consent records are immutable evidence likewise.
+      const computeRows = await admin.from('project_compute_dispatches').select('project_id').in('project_id', ownedIds);
+      if (computeRows.error) failures.push('read protected compute-dispatch projects');
+      for (const row of computeRows.data ?? []) protectedIds.add(row.project_id);
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
@@ -492,6 +496,52 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     const after = await owner.client.from('project_revision_operations').select('status').eq('id', op.id);
     expect(after.data).toEqual([{ status: 'CANDIDATE_READY' }]);
   });
+
+  it('Phase 36 gateway: consent-gated local job through actual JWT and PostgREST; consent records are owner-only, immutable and unforgeable', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'Phase 36 gateway' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id;
+    const generated = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions/generate`, headers: owner.headers, payload: { requirements: requirements() } });
+    expect(generated.statusCode, generated.body).toBe(201); const revisionId = generated.json().revision.id;
+    const quoted = await app.inject({ method: 'POST', url: `/api/projects/${id}/compute/quotes`, headers: owner.headers, payload: { request: { kind: 'SCENE_COMPILE', revisionId } } });
+    expect(quoted.statusCode, quoted.body).toBe(200);
+    const quote = quoted.json();
+    expect(quote).toMatchObject({ authorization: 'NOT_AUTHORIZED_UNTIL_CONSENT', placement: 'LOCAL', cost: { ceilingMinor: 0 } });
+    expect((await owner.client.from('project_compute_dispatches').select('*').eq('project_id', id)).data).toEqual([]);
+    const remote = await app.inject({ method: 'POST', url: `/api/projects/${id}/compute/quotes`, headers: owner.headers, payload: { request: { kind: 'SCENE_COMPILE', revisionId }, placement: 'REMOTE' } });
+    expect([remote.statusCode, remote.json().error.code]).toEqual([422, 'COMPUTE_PLACEMENT_DISABLED']);
+    const consent = { quote, consent: { quoteHash: quote.quoteHash, acceptQuote: true, acceptLocalExecution: true } };
+    expect((await app.inject({ method: 'POST', url: `/api/projects/${id}/compute/jobs`, headers: other.headers, payload: consent })).statusCode).toBe(404);
+    const accepted = await app.inject({ method: 'POST', url: `/api/projects/${id}/compute/jobs`, headers: owner.headers, payload: consent });
+    expect(accepted.statusCode, accepted.body.slice(0, 500)).toBe(202);
+    const jobId = accepted.json().job.id;
+    const replay = await app.inject({ method: 'POST', url: `/api/projects/${id}/compute/jobs`, headers: owner.headers, payload: consent });
+    expect([replay.statusCode, replay.json().replayed, replay.json().job.id]).toEqual([200, true, jobId]);
+    let view: { job: { status: string }; resultCheck: { status: string }; dispatches: unknown[] } | undefined;
+    for (const deadline = Date.now() + 60_000; Date.now() < deadline;) {
+      const polled = await app.inject({ method: 'GET', url: `/api/projects/${id}/compute/jobs/${jobId}`, headers: owner.headers });
+      expect(polled.statusCode, polled.body.slice(0, 500)).toBe(200);
+      view = polled.json();
+      if (['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(view!.job.status)) break;
+      await new Promise(r => setTimeout(r, 200));
+    }
+    expect(view).toMatchObject({ job: { status: 'SUCCEEDED' }, resultCheck: { status: 'ACCEPTED_BY_SERVICE_VALIDATOR' }, dispatches: [expect.objectContaining({ quoteHash: quote.quoteHash })] });
+    expect((await app.inject({ method: 'GET', url: `/api/projects/${id}/compute/jobs/${jobId}`, headers: other.headers })).statusCode).toBe(404);
+    // Direct SDK: owner-only reads, no writes, no unsigned or foreign RPCs.
+    const own = await owner.client.from('project_compute_dispatches').select('quote_hash,job_id').eq('project_id', id);
+    expect(own.error).toBeNull(); expect(own.data).toEqual([{ quote_hash: quote.quoteHash, job_id: jobId }]);
+    const foreignRows = await other.client.from('project_compute_dispatches').select('*').eq('project_id', id);
+    expect(foreignRows.error).toBeNull(); expect(foreignRows.data).toEqual([]);
+    expect((await publicClient.from('project_compute_dispatches').select('*').eq('project_id', id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_compute_dispatches').update({ cost_ceiling_minor: 0 }).eq('project_id', id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_compute_dispatches').delete().eq('project_id', id)).error?.code).toBe('42501');
+    expect((await owner.client.from('project_compute_dispatches').insert({ quote_hash: 'a'.repeat(64) })).error?.code).toBe('42501');
+    const unsigned = await owner.client.rpc('compute_write', { p_action: 'submit', p_input: { projectId: id }, p_job_call: {}, p_envelope: '{}', p_signature: 'f'.repeat(64) });
+    expect(unsigned.error?.code).toBe('42501');
+    expect((await other.client.rpc('compute_read', { p_action: 'job', p_project_id: id, p_job_id: jobId })).error?.code).toBe('P1201');
+    expect((await publicClient.rpc('compute_read', { p_action: 'job', p_project_id: id, p_job_id: jobId })).error).not.toBeNull();
+    expect((await owner.client.from('project_compute_dispatches').select('job_id').eq('project_id', id)).data).toHaveLength(1);
+  }, 90_000);
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {
     if (!app || !owner || !other || !publicClient || !admin) throw new Error('Local setup incomplete');

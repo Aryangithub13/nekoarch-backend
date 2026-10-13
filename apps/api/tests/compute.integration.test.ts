@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { Writable } from 'node:stream';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { asPrincipal, createTestUser, startTestDatabase } from '../../../test-support/postgres.js';
 import { createPgBackend } from '../../../test-support/pg-backend.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
@@ -10,6 +10,9 @@ import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { createLogger } from '../src/lib/logger.js';
 import { signProjectCommit } from '../src/services/project-service.js';
+import { signedJobSubmission } from '../src/services/job-service.js';
+import { quoteSignature } from '../src/compute/gateway.js';
+import { computeDatabaseError } from '../src/lib/compute-repository.js';
 import { ScenePool } from '../src/scene3d/pool.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -195,6 +198,128 @@ describe('Phase 36 compute gateway (first slice) on PostgreSQL', () => {
     expect(after.domains.map((d: Json) => [d.domain, d.status])).toEqual(before.domains.map((d: Json) => [d.domain, d.status]));
     expect(after.domains.every((d: Json) => d.status !== 'EVALUATED')).toBe(true);
     expect(after.domains.flatMap((d: Json) => d.blockers.map((b: Json) => b.kind))).toEqual(expect.arrayContaining(['NO_VALIDATED_SOLVER']));
+  }, 120_000);
+
+  /** Re-signs a changed quote with the server key: what the server would have issued, so only the defensive checks after the signature can refuse it. */
+  const reissued = (quote: Json, change: Json) => {
+    const { quoteHash: _hash, ...content } = { ...quote, ...change };
+    return { ...content, quoteHash: quoteSignature(secret, ownerId, content as Parameters<typeof quoteSignature>[2]) };
+  };
+  /** The signed compute_write call the gateway makes, issued directly (no runner dispatch afterwards), with optional changes to the consent input. */
+  const sqlConsent = (quote: Json, change: Json = {}) => {
+    const { request: _request, ...stored } = quote;
+    const input = { projectId: quote.projectId, quoteHash: quote.quoteHash, kind: quote.kind, request: quote.request, inputHash: quote.inputHash, placement: 'LOCAL',
+      providerId: 'local-pool', sourceRevisionId: quote.source.revisionId, modelHash: quote.source.modelHash, costClass: 'FREE', costCeilingMinor: 0, currency: 'INR',
+      dataTransfer: 'NONE', quote: stored, limits: { maxConsentedPerOwnerPerDay: 50, maxActivePerOwner: 8 }, ...change };
+    const job = signedJobSubmission(ownerId, input.projectId, input.request, secret), signed = signProjectCommit(secret, ownerId, '/api/projects/:projectId/compute/jobs', input);
+    return asPrincipal(db.pool, ownerId, c => c.query('select public.compute_write($1,$2,$3,$4,$5) r', ['submit', JSON.stringify(input),
+      JSON.stringify({ p_action: 'submit', p_input: job.input, p_envelope: job.attestation.envelope, p_signature: job.attestation.signature }), signed.envelope, signed.signature]))
+      .then(r => r.rows[0].r as Json);
+  };
+  const mapped = (error: unknown) => { try { computeDatabaseError(error as { code?: string }); } catch (e) { return [(e as Json).statusCode, (e as Json).code]; } };
+
+  it('refuses expired and stale quotes, including a replay after expiry, and creates no job or consent record', async () => {
+    const { projectId, revisionId, quotes, jobs } = await project();
+    const quote = (await call(app, 'POST', quotes, { request: { kind: 'SCENE_COMPILE', revisionId } })).json();
+    const refused = async (payload: unknown, code: string) => {
+      const r = await call(app, 'POST', jobs, payload);
+      expect([r.statusCode, r.json().error.code]).toEqual([409, code]);
+    };
+    // Issued by this server two hours ago with the default 900 s TTL.
+    const issued = Date.now() - 7_200_000;
+    await refused(consentFor(reissued(quote, { issuedAt: new Date(issued).toISOString(), expiresAt: new Date(issued + 900_000).toISOString() })), 'COMPUTE_QUOTE_EXPIRED');
+    // Signed by this server but naming a model hash the revision does not have (revisions are immutable, so only a defect could produce this).
+    await refused(consentFor(reissued(quote, { source: { ...quote.source, modelHash: 'e'.repeat(64) } })), 'COMPUTE_QUOTE_STALE');
+    expect(await counts(projectId)).toEqual({ jobs: 0, dispatches: 0, scenes: 0 });
+    // A consent repeated after its quote expired is refused before the database: it neither replays nor starts new work.
+    const first = await call(app, 'POST', jobs, consentFor(quote));
+    expect(first.statusCode, first.body).toBe(202);
+    await settle(`${jobs}/${first.json().job.id}`);
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      vi.setSystemTime(Date.parse(quote.expiresAt) + 1000);
+      await refused(consentFor(quote), 'COMPUTE_QUOTE_EXPIRED');
+    } finally { vi.useRealTimers(); }
+    expect(await counts(projectId)).toEqual({ jobs: 1, dispatches: 1, scenes: 1 });
+  }, 120_000);
+
+  it('runs concurrent first consents exactly once and rejects reuse of a quote hash for other work at the database boundary', async () => {
+    const { projectId, revisionId, quotes, jobs } = await project();
+    const quote = (await call(app, 'POST', quotes, { request: { kind: 'SCENE_COMPILE', revisionId } })).json();
+    const racing = await Promise.all([1, 2, 3, 4].map(() => call(app, 'POST', jobs, consentFor(quote))));
+    expect(racing.map(r => r.statusCode).sort()).toEqual([200, 200, 200, 202]);
+    expect(new Set(racing.map(r => r.json().job.id)).size).toBe(1);
+    expect(racing.filter(r => r.json().replayed).length).toBe(3);
+    const jobId = racing[0].json().job.id;
+    await settle(`${jobs}/${jobId}`);
+    expect(await counts(projectId)).toEqual({ jobs: 1, dispatches: 1, scenes: 1 });
+    // The same quote hash for different input, or on another of the owner's projects: P3602 → 409 COMPUTE_QUOTE_CONFLICT, nothing written.
+    const other = await project();
+    for (const change of [{ inputHash: 'f'.repeat(64) }, { projectId: other.projectId }]) {
+      const error = await sqlConsent(quote, change).then(() => null, e => e);
+      expect(error?.code, JSON.stringify(change)).toBe('P3602');
+      expect(mapped(error)).toEqual([409, 'COMPUTE_QUOTE_CONFLICT']);
+    }
+    // The identical signed call is a replay of the recorded consent, not new work.
+    expect(await sqlConsent(quote)).toMatchObject({ replayed: true, job: { id: jobId }, dispatch: { quoteHash: quote.quoteHash } });
+    expect(await counts(projectId)).toEqual({ jobs: 1, dispatches: 1, scenes: 1 });
+    expect(await counts(other.projectId)).toEqual({ jobs: 0, dispatches: 0, scenes: 0 });
+  }, 120_000);
+
+  it('commits the job and its consent record together: a failure after the nested submission rolls both back', async () => {
+    const { projectId, revisionId, quotes } = await project();
+    const quote = (await call(app, 'POST', quotes, { request: { kind: 'SCENE_COMPILE', revisionId } })).json();
+    // The nested B32 job_write succeeds, then the consent insert violates its size check (23514): the job insert is rolled back with it.
+    const oversized = { ...quote, padding: 'x'.repeat(20_000) };
+    const { request: _request, ...stored } = oversized;
+    await expect(sqlConsent(quote, { quote: stored })).rejects.toMatchObject({ code: '23514' });
+    expect(await counts(projectId)).toEqual({ jobs: 0, dispatches: 0, scenes: 0 });
+    expect((await db.pool.query("select count(*)::int n from project_job_events e join project_jobs j on j.id=e.job_id where j.project_id=$1", [projectId])).rows[0].n).toBe(0);
+  }, 120_000);
+
+  it('recovers a consented job whose dispatch was lost: polling starts it, once', async () => {
+    const { projectId, revisionId, quotes, jobs } = await project();
+    const quote = (await call(app, 'POST', quotes, { request: { kind: 'SCENE_COMPILE', revisionId } })).json();
+    // The transaction committed but the process never dispatched (e.g. it stopped right after the commit).
+    const committed = await sqlConsent(quote);
+    expect(committed).toMatchObject({ replayed: false, job: { status: 'QUEUED' } });
+    expect((await db.pool.query('select status from project_jobs where id=$1', [committed.job.id])).rows[0].status).toBe('QUEUED');
+    const done = await settle(`${jobs}/${committed.job.id}`);
+    expect(done).toMatchObject({ job: { status: 'SUCCEEDED', attempt: 1 }, resultCheck: { status: 'ACCEPTED_BY_SERVICE_VALIDATOR' } });
+    // A repeated HTTP consent for the recovered job replays it.
+    const replay = await call(app, 'POST', jobs, consentFor(quote));
+    expect([replay.statusCode, replay.json().job.id]).toEqual([200, committed.job.id]);
+    expect(await counts(projectId)).toEqual({ jobs: 1, dispatches: 1, scenes: 1 });
+  }, 120_000);
+
+  it('keeps B32 limits and deduplication in force under the gateway: owner-wide gateway limits add to them, never replace them', async () => {
+    const hanging = buildApp({ env: env(secret, { LOG_LEVEL: 'silent', COMPUTE_POLICY: JSON.stringify({ maxActivePerOwner: 8 }) }), backend: createPgBackend(db.pool, { owner: ownerId }),
+      captureError: () => undefined, scenePool: new ScenePool({ worker: { url: new URL('../../../test-support/scene-workers/probe.mjs', import.meta.url), execArgv: [], workerData: { mode: 'hang' } }, timeoutMs: 20_000 }) });
+    await hanging.ready();
+    const a = await project(hanging), b = await project(hanging);
+    try {
+      // Two quotes for identical work: while the first job is active, the second consent is deduplicated by B32 onto the same job.
+      const q1 = (await call(hanging, 'POST', a.quotes, { request: { kind: 'SCENE_COMPILE', revisionId: a.revisionId } })).json();
+      await new Promise(r => setTimeout(r, 5));
+      const q2 = (await call(hanging, 'POST', a.quotes, { request: { kind: 'SCENE_COMPILE', revisionId: a.revisionId } })).json();
+      expect(q2.quoteHash).not.toBe(q1.quoteHash);
+      const r1 = await call(hanging, 'POST', a.jobs, consentFor(q1)), r2 = await call(hanging, 'POST', a.jobs, consentFor(q2));
+      expect([r1.statusCode, r2.statusCode, r2.json().replayed, r2.json().job.deduplicated]).toEqual([202, 202, false, true]);
+      expect(r2.json().job.id).toBe(r1.json().job.id);
+      expect(await counts(a.projectId)).toEqual({ jobs: 1, dispatches: 2, scenes: 0 });
+      // B32's per-project active limit (4) still applies inside the gateway transaction; the refused consent leaves no record.
+      await db.pool.query(`insert into project_jobs(project_id,owner_id,kind,status,job_version,request_json,input_hash,progress_json)
+        select $1,$2,'SCENE_COMPILE','QUEUED','durable-job-v1',jsonb_build_object('kind','SCENE_COMPILE','revisionId',$3::text),encode(sha256(convert_to(g::text,'UTF8')),'hex'),
+        project_private.job_progress('QUEUED',0,'Queued') from generate_series(1,4) g`, [b.projectId, ownerId, b.revisionId]);
+      const qb = (await call(hanging, 'POST', b.quotes, { request: { kind: 'SCENE_COMPILE', revisionId: b.revisionId } })).json();
+      const limited = await call(hanging, 'POST', b.jobs, consentFor(qb));
+      expect([limited.statusCode, limited.json().error.code]).toEqual([429, 'JOB_LIMIT_EXCEEDED']);
+      expect(await counts(b.projectId)).toEqual({ jobs: 4, dispatches: 0, scenes: 0 });
+    } finally {
+      await db.pool.query("update project_jobs set status='CANCELLED', cancel_requested=true, lease_token=null, lease_expires_at=null, finished_at=clock_timestamp() where project_id = any($1) and status in ('QUEUED','RUNNING')",
+        [[a.projectId, b.projectId]]);
+      await hanging.close();
+    }
   }, 120_000);
 
   it('isolates owners, records immutable consent evidence, refuses forged SQL, and logs without request payloads or secrets', async () => {
