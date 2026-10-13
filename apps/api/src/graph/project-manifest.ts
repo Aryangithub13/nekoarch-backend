@@ -1,10 +1,13 @@
 import { costHash } from '@designflow/boq-cost';
+import type { BuildingModelV2 } from '@designflow/shared';
+import { scopedDiff } from '../verification/diff.js';
+import { modelHash } from '../lib/generation-identity.js';
 import type { z } from 'zod';
 import type { ProjectRevisionDetailSchema } from '../contracts/projects.js';
 import type { DesignConceptSummarySchema } from '../contracts/design-concepts.js';
 import { NODE_STATES, type DependencyGraph, type GraphFamily, type NodeState } from '../contracts/dependency-graph.js';
-import { DISCIPLINES, FRESHNESS_ASSIGNMENT, GRAPH_STATE_MAPPING, MODULES, NOT_INCLUDED, PROJECT_MANIFEST_VERSION, ProjectManifestSchema,
-  type FreshnessState, type ManifestModule, type ManifestModuleEntry, type ProjectManifest } from '../contracts/project-manifest.js';
+import { DISCIPLINES, FRESHNESS_ASSIGNMENT, GRAPH_STATE_MAPPING, MANIFEST_DIFF_CHANGE_LIMIT, MODULES, NOT_INCLUDED, PROJECT_MANIFEST_VERSION, ProjectManifestSchema,
+  type ChangeImpact, type FreshnessState, type Lineage, type ManifestDiff, type ManifestModule, type ManifestModuleEntry, type ProjectManifest } from '../contracts/project-manifest.js';
 import { SERVICES } from '../services/overview-service.js';
 
 /** The revision fields the manifest reads; a full revision detail satisfies it. */
@@ -44,8 +47,16 @@ if (DEFS.map(d => d.module).join() !== MODULES.join()) throw new Error('Manifest
 export const JOB_MODULES = Object.freeze({ SCENE_COMPILE: 'SCENE_3D', OPTIMIZATION_STUDY: 'DESIGN_OPTIMIZATION' } as const);
 export type ActiveJob = { jobId: string; module: typeof JOB_MODULES[keyof typeof JOB_MODULES] };
 
+/** The parent revision fields lineage and diff read. */
+export type ParentRevision = Pick<z.infer<typeof ProjectRevisionDetailSchema>, 'id' | 'revisionNumber' | 'createdAt' | 'identity' | 'model'>;
+/** Phase 30 lineage read (`revision_operation_read` 'lineage'): the operation that committed this revision, if any. */
+export type OperationLineage = { operation: { id: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | null; baseRevisionId: string; restoreSourceRevisionId: string | null;
+  committedRevisionId: string | null } | null };
+
 export type ManifestInput = {
   projectId: string; revision: Revision; graph: DependencyGraph;
+  /** `parent` is null for a root revision or when the parent could not be read (`parentReadable: false`). `operation` is null when this backend has no operations. */
+  ancestry: { parent: ParentRevision | null; parentReadable: boolean; operation: OperationLineage | null };
   /** null when design-concept persistence is not configured on this backend. */
   designConcepts: { items: Concept[]; truncated: boolean } | null;
   /** null when durable-job persistence is not configured; otherwise the active jobs bound to this revision. */
@@ -56,6 +67,67 @@ export type ManifestInput = {
 // blocked outranks stale outranks pending outranks current: an aggregate never reads better than its worst member.
 const RANK: Record<FreshnessState, number> = { current: 0, pending: 1, stale: 2, blocked: 3, not_applicable: -1, verified: -1 };
 const worst = (states: FreshnessState[]) => states.reduce<FreshnessState | null>((w, s) => w === null || RANK[s] > RANK[w] ? s : w, null);
+
+/** Ancestry checks the stored schema guarantees (`0006`); a violation is reported, never repaired. */
+export function buildLineage(revision: Revision, ancestry: ManifestInput['ancestry']): Lineage & { parentHash: string | null } {
+  const { parent, parentReadable, operation } = ancestry, reasons: Lineage['reasons'] = [];
+  const parentHash = parent ? modelHash(parent.model) : null;
+  if (revision.parentRevisionId === null) { if (revision.revisionNumber !== 1) reasons.push('ROOT_PARENT_MISMATCH'); }
+  else if (!parentReadable || !parent) reasons.push('PARENT_UNREADABLE');
+  else {
+    if (parent.id !== revision.parentRevisionId || parent.revisionNumber !== revision.revisionNumber - 1) reasons.push('PARENT_NUMBER_MISMATCH');
+    if (parent.identity && parent.identity.modelHash !== parentHash) reasons.push('PARENT_IDENTITY_INCONSISTENT');
+  }
+  const op = operation?.operation ?? null;
+  if (op) {
+    if (op.baseRevisionId !== revision.parentRevisionId) reasons.push('OPERATION_BASE_MISMATCH');
+    if (op.committedRevisionId !== revision.id) reasons.push('OPERATION_TARGET_MISMATCH');
+  }
+  const status = reasons.includes('PARENT_UNREADABLE') ? 'UNAVAILABLE' as const : reasons.length ? 'INCONSISTENT' as const
+    : revision.parentRevisionId === null ? 'ROOT' as const : 'LINKED' as const;
+  const linked = status === 'LINKED' || (status === 'INCONSISTENT' && !!parent);
+  return { status, revisionNumber: revision.revisionNumber, parentRevisionId: revision.parentRevisionId,
+    parent: parent && linked ? { revisionId: parent.id, revisionNumber: parent.revisionNumber, modelHash: parentHash!, createdAt: parent.createdAt } : null,
+    modelEquivalentToParent: status === 'LINKED' ? parentHash === modelHash(revision.model) : null,
+    operation: operation === null ? { status: 'UNAVAILABLE', operationId: null, kind: null, baseRevisionId: null, restoreSourceRevisionId: null }
+      : op ? { status: 'RECORDED', operationId: op.id, kind: op.kind, baseRevisionId: op.baseRevisionId, restoreSourceRevisionId: op.restoreSourceRevisionId }
+      : { status: 'NONE', operationId: null, kind: null, baseRevisionId: null, restoreSourceRevisionId: null },
+    reasons, parentHash };
+}
+
+/** Entity-level comparison with the parent through the Phase 34 `scopedDiff` (canonical hash per entity), only when the lineage is LINKED. */
+export function buildDiff(projectId: string, revision: Revision, hash: string, parent: ParentRevision | null, lineage: Lineage & { parentHash: string | null }): ManifestDiff {
+  const empty = { diffVersion: null, baseRevisionId: null, baseModelHash: null, modelHash: hash, modelHashChanged: null, entitiesIdentical: null, counts: null,
+    collections: [], changes: [], changesTruncated: false };
+  if (lineage.status === 'ROOT') return { ...empty, status: 'NO_PARENT', unavailableReason: null };
+  if (lineage.status !== 'LINKED' || !parent) return { ...empty, status: 'UNAVAILABLE',
+    unavailableReason: lineage.status === 'UNAVAILABLE' ? 'PARENT_UNREADABLE' : 'LINEAGE_INCONSISTENT' };
+  const report = scopedDiff(parent.model as BuildingModelV2, revision.model as BuildingModelV2, { projectId,
+    baseRevisionId: parent.id, otherRevisionId: revision.id, baseModelHash: lineage.parentHash!, otherModelHash: hash }, { levelIds: [], entityIds: [], allowSiteChange: true });
+  const collections = [...new Set(report.changes.map(c => c.collection))].map(collection => {
+    const of = report.changes.filter(c => c.collection === collection);
+    return { collection, added: of.filter(c => c.change === 'ADDED').length, removed: of.filter(c => c.change === 'REMOVED').length,
+      changed: of.filter(c => c.change === 'CHANGED').length };
+  });
+  return { status: 'COMPUTED', diffVersion: report.diffVersion, baseRevisionId: parent.id, baseModelHash: lineage.parentHash, modelHash: hash,
+    modelHashChanged: lineage.parentHash !== hash, entitiesIdentical: report.changes.length === 0,
+    counts: { added: report.counts.added, removed: report.counts.removed, changed: report.counts.changed }, collections,
+    changes: report.changes.slice(0, MANIFEST_DIFF_CHANGE_LIMIT).map(({ collection, entityId, change, levelIds }) => ({ collection, entityId, change, levelIds })),
+    changesTruncated: report.changes.length > MANIFEST_DIFF_CHANGE_LIMIT, unavailableReason: null };
+}
+
+/** Per-discipline impact by model binding only (IMPACT_REASONS); computed only from a COMPUTED diff, never guessed. */
+export function buildChangeImpact(diff: ManifestDiff): ChangeImpact {
+  if (diff.status !== 'COMPUTED') return { status: diff.status, basis: 'MODEL_BINDING', baseRevisionId: null, disciplines: [] };
+  const changed = diff.modelHashChanged === true, collections = diff.collections.map(c => c.collection);
+  return { status: 'COMPUTED', basis: 'MODEL_BINDING', baseRevisionId: diff.baseRevisionId, disciplines: DISCIPLINES.map(discipline => {
+    const modules = DEFS.filter(d => d.discipline === discipline).map(d => d.module);
+    if (!changed) return { discipline, impact: 'NOT_AFFECTED' as const, reason: 'MODEL_UNCHANGED' as const, modules, changedCollections: [] };
+    if (discipline === 'ARCHITECTURE') return { discipline, impact: 'AFFECTED' as const, modules, changedCollections: collections,
+      reason: collections.length ? 'MODEL_ENTITIES_CHANGED' as const : 'MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS' as const };
+    return { discipline, impact: 'AFFECTED' as const, reason: 'BOUND_TO_CHANGED_MODEL' as const, modules, changedCollections: [] };
+  }) };
+}
 
 /**
  * Pure and deterministic. Every state is taken from the Phase 37 graph or from a check repeated here on stored columns; nothing is inferred.
@@ -113,6 +185,8 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
         sourceRevisionId: revision.id, targetRevisionId: target } : null };
   });
 
+  const ancestry = buildLineage(revision, input.ancestry), { parentHash: _parentHash, ...lineage } = ancestry;
+  const diff = buildDiff(projectId, revision, hash, input.ancestry.parent, ancestry);
   const disciplines = DISCIPLINES.map(discipline => {
     const members = modules.filter(m => m.discipline === discipline);
     return { discipline, freshness: worst(members.flatMap(m => m.freshness ? [m.freshness.state] : [])), modules: members.map(m => m.module) };
@@ -123,6 +197,7 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     identity: { projectId, revisionId: revision.id, revisionNumber: revision.revisionNumber, parentRevisionId: revision.parentRevisionId,
       projectCurrentRevisionId: current, revisionCurrency: current === null ? 'NO_CURRENT_REVISION' as const : current === revision.id ? 'CURRENT' as const : 'HISTORICAL' as const,
       modelHash: hash, acceptanceQaId: revision.qa.id, createdAt: revision.createdAt },
+    lineage, diff, changeImpact: buildChangeImpact(diff),
     canonicalModel: { schemaVersion: revision.model.schemaVersion, completeness: revision.completeness, units: revision.model.units, coordinateSystem: revision.model.coordinateSystem,
       site: { present: site !== null, northMilliDegrees: site?.northMilliDegrees ?? null, referenceDatum: site?.referenceOrigin?.datum ?? null },
       counts: { levels: revision.model.levels.length, spaces: revision.model.spaces.length, walls: revision.model.walls.length, openings: revision.model.openings.length } },

@@ -62785,6 +62785,426 @@
            ],
            "additionalProperties": false
           },
+          "lineage": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "ROOT",
+              "LINKED",
+              "INCONSISTENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "parent": {
+             "type": "object",
+             "properties": {
+              "revisionId": {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              },
+              "revisionNumber": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "modelHash": {
+               "$ref": "#/components/properties/identity/properties/modelHash"
+              },
+              "createdAt": {
+               "type": "string"
+              }
+             },
+             "required": [
+              "revisionId",
+              "revisionNumber",
+              "modelHash",
+              "createdAt"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "modelEquivalentToParent": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "operation": {
+             "type": "object",
+             "properties": {
+              "status": {
+               "type": "string",
+               "enum": [
+                "NONE",
+                "RECORDED",
+                "UNAVAILABLE"
+               ]
+              },
+              "operationId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "kind": {
+               "type": "string",
+               "enum": [
+                "APPEARANCE_MODIFY",
+                "RESTORE"
+               ],
+               "nullable": true
+              },
+              "baseRevisionId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "restoreSourceRevisionId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              }
+             },
+             "required": [
+              "status",
+              "operationId",
+              "kind",
+              "baseRevisionId",
+              "restoreSourceRevisionId"
+             ],
+             "additionalProperties": false
+            },
+            "reasons": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "PARENT_UNREADABLE",
+               "PARENT_NUMBER_MISMATCH",
+               "PARENT_IDENTITY_INCONSISTENT",
+               "ROOT_PARENT_MISMATCH",
+               "OPERATION_BASE_MISMATCH",
+               "OPERATION_TARGET_MISMATCH"
+              ]
+             }
+            }
+           },
+           "required": [
+            "status",
+            "revisionNumber",
+            "parentRevisionId",
+            "parent",
+            "modelEquivalentToParent",
+            "operation",
+            "reasons"
+           ],
+           "additionalProperties": false
+          },
+          "diff": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "COMPUTED",
+              "NO_PARENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "diffVersion": {
+             "type": "string",
+             "enum": [
+              "scoped-diff-v1"
+             ],
+             "nullable": true
+            },
+            "baseRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "baseModelHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/modelHash"
+              }
+             ],
+             "nullable": true
+            },
+            "modelHash": {
+             "$ref": "#/components/properties/identity/properties/modelHash"
+            },
+            "modelHashChanged": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "entitiesIdentical": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "counts": {
+             "type": "object",
+             "properties": {
+              "added": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "removed": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "changed": {
+               "type": "integer",
+               "minimum": 0
+              }
+             },
+             "required": [
+              "added",
+              "removed",
+              "changed"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "collections": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "type": "string",
+                "enum": [
+                 "levels",
+                 "spaces",
+                 "walls",
+                 "openings",
+                 "slabs",
+                 "columns",
+                 "stairs",
+                 "dimensions",
+                 "specifications",
+                 "site"
+                ]
+               },
+               "added": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "removed": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "changed": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "collection",
+               "added",
+               "removed",
+               "changed"
+              ],
+              "additionalProperties": false
+             }
+            },
+            "changes": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "$ref": "#/components/properties/diff/properties/collections/items/properties/collection"
+               },
+               "entityId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+               },
+               "change": {
+                "type": "string",
+                "enum": [
+                 "ADDED",
+                 "REMOVED",
+                 "CHANGED"
+                ]
+               },
+               "levelIds": {
+                "type": "array",
+                "items": {
+                 "type": "string"
+                },
+                "maxItems": 2
+               }
+              },
+              "required": [
+               "collection",
+               "entityId",
+               "change",
+               "levelIds"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 200
+            },
+            "changesTruncated": {
+             "type": "boolean"
+            },
+            "unavailableReason": {
+             "type": "string",
+             "enum": [
+              "PARENT_UNREADABLE",
+              "LINEAGE_INCONSISTENT"
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "diffVersion",
+            "baseRevisionId",
+            "baseModelHash",
+            "modelHash",
+            "modelHashChanged",
+            "entitiesIdentical",
+            "counts",
+            "collections",
+            "changes",
+            "changesTruncated",
+            "unavailableReason"
+           ],
+           "additionalProperties": false
+          },
+          "changeImpact": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "COMPUTED",
+              "NO_PARENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "enum": [
+              "MODEL_BINDING"
+             ]
+            },
+            "baseRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "disciplines": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "discipline": {
+                "type": "string",
+                "enum": [
+                 "ARCHITECTURE",
+                 "QUANTITIES_AND_COST",
+                 "ENGINEERING",
+                 "DESIGN",
+                 "VISUALIZATION",
+                 "DOCUMENTATION"
+                ]
+               },
+               "impact": {
+                "type": "string",
+                "enum": [
+                 "AFFECTED",
+                 "NOT_AFFECTED"
+                ]
+               },
+               "reason": {
+                "type": "string",
+                "enum": [
+                 "MODEL_ENTITIES_CHANGED",
+                 "MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS",
+                 "BOUND_TO_CHANGED_MODEL",
+                 "MODEL_UNCHANGED"
+                ]
+               },
+               "modules": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "changedCollections": {
+                "type": "array",
+                "items": {
+                 "$ref": "#/components/properties/diff/properties/collections/items/properties/collection"
+                }
+               }
+              },
+              "required": [
+               "discipline",
+               "impact",
+               "reason",
+               "modules",
+               "changedCollections"
+              ],
+              "additionalProperties": false
+             }
+            }
+           },
+           "required": [
+            "status",
+            "basis",
+            "baseRevisionId",
+            "disciplines"
+           ],
+           "additionalProperties": false
+          },
           "configuration": {
            "type": "object",
            "properties": {
@@ -63292,6 +63712,9 @@
           "manifestVersion",
           "identity",
           "canonicalModel",
+          "lineage",
+          "diff",
+          "changeImpact",
           "configuration",
           "modules",
           "disciplines",

@@ -57,6 +57,9 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
       projectCurrentRevisionId: a.revision.id, modelHash: a.revision.identity.modelHash, acceptanceQaId: a.revision.qa.id });
     expect(m.canonicalModel).toMatchObject({ units: 'mm', coordinateSystem: 'x-right-y-up-z-depth', counts: { levels: a.revision.model.levels.length } });
     expect(m.configuration).toMatchObject({ sourceMode: 'generated', generationIdentity: a.revision.identity });
+    // Revision 1: ROOT lineage, an ordinary generation (no Phase 30 operation), nothing to compare.
+    expect(m.lineage).toMatchObject({ status: 'ROOT', parentRevisionId: null, operation: { status: 'NONE' }, reasons: [] });
+    expect([m.diff.status, m.changeImpact.status, m.changeImpact.disciplines]).toEqual(['NO_PARENT', 'NO_PARENT', []]);
     expect(mod(m, 'BUILDING_MODEL')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current', reasons: [] }, artifacts: [{ artifactId: a.revision.id }] });
     for (const name of ['QUANTITY_TAKEOFF', 'BOQ_COST', 'STRUCTURAL_ANALYSIS', 'SCENE_3D', 'DESIGN_CONCEPTS'])
       expect(mod(m, name), name).toMatchObject({ availability: 'NOT_GENERATED', freshness: null, missingReason: 'NOT_GENERATED_FOR_REVISION', artifacts: [] });
@@ -94,8 +97,9 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
   }, 300_000);
 
   it('M4 gate: an accepted edit marks every dependent output of the base stale with a reason; the edited revision starts with nothing stale', async () => {
-    const edited = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: { ...a.revision.model, name: `${a.revision.model.name} (edited)` },
-      baseRevisionId: a.revision.id })).json().revision as Json;
+    const spaces = a.revision.model.spaces as Json[];
+    const edited = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: { ...a.revision.model, name: `${a.revision.model.name} (edited)`,
+      spaces: [{ ...spaces[0], name: `${spaces[0]!.name} (edited)` }, ...spaces.slice(1)] }, baseRevisionId: a.revision.id })).json().revision as Json;
     const old = await manifest(a.base);
     expect(old.identity).toMatchObject({ revisionCurrency: 'HISTORICAL', projectCurrentRevisionId: edited.id });
     // The first reason names the cause; derived outputs carry the whole chain back to the superseded revision.
@@ -113,6 +117,13 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
 
     const fresh = await manifest(`/api/projects/${a.projectId}/revisions/${edited.id}`);
     expect(fresh.identity).toMatchObject({ revisionCurrency: 'CURRENT', parentRevisionId: a.revision.id });
+    // Change metadata against the parent: one space changed; every discipline is affected through the model it is bound to.
+    expect(fresh.lineage).toMatchObject({ status: 'LINKED', revisionNumber: 2, parentRevisionId: a.revision.id,
+      parent: { revisionId: a.revision.id, revisionNumber: 1, modelHash: a.revision.identity.modelHash }, modelEquivalentToParent: false, operation: { status: 'NONE' } });
+    expect(fresh.diff).toMatchObject({ status: 'COMPUTED', baseRevisionId: a.revision.id, modelHashChanged: true, entitiesIdentical: false,
+      counts: { added: 0, removed: 0, changed: 1 }, collections: [{ collection: 'spaces', changed: 1 }], changes: [{ collection: 'spaces', entityId: spaces[0]!.id, change: 'CHANGED' }] });
+    expect(fresh.changeImpact.disciplines.map(d => [d.discipline, d.impact, d.reason])).toEqual([['ARCHITECTURE', 'AFFECTED', 'MODEL_ENTITIES_CHANGED'],
+      ...['QUANTITIES_AND_COST', 'ENGINEERING', 'DESIGN', 'VISUALIZATION', 'DOCUMENTATION'].map(d => [d, 'AFFECTED', 'BOUND_TO_CHANGED_MODEL'])]);
     expect(fresh.modules.filter(x => x.source === 'STORED_ARTIFACT' && x.module !== 'ACCEPTANCE_QA').every(x => x.availability === 'NOT_GENERATED')).toBe(true);
     expect(fresh.modules.every(x => x.freshness === null || x.freshness.state === 'current')).toBe(true);
   }, 180_000);
@@ -131,7 +142,12 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(mod(m, 'DESIGN_OPTIMIZATION').freshness).toBeNull();
     expect(m.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness).toBe('pending');
     const second = (await ok('POST', `/api/projects/${p.projectId}/revisions`, { model: p.revision.model, baseRevisionId: p.revision.id })).json().revision as Json;
-    expect(mod(await manifest(`/api/projects/${p.projectId}/revisions/${second.id}`), 'SCENE_3D').freshness).toBeNull();
+    const same = await manifest(`/api/projects/${p.projectId}/revisions/${second.id}`);
+    expect(mod(same, 'SCENE_3D').freshness).toBeNull();
+    // An unchanged save: LINKED and model-equivalent, an empty computed diff, no discipline affected.
+    expect(same.lineage).toMatchObject({ status: 'LINKED', modelEquivalentToParent: true });
+    expect(same.diff).toMatchObject({ status: 'COMPUTED', modelHashChanged: false, entitiesIdentical: true, counts: { added: 0, removed: 0, changed: 0 }, changes: [] });
+    expect(same.changeImpact.disciplines.every(d => d.impact === 'NOT_AFFECTED' && d.reason === 'MODEL_UNCHANGED')).toBe(true);
   }, 180_000);
 
   it('M3: a revision committed while the manifest is read is a 409, never a manifest that mixes revisions', async () => {
@@ -142,8 +158,18 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     } };
     expect(await refusal(projectManifest(moved, a.projectId, a.revision.id))).toEqual([409, 'PROJECT_MANIFEST_READ_INCONSISTENT']);
     // Without design-concept or job persistence the manifest still reads, and says which module it could not see.
-    const { designConceptRpc: _concepts, jobRpc: _jobs, ...bare } = repo;
+    // A parent revision that cannot be read (the schema guarantees it exists) is reported as UNAVAILABLE, never as an empty diff.
+    const edited = (await app.inject({ url: `/api/projects/${a.projectId}`, headers: owner })).json().currentRevisionId as string;
+    const hidden: Repository = { ...repo, projectRpc: async (name, args) => {
+      if (name === 'project_read' && args.p_action === 'revision' && args.p_revision_id === a.revision.id) throw new ApiError(404, 'REVISION_NOT_FOUND', 'Revision not found');
+      return repo.projectRpc!(name, args);
+    } };
+    const orphan = await projectManifest(hidden, a.projectId, edited);
+    expect([orphan.lineage.status, orphan.lineage.reasons, orphan.diff.status, orphan.diff.unavailableReason, orphan.changeImpact.status])
+      .toEqual(['UNAVAILABLE', ['PARENT_UNREADABLE'], 'UNAVAILABLE', 'PARENT_UNREADABLE', 'UNAVAILABLE']);
+    const { designConceptRpc: _concepts, jobRpc: _jobs, revisionRpc: _operations, ...bare } = repo;
     const m = await projectManifest(bare as Repository, a.projectId, a.revision.id);
     expect(mod(m, 'DESIGN_CONCEPTS')).toMatchObject({ availability: 'UNAVAILABLE', missingReason: 'PERSISTENCE_UNAVAILABLE', freshness: null });
+    expect(m.lineage.operation.status).toBe('UNAVAILABLE');
   }, 120_000);
 });
