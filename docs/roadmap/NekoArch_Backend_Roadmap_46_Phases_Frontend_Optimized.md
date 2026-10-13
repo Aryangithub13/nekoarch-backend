@@ -7,7 +7,9 @@
 > - Sections 1, 2 and 5–7 are carried over from revision 1; their only changes are additions of repository facts, listed in §9.
 > - Section 3 (phase index) and section 4 (Phase 36) were rewritten where revision 1 contradicted verifiable repository evidence; every such change is listed.
 >
-> **Approval state:** owner review required before this document is treated as authoritative.
+> **Revision 3, 2026-10-13 (state update).** Only repository facts changed since r2: the Phase 36 gateway was merged (PR #10), the PR #7 review and conflict state, migration `0025`, and the open items. Each change is listed in §9. Live state (branches, CI, acceptance evidence) now lives in [status-register.md](status-register.md); decisions in [decisions-register.md](decisions-register.md); capabilities in [capability-register.md](capability-register.md); the document map and source index in [README.md](README.md).
+>
+> **Approval state:** provisional working authority (owner direction, 2026-10-13); owner review is still required before this document is treated as authoritative.
 > **Original:** `NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md` (8 Oct 2026; reported as the owner's local copy) has not been recovered. Nothing here reproduces its wording, except the short quotations that earlier sessions copied into phase documents. Those are marked as quotations, with their location.
 
 ## 1. How to use this file
@@ -49,7 +51,7 @@ Do not silently convert PROPOSED or UNKNOWN content into an official requirement
   - *Merged*: in `phase31/development` by Git ancestry (CONFIRMED).
   - Claims of verification made inside reports remain REPORTED.
 
-Base of record: `phase31/development` @ `f86b577`. Phase 35's remediation is at `phase35-1/release-remediation` @ `3717a80` (PR #7).
+Base of record: `phase31/development` @ `5476f41` (r3; it was `f86b577` in r2). Phase 35's remediation is at `phase35-1/release-remediation` @ `3717a80` (PR #7).
 
 | Phase | Scope (repository evidence) | Scope basis | Status | Migrations | Revision 1 label → finding |
 |---:|---|---|---|---|---|
@@ -84,8 +86,8 @@ Base of record: `phase31/development` @ `f86b577`. Phase 35's remediation is at 
 | 32 | Durable generation jobs, progress and recovery | Roadmap quote, `docs/phase32/phase32-design.md:9` | Merged, untagged | 0022 | "Site & Plot Workspace backend support" → **conflict** (§3.1) |
 | 33 | Account, project library, settings and context (quotas: ≤ 8 active jobs per owner) | Roadmap quote, `docs/phase33/phase33-design.md:13` | Merged, untagged | 0023 | **Agrees** (narrower label) |
 | 34 | Complex building verification (geometry, site polygons, dimensions, scoped diffs) | Roadmap quote, `docs/phase34/phase34-design.md:7` | Merged, untagged | — | UNKNOWN → **corrected** |
-| 35 | Supertall engineering assessment and verification: deterministic geometry, conceptual cost, typed engineering blockers, zones, regeneration, partitions, evidence classes | Phase docs `docs/phase35/`, `docs/phase35-1/` @ `3717a80`; scope R1–R8 accepted by the owner (REPORTED, `3717a80`); **no roadmap quote recovered** | B35 merged (PR #4); B35.1 and completion on PR #7: **open draft**, CI green on Node 22.22.0 and 22.23.2 (`supabase-acceptance` skipped), **no review** | — | "Engineering Calculation Workspace" → **label conflict** (§3.1); safeguards agree |
-| 36 | **Cloud Engineering Compute Gateway** | Roadmap paraphrase `docs/phase36/phase36-handoff.md` (`a7e3da4`, merged by PR #6); later-phase assignments in phase 30, 32 and 35 docs; owner directive | **Not started**; no gateway code exists | — | **Agrees** (§4) |
+| 35 | Supertall engineering assessment and verification: deterministic geometry, conceptual cost, typed engineering blockers, zones, regeneration, partitions, evidence classes | Phase docs `docs/phase35/`, `docs/phase35-1/` @ `3717a80`; scope R1–R8 accepted by the owner (REPORTED, `3717a80`); **no roadmap quote recovered** | B35 merged (PR #4). B35.1 and completion on PR #7: **open draft**, CI green on Node 22.22.0 and 22.23.2 (`supabase-acceptance` skipped), **approved** by @shubham-0 on `3717a80` (r3), now **conflicting** with the default branch (r3) | — | "Engineering Calculation Workspace" → **label conflict** (§3.1); safeguards agree |
+| 36 | **Cloud Engineering Compute Gateway** | Roadmap paraphrase `docs/phase36/phase36-handoff.md` (`a7e3da4`, merged by PR #6); later-phase assignments in phase 30, 32 and 35 docs; owner directive | **First slice merged** (PR #10 → `5476f41`, 2026-10-13, r3). Untagged. Default-branch typecheck fails on a test line; acceptance is incomplete ([status-register §3](status-register.md)) | 0025 | **Agrees** (§4) |
 | 37 | Unified multidisciplinary dependency graph and freshness propagation | Later-phase assignment (`phase30-report.md:165`, `modernization/modernization-report.md:226`) | Not started | — | UNKNOWN → **REPORTED assignment added** |
 | 38 | Documentation exports, evidence packages, drawing sheets | Later-phase assignment (`phase30-report.md` §K: "Documentation exports → 38") | Not started | — | "Provider routing" → **conflict** (§3.1) |
 | 39 | AI modules: interior/exterior, generative alternatives, **provider routing** | Later-phase assignment (`phase30-report.md` §K: "39, 43") | Not started | — | UNKNOWN → **REPORTED assignment added** |
@@ -97,11 +99,7 @@ Base of record: `phase31/development` @ `f86b577`. Phase 35's remediation is at 
 | 45 | Desktop delivery: LOD, chunked progressive delivery, push progress (SSE/websocket), typed response schemas | Later-phase assignment (`phase30-report.md` §K, `phase32-design.md` §12) | Not started | — | "Final acceptance" (PROPOSED) → **conflict**, UNKNOWN |
 | 46 | Final integration and end-to-end benchmark | Later-phase assignment ("45–46") | Not started | — | "Final roadmap completion / handoff" → **broadly agrees** |
 
-**Migrations of record** on `phase31/development`: `0001`–`0024`. The hosted database is believed to be at `0017` (REPORTED in the B31–B33 reports; to be confirmed read-only by an operator). Two unmerged branches each need `0025`:
-- `phase36/conversational-ai` (`3016ec8`) has a `0025` that only replaces a function;
-- a compute gateway would add its own `0025`.
-
-Whichever merges second renumbers to `0026` (§4.5).
+**Migrations of record** on `phase31/development`: `0001`–`0025` (r3: `0025_compute_gateway.sql` merged by PR #10). The hosted database is believed to be at `0017` (REPORTED in the B31–B33 reports; to be confirmed read-only by an operator). r3: the gateway's `0025` merged first, so `phase36/conversational-ai` (`3016ec8`, whose `0025` only replaces a function) must be renumbered to `0026` before it can merge (§4.5).
 
 ### 3.1 Conflicts between revision 1 and repository evidence (owner decision; none blocks Phase 36 safety)
 
@@ -134,9 +132,9 @@ The only document saying otherwise is the conversational-AI branch's own design 
 | ID | Requirement | Basis | Already in code | Open point |
 |---|---|---|---|---|
 | G1 | Build on B32 durable jobs, not the reverse (hard rule 3) | R, A | Yes: B32 jobs, leases, fencing, retries, dedup, cancel, owner-read recovery | — |
-| G2 | Provider-specific adapters; secure server-side credentials | R, O | No | Provider choice (D1) |
+| G2 | Provider-specific adapters; secure server-side credentials | R, O | r3: local-pool provider only; `remote-http-worker` listed `DISABLED`; no credentials (PR #10) | Provider choice (D1) |
 | G3 | Progress, cancel, retry, bounded concurrency, error isolation | R, O | Mostly (B32, worker pools) | — |
-| G4 | Budgets, quotas, deadlines; cost protection; no unbounded compute | R, O | Quotas (B33) | Budget unit and ceilings (D4) |
+| G4 | Budgets, quotas, deadlines; cost protection; no unbounded compute | R, O | Quotas (B33). r3: gateway owner limits (`maxActivePerOwner`, `maxConsentedPerOwnerPerDay`); cost pinned to `FREE` / `0` | Budget unit and ceilings (D4) |
 | G5 | Result verification before persistence; provider success is not engineering correctness | R, O | Validators exist for scene and optimization output | Remote-eligible kinds (D6) |
 | G6 | Deduplication; content-addressed caching of verified results | R | Dedup yes; cache no | — |
 | G7 | Dependency-aware fan-out/fan-in; checkpoints; fine-grained recomputation | R only | No | Confirm (in the paraphrase only; absent from P) |
@@ -145,7 +143,7 @@ The only document saying otherwise is the conversational-AI branch's own design 
 | G10 | Retention policy | R | Guarded-retention convention | Values |
 | G11 | Truthful unsupported/approximate status; Phase 35 blockers unchanged | R, O | Yes (B35 disclosures, `REQUIRES_SOLVER`) | — |
 | G12 | "Engineering-grade solver execution" | R only (P recommends no solver kinds) | No validated solver exists | **Owner ruling needed** |
-| G13 | Lightweight core; remote execution optional and disabled by default; privacy/data-transfer consent | O; research §11; P | — | Privacy default (D7) |
+| G13 | Lightweight core; remote execution optional and disabled by default; privacy/data-transfer consent | O; research §11; P | r3: remote cannot be enabled (`COMPUTE_POLICY.remoteExecution` = `DISABLED` only); explicit consent per quote; `dataTransfer: NONE` | Privacy default (D7) |
 
 ### 4.3 Owner decisions
 
@@ -165,7 +163,9 @@ The only document saying otherwise is the conversational-AI branch's own design 
 - existing deterministic job kinds only;
 - no solver kinds and no change to Phase 35 domain statuses.
 
-### 4.4 Base branch (verified 2026-10-13; not yet chosen)
+### 4.4 Base branch (verified 2026-10-13)
+
+r3, resolved: option A was used, with only the worker fix cherry-picked (`a7da2a0` = `008a77f`, identical patch-id). The branch merged as PR #10. The table is kept for the record.
 
 | Option | Ancestry | Consideration |
 |---|---|---|
@@ -175,7 +175,7 @@ The only document saying otherwise is the conversational-AI branch's own design 
 
 ### 4.5 Separate workstream
 
-`phase36/conversational-ai` (`3016ec8`, based on `3717a80`) implements conversation turns, decision memory and confirmed actions on the Phase 20/21 layer. It is **preserved, unmerged and not Phase 36**. Its disposition (keep, renumber or rename) is an owner decision. Its migration `0025` collides with a gateway `0025`, and whichever merges second takes `0026`.
+`phase36/conversational-ai` (`3016ec8`, based on `3717a80`) implements conversation turns, decision memory and confirmed actions on the Phase 20/21 layer. It is **preserved, unmerged and not Phase 36**. Its disposition (keep, renumber or rename) is an owner decision. Its migration `0025` collides with the gateway's `0025`, which is now on the default branch (r3). It must take `0026` before any merge.
 
 ## 5. Release and verification gates
 
@@ -241,9 +241,10 @@ Companion research framework: `docs/research/NekoArch_Phase35_Engineering_Resear
 - [ ] Owner review of this revision; recover or explicitly authorize it as the working authority.
 - [ ] Resolve the §3.1 label conflicts (Phases 32, 35, 38, 41, 43–45).
 - [ ] Recover the original V2 research set, if it exists.
-- [ ] Phase 36: rule on G7, G8 and G12; decide D1–D7; choose the base branch (§4.4).
-- [ ] Decide the disposition and migration number of `phase36/conversational-ai`.
-- [ ] Track the Phase 35 independent review (PR #7: open draft, no review) and owner release authorization.
+- [ ] Phase 36: rule on G7, G8 and G12; decide D1–D7. The base branch was resolved in r3 (§4.4).
+- [ ] Phase 36 first slice: restore a green typecheck on the default branch, and record the Node 22.23.2 and container-smoke results ([decisions Q1](decisions-register.md)).
+- [ ] Decide the disposition of `phase36/conversational-ai`. Its migration must become `0026` (r3).
+- [ ] Phase 35: PR #7 is approved (r3) but still a draft and now conflicting. Resolve the conflicts and obtain owner release authorization.
 - [ ] Confirm the hosted database migration state read-only before any hosted migration.
 - [ ] Keep Phase 30 frontend integration verification deferred.
 - [ ] Retain the Phase 40 comprehensive audit as a project-level gate.
@@ -257,3 +258,10 @@ Companion research framework: `docs/research/NekoArch_Phase35_Engineering_Resear
   - Phase 36 requirements given provenance;
   - base-branch options and the repository's check commands added.
   - Sections 1, 2 and 5–7 are unchanged apart from added facts (the evidence-class definitions in §1; the command table in §5; the companion-file pointer in §7).
+- `2026-10-13 r3`: state update; no scope change.
+  - Base of record moved to `5476f41`.
+  - Phase 36 marked as first slice merged (PR #10), with the open typecheck defect recorded.
+  - PR #7 marked as approved and now conflicting.
+  - Migrations of record became `0001`–`0025`, and the conversational branch must take `0026`.
+  - §4.4 base-branch question resolved; §8 open items updated.
+  - Linked the new registers ([README](README.md), [status](status-register.md), [decisions](decisions-register.md), [capabilities](capability-register.md), [architecture](architecture-map.md)).

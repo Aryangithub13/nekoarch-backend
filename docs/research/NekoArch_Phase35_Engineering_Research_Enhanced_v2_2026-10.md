@@ -304,3 +304,27 @@ A mapping between the framework's eight classes and these enums is **PROPOSED on
 ### A.5 Change log
 
 - `2026-10-13 r2` — Addendum A added (repository reconciliation). The supplied text above is unchanged.
+
+## Addendum B — Source-integrity register status (2026-10-13, revision 3)
+
+> Repository facts only. Like Addendum A, this adds **no** standard, clause, equation, coefficient, rate, tolerance or validation result. The text above (the supplied framework and Addendum A) is unchanged.
+
+### B.1 Registered sources
+
+**None.** No source record (§5) or claim record (§6) has been created. Every §9 queue item `RCH-001`–`RCH-012` remains `NOT_RESEARCHED`. In the 2026-10-13 consolidation pass:
+- none of the three owner-supplied shared conversations could be retrieved (see `docs/roadmap/README.md` §3.1);
+- no standard, price list or provider term was retrieved.
+
+### B.2 §8 statements re-verified against `phase31/development` @ `5476f41`
+
+| §8 statement | Finding | Class |
+|---|---|---|
+| The frame solver is a limited linear-static solver | `apps/api/src/structural/frame-solver.ts`; scope and exclusions in `docs/phase24/phase24-design.md` §1 | CONFIRMED (code and design) |
+| Solver verification | `apps/api/tests/structural.test.ts`, describe "Phase 24 analytical verification (independent closed forms)": cantilever PL³/3EI, wL⁴/8EI, propped-cantilever reactions. These passed in the 2026-10-13 local full run. This is **verification against analytical cases only**; no comparison with independent reference software or benchmark sets was found (relevant to `RCH-011`) | CONFIRMED (test passed) / validation: none found |
+| No validated wind, seismic, drift or foundation solver | `engineering/assess.ts` emits `NO_VALIDATED_SOLVER`, giving domain status `REQUIRES_SOLVER`, for `WIND_LOADS`, `SEISMIC_LOADS`, `LATERAL_DRIFT_AND_STABILITY`, `GEOTECHNICAL_AND_FOUNDATIONS` and `DYNAMIC_RESPONSE` | CONFIRMED (code) |
+| No member design or lift engineering | `MEMBER_DESIGN` (`NO_MEMBER_DESIGN`) and `VERTICAL_TRANSPORT` (`NO_LIFT_TRAFFIC_ANALYSIS`) are blocked with kind **`NOT_IMPLEMENTED`**, not `NO_VALIDATED_SOLVER`. Addendum A.2 grouped them with the solver blockers; this is the precise mapping | CONFIRMED (code) |
+| Blockers survive a completed compute job | `apps/api/tests/compute.integration.test.ts`, "leaves Phase 35 engineering blockers unchanged after a successful gateway job", passed 2026-10-13 | CONFIRMED (test passed) |
+
+### B.3 Change log
+
+- `2026-10-13 r3` — Addendum B added. The supplied text and Addendum A are unchanged.
