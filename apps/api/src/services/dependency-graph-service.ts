@@ -83,7 +83,18 @@ export function analysisRecord(c: Context, family: GraphFamily, a: Analysis): Gr
     checks: [...bindings(c, a), check('MODEL_HASH', a.modelHash === c.hash)] };
 }
 
-export type GraphOptions = { limits?: Partial<GraphLimits>; now?: () => number };
+/** In-flight per-artifact reads per request: bounds the database load of one graph read (up to ~150 reads) to a small, fixed fan-out. */
+export const READ_CONCURRENCY = 8;
+/** Runs the reads in order with at most `width` in flight, checking the time budget before each one starts. Results keep input order. */
+async function pooled<T>(reads: (() => Promise<T>)[], width: number, tick: () => void): Promise<T[]> {
+  const results: T[] = new Array(reads.length);
+  let next = 0;
+  const lane = async () => { while (next < reads.length) { const i = next++; tick(); results[i] = await reads[i]!(); } };
+  await Promise.all(Array.from({ length: Math.min(width, reads.length) }, lane));
+  return results;
+}
+
+export type GraphOptions = { limits?: Partial<GraphLimits>; now?: () => number; readConcurrency?: number };
 /** Read-only and owner-only: every read is an owner-scoped RPC, and the revision read (404 for anyone else) runs first. Nothing is written. */
 export async function dependencyGraph(repository: Repository, projectId: string, revisionId: string, options: GraphOptions = {}) {
   const limits: GraphLimits = { ...GRAPH_LIMITS, ...options.limits }, now = options.now ?? Date.now, deadline = now() + limits.timeBudgetMs;
@@ -104,14 +115,15 @@ export async function dependencyGraph(repository: Repository, projectId: string,
   if (currents.size !== 1) throw new ApiError(409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', 'The project changed while the graph was read; retry');
   const counted = () => 2 + lists.reduce((n, l) => n + l.items.length, 0);
   if (counted() > limits.maxNodes) limitExceeded('NODES');
-  const constructionLists = await Promise.all(takeoffs!.items.map(t => new ConstructionRepository(repository).list(projectId, revisionId, t.id, page)));
+  const width = options.readConcurrency ?? READ_CONCURRENCY;
+  const constructionLists = await pooled(takeoffs!.items.map(t => () => new ConstructionRepository(repository).list(projectId, revisionId, t.id, page)), width, tick);
   tick();
   if (constructionLists.some(l => l.nextCursor !== null)) limitExceeded('FAMILY_PAGE');
   if (counted() + constructionLists.reduce((n, l) => n + l.items.length, 0) > limits.maxNodes) limitExceeded('NODES');
-  const [takeoffDetails, constructionDetails, costDetails] = await Promise.all([
-    Promise.all(takeoffs!.items.map(t => new TakeoffRepository(repository).read(projectId, revisionId, t.id))),
-    Promise.all(constructionLists.flatMap(l => l.items).map(k => new ConstructionRepository(repository).read(projectId, revisionId, k.takeoffId, k.id))),
-    Promise.all(costs!.items.map(e => new CostRepository(repository).read(projectId, revisionId, e.id)))]);
+  const takeoffDetails = await pooled(takeoffs!.items.map(t => () => new TakeoffRepository(repository).read(projectId, revisionId, t.id)), width, tick);
+  const constructionDetails = await pooled(constructionLists.flatMap(l => l.items)
+    .map(k => () => new ConstructionRepository(repository).read(projectId, revisionId, k.takeoffId, k.id)), width, tick);
+  const costDetails = await pooled(costs!.items.map(e => () => new CostRepository(repository).read(projectId, revisionId, e.id)), width, tick);
   tick();
 
   const c: Context = { revision, hash: modelHash(revision.model) };

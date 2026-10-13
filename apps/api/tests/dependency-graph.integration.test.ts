@@ -147,4 +147,19 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     expect(await refusal(dependencyGraph(skewed, a.projectId, a.revision.id))).toEqual([409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', null]);
     expect((await dependencyGraph(repo, a.projectId, a.revision.id)).complete).toBe(true);
   }, 120_000);
+
+  it('per-artifact reads run with a bounded number in flight and give the same graph', async () => {
+    const repo = backend.repository('owner');
+    let inFlight = 0, peak = 0, reads = 0;
+    const counted = <A extends unknown[], R>(call: (...args: A) => Promise<R>) => async (...args: A) => {
+      inFlight++; reads++; peak = Math.max(peak, inFlight);
+      try { return await call(...args); } finally { inFlight--; }
+    };
+    const watched: Repository = { ...repo, takeoffRpc: counted(repo.takeoffRpc!), constructionRpc: counted(repo.constructionRpc!), costRpc: counted(repo.costRpc!) };
+    const reference = await dependencyGraph(repo, a.projectId, a.revision.id);
+    // The base suite's chain gives 2 lists, 1 construction list and 4 detail reads here.
+    expect(await dependencyGraph(watched, a.projectId, a.revision.id, { readConcurrency: 1 })).toEqual(reference);
+    expect(reads).toBe(7);
+    expect(peak).toBeLessThanOrEqual(2); // the two family lists run together; every later read runs one at a time
+  }, 120_000);
 });

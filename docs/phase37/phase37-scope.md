@@ -175,6 +175,7 @@ Further rules:
 | Per-family page | 20; a non-null `nextCursor` means the family could not be listed completely | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: FAMILY_PAGE`) |
 | Dependency depth (longest chain) | 8 (the real maximum is 5) | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: DEPTH`) |
 | Wall time | 5,000 ms, checked between reads and before evaluation | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: TIME`) |
+| Per-artifact reads in flight | 8 (construction lists and takeoff, construction and cost detail reads); the time budget is checked before each read starts | Not a refusal: the reads queue. Without the cap one request could run about 150 reads at once |
 | Cycles | Detected before evaluation (cannot occur under the stored foreign keys; checked anyway) | 422 `DEPENDENCY_GRAPH_CYCLE` |
 | Current-revision consistency | The `projectCurrentRevisionId` values reported by the separate reads must agree | 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` (retryable) |
 
@@ -196,7 +197,7 @@ Further rules:
 
 ### A5. Determinism, identity and authorization
 
-- **Determinism.** Nodes are sorted by family order, then `createdAt`, then `id`. Edges are sorted by `(from, to, kind)`. The response contains no wall-clock or request-dependent field.
+- **Determinism.** Nodes are sorted by family order, then `createdAt`, then `id`. Edges are ordered by their `from` node's position, then their `to` node's position, then `kind`. The response contains no wall-clock or request-dependent field.
 - **Identity binding.**
   - The response carries `inputIdentity: { projectId, revisionId, modelHash, projectCurrentRevisionId }`.
   - It also carries `graphHash` = `costHash` of the response without `graphHash`. Identical stored state therefore gives byte-identical responses.
