@@ -38,6 +38,7 @@ import { ASSESSMENT_VERSION } from '../engineering/contracts.js';
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
+import { COMPUTE_ROOT, GATEWAY_VERSION, PROVIDERS } from '../compute/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -68,6 +69,9 @@ export const SERVICES = Object.freeze([
   // Phase 35: preliminary engineering assessment (height, areas, volume, base width, conceptual cost arithmetic) and a truthful map of what needs inputs,
   // verified sources, a validated solver or professional review. No structural, wind, seismic or foundation value is produced.
   { serviceId: 'ENGINEERING_ASSESSMENT', version: ASSESSMENT_VERSION, persistence: 'DERIVED_ON_READ', route: ENGINEERING_ROOT, workflowCapability: null },
+  // Phase 36 (first slice): quote → explicit consent → durable job for SCENE_COMPILE and OPTIMIZATION_STUDY on the local pools only. Remote execution
+  // is disabled; a successful job is a software-validated artifact, never an engineering validation.
+  { serviceId: 'COMPUTE_GATEWAY', version: GATEWAY_VERSION, persistence: 'CONSENTED_DISPATCH_RECORD', route: COMPUTE_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */
@@ -83,7 +87,7 @@ export const MEDIA = Object.freeze([
   { media: 'RENDERED_WALKTHROUGH_VIDEO', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER' },
 ].map(m => Object.freeze(m)));
 
-export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES });
+export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES, computeProviders: PROVIDERS });
 
 type Item = { id: string; createdAt: string };
 const href = (route: string, projectId: string, revisionId: string) => route.replace(':projectId', projectId).replace(':revisionId', revisionId);

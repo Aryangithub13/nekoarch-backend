@@ -21,12 +21,18 @@ async function precheck(repository: Repository, projectId: string, request: JobR
   else await new ProjectRepository(repository).read('revision', projectId, request.revisionId);
 }
 
+/** The signed B32 submission for a request, built once here so the Phase 36 gateway submits exactly what this route would (no second job path). */
+export function signedJobSubmission(userId: string, projectId: string, request: JobRequest, secret: string, context?: IdempotencyContext) {
+  const input = { action: 'submit', projectId, kind: request.kind, request, inputHash: costHash(request) };
+  return { input, attestation: signProjectCommit(secret, userId, JOB_ROOT, input, context) };
+}
+
 /** Returns the stored detail (the route presents it, also for idempotent replays). */
 export async function submitJob(repository: Repository, runner: JobRunner, userId: string, projectId: string, request: JobRequest, secret?: string, context?: IdempotencyContext) {
   const key = need(secret);
   await precheck(repository, projectId, request);
-  const input = { action: 'submit', projectId, kind: request.kind, request, inputHash: costHash(request) };
-  const detail = await new JobRepository(repository).detail('submit', input, signProjectCommit(key, userId, JOB_ROOT, input, context), context);
+  const { input, attestation } = signedJobSubmission(userId, projectId, request, key, context);
+  const detail = await new JobRepository(repository).detail('submit', input, attestation, context);
   if (detail.status === 'QUEUED') runner.dispatch(repository, userId, projectId, detail.id);
   return detail;
 }

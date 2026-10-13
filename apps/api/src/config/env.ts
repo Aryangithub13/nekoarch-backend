@@ -1,6 +1,7 @@
 import { isIP } from 'node:net';
 import { z } from 'zod';
 import { AiPolicySchema } from '../contracts/ai-orchestration.js';
+import { ComputePolicySchema } from '../compute/contracts.js';
 
 const positive = (value: number) => optionalDefault(z.coerce.number().int().min(1).max(2_147_483_647).default(value));
 const flag = (value: 'true' | 'false') => optionalDefault(z.enum(['true', 'false']).default(value)).transform(value => value === 'true');
@@ -21,6 +22,11 @@ export const EnvSchema = z.object({
   AI_ROUTING_CONFIG: optionalDefault(z.string().max(32768).default('')).transform((value, ctx) => {
     try { const parsed=AiPolicySchema.safeParse(value?JSON.parse(value):{}); if(parsed.success)return parsed.data; } catch { /* Reject without reflecting configuration or credentials. */ }
     ctx.addIssue({code:'custom',message:'Invalid AI routing configuration'}); return z.NEVER;
+  }),
+  // Phase 36: server-owned compute policy (JSON). Remote execution cannot be enabled in this release; an attempt fails startup (fail closed).
+  COMPUTE_POLICY: optionalDefault(z.string().max(4096).default('')).transform((value, ctx) => {
+    try { const parsed=ComputePolicySchema.safeParse(value?JSON.parse(value):{}); if(parsed.success)return parsed.data; } catch { /* Reject without reflecting configuration. */ }
+    ctx.addIssue({code:'custom',message:'Invalid compute policy'}); return z.NEVER;
   }),
   AI_CONVERSATION_MODE: optionalDefault(z.enum(['fallback', 'local', 'disabled']).default('fallback')),
   AI_CONVERSATION_ENDPOINT: optionalDefault(z.string().optional()),
