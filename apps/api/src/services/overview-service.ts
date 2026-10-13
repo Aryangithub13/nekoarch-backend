@@ -45,6 +45,10 @@ import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
 import { COMPUTE_ROOT, GATEWAY_VERSION, PROVIDERS } from '../compute/contracts.js';
 import { DEPENDENCY_GRAPH_VERSION } from '../contracts/dependency-graph.js';
 import { DEPENDENCY_GRAPH_ROUTE } from './dependency-graph-service.js';
+import { DOCUMENTS_VERSION } from '../contracts/documents.js';
+import { EVIDENCE_PACKAGE_VERSION } from '../contracts/evidence.js';
+import { DOCUMENTS_ROOT } from './documents-service.js';
+import { EVIDENCE_ROOT } from './evidence-service.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -87,6 +91,10 @@ export const SERVICES = Object.freeze([
   { serviceId: 'COMPUTE_GATEWAY', version: GATEWAY_VERSION, persistence: 'CONSENTED_DISPATCH_RECORD', route: COMPUTE_ROOT, workflowCapability: null },
   // Phase 37: read-only provenance graph of a revision's stored artifacts with fail-closed freshness (CURRENT, STALE_*, UNVERIFIED). Provenance, never correctness.
   { serviceId: 'DEPENDENCY_GRAPH', version: DEPENDENCY_GRAPH_VERSION, persistence: 'DERIVED_ON_READ', route: DEPENDENCY_GRAPH_ROUTE, workflowCapability: null },
+  // Phase 38: revision-bound plan sheets (SVG) and schedules (JSON, CSV) derived from stored geometry only; PDF and DXF are unsupported.
+  { serviceId: 'CONSTRUCTION_DOCUMENTS', version: DOCUMENTS_VERSION, persistence: 'DERIVED_ON_READ', route: DOCUMENTS_ROOT, workflowCapability: null },
+  // Phase 38: immutable, signed evidence packages (graph, assessment with its flags verbatim, document manifest). Provenance, never a review or a certification.
+  { serviceId: 'EVIDENCE_PACKAGES', version: EVIDENCE_PACKAGE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: EVIDENCE_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

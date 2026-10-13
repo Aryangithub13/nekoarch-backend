@@ -21,7 +21,9 @@ export async function installLimits(app: FastifyInstance, env: Env) {
     '/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/partitions',
     // Phase 36: a turn may plan, assess or regenerate on read, and a decision executes the coordinated operation.
     '/api/projects/:projectId/conversations/:conversationId/turns', '/api/projects/:projectId/conversations/:conversationId/actions/:actionId/decisions',
-    '/api/projects/:projectId/conversations/:conversationId/rebase'].includes(request.routeOptions.url ?? '') ? 'generate'
+    '/api/projects/:projectId/conversations/:conversationId/rebase',
+    // Phase 38: an evidence package builds the Phase 37 graph, the Phase 35 assessment and every construction document of the revision.
+    '/api/projects/:projectId/revisions/:revisionId/evidence-packages'].includes(request.routeOptions.url ?? '') ? 'generate'
     : ['POST', 'PATCH', 'DELETE'].includes(request.method) ? 'write' : 'read';
   const perimeter = app.createRateLimit({ max: env.RATE_LIMIT_IP, keyGenerator: req => digest(`ip:${req.ip}`) });
   const operation = app.createRateLimit({
