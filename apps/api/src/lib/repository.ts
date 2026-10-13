@@ -39,6 +39,7 @@ export interface Repository {
   jobRpc?(name: 'job_read' | 'job_write', args: Record<string, unknown>): Promise<unknown>;
   computeRpc?(name: 'compute_read' | 'compute_write', args: Record<string, unknown>): Promise<unknown>;
   evidenceRpc?(name: 'evidence_read' | 'evidence_write', args: Record<string, unknown>): Promise<unknown>;
+  designConceptRpc?(name: 'design_concept_read' | 'design_concept_write', args: Record<string, unknown>): Promise<unknown>;
   accountRpc?(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;

@@ -14,6 +14,7 @@ import { referenceDatabaseError } from '../apps/api/src/lib/reference-repository
 import { jobDatabaseError } from '../apps/api/src/lib/job-repository.js';
 import { computeDatabaseError } from '../apps/api/src/lib/compute-repository.js';
 import { evidenceDatabaseError } from '../apps/api/src/lib/evidence-repository.js';
+import { designConceptDatabaseError } from '../apps/api/src/lib/design-concept-repository.js';
 import { accountDatabaseError } from '../apps/api/src/lib/account-repository.js';
 import type { Pool } from 'pg';
 import { z } from 'zod';
@@ -239,6 +240,18 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
             return result.rows[0].response;
           } catch (error) {
             evidenceDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
+        async designConceptRpc(name, args) {
+          const keys = name === 'design_concept_write' ? ['p_input','p_envelope','p_signature'] : ['p_action','p_project_id','p_revision_id','p_concept_id','p_input_hash','p_limit','p_cursor'];
+          const values = keys.map(key => args[key] ?? (key === 'p_limit' ? 20 : null));
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}(${values.map((_, i) => `$${i + 1}`).join(',')}) response`,
+              values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            designConceptDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
           }
         },
         async accountRpc(name, args) {
