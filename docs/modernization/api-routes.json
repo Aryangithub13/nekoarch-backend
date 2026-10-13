@@ -90,6 +90,21 @@
   "anonymous": 401
  },
  {
+  "method": "POST",
+  "url": "/api/projects/:projectId/compute/jobs",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/compute/jobs/:jobId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/compute/quotes",
+  "anonymous": 401
+ },
+ {
   "method": "GET",
   "url": "/api/projects/:projectId/context",
   "anonymous": 401
