@@ -191,6 +191,8 @@ All 6 were caught. One earlier attempt at the last mutation was syntactically in
 
 **`0025` collision:** the conversational branch cannot merge with its `0025`. The Supabase ledger keys on the version prefix: a database that has `0025` recorded would skip it, and the CLI refuses duplicate versions. Git reports **no** conflict for the two different file names. The two migrations touch disjoint objects, so `0026` is a safe number for the conversational one.
 
+**Resolved (2026-10-13):** `0025_compute_gateway.sql` keeps `0025`. After PR #7 merged, the conversational migration was renamed to `0026_conversation_turns.sql` on `phase36/conversation-turns-0026`, with byte-identical SQL and an updated upgrade test. The plan below is kept as the record.
+
 **Coordination plan (PROPOSED; nothing renumbered):**
 1. Land this repair, so the default branch typechecks.
 2. Resolve PR #7's conflicts (below), run its full-suite CI on both Node versions, and merge it if the owner authorizes.

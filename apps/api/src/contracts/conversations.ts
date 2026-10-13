@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { PreflightSchema } from '../revision/contracts.js';
 import { SelectedBlueprintRequirementsSchema, BlueprintV2RequirementsSchema, ParametricEditSchema } from '@designflow/generator';
 import { IntentCandidateSchema, NaturalLanguageDesignRequestSchema } from './requirement-interpretation.js';
+import { ActionSchema, MemoryEntrySchema, TURN_LIMITS, TurnSchema } from './conversation-memory.js';
 
 export const CONVERSATION_LIMITS = Object.freeze({ turns: 100, messages: 20, perProject: 20, perUser: 100, text: 4000, contextBytes: 12000, outputBytes: 16384, stateBytes: 131072, actions: 4 });
 const id = z.string().uuid();
@@ -25,7 +26,9 @@ export const ConversationIntentSchema = IntentCandidateSchema.extend({
   northMilliDegrees: z.number().int().min(0).max(359999).optional(),
 }).strict();
 export type ConversationIntent = z.infer<typeof ConversationIntentSchema>;
-export const CreateConversationSchema = z.object({ conversationId: id, baseRevisionId: id.nullable(), layoutV2: z.object({}).strict().optional() }).strict();
+export const CreateConversationSchema = z.object({ conversationId: id, baseRevisionId: id.nullable(), layoutV2: z.object({}).strict().optional(),
+  /** Phase 36, opt-in: allow a conversation on a revision without stored requirements (supplied or regenerated). Requirement messages are then refused. */
+  turnsOnly: z.literal(true).optional() }).strict();
 export const ConversationParamsSchema = z.object({ projectId: id, conversationId: id }).strict();
 // Explicit native updates are user-only. Provider output cannot supply this object.
 const native = BlueprintV2RequirementsSchema.innerType().shape;
@@ -61,6 +64,10 @@ export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), v
   messages: z.array(z.object({ id, text: z.string().max(4000), createdAt: z.string().datetime() }).strict()).max(20),
   orchestration: AiProvenanceSchema.optional(),
   provider: z.object({ kind: z.string().max(64), model: z.string().max(100), failure: z.string().max(100).nullable() }).strict(),
+  // Phase 36, additive and optional: absent on Phase 20 rows and on conversations that never use turns, so their documents are unchanged.
+  memory: z.array(MemoryEntrySchema).max(TURN_LIMITS.memory).optional(),
+  turns: z.array(TurnSchema).max(TURN_LIMITS.turns).optional(),
+  actions: z.array(ActionSchema).max(TURN_LIMITS.actions).optional(),
 }).strict();
 export type ConversationState = z.infer<typeof ConversationStateSchema>;
 export const ConversationSchema = z.object({ id, projectId: id, state: ConversationStateSchema }).strict();

@@ -12,6 +12,10 @@ import { AiProviderError } from '../contracts/ai-orchestration.js';
 import { ApiError } from '../lib/errors.js';
 
 type Requirements = NonNullable<ConversationState['requirements']>;
+/** Shared by Phase 20 messages and Phase 36 turns: instructions or credentials embedded in user text are refused, never interpreted. */
+export function assertSafeConversationText(text: string) {
+  if (/\b(?:ignore (?:all |previous |system )*instructions|system prompt|execute sql|run shell|service.role|approve true)\b|-----BEGIN .*PRIVATE KEY|\bBearer\s+\S+/i.test(text)) throw new ApiError(422,'UNSAFE_CONVERSATION_INPUT','Instructions or credentials outside architectural intent are not accepted');
+}
 export function initialConversation(baseRevisionId: string | null, requirements: Requirements | null, v2: boolean): ConversationState {
   return ConversationStateSchema.parse({ schemaVersion: 1, version: 0, baseRevisionId, solver: requirements && 'parametricArchitecture' in requirements ? 'PARAMETRIC' : requirements && 'layoutV2' in requirements || v2 ? 'V2' : 'V1',
     status: 'DRAFT', intent: {}, baseRequirements: requirements, requirements, questions: [], unsupported: [], explanations: [], fieldSources: requirements ? { base: 'PERSISTED' } : {},
@@ -149,7 +153,7 @@ function applyNative(r: Requirements, c: ConversationIntent, questions: string[]
 }
 
 export async function planConversation(previous: ConversationState, message: ConversationMessage, options: { provider?: ConversationProvider; disabled?: boolean; signal?: AbortSignal; restoredRequirements?: Requirements } = {}): Promise<ConversationState> {
-  if (/\b(?:ignore (?:all |previous |system )*instructions|system prompt|execute sql|run shell|service.role|approve true)\b|-----BEGIN .*PRIVATE KEY|\bBearer\s+\S+/i.test(message.text)) throw new ApiError(422,'UNSAFE_CONVERSATION_INPUT','Instructions or credentials outside architectural intent are not accepted');
+  assertSafeConversationText(message.text);
   const state = structuredClone(previous); state.version++; state.proposal = null; state.questions = []; state.explanations = []; state.status = 'NEEDS_CLARIFICATION';
   state.messages = [...state.messages,{id:message.messageId,text:message.text,createdAt:new Date().toISOString()}].slice(-20);
   state.provider = {kind:'fallback',model:'bounded-conversation-v1',failure:null};
@@ -288,10 +292,12 @@ function finalize(state: ConversationState, requirements: Requirements|null): Co
   }
   return boundedState(state);
 }
-function boundedState(state: ConversationState): ConversationState {
+export function boundedState(state: ConversationState): ConversationState {
   state.summary=`Version ${state.version}; ${state.status}; ${state.questions.length} unresolved questions; ${state.unsupported.length} unsupported requests. Structured intent and native requirements are authoritative, not this summary.`;
   // Trim only display history, never structured requirements, to stay below the
   // PostgreSQL JSONB byte ceiling even with multibyte user text.
+  // Phase 36 assistant turns are display history too; the oldest go first, the latest reply always stays.
+  while((state.turns?.length ?? 0)>1 && Buffer.byteLength(JSON.stringify(state))>120000) state.turns!.shift();
   while(state.messages.length && Buffer.byteLength(JSON.stringify(state))>120000) state.messages.shift();
   return ConversationStateSchema.parse(state);
 }
