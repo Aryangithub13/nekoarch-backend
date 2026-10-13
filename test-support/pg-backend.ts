@@ -12,6 +12,7 @@ import { sceneDatabaseError } from '../apps/api/src/lib/scene-repository.js';
 import { revisionDatabaseError } from '../apps/api/src/lib/revision-repository.js';
 import { referenceDatabaseError } from '../apps/api/src/lib/reference-repository.js';
 import { jobDatabaseError } from '../apps/api/src/lib/job-repository.js';
+import { computeDatabaseError } from '../apps/api/src/lib/compute-repository.js';
 import { accountDatabaseError } from '../apps/api/src/lib/account-repository.js';
 import type { Pool } from 'pg';
 import { z } from 'zod';
@@ -213,6 +214,18 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
             return result.rows[0].response;
           } catch (error) {
             jobDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
+          }
+        },
+        async computeRpc(name, args) {
+          const keys = name === 'compute_write' ? ['p_action','p_input','p_job_call','p_envelope','p_signature'] : ['p_action','p_project_id','p_job_id'];
+          const values = keys.map(key => args[key] ?? null);
+          try {
+            const result = await asPrincipal(pool, userId, client => client.query(
+              `select public.${name}(${values.map((_, i) => `$${i + 1}`).join(',')}) response`,
+              values.map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value)));
+            return result.rows[0].response;
+          } catch (error) {
+            computeDatabaseError({ code: typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '' });
           }
         },
         async accountRpc(name, args) {

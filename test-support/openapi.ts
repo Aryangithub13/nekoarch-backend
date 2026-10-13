@@ -36,6 +36,7 @@ import { RegenerationReportSchema, RegenerationRequestSchema, RegenerationVerifi
 import { PartitionReportSchema, PartitionRequestSchema } from '../apps/api/src/engineering/partition-contracts.js';
 import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
+import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
@@ -115,6 +116,9 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/references/:referenceId/download-links`]: { body: DownloadLinkRequestSchema, response: DownloadLinkSchema, status: 201 },
   'GET /api/reference-downloads': { query: DownloadTokenSchema, media: 'application/octet-stream' },
   // Phase 32 durable jobs.
+  // Phase 36: compute gateway (quote → consent → durable job; polling).
+  [`POST ${P}/compute/quotes`]: { body: QuoteRequestSchema, response: ComputeQuoteSchema }, [`POST ${P}/compute/jobs`]: { body: SubmitRequestSchema, response: SubmitResponseSchema, status: 202 },
+  [`GET ${P}/compute/jobs/:jobId`]: { query: JobEmpty, response: ComputeJobSchema },
   [`POST ${P}/jobs`]: { body: JobRequestSchema, response: JobDetailSchema, status: 202 }, [`GET ${P}/jobs`]: { query: JobListQuerySchema, response: JobListSchema },
   [`GET ${P}/jobs/:jobId`]: { query: JobEmpty, response: JobDetailSchema }, [`GET ${P}/jobs/:jobId/events`]: { query: JobEventsQuerySchema, response: JobEventListSchema },
   [`POST ${P}/jobs/:jobId/cancel`]: { body: JobEmpty, response: JobDetailSchema }, [`POST ${P}/jobs/:jobId/retry`]: { body: JobEmpty, response: JobDetailSchema },

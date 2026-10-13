@@ -42,6 +42,7 @@ import { MODEL_LIMITS, UNSUPPORTED_OPERATIONS } from '../engineering/capability-
 import { CONTEXT_VERSION } from '../account/contracts.js';
 import { JOB_VERSION } from '../jobs/contracts.js';
 import { REFERENCE_INSPECTOR_VERSION } from '../references/contracts.js';
+import { COMPUTE_ROOT, GATEWAY_VERSION, PROVIDERS } from '../compute/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -79,6 +80,9 @@ export const SERVICES = Object.freeze([
   // listed under unsupportedOperations.
   { serviceId: 'ZONE_REGENERATION', version: REGENERATION_VERSION, persistence: 'CANDIDATE_THEN_SUPPLIED_REVISION', route: ZONE_REGENERATION_ROUTE, workflowCapability: null },
   { serviceId: 'ZONE_PARTITIONS', version: PARTITION_VERSION, persistence: 'DERIVED_ON_READ', route: ZONE_PARTITIONS_ROUTE, workflowCapability: null },
+  // Phase 36 (first slice): quote → explicit consent → durable job for SCENE_COMPILE and OPTIMIZATION_STUDY on the local pools only. Remote execution
+  // is disabled; a successful job is a software-validated artifact, never an engineering validation.
+  { serviceId: 'COMPUTE_GATEWAY', version: GATEWAY_VERSION, persistence: 'CONSENTED_DISPATCH_RECORD', route: COMPUTE_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */
@@ -94,9 +98,9 @@ export const MEDIA = Object.freeze([
   { media: 'RENDERED_WALKTHROUGH_VIDEO', status: 'UNSUPPORTED', serviceId: null, mimeType: null, provider: null, reason: 'NO_RENDER_PROVIDER' },
 ].map(m => Object.freeze(m)));
 
-/** Phase 35.1 adds `modelLimits` (enforced execution limits and their typed refusals) and `unsupportedOperations`; both are additive. */
+/** Phase 35.1 adds `modelLimits` (enforced execution limits and their typed refusals) and `unsupportedOperations`; Phase 36 adds `computeProviders`. All additive. */
 export const discovery = () => ({ discoveryVersion: DISCOVERY_VERSION, services: SERVICES, media: MEDIA, aiCapabilities: AI_CAPABILITIES,
-  modelLimits: MODEL_LIMITS, unsupportedOperations: UNSUPPORTED_OPERATIONS });
+  modelLimits: MODEL_LIMITS, unsupportedOperations: UNSUPPORTED_OPERATIONS, computeProviders: PROVIDERS });
 
 type Item = { id: string; createdAt: string };
 const href = (route: string, projectId: string, revisionId: string) => route.replace(':projectId', projectId).replace(':revisionId', revisionId);

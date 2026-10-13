@@ -31,6 +31,8 @@ const safeRoutes = new Set([
   `${revision}/verification`, `${revision}/verification/diff`, `${revision}/engineering-assessment`, `${revision}/engineering-assessment/zones`, `${revision}/engineering-assessment/zones/regeneration-preflight`,
   `${revision}/engineering-assessment/zones/regeneration`, `${revision}/engineering-assessment/zones/regeneration/verification`, `${revision}/engineering-assessment/zones/partitions`,
   ...['', '/:jobId', '/:jobId/events', '/:jobId/cancel', '/:jobId/retry'].map(suffix => `${project}/jobs${suffix}`),
+  // Phase 36
+  `${project}/compute/quotes`, `${project}/compute/jobs`, `${project}/compute/jobs/:jobId`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
