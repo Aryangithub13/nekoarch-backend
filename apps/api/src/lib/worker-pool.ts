@@ -21,9 +21,14 @@ export type Timed<R> = R & { queueMs: number; workerMs: number };
 interface Job<R> { id: number; message: WorkerJob; queuedAt: number; resolve: (value: Timed<R>) => void; reject: (error: Error) => void }
 interface Slot<R> { worker: Worker; job: Job<R> | null; startedAt: number; timer: NodeJS.Timeout | null }
 
+/**
+ * Compiled (dist) workers start directly from their `.js` file. Source-mode workers (tests, tsx) start from a bootstrap that
+ * registers tsx inside the worker before importing the `.ts` entry: `execArgv: ['--import', 'tsx']` is not applied inside
+ * worker threads on some Node 22 releases (see tsx-worker.mjs), which broke every source-mode worker on Node 22.22.0.
+ */
 export const ownWorker = (moduleUrl: string, name: string): WorkerSpec => {
-  const ts = moduleUrl.endsWith('.ts'); // source (tests, tsx) vs compiled dist
-  return { url: new URL(`./${name}.${ts ? 'ts' : 'js'}`, moduleUrl), execArgv: ts ? ['--import', 'tsx'] : [] };
+  if (!moduleUrl.endsWith('.ts')) return { url: new URL(`./${name}.js`, moduleUrl), execArgv: [] };
+  return { url: new URL('./tsx-worker.mjs', import.meta.url), execArgv: [], workerData: { entry: new URL(`./${name}.ts`, moduleUrl).href } };
 };
 
 /** Fixed-size worker pool with a bounded queue. A failed, crashed or timed-out worker never yields a result. */

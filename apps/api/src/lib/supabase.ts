@@ -12,6 +12,7 @@ import { sceneDatabaseError } from './scene-repository.js';
 import { revisionDatabaseError } from './revision-repository.js';
 import { referenceDatabaseError } from './reference-repository.js';
 import { jobDatabaseError } from './job-repository.js';
+import { computeDatabaseError } from './compute-repository.js';
 import { accountDatabaseError } from './account-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
@@ -90,6 +91,11 @@ export class SupabaseRepository implements Repository {
   async jobRpc(name: 'job_read' | 'job_write', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) jobDatabaseError(error);
+    return data as unknown;
+  }
+  async computeRpc(name: 'compute_read' | 'compute_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) computeDatabaseError(error);
     return data as unknown;
   }
   async accountRpc(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>) {
