@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { costHash } from '@designflow/boq-cost';
 import { buildDependencyGraph, GRAPH_LIMITS, type GraphInput, type GraphRecord } from '../src/graph/dependency-graph.js';
-import { analysisRecord, constructionRecord, costRecord, revisionRecords, takeoffRecord } from '../src/services/dependency-graph-service.js';
+import { analysisRecord, constructionRecord, costRecord, inputHashVerified, revisionRecords, takeoffRecord } from '../src/services/dependency-graph-service.js';
+import { knowledgeInputHash } from '../src/services/knowledge-service.js';
+import { sceneInputHash } from '../src/scene3d/compile.js';
 import { takeoffFingerprint } from '../src/services/takeoff-service.js';
 import { constructionFingerprint } from '../src/services/construction-service.js';
 import { costInputFingerprint } from '../src/services/cost-service.js';
@@ -171,8 +173,38 @@ describe('Phase 37 record verification recomputes hashes from stored inputs', ()
     const stranger = { ...takeoff, id: uuid(98) };
     expect(states([...verified(), takeoffRecord(c, stranger as never), costRecord(c, { ...cost, id: uuid(97), takeoffId: stranger.id } as never, new Map([[construction.id, construction as never]]))])
       .BOQ_COST).toEqual(['UNVERIFIED', 'LINK_INCONSISTENT']);
-    expect(states([analysisRecord(c, 'SCENE_3D', { ...takeoff, modelHash: 'b'.repeat(64) })])).toMatchObject({ SCENE_3D: ['UNVERIFIED', 'MODEL_HASH_MISMATCH'] });
-    expect(states([analysisRecord(c, 'SCENE_3D', { ...takeoff, modelHash: HASH, projectRevisionId: NEWER })])).toMatchObject({ SCENE_3D: ['UNVERIFIED', 'REVISION_BINDING_MISMATCH'] });
+    expect(states([analysisRecord(c, 'SCENE_3D', scene({ modelHash: 'b'.repeat(64) }))])).toMatchObject({ SCENE_3D: ['UNVERIFIED', 'MODEL_HASH_MISMATCH'] });
+    expect(states([analysisRecord(c, 'SCENE_3D', scene({ projectRevisionId: NEWER }))])).toMatchObject({ SCENE_3D: ['UNVERIFIED', 'REVISION_BINDING_MISMATCH'] });
+  });
+
+  // Analysis inputHash: recomputed from the stored snapshot or manifest with the write path's own function, never trusted from the row.
+  const source = { projectId: PROJECT, revisionId: REV, modelHash: HASH, generatorVersion: null, parameterHash: null };
+  const scene = (patch: object = {}, manifest: object = {}) => ({ id: uuid(30), projectRevisionId: REV, acceptanceQaId: QA, modelHash: HASH, createdAt: at(30),
+    inputHash: sceneInputHash(source), manifest: { inputHash: sceneInputHash(source), source, ...manifest }, ...patch }) as never;
+  const studyInput = { version: 'optimization-input-v1', variables: [{ id: 'v' }] };
+  const study = (snapshot: object = {}) => ({ id: uuid(31), projectRevisionId: REV, acceptanceQaId: QA, modelHash: HASH, createdAt: at(31),
+    inputHash: costHash(studyInput), snapshot: { input: studyInput, inputHash: costHash(studyInput), ...snapshot } }) as never;
+  const kBinding = { revisionId: REV, modelHash: HASH }, kInput = { version: 'specialized-knowledge-input-v1', packs: [], sources: {}, scope: { disciplines: [] } };
+  const knowledge = (snapshot: object = {}) => ({ id: uuid(32), projectRevisionId: REV, acceptanceQaId: QA, modelHash: HASH, createdAt: at(32),
+    structuralAnalysisId: null, environmentalAnalysisId: null, systemsAnalysisId: null, inputHash: knowledgeInputHash(kBinding, kInput),
+    snapshot: { binding: kBinding, input: kInput, inputHash: knowledgeInputHash(kBinding, kInput), ...snapshot } }) as never;
+  it('verifies each analysis inputHash by recomputation and fails closed on any difference', () => {
+    expect(states([analysisRecord(c, 'SCENE_3D', scene()), analysisRecord(c, 'DESIGN_OPTIMIZATION', study()),
+      analysisRecord(c, 'SPECIALIZED_KNOWLEDGE', knowledge())])).toMatchObject({ SCENE_3D: ['CURRENT', null], DESIGN_OPTIMIZATION: ['CURRENT', null], SPECIALIZED_KNOWLEDGE: ['CURRENT', null] });
+    // The stored input changed while the stored hashes stayed: the recomputation catches it.
+    expect(states([analysisRecord(c, 'SCENE_3D', scene({}, { source: { ...source, parameterHash: 'd'.repeat(64) } }))]).SCENE_3D).toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    expect(states([analysisRecord(c, 'DESIGN_OPTIMIZATION', study({ input: { ...studyInput, variables: [] } }))]).DESIGN_OPTIMIZATION).toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    expect(states([analysisRecord(c, 'SPECIALIZED_KNOWLEDGE', knowledge({ input: { ...kInput, scope: { disciplines: ['FIRE'] } } }))]).SPECIALIZED_KNOWLEDGE)
+      .toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    // The row's hash and the snapshot's own hash must agree as well.
+    expect(states([analysisRecord(c, 'SCENE_3D', scene({ inputHash: 'e'.repeat(64) }))]).SCENE_3D).toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    expect(states([analysisRecord(c, 'DESIGN_OPTIMIZATION', study({ inputHash: 'e'.repeat(64) }))]).DESIGN_OPTIMIZATION).toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    // An unreadable stored input cannot be verified: fail closed, never throw.
+    expect(inputHashVerified('STRUCTURAL_ANALYSIS', { inputHash: HASH, snapshot: {} } as never)).toBe(false);
+    expect(states([analysisRecord(c, 'STRUCTURAL_ANALYSIS', { id: uuid(20), projectRevisionId: REV, acceptanceQaId: QA, modelHash: HASH, createdAt: at(20),
+      inputHash: HASH, snapshot: {} } as never)]).STRUCTURAL_ANALYSIS).toEqual(['UNVERIFIED', 'INPUT_HASH_MISMATCH']);
+    // A correct inputHash does not rescue a wrong model hash, and vice versa: every check must pass.
+    expect(states([analysisRecord(c, 'SCENE_3D', scene({ modelHash: 'b'.repeat(64) }))]).SCENE_3D).toEqual(['UNVERIFIED', 'MODEL_HASH_MISMATCH']);
   });
   it('AC9: the acceptance QA must exist, pass, be schema-valid and error-free; a stored identity must match the model', () => {
     const verdict = (patch: object, identity: object | null = revision.identity) => {

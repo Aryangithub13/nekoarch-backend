@@ -4,6 +4,11 @@ import { sampleCostingPolicy } from '@designflow/boq-cost';
 import { createTestUser, startTestDatabase } from '../../../test-support/postgres.js';
 import { createPgBackend } from '../../../test-support/pg-backend.js';
 import { frameInput } from '../../../test-support/structural-fixtures.js';
+import { environmentalInput } from '../../../test-support/environmental-fixtures.js';
+import { systemsInput, wetFrameInput, wetRequirements } from '../../../test-support/systems-fixtures.js';
+import { knowledgeInput } from '../../../test-support/knowledge-acceptance.js';
+import { parametricInput } from '../../../test-support/parametric-fixtures.js';
+import { optimizationInput } from '../../../test-support/optimization-fixtures.js';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
 import { buildApp } from '../src/app.js';
@@ -145,6 +150,70 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
       return args.p_action === 'list' ? { ...r, projectCurrentRevisionId: randomUUID() } : r;
     } };
     expect(await refusal(dependencyGraph(skewed, a.projectId, a.revision.id))).toEqual([409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', null]);
+    expect((await dependencyGraph(repo, a.projectId, a.revision.id)).complete).toBe(true);
+  }, 120_000);
+  it('every analysis family stored through the real write paths verifies its recomputed inputHash; a systems → knowledge chain is CURRENT', async () => {
+    const projectId = (await ok('POST', '/api/projects', { title: 'Phase 37 analysis chain' })).json().id as string;
+    const wet = (await ok('POST', `/api/projects/${projectId}/revisions/generate`, { requirements: wetRequirements() })).json().revision as Json;
+    const base = `/api/projects/${projectId}/revisions/${wet.id}`, post = async (path: string, payload: unknown) => (await ok('POST', `${base}/${path}`, payload)).json() as Json;
+    const S = await post('structural/analyses', wetFrameInput()), E = await post('environmental/analyses', environmentalInput());
+    const Y = await post('systems/analyses', systemsInput({ structuralAnalysisId: S.id, environmentalAnalysisId: E.id }));
+    const K = await post('knowledge/analyses', knowledgeInput({ structuralAnalysisId: S.id, environmentalAnalysisId: E.id, systemsAnalysisId: Y.id }));
+    const g = await graph(base), byId = Object.fromEntries(g.nodes.map(n => [n.nodeId, n]));
+    for (const [family, id] of [['STRUCTURAL_ANALYSIS', S.id], ['ENVIRONMENTAL_ANALYSIS', E.id], ['BUILDING_SYSTEMS_ANALYSIS', Y.id], ['SPECIALIZED_KNOWLEDGE', K.id]]) {
+      const n = byId[`${family}:${id}`]!;
+      expect([n.state, n.checks.find(c => c.check === 'INPUT_HASH')?.result], family).toEqual(['CURRENT', 'VERIFIED']);
+    }
+    expect(g.edges.filter(e => e.kind === 'DERIVED_FROM').map(e => [e.from.split(':')[0], e.to.split(':')[0]])).toEqual([
+      ['BUILDING_SYSTEMS_ANALYSIS', 'STRUCTURAL_ANALYSIS'], ['BUILDING_SYSTEMS_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS'],
+      ['SPECIALIZED_KNOWLEDGE', 'STRUCTURAL_ANALYSIS'], ['SPECIALIZED_KNOWLEDGE', 'ENVIRONMENTAL_ANALYSIS'], ['SPECIALIZED_KNOWLEDGE', 'BUILDING_SYSTEMS_ANALYSIS']]);
+
+    const p2 = (await ok('POST', '/api/projects', { title: 'Phase 37 optimization and scene' })).json().id as string;
+    const gen = (await ok('POST', `/api/projects/${p2}/revisions/generate`, { requirements: parametricInput(true) })).json().revision as Json;
+    const base2 = `/api/projects/${p2}/revisions/${gen.id}`;
+    const O = (await ok('POST', `${base2}/optimization/studies`, optimizationInput())).json(), C = (await ok('POST', `${base2}/scene/artifacts`, {})).json();
+    const g2 = await graph(base2), byId2 = Object.fromEntries(g2.nodes.map(n => [n.nodeId, n]));
+    for (const key of [`DESIGN_OPTIMIZATION:${O.id}`, `SCENE_3D:${C.id}`])
+      expect([byId2[key]!.state, byId2[key]!.checks.find(c => c.check === 'INPUT_HASH')?.result], key).toEqual(['CURRENT', 'VERIFIED']);
+
+    // A stored analysis input changed behind its unchanged hashes is caught by the recomputation and poisons its dependents.
+    const client = await db.pool.connect();
+    try {
+      await client.query('begin');
+      await client.query('set local session_replication_role = replica');
+      await client.query(`update project_revision_structural_analyses set snapshot_json = jsonb_set(snapshot_json, '{input,materials,0,name}', '"tampered"') where id = $1`, [S.id]);
+      await client.query('commit');
+    } finally { client.release(); }
+    const tampered = Object.fromEntries((await graph(base)).nodes.map(n => [n.nodeId, n]));
+    expect(tampered[`STRUCTURAL_ANALYSIS:${S.id}`]).toMatchObject({ state: 'UNVERIFIED', causes: [{ code: 'INPUT_HASH_MISMATCH' }] });
+    expect(tampered[`BUILDING_SYSTEMS_ANALYSIS:${Y.id}`]).toMatchObject({ state: 'UNVERIFIED', causes: [{ code: 'UPSTREAM_UNVERIFIED', nodeId: `STRUCTURAL_ANALYSIS:${S.id}` },
+      { code: 'INPUT_HASH_MISMATCH', nodeId: `STRUCTURAL_ANALYSIS:${S.id}` }] });
+    expect(tampered[`SPECIALIZED_KNOWLEDGE:${K.id}`]!.state).toBe('UNVERIFIED');
+    expect(tampered[`ENVIRONMENTAL_ANALYSIS:${E.id}`]!.state).toBe('CURRENT');
+  }, 300_000);
+
+  it('an artifact or revision committed between the first and second listing round is a 409, never a graph that mixes two states', async () => {
+    const repo = backend.repository('owner');
+    // Hide the newest cost on the first listing only: the second round sees it, as if it had been committed during the read.
+    let costLists = 0;
+    const late: Repository = { ...repo, costRpc: async (name, args) => {
+      const r = await repo.costRpc!(name, args) as Json;
+      return 'p_limit' in args && costLists++ === 0 ? { ...r, items: r.items.slice(0, -1) } : r;
+    } };
+    expect(await refusal(dependencyGraph(late, a.projectId, a.revision.id))).toEqual([409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', null]);
+    // The current revision moves between the rounds: every analysis listing reports the new pointer from the second round on.
+    const moving = randomUUID();
+    const wrap = (rpc: (name: never, args: Record<string, unknown>) => Promise<unknown>) => {
+      let lists = 0;
+      return (async (name: never, args: Record<string, unknown>) => {
+        const r = await rpc(name, args) as Json;
+        return args.p_action === 'list' && lists++ > 0 ? { ...r, projectCurrentRevisionId: moving } : r;
+      }) as never;
+    };
+    const moved: Repository = { ...repo, structuralRpc: wrap(repo.structuralRpc!), environmentalRpc: wrap(repo.environmentalRpc!), systemsRpc: wrap(repo.systemsRpc!),
+      knowledgeRpc: wrap(repo.knowledgeRpc!), optimizationRpc: wrap(repo.optimizationRpc!), sceneRpc: wrap(repo.sceneRpc!) };
+    expect(await refusal(dependencyGraph(moved, a.projectId, a.revision.id))).toEqual([409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', null]);
+    // Unchanged state reads cleanly through the same two rounds.
     expect((await dependencyGraph(repo, a.projectId, a.revision.id)).complete).toBe(true);
   }, 120_000);
 });

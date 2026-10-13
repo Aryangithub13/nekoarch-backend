@@ -43010,6 +43010,7 @@
                   "LINK_CONSISTENCY",
                   "MODEL_HASH",
                   "INPUT_FINGERPRINT",
+                  "INPUT_HASH",
                   "REPORT_HASH"
                  ]
                 },
@@ -43044,6 +43045,7 @@
                   "LINK_INCONSISTENT",
                   "MODEL_HASH_MISMATCH",
                   "FINGERPRINT_MISMATCH",
+                  "INPUT_HASH_MISMATCH",
                   "REPORT_HASH_MISMATCH",
                   "NO_CURRENT_REVISION",
                   "UPSTREAM_UNVERIFIED",
