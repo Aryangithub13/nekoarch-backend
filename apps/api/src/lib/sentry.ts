@@ -14,6 +14,8 @@ const safeRoutes = new Set([
   `${project}/requirements/interpret`, `${project}/revisions`, `${project}/revisions/generate`, revision, `${revision}/overview`,
   `${project}/workflows`, `${project}/workflows/plan`, `${project}/workflows/:workflowRunId`,
   `${project}/conversations`, conversation, `${conversation}/messages`, `${conversation}/proposals/approve`, `${conversation}/tools`,
+  // Phase 36
+  `${conversation}/turns`, `${conversation}/actions/:actionId/decisions`, `${conversation}/rebase`, `${conversation}/context`,
   takeoff, `${takeoff}/:takeoffId`, construction, `${construction}/:calculationId`,
   `${construction}/:calculationId/cost-estimates`, `${revision}/cost-estimates`, `${revision}/cost-estimates/:costEstimateId`,
   ...['', '/validation', '/elements', '/elements/:elementId', '/relationships', '/diff/:otherRevisionId', '/export.json', '/export.ifc'].map(suffix => `${revision}/bim${suffix}`),

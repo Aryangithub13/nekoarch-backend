@@ -11,6 +11,8 @@ import { ProjectReadQuerySchema } from '../apps/api/src/contracts/freshness.js';
 import { NaturalLanguageDesignRequestSchema, InterpretationResultSchema } from '../apps/api/src/contracts/requirement-interpretation.js';
 import { ConversationListSchema, ConversationMessageSchema, ConversationPageSchema, ConversationSchema, ConversationToolResponseSchema, ConversationToolSchema,
   CreateConversationSchema, ProposalApprovalSchema } from '../apps/api/src/contracts/conversations.js';
+import { ActionDecisionResponseSchema, ActionDecisionSchema, ConversationContextSchema, RebaseRequestSchema, RebaseResponseSchema, TurnRequestSchema,
+  TurnResponseSchema } from '../apps/api/src/contracts/conversation-turns.js';
 import { TakeoffDetailSchema, TakeoffListSchema, TakeoffRequestSchema } from '../apps/api/src/contracts/takeoffs.js';
 import { ConstructionDetailSchema, ConstructionListSchema, ConstructionRequestSchema } from '../apps/api/src/contracts/construction.js';
 import { CostDetailSchema, CostListSchema, CostRequestSchema } from '../apps/api/src/contracts/costs.js';
@@ -67,6 +69,9 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${V}`]: { response: ConversationSchema }, [`DELETE ${V}`]: { response: z.object({ deleted: z.literal(true) }).strict() },
   [`POST ${V}/messages`]: { body: ConversationMessageSchema, response: ConversationSchema }, [`POST ${V}/proposals/approve`]: { body: ProposalApprovalSchema, response: RevisionCommitResponseSchema },
   [`POST ${V}/tools`]: { body: ConversationToolSchema, response: ConversationToolResponseSchema },
+  // Phase 36: conversational turns, coordinated action decisions, rebase and the bounded context document.
+  [`POST ${V}/turns`]: { body: TurnRequestSchema, response: TurnResponseSchema }, [`POST ${V}/actions/:actionId/decisions`]: { body: ActionDecisionSchema, response: ActionDecisionResponseSchema },
+  [`POST ${V}/rebase`]: { body: RebaseRequestSchema, response: RebaseResponseSchema }, [`GET ${V}/context`]: { query: empty, response: ConversationContextSchema },
   [`POST ${T}`]: { body: TakeoffRequestSchema, response: TakeoffDetailSchema, status: 201 }, [`GET ${T}`]: { query: PageQuerySchema, response: TakeoffListSchema },
   [`GET ${T}/:takeoffId`]: { response: TakeoffDetailSchema },
   [`POST ${C}`]: { body: ConstructionRequestSchema, response: ConstructionDetailSchema, status: 201 }, [`GET ${C}`]: { query: PageQuerySchema, response: ConstructionListSchema },

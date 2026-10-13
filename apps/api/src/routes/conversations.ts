@@ -13,21 +13,34 @@ import { ProjectRepository } from '../lib/project-repository.js';
 import { ConversationRepository } from '../lib/conversation-repository.js';
 import { ProjectDetailSchema, ProjectRevisionDetailSchema, ProjectParamsSchema, RevisionCommitResponseSchema } from '../contracts/projects.js';
 import { ConversationSchema, ConversationListSchema, ConversationPageSchema, ConversationParamsSchema, CreateConversationSchema, ConversationMessageSchema, ProposalApprovalSchema, ConversationToolSchema, ConversationToolResponseSchema } from '../contracts/conversations.js';
-import { initialConversation, planConversation } from '../ai/conversation-planner.js';
+import { assertSafeConversationText, boundedState, initialConversation, planConversation } from '../ai/conversation-planner.js';
+import { TURN_LIMITS } from '../contracts/conversation-memory.js';
+import { ActionDecisionResponseSchema, ActionDecisionSchema, ActionParamsSchema, RebaseRequestSchema, RebaseResponseSchema, TurnRequestSchema, TurnResponseSchema } from '../contracts/conversation-turns.js';
+import { runTurn } from '../conversation/turns.js';
+import { decideAction, rebaseConversation } from '../conversation/actions.js';
+import { loadContext } from '../conversation/context.js';
+import { closeOperation } from '../services/revision-service.js';
+import type { AppearancePool } from '../revision/pool.js';
+import type { ConversationState } from '../contracts/conversations.js';
 import { createConversationOrchestrator } from '../config/ai.js';
 import { type ConversationProvider } from '../ai/conversation-provider.js';
 import { saveProjectRevision } from '../services/project-service.js';
 import { CAPABILITIES, CapabilitySchema } from '../workflows/registry.js';
 
-export function conversationsRoutes(app: FastifyInstance, backend: Backend, env: Env, configured?: ConversationProvider) {
+/** Phase 36: explicit "keep" constraints recorded by conversation turns bind the Phase 20 routes too, since approval regenerates the whole design. */
+const activePreservation = (state: ConversationState) => !!state.baseRevisionId && (state.memory ?? []).some(m => m.kind === 'PRESERVATION' && m.status === 'ACTIVE');
+const Reserved = z.object({replay:z.boolean(),conversation:ConversationSchema}).strict();
+
+export function conversationsRoutes(app: FastifyInstance, backend: Backend, env: Env, configured?: ConversationProvider, appearancePool?: AppearancePool) {
   const root='/api/projects/:projectId/conversations', item=`${root}/:conversationId`;
   const provider=createConversationOrchestrator(env,configured,event=>app.log.info(event,'AI provider attempt'));
+  const pool=()=>{ if(!appearancePool) throw new ApiError(503,'REVISION_UNAVAILABLE','Revision execution is not configured'); return appearancePool; };
   app.post(root,{bodyLimit:8192},async request=>{
     const {repository,userId}=await requestContext(request,backend,true);
     const {projectId}=parseRequest(ProjectParamsSchema,request.params), input=parseRequest(CreateConversationSchema,request.body);
     const project=ProjectDetailSchema.parse(await new ProjectRepository(repository).read('get',projectId));
     if(input.baseRevisionId!==project.currentRevisionId) throw new ApiError(409,'REVISION_CONFLICT','Select the current revision explicitly');
-    if(project.currentRevision && !project.currentRevision.normalizedRequirements) throw new ApiError(422,'NATIVE_REQUIREMENTS_UNAVAILABLE','The revision has no stored native requirements');
+    if(project.currentRevision && !project.currentRevision.normalizedRequirements && !input.turnsOnly) throw new ApiError(422,'NATIVE_REQUIREMENTS_UNAVAILABLE','The revision has no stored native requirements');
     if(project.currentRevision?.normalizedRequirements && !('layoutV2' in project.currentRevision.normalizedRequirements) && input.layoutV2) throw new ApiError(422,'SOLVER_VERSION_CONFLICT','A V1 revision cannot be silently upgraded');
     const state=initialConversation(input.baseRevisionId,project.currentRevision?.normalizedRequirements ?? null,input.layoutV2!==undefined);
     return ConversationSchema.parse(await new ConversationRepository(repository,userId!,env.PROJECT_COMMIT_SECRET).write('create',{projectId,conversationId:input.conversationId,state}));
@@ -62,6 +75,9 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     const controller=new AbortController(); const abort=()=>controller.abort(); const disconnect=()=>{if(!reply.raw.writableEnded)controller.abort();};
     request.raw.once('aborted',abort);reply.raw.once('close',disconnect);
     try {
+      // Only reachable for conversations that used Phase 36 turns: a rebase onto a supplied revision, or active "keep" constraints.
+      if(reserved.conversation.state.baseRevisionId && !reserved.conversation.state.baseRequirements) throw new ApiError(422,'NATIVE_REQUIREMENTS_UNAVAILABLE','The revision has no stored native requirements');
+      if(activePreservation(reserved.conversation.state)) throw new ApiError(409,'PRESERVATION_CONFLICT','Active preservation constraints conflict with whole-design regeneration; release them first');
       const state=await planConversation(reserved.conversation.state,input,{...(provider?{provider}:{}),disabled:env.AI_CONVERSATION_MODE==='disabled',signal:controller.signal,...(restoredRequirements?{restoredRequirements}:{})});
       if (controller.signal.aborted) throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
       const result=ConversationSchema.parse(await conversations.write('finish',{...params,token,state}));
@@ -81,6 +97,7 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     const conversations=new ConversationRepository(repository,userId!,env.PROJECT_COMMIT_SECRET);
     const replay=await conversations.read('replay',{...params,approval}); if(replay) return RevisionCommitResponseSchema.parse(replay);
     const conversation=ConversationSchema.parse(await conversations.read('get',params)),proposal=conversation.state.proposal;
+    if(activePreservation(conversation.state)) throw new ApiError(409,'PRESERVATION_CONFLICT','Active preservation constraints conflict with whole-design regeneration; release them first');
     if(!proposal || conversation.state.status!=='AWAITING_APPROVAL' || approval.proposalId!==proposal.id || approval.proposalVersion!==proposal.version || approval.requirementsHash!==proposal.requirementsHash || approval.baseRevisionId!==proposal.baseRevisionId || Date.parse(proposal.expiresAt)<=Date.now()) throw new ApiError(409,'PROPOSAL_CONFLICT','Approve the exact current proposal before generation');
     const project=ProjectDetailSchema.parse(await new ProjectRepository(repository).read('get',params.projectId));
     if(project.currentRevisionId!==approval.baseRevisionId) throw new ApiError(409,'REVISION_CONFLICT','The proposal is stale; start a conversation on the current revision');
@@ -118,5 +135,63 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     }));
     request.log.info({conversationId:params.conversationId,actions:input.actions.map(a=>a.name)},'read-only conversation tools');
     return ConversationToolResponseSchema.parse({schemaVersion:1,projectId:params.projectId,conversationId:params.conversationId,results});
+  });
+
+  // ---------------------------------------------------------------- Phase 36: conversational turns, coordinated actions, rebase, context
+  app.post(`${item}/turns`,{bodyLimit:TURN_LIMITS.bodyBytes},async (request,reply)=>{
+    const started=performance.now();
+    const {repository,userId}=await requestContext(request,backend,true);
+    const params=parseRequest(ConversationParamsSchema,request.params),input=parseRequest(TurnRequestSchema,request.body);
+    assertSafeConversationText(input.text);
+    const conversations=new ConversationRepository(repository,userId!,env.PROJECT_COMMIT_SECRET),token=randomUUID();
+    const fingerprint=createHash('sha256').update(JSON.stringify({turn:input})).digest('hex');
+    const reserved=Reserved.parse(await conversations.write('reserve',{...params,messageId:input.turnId,expectedVersion:input.expectedVersion,baseRevisionId:input.baseRevisionId,fingerprint,token}));
+    const respond=(conversation:z.infer<typeof ConversationSchema>)=>{
+      const turn=conversation.state.turns?.find(t=>t.inReplyTo===input.turnId) ?? null;
+      return TurnResponseSchema.parse({conversation,turn,action:turn?.actionId ? conversation.state.actions?.find(a=>a.id===turn.actionId) ?? null : null});
+    };
+    if(reserved.replay) return respond(reserved.conversation);
+    const controller=new AbortController(); const abort=()=>controller.abort(); const disconnect=()=>{if(!reply.raw.writableEnded)controller.abort();};
+    request.raw.once('aborted',abort);reply.raw.once('close',disconnect);
+    try {
+      const outcome=await runTurn({repository,projectId:params.projectId,conversationId:params.conversationId,env,provider,signal:controller.signal},reserved.conversation.state,input);
+      if(controller.signal.aborted) throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
+      const result=ConversationSchema.parse(await conversations.write('finish',{...params,token,state:boundedState(outcome.state)}));
+      // A superseded Phase 30 candidate is cancelled so it stops counting against the project's active operations; failure is only logged.
+      for(const operationId of outcome.supersededOperations) await closeOperation(repository,userId!,params.projectId,operationId,'cancel',env.PROJECT_COMMIT_SECRET).catch(()=>request.log.warn({operationId},'superseded revision operation not cancelled'));
+      request.log.info({conversationId:params.conversationId,projectId:params.projectId,turnId:input.turnId,version:result.state.version,classification:outcome.turn.classification,
+        turnStatus:outcome.turn.status,actionId:outcome.action?.id ?? null,actionKind:outcome.action?.kind ?? null,conflicts:outcome.turn.conflicts.length,interpretation:outcome.turn.interpretation.mode,
+        providerKind:outcome.turn.interpretation.provider,providerFailure:outcome.turn.interpretation.failure,contextHash:outcome.turn.contextHash,contextBytes:outcome.contextBytes,
+        durationMs:performance.now()-started},'conversation turn processed');
+      return respond(result);
+    } catch (error) {
+      try { await conversations.write('cancel-message',{...params,token}); }
+      catch { request.log.warn('Conversation lease cleanup unavailable'); }
+      request.log.info({conversationId:params.conversationId,projectId:params.projectId,turnId:input.turnId,errorCode:error instanceof ApiError?error.code:'INTERNAL_ERROR',durationMs:performance.now()-started},'conversation turn not recorded');
+      throw error;
+    } finally { request.raw.removeListener('aborted',abort);reply.raw.removeListener('close',disconnect); }
+  });
+  app.post(`${item}/actions/:actionId/decisions`,{bodyLimit:TURN_LIMITS.bodyBytes},async request=>{
+    const started=performance.now();
+    const {repository,userId}=await requestContext(request,backend,true);
+    const params=parseRequest(ActionParamsSchema,request.params),input=parseRequest(ActionDecisionSchema,request.body);
+    const result=ActionDecisionResponseSchema.parse(await decideAction({repository,userId:userId!,projectId:params.projectId,conversationId:params.conversationId,env,pool,log:request.log},params.actionId,input));
+    request.log.info({conversationId:params.conversationId,projectId:params.projectId,actionId:params.actionId,decision:input.decision,actionKind:result.action.kind,actionStatus:result.action.status,
+      revisionId:result.action.result?.revisionId ?? null,verification:result.action.result?.verification ?? null,failureCode:result.action.failure?.code ?? null,durationMs:performance.now()-started},'conversation action decided');
+    return result;
+  });
+  app.post(`${item}/rebase`,{bodyLimit:1024},async request=>{
+    const {repository,userId}=await requestContext(request,backend,true);
+    const params=parseRequest(ConversationParamsSchema,request.params),input=parseRequest(RebaseRequestSchema,request.body);
+    const result=RebaseResponseSchema.parse(await rebaseConversation({repository,userId:userId!,projectId:params.projectId,conversationId:params.conversationId,env,log:request.log},input.expectedVersion));
+    request.log.info({conversationId:params.conversationId,projectId:params.projectId,rebased:result.rebased,fromRevisionId:result.fromRevisionId,toRevisionId:result.toRevisionId,reconciled:result.reconciled.length},'conversation rebase');
+    return result;
+  });
+  app.get(`${item}/context`,async request=>{
+    const {repository,userId}=await requestContext(request,backend,true);
+    const params=parseRequest(ConversationParamsSchema,request.params);
+    parseRequest(z.object({}).strict(),request.query);
+    const conversation=ConversationSchema.parse(await new ConversationRepository(repository,userId!).read('get',params));
+    return (await loadContext(repository,params.projectId,params.conversationId,conversation.state)).document;
   });
 }
