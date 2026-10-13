@@ -24,7 +24,7 @@
 | Six Specialized Architectural AI Workflows: Interior, Exterior, Blueprint, Structural, Materials, Budget | **B39** | ROADMAP L283–297 |
 | Capability-based routing, per-operation provider provenance, privacy and region policy, schema checks, safe fallback, provider evaluation, cost | **B43** (old 38, "Intelligent API & Model Routing Expansion") | ROADMAP L355–372, numbering table L450 |
 | Brief and reference use in AI flows, scoped retrieval with consent | **B41** (L330–332) with **B43** (L362); the context bundle is B33 | ROADMAP |
-| Autonomous Large-Scale Project Integration, which consumes the six tested B39 operations | **B40** | ROADMAP L300–315, L311, §I rule 4 L735 |
+| Autonomous Large-Scale Project Integration, which consumes the six tested B39 operations | **B40** | ROADMAP L300–315, L311, §I rule 3, L735 |
 
 **Q4 is resolved by the roadmap:** provider routing is **B43**, not B38 and not B39 (reconciliation r2, C4).
 
