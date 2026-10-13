@@ -8,6 +8,7 @@ import { durableCommand } from '../lib/idempotency.js';
 import { ProjectRepository } from '../lib/project-repository.js';
 import { saveProjectRevision } from '../services/project-service.js';
 import { projectOverview } from '../services/overview-service.js';
+import { dependencyGraph, DEPENDENCY_GRAPH_ROUTE } from '../services/dependency-graph-service.js';
 import { ProjectReadQuerySchema } from '../contracts/freshness.js';
 import { CreateProjectRequestSchema, UpdateProjectRequestSchema, SaveRevisionRequestSchema, GenerateRevisionRequestSchema,
   ProjectDetailSchema, ProjectRevisionDetailSchema, PublicProjectSchema, ProjectParamsSchema, RevisionParamsSchema,
@@ -60,6 +61,12 @@ export function projectsRoutes(app: FastifyInstance, backend: Backend, env: Env)
     const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
     parseRequest(z.object({}).strict(), request.query);
     return projectOverview(repository, projectId, revisionId);
+  });
+  app.get(DEPENDENCY_GRAPH_ROUTE, async request => {
+    const { repository } = await requestContext(request, backend, true);
+    const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
+    parseRequest(z.object({}).strict(), request.query);
+    return dependencyGraph(repository, projectId, revisionId);
   });
   for (const source of ['generated', 'supplied'] as const) {
     const url = `/api/projects/:projectId/revisions${source === 'generated' ? '/generate' : ''}`;

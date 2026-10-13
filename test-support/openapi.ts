@@ -37,6 +37,7 @@ import { PartitionReportSchema, PartitionRequestSchema } from '../apps/api/src/e
 import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
+import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
@@ -62,6 +63,7 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/revisions`]: { body: SaveRevisionRequestSchema, response: RevisionCommitResponseSchema, status: 201 },
   [`POST ${P}/revisions/generate`]: { body: GenerateRevisionRequestSchema, response: RevisionCommitResponseSchema, status: 201 },
   [`GET ${R}`]: { response: ProjectRevisionDetailSchema }, [`GET ${R}/overview`]: { query: empty, response: null },
+  [`GET ${R}/dependency-graph`]: { query: empty, response: DependencyGraphSchema },
   [`POST ${P}/workflows/plan`]: { body: WorkflowRequestSchema, response: z.object({ projectId: z.string().uuid(), sourceRevisionId: z.string().uuid().nullable(), inputFingerprint: z.string(), plan: WorkflowPlanSchema }).strict() },
   [`POST ${P}/workflows`]: { body: WorkflowRequestSchema, response: WorkflowRunSchema, status: 201 }, [`GET ${P}/workflows`]: { query: PageQuerySchema, response: null },
   [`GET ${P}/workflows/:workflowRunId`]: { response: WorkflowRunSchema },
