@@ -28,7 +28,7 @@ const concept = (n: number, patch: Record<string, unknown> = {}) => ({ id: uuid(
   source: 'DETERMINISTIC_TEMPLATE' as const, providerId: null, modelId: null, alternativeCount: 1, modelHash: HASH, inputHash: 'b'.repeat(64), contentHash: 'c'.repeat(64),
   createdAt: at(n), ...patch });
 const manifest = (records = chain(), current: string | null = REV, extra: Partial<ManifestInput> = {}) => buildProjectManifest({ projectId: PROJECT, revision: revision(),
-  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], integrityCheckedAt: at(99), ...extra });
+  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], lineage: null, integrityCheckedAt: at(99), ...extra });
 const mod = (m: ReturnType<typeof buildProjectManifest>, name: string) => m.modules.find(x => x.module === name)!;
 
 describe('B37 Unified Project Manifest v2 (pure builder)', () => {
@@ -94,6 +94,39 @@ describe('B37 Unified Project Manifest v2 (pure builder)', () => {
     expect(d.freshness!.state).toBe('blocked');
     expect(mod(manifest(chain(), NEWER, { designConcepts: { items: [concept(60)], truncated: false } }), 'DESIGN_CONCEPTS').freshness!.state).toBe('stale');
     expect(mod(manifest(chain(), REV, { designConcepts: null }), 'DESIGN_CONCEPTS')).toMatchObject({ availability: 'UNAVAILABLE', missingReason: 'PERSISTENCE_UNAVAILABLE' });
+  });
+
+  it('roadmap L260/L253: lineage, diff and per-discipline change impact are derived from the revision and the manifest freshness', () => {
+    // A first revision: no parent, so no diff; lineage persistence not configured on this backend.
+    const first = manifest();
+    expect(first.lineage).toEqual({ parentRevisionId: null, operation: null, operationLineage: 'UNAVAILABLE' });
+    expect(first.diff).toEqual({ basis: 'BIM_SEMANTIC_DIFF', againstRevisionId: null, href: null, availability: 'NO_PARENT' });
+    expect(first.changeImpact.disciplines.every(d => !d.regenerate.length && !d.revalidate.length && !d.awaiting.length && !d.staleArtifacts && !d.blockedArtifacts)).toBe(true);
+    // A revision produced by a Phase 30 operation from a parent: the operation is carried, and the diff points at the existing BIM diff route.
+    const PARENT = uuid(5), OP = uuid(6);
+    const child = manifest(chain(), REV, { revision: { ...revision(), parentRevisionId: PARENT } as ManifestInput['revision'],
+      lineage: { operation: { id: OP, kind: 'APPEARANCE_MODIFY', baseRevisionId: PARENT }, modelEquivalentToBase: true } });
+    expect(child.lineage).toEqual({ parentRevisionId: PARENT, operationLineage: 'AVAILABLE',
+      operation: { operationId: OP, kind: 'APPEARANCE_MODIFY', baseRevisionId: PARENT, modelEquivalentToBase: true } });
+    expect(child.diff).toEqual({ basis: 'BIM_SEMANTIC_DIFF', againstRevisionId: PARENT, href: `/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}`,
+      availability: 'AVAILABLE' });
+    expect(manifest(chain(), REV, { lineage: { operation: null, modelEquivalentToBase: null } }).lineage).toEqual({ parentRevisionId: null, operation: null,
+      operationLineage: 'AVAILABLE' });
+    // Superseded: every stored and derived output of the base is listed for regeneration, by discipline, against the new current revision.
+    const stale = manifest(chain(), NEWER), impact = (m: typeof stale, d: string) => m.changeImpact.disciplines.find(x => x.discipline === d)!;
+    expect(stale.changeImpact.targetRevisionId).toBe(NEWER);
+    expect(impact(stale, 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
+      revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
+    expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], staleArtifacts: 1 });
+    expect(impact(stale, 'DOCUMENTATION').regenerate).toEqual(['CONSTRUCTION_DOCUMENTS']);
+    // A failed check asks for revalidation, never regeneration; an active job is awaited.
+    const records = chain().map(r => r.family === 'QUANTITY_TAKEOFF' ? { ...r, checks: r.checks.map(c => c.check === 'MODEL_HASH' ? { ...c, result: 'FAILED' as const } : c) } : r);
+    expect(impact(manifest(records), 'QUANTITIES_AND_COST')).toMatchObject({ regenerate: [], revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
+      blockedArtifacts: 3 });
+    expect(impact(manifest(base(), REV, { activeJobs: [{ jobId: uuid(40), module: 'SCENE_3D' }] }), 'VISUALIZATION').awaiting).toEqual(['SCENE_3D']);
+    // Nothing reads better than the module freshness it summarises.
+    for (const m of [first, child, stale]) for (const d of m.changeImpact.disciplines)
+      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
   });
 
   it('is deterministic: record order and read time do not change the manifest hash', () => {

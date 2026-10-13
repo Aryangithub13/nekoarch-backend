@@ -4,6 +4,7 @@ import type { Repository } from '../lib/repository.js';
 import { ProjectRepository } from '../lib/project-repository.js';
 import { JobRepository } from '../lib/job-repository.js';
 import { DesignConceptRepository } from '../lib/design-concept-repository.js';
+import { RevisionRepository } from '../lib/revision-repository.js';
 import { buildProjectManifest, JOB_MODULES, type ActiveJob } from '../graph/project-manifest.js';
 import { dependencyGraph, type GraphOptions } from './dependency-graph-service.js';
 
@@ -43,12 +44,14 @@ async function activeJobs(repository: Repository, projectId: string, revisionId:
 export async function projectManifest(repository: Repository, projectId: string, revisionId: string, options: GraphOptions & { clock?: () => Date } = {}) {
   const revision = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
   const graph = await dependencyGraph(repository, projectId, revisionId, options);
-  const [concepts, jobs] = await Promise.all([
+  // The lineage of a committed revision is immutable, so this read needs no coherence check of its own.
+  const [concepts, jobs, lineage] = await Promise.all([
     repository.designConceptRpc ? new DesignConceptRepository(repository).list(projectId, revisionId, { limit: MANIFEST_READS.conceptPage }) : null,
-    activeJobs(repository, projectId, revisionId)]);
+    activeJobs(repository, projectId, revisionId),
+    repository.revisionRpc ? new RevisionRepository(repository).lineage(projectId, revisionId) : null]);
   if (concepts && concepts.projectCurrentRevisionId !== graph.inputIdentity.projectCurrentRevisionId)
     throw new ApiError(409, 'PROJECT_MANIFEST_READ_INCONSISTENT', 'The project changed while the manifest was read; retry');
-  return buildProjectManifest({ projectId, revision, graph, activeJobs: jobs,
+  return buildProjectManifest({ projectId, revision, graph, activeJobs: jobs, lineage,
     designConcepts: concepts ? { items: concepts.items, truncated: concepts.nextCursor !== null } : null,
     integrityCheckedAt: (options.clock ?? (() => new Date()))().toISOString() });
 }

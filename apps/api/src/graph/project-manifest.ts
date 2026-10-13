@@ -50,6 +50,8 @@ export type ManifestInput = {
   designConcepts: { items: Concept[]; truncated: boolean } | null;
   /** null when durable-job persistence is not configured; otherwise the active jobs bound to this revision. */
   activeJobs: ActiveJob[] | null;
+  /** null when revision-operation persistence is not configured; otherwise the Phase 30 operation that produced this revision, if any. */
+  lineage: { operation: { id: string; kind: string | null; baseRevisionId: string } | null; modelEquivalentToBase: boolean | null } | null;
   integrityCheckedAt: string;
 };
 
@@ -117,6 +119,17 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     const members = modules.filter(m => m.discipline === discipline);
     return { discipline, freshness: worst(members.flatMap(m => m.freshness ? [m.freshness.state] : [])), modules: members.map(m => m.module) };
   });
+  // Per-discipline change impact, read straight from the module freshness above: nothing new is inferred.
+  const changeImpact = { targetRevisionId: target, disciplines: DISCIPLINES.map(discipline => {
+    const members = modules.filter(m => m.discipline === discipline), with_ = (s: FreshnessState) => members.filter(m => m.freshness?.state === s).map(m => m.module);
+    const count = (s: FreshnessState) => members.reduce((n, m) => n + m.artifacts.filter(x => x.freshness.state === s).length, 0);
+    return { discipline, regenerate: with_('stale'), revalidate: with_('blocked'), awaiting: with_('pending'), staleArtifacts: count('stale'), blockedArtifacts: count('blocked') };
+  }) };
+  const op = input.lineage?.operation ?? null, parent = revision.parentRevisionId;
+  const lineage = { parentRevisionId: parent, operationLineage: input.lineage ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,
+    operation: op ? { operationId: op.id, kind: op.kind, baseRevisionId: op.baseRevisionId, modelEquivalentToBase: input.lineage!.modelEquivalentToBase } : null };
+  const diff = { basis: 'BIM_SEMANTIC_DIFF' as const, againstRevisionId: parent,
+    href: parent ? `${href(`${REVISION_ROUTE}/bim/diff`)}/${parent}` : null, availability: parent ? 'AVAILABLE' as const : 'NO_PARENT' as const };
   const site = revision.model.site;
   const body = {
     manifestVersion: PROJECT_MANIFEST_VERSION,
@@ -127,7 +140,7 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
       site: { present: site !== null, northMilliDegrees: site?.northMilliDegrees ?? null, referenceDatum: site?.referenceOrigin?.datum ?? null },
       counts: { levels: revision.model.levels.length, spaces: revision.model.spaces.length, walls: revision.model.walls.length, openings: revision.model.openings.length } },
     configuration: { sourceMode: revision.sourceMode, generatorVersion: revision.generatorVersion, generationIdentity: revision.identity ?? null },
-    modules, disciplines,
+    lineage, diff, modules, disciplines, changeImpact,
     freshnessVocabulary: { states: FRESHNESS_ASSIGNMENT.map(s => ({ ...s })), graphStateMapping: { ...GRAPH_STATE_MAPPING } },
     verification: { scope: 'PROVENANCE_INTEGRITY' as const, graphVersion: graph.graphVersion, graphHash: graph.graphHash,
       nodeStates: Object.fromEntries(NODE_STATES.map(s => [s, graph.nodes.filter(n => n.state === s).length])) },

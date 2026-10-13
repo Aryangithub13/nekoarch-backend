@@ -52,6 +52,17 @@ export const ManifestModuleSchema = z.object({
   completeness: z.enum(['COMPLETE', 'TRUNCATED']), freshness: FreshnessSchema.nullable(), missingReason: z.enum(MISSING_REASONS).nullable(),
   activeJobIds: z.array(id), artifacts: z.array(ManifestArtifactSchema),
 }).strict();
+/** Roadmap L260 `lineage`: the parent revision and, when a Phase 30 operation produced this revision, that operation (immutable once committed). */
+export const LineageSchema = z.object({ parentRevisionId: id.nullable(),
+  operation: z.object({ operationId: id, kind: z.string().max(40).nullable(), baseRevisionId: id, modelEquivalentToBase: z.boolean().nullable() }).strict().nullable(),
+  operationLineage: z.enum(['AVAILABLE', 'UNAVAILABLE']) }).strict();
+/** Roadmap L260 `diff`: where the comparison-friendly semantic diff against the parent is served. The BIM profile limits apply at that route. */
+export const DiffSchema = z.object({ basis: z.literal('BIM_SEMANTIC_DIFF'), againstRevisionId: id.nullable(), href: z.string().startsWith('/api/projects/').nullable(),
+  availability: z.enum(['AVAILABLE', 'NO_PARENT']) }).strict();
+/** Roadmap L253 per-discipline change impact, from this manifest's own freshness: what must be regenerated, revalidated or awaited for the target revision. */
+export const ChangeImpactSchema = z.object({ targetRevisionId: id.nullable(),
+  disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
+    awaiting: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0), blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
 export const ProjectManifestSchema = z.object({
   manifestVersion: z.literal(PROJECT_MANIFEST_VERSION),
   identity: z.object({ projectId: id, revisionId: id, revisionNumber: z.number().int().positive(), parentRevisionId: id.nullable(),
@@ -62,8 +73,10 @@ export const ProjectManifestSchema = z.object({
     site: z.object({ present: z.boolean(), northMilliDegrees: z.number().int().nullable(), referenceDatum: z.string().nullable() }).strict(),
     counts: z.object({ levels: z.number().int(), spaces: z.number().int(), walls: z.number().int(), openings: z.number().int() }).strict() }).strict(),
   configuration: z.object({ sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), generationIdentity: z.unknown().nullable() }).strict(),
+  lineage: LineageSchema, diff: DiffSchema,
   modules: z.array(ManifestModuleSchema),
   disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), freshness: freshness.nullable(), modules: z.array(z.enum(MODULES)) }).strict()),
+  changeImpact: ChangeImpactSchema,
   freshnessVocabulary: z.object({ states: z.array(z.object({ state: freshness, assigned: z.boolean(), basis: z.string() }).strict()),
     graphStateMapping: z.record(z.enum(NODE_STATES), freshness) }).strict(),
   verification: z.object({ scope: z.literal('PROVENANCE_INTEGRITY'), graphVersion: z.literal(DEPENDENCY_GRAPH_VERSION), graphHash: hash,

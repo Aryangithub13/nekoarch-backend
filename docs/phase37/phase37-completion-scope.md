@@ -4,7 +4,7 @@
 
 **Base:** `phase31/development` at `d0cd38b` (Phase 39 merged as PR #16). Citations refer to that commit.
 
-**Roadmap:** `NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md` (8 Oct 2026; owner-designated as authoritative on 2026-10-13). A verbatim copy, sha256 `0ebc4479…3a03`, is on branch `main` at `docs/sources/`. It is cited below as ROADMAP Lnnn.
+**Roadmap:** `NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md` (8 Oct 2026; owner-designated as authoritative on 2026-10-13). A verbatim copy, sha256 `0ebc4479…3a03`, is on branch `main` at `docs/sources/` and is carried into the development branch by PR #18. It is cited below as ROADMAP Lnnn.
 
 **Labels used throughout:**
 - **ROADMAP:** roadmap text.
@@ -95,10 +95,17 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 | M3 | No mixed revisions: a pointer change during the read → 409 | ROADMAP L258, L747 | Integration: a skewed design-concept listing |
 | M4 | An accepted edit marks every dependent output of the base `stale` with a reason and target revision; the scene stays linked by revision id and verified model hash | ROADMAP L262 | Integration: takeoff → construction → cost, scene and design concept on revision A; supplied edit B; manifests of A and B |
 | M5 | Additive: `project-overview-v1`, `dependency-graph-v1`, Phase 38/39 responses unchanged | ROADMAP A4 L51 | Existing suites unchanged |
-| M6 | Bounded reads | PROPOSED | The manifest's own reads: 3 listings and up to 4 job details in flight. **The graph's per-artifact read fan-out is unchanged here.** The fix is the unmerged `phase37/read-cap` (`0bf1c89`), which is **not merged by this slice** (owner decision D-3) |
+| M6 | Bounded reads | PROPOSED | The manifest's own reads: 3 listings, 1 lineage read and up to 4 job details in flight. **Graph fan-out (added after owner decision D-3, 2026-10-13):** the `0bf1c89` cap is ported as a request-scoped read gate. Construction listings and every per-artifact detail read (including the six analysis families) have at most `READ_CONCURRENCY` (8) in flight. Integration test: peak equals the width (1 and 3), one read per artifact node, graph identical to an unbounded read; the mutant without the gate fails |
 | M7 | Engineering flags and claims unchanged; the manifest carries no assessment values | ROADMAP A4 L50 | Unit: `claims`; existing engineering/evidence tests unchanged |
 | M8 | Build, typecheck, lint, full suite, route catalog and OpenAPI drift, telemetry allowlist | ROADMAP §K L788 | Local runs; CI on the PR |
 | M9 | Phase tag and staging proof | ROADMAP §K L788 | **Not done.** Owner-authorized only |
+| M10 | Roadmap L260 `lineage` and `diff`, and L253 per-discipline change impact, as machine-readable fields (added after owner approval, 2026-10-13) | ROADMAP L253, L260 | Unit: no parent (`NO_PARENT`), a Phase 30 operation lineage, stale, blocked and pending impact. Integration: after a supplied edit, the base's `changeImpact` lists every stored and derived output to regenerate against the new revision; the child's `diff.href` answers 200 |
+
+### M10 design (derived on read; no migration)
+
+- **`lineage`:** `parentRevisionId`, plus the Phase 30 operation (id, kind, base revision, `modelEquivalentToBase`) that committed the revision. This comes from the existing `revision_operation_read('lineage')`; it is immutable once committed, so it needs no coherence check. `operationLineage: UNAVAILABLE` when revision-operation persistence is not configured.
+- **`diff`:** a `BIM_SEMANTIC_DIFF` href to the existing `…/bim/diff/:parentRevisionId` route, or `NO_PARENT`. The BIM profile limits apply at that route; the manifest does not compute the diff.
+- **`changeImpact`:** per discipline, `regenerate` (modules whose freshness is `stale`), `revalidate` (`blocked`) and `awaiting` (`pending`), plus stale and blocked artifact counts, against `targetRevisionId` (the project's current revision). It is read only from the module freshness above, so it never reads better than that freshness.
 
 ## 4. Out of scope
 
@@ -108,4 +115,4 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 - Component-level (per-element) impact.
 - Evidence packages, zone assessment and partitions, appearance variants: listed in `notIncluded`.
 - Changes to the graph, overview or discovery semantics beyond one additive `PROJECT_MANIFEST` service row.
-- Merging `phase37/read-cap`.
+- Merging the `phase37/read-cap` branch itself. Its change is ported instead (M6); the branch is left untouched.

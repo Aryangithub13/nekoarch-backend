@@ -110,9 +110,22 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(old.disciplines.filter(d => d.freshness !== null).every(d => d.freshness === 'stale')).toBe(true);
     // Every stored artifact of the base is accounted for: none is silently current.
     expect(old.modules.flatMap(x => x.artifacts).every(x => x.freshness.state === 'stale')).toBe(true);
+    // Roadmap L253/L262: the change impact of the edit lists, by discipline, every base output to regenerate against the new revision.
+    expect(old.changeImpact.targetRevisionId).toBe(edited.id);
+    const regenerate = old.changeImpact.disciplines.flatMap((d: Json) => d.regenerate);
+    for (const name of ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D', 'DESIGN_CONCEPTS', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate).toContain(name);
+    expect(old.changeImpact.disciplines.reduce((n: number, d: Json) => n + d.staleArtifacts, 0))
+      .toBe(old.modules.reduce((n: number, x: Json) => n + x.artifacts.length, 0));
 
     const fresh = await manifest(`/api/projects/${a.projectId}/revisions/${edited.id}`);
     expect(fresh.identity).toMatchObject({ revisionCurrency: 'CURRENT', parentRevisionId: a.revision.id });
+    // Roadmap L260: lineage names the parent (a supplied save, so no Phase 30 operation), and the diff route answers for the pair.
+    expect(fresh.lineage).toEqual({ parentRevisionId: a.revision.id, operation: null, operationLineage: 'AVAILABLE' });
+    expect(fresh.diff).toMatchObject({ basis: 'BIM_SEMANTIC_DIFF', againstRevisionId: a.revision.id, availability: 'AVAILABLE' });
+    await ok('GET', fresh.diff.href!);
+    expect(old.lineage.parentRevisionId).toBeNull();
+    expect(old.diff).toMatchObject({ href: null, availability: 'NO_PARENT' });
+    expect(fresh.changeImpact.disciplines.every((d: Json) => !d.regenerate.length && !d.revalidate.length)).toBe(true);
     expect(fresh.modules.filter(x => x.source === 'STORED_ARTIFACT' && x.module !== 'ACCEPTANCE_QA').every(x => x.availability === 'NOT_GENERATED')).toBe(true);
     expect(fresh.modules.every(x => x.freshness === null || x.freshness.state === 'current')).toBe(true);
   }, 180_000);
