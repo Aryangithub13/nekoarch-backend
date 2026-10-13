@@ -158,6 +158,7 @@ A migration is necessary because durable charge protection and traceable results
    3. **Quota pre-check** before any provider call. When the quota is exhausted, `AUTO` falls back to the template, recorded as `PROVIDER_QUOTA_EXHAUSTED`, and `PROVIDER` gets 429.
    4. **Route limits.** The route is in the `generate` rate-limit group.
    5. **Policy defaults.** Metered models stay refused unless the operator sets `allowMetered`, and remote providers stay refused unless the operator allows remote privacy.
+5. **Cancellation (decision).** The router honours an abort signal (tested), but a client disconnect does **not** abort a provider call already in flight. A remote call is normally billed once sent, so the bounded result (≤ 15 s) is stored and a retry replays it rather than paying twice.
 
 ### E. Wiring
 
@@ -165,7 +166,7 @@ A migration is necessary because durable charge protection and traceable results
 - **Discovery.**
   - `services` gains `DESIGN_CONCEPTS` (`ADVISORY_ARTIFACT`).
   - `aiCapabilities` shows the two new capabilities as `AVAILABLE`.
-  - `media` gains `INTERIOR_DESIGN_CONCEPT` and `EXTERIOR_DESIGN_CONCEPT` (`application/json`). The render entries are unchanged.
+  - `media` is unchanged: a concept is JSON data, not a media output, and the render entries stay `UNSUPPORTED`.
 - **Catalogs.** Route catalog, OpenAPI, Sentry route allowlist and the AI import-boundary allowlist (new pure modules only; network APIs stay confined to `orchestration/transport.ts` and the existing local provider).
 
 ---
