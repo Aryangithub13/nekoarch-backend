@@ -36,6 +36,8 @@ const safeRoutes = new Set([
   // Phase 38
   ...['', '/plan-sheets/:levelId', '/schedules', '/schedules/:schedule/csv'].map(suffix => `${revision}/documents${suffix}`),
   `${revision}/evidence-packages`, `${revision}/evidence-packages/:packageId`,
+  // Phase 39
+  `${revision}/design-concepts`, `${revision}/design-concepts/:conceptSetId`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.

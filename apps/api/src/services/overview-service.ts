@@ -49,6 +49,8 @@ import { DOCUMENTS_VERSION } from '../contracts/documents.js';
 import { EVIDENCE_PACKAGE_VERSION } from '../contracts/evidence.js';
 import { DOCUMENTS_ROOT } from './documents-service.js';
 import { EVIDENCE_ROOT } from './evidence-service.js';
+import { DESIGN_CONCEPT_VERSION } from '../contracts/design-concepts.js';
+import { DESIGN_ROOT } from './design-concept-service.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -95,6 +97,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'CONSTRUCTION_DOCUMENTS', version: DOCUMENTS_VERSION, persistence: 'DERIVED_ON_READ', route: DOCUMENTS_ROOT, workflowCapability: null },
   // Phase 38: immutable, signed evidence packages (graph, assessment with its flags verbatim, document manifest). Provenance, never a review or a certification.
   { serviceId: 'EVIDENCE_PACKAGES', version: EVIDENCE_PACKAGE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: EVIDENCE_ROOT, workflowCapability: null },
+  // Phase 39: advisory interior/exterior concepts (1-3 alternatives) from a configured provider or deterministic templates; never geometry, a render or an engineering result.
+  { serviceId: 'DESIGN_CONCEPTS', version: DESIGN_CONCEPT_VERSION, persistence: 'ADVISORY_ARTIFACT', route: DESIGN_ROOT, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

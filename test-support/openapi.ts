@@ -40,6 +40,7 @@ import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequest
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
+import { DesignConceptDetailSchema, DesignConceptListSchema, DesignConceptPageQuerySchema, DesignConceptReadQuerySchema, DesignConceptRequestSchema } from '../apps/api/src/contracts/design-concepts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
 /** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
@@ -73,6 +74,10 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${R}/evidence-packages`]: { body: EvidenceCreateRequestSchema, response: EvidenceDetailSchema, status: 201 },
   [`GET ${R}/evidence-packages`]: { query: EvidencePageQuerySchema, response: EvidenceListSchema },
   [`GET ${R}/evidence-packages/:packageId`]: { query: EvidenceReadQuerySchema, response: EvidenceDetailSchema },
+  // Phase 39: 201 for a new set; an identical request replays the stored set with 200 (`replayed: true`).
+  [`POST ${R}/design-concepts`]: { body: DesignConceptRequestSchema, response: DesignConceptDetailSchema, status: 201 },
+  [`GET ${R}/design-concepts`]: { query: DesignConceptPageQuerySchema, response: DesignConceptListSchema },
+  [`GET ${R}/design-concepts/:conceptSetId`]: { query: DesignConceptReadQuerySchema, response: DesignConceptDetailSchema },
   [`POST ${P}/workflows/plan`]: { body: WorkflowRequestSchema, response: z.object({ projectId: z.string().uuid(), sourceRevisionId: z.string().uuid().nullable(), inputFingerprint: z.string(), plan: WorkflowPlanSchema }).strict() },
   [`POST ${P}/workflows`]: { body: WorkflowRequestSchema, response: WorkflowRunSchema, status: 201 }, [`GET ${P}/workflows`]: { query: PageQuerySchema, response: null },
   [`GET ${P}/workflows/:workflowRunId`]: { response: WorkflowRunSchema },
