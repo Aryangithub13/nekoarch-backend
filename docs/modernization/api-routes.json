@@ -391,6 +391,21 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/design-concepts",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/design-concepts",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/design-concepts/:conceptSetId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/documents",
   "anonymous": 401
  },

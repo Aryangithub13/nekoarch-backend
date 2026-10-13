@@ -55,3 +55,27 @@ export async function remoteCompletion(endpoint:URL,body:string,key:string|undef
     req.on('error',()=>reject(new AiProviderError(signal.aborted?'PROVIDER_TIMEOUT':'PROVIDER_UNAVAILABLE')));req.end(body);
   });
 }
+/**
+ * Phase 39: the loopback OpenAI-compatible request of a typed task. The endpoint was already validated (numeric loopback, exact path);
+ * redirects are refused, the body is capped while it streams, and every failure is reduced to a typed code.
+ */
+export async function localCompletion(endpoint:string,body:string,key:string|undefined,signal:AbortSignal):Promise<string>{
+  validateCredential(key);
+  if(signal.aborted)throw new AiProviderError('PROVIDER_TIMEOUT');
+  let response:Response;
+  try{response=await fetch(endpoint,{method:'POST',redirect:'error',signal,headers:{'content-type':'application/json',...(key?{authorization:`Bearer ${key}`}:{})},body});}
+  catch{throw new AiProviderError(signal.aborted?'PROVIDER_TIMEOUT':'PROVIDER_UNAVAILABLE');}
+  if(!response.ok){await response.body?.cancel().catch(()=>undefined);statusError(response.status);}
+  if(!response.body)throw new AiProviderError('PROVIDER_RESPONSE_INVALID');
+  const reader=response.body.getReader(),chunks:Uint8Array[]=[];let bytes=0;
+  try{
+    for(;;){
+      let next:ReadableStreamReadResult<Uint8Array>;
+      try{next=await reader.read();}catch{throw new AiProviderError(signal.aborted?'PROVIDER_TIMEOUT':'PROVIDER_UNAVAILABLE');}
+      if(next.done)break;bytes+=next.value.byteLength;
+      if(bytes>CONVERSATION_LIMITS.outputBytes)throw new AiProviderError('PROVIDER_RESPONSE_TOO_LARGE');
+      chunks.push(next.value);
+    }
+  }finally{await reader.cancel().catch(()=>undefined);reader.releaseLock();}
+  return Buffer.concat(chunks).toString('utf8');
+}

@@ -5238,7 +5238,9 @@
            "EXTERIOR_VISUALIZATION",
            "MODEL_3D_GENERATION",
            "DOCUMENT_ANALYSIS",
-           "ENGINEERING_ASSISTANCE"
+           "ENGINEERING_ASSISTANCE",
+           "INTERIOR_DESIGN_CONCEPT",
+           "EXTERIOR_DESIGN_CONCEPT"
           ]
          },
          "privacyClass": {
@@ -5352,7 +5354,8 @@
               "PROVIDER_SCHEMA_VIOLATION",
               "PROVIDER_POLICY_REJECTED",
               "ALL_PROVIDERS_FAILED",
-              "REQUEST_CANCELLED"
+              "REQUEST_CANCELLED",
+              "PROVIDER_OUTPUT_UNSAFE"
              ],
              "nullable": true
             },
@@ -43198,6 +43201,2670 @@
           "notRepresented",
           "claims",
           "graphHash"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/design-concepts": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/design-concepts",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "default": 20
+      }
+     },
+     {
+      "name": "cursor",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 512
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "format": "uuid"
+             },
+             "projectRevisionId": {
+              "$ref": "#/components/properties/items/items/properties/id"
+             },
+             "scope": {
+              "type": "string",
+              "enum": [
+               "INTERIOR",
+               "EXTERIOR"
+              ]
+             },
+             "conceptSetVersion": {
+              "type": "string",
+              "enum": [
+               "design-concept-set-v1"
+              ]
+             },
+             "source": {
+              "type": "string",
+              "enum": [
+               "PROVIDER",
+               "DETERMINISTIC_TEMPLATE"
+              ]
+             },
+             "providerId": {
+              "type": "string",
+              "maxLength": 64,
+              "nullable": true
+             },
+             "modelId": {
+              "type": "string",
+              "maxLength": 100,
+              "nullable": true
+             },
+             "alternativeCount": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+             },
+             "modelHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+             },
+             "inputHash": {
+              "$ref": "#/components/properties/items/items/properties/modelHash"
+             },
+             "contentHash": {
+              "$ref": "#/components/properties/items/items/properties/modelHash"
+             },
+             "createdAt": {
+              "type": "string"
+             },
+             "currency": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "type": "string",
+                "enum": [
+                 "CURRENT",
+                 "HISTORICAL"
+                ]
+               },
+               "conceptRevisionId": {
+                "$ref": "#/components/properties/items/items/properties/id"
+               },
+               "projectCurrentRevisionId": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/properties/items/items/properties/id"
+                 }
+                ],
+                "nullable": true
+               }
+              },
+              "required": [
+               "status",
+               "conceptRevisionId",
+               "projectCurrentRevisionId"
+              ],
+              "additionalProperties": false
+             }
+            },
+            "required": [
+             "id",
+             "projectRevisionId",
+             "scope",
+             "conceptSetVersion",
+             "source",
+             "providerId",
+             "modelId",
+             "alternativeCount",
+             "modelHash",
+             "inputHash",
+             "contentHash",
+             "createdAt",
+             "currency"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "nextCursor": {
+           "type": "string",
+           "nullable": true
+          }
+         },
+         "required": [
+          "items",
+          "nextCursor"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "operationId": "post /api/projects/:projectId/revisions/:revisionId/design-concepts",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "scope": {
+          "type": "string",
+          "enum": [
+           "INTERIOR",
+           "EXTERIOR"
+          ]
+         },
+         "text": {
+          "allOf": [
+           {
+            "type": "string",
+            "maxLength": 4000
+           },
+           {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+           }
+          ]
+         },
+         "alternatives": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "default": 2
+         },
+         "spaceIds": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 200,
+           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "minItems": 1,
+          "maxItems": 12
+         },
+         "useBrief": {
+          "type": "boolean",
+          "default": true
+         },
+         "referenceIds": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "maxItems": 8,
+          "default": []
+         },
+         "generator": {
+          "type": "string",
+          "enum": [
+           "AUTO",
+           "PROVIDER",
+           "TEMPLATE"
+          ],
+          "default": "AUTO"
+         },
+         "variation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99,
+          "default": 0
+         }
+        },
+        "required": [
+         "scope"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectRevisionId": {
+           "$ref": "#/components/properties/id"
+          },
+          "scope": {
+           "type": "string",
+           "enum": [
+            "INTERIOR",
+            "EXTERIOR"
+           ]
+          },
+          "conceptSetVersion": {
+           "type": "string",
+           "enum": [
+            "design-concept-set-v1"
+           ]
+          },
+          "source": {
+           "type": "string",
+           "enum": [
+            "PROVIDER",
+            "DETERMINISTIC_TEMPLATE"
+           ]
+          },
+          "providerId": {
+           "type": "string",
+           "maxLength": 64,
+           "nullable": true
+          },
+          "modelId": {
+           "type": "string",
+           "maxLength": 100,
+           "nullable": true
+          },
+          "alternativeCount": {
+           "type": "integer",
+           "minimum": 1,
+           "maximum": 3
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "contentHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "conceptSet": {
+           "type": "object",
+           "properties": {
+            "conceptSetVersion": {
+             "type": "string",
+             "enum": [
+              "design-concept-set-v1"
+             ]
+            },
+            "scope": {
+             "$ref": "#/components/properties/scope"
+            },
+            "binding": {
+             "type": "object",
+             "properties": {
+              "projectId": {
+               "$ref": "#/components/properties/id"
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "revisionNumber": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "modelHash": {
+               "$ref": "#/components/properties/modelHash"
+              },
+              "acceptanceQaId": {
+               "$ref": "#/components/properties/id"
+              },
+              "qaStatus": {
+               "type": "string",
+               "enum": [
+                "PASS",
+                "PASS_WITH_WARNINGS"
+               ]
+              }
+             },
+             "required": [
+              "projectId",
+              "revisionId",
+              "revisionNumber",
+              "modelHash",
+              "acceptanceQaId",
+              "qaStatus"
+             ],
+             "additionalProperties": false
+            },
+            "request": {
+             "type": "object",
+             "properties": {
+              "scope": {
+               "$ref": "#/components/properties/scope"
+              },
+              "text": {
+               "type": "string",
+               "maxLength": 1000,
+               "nullable": true
+              },
+              "alternatives": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 3
+              },
+              "spaceIds": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+               },
+               "maxItems": 12,
+               "nullable": true
+              },
+              "useBrief": {
+               "type": "boolean"
+              },
+              "referenceIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/id"
+               },
+               "maxItems": 8
+              },
+              "generator": {
+               "type": "string",
+               "enum": [
+                "AUTO",
+                "PROVIDER",
+                "TEMPLATE"
+               ]
+              },
+              "variation": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 99
+              }
+             },
+             "required": [
+              "scope",
+              "text",
+              "alternatives",
+              "spaceIds",
+              "useBrief",
+              "referenceIds",
+              "generator",
+              "variation"
+             ],
+             "additionalProperties": false
+            },
+            "inputs": {
+             "type": "object",
+             "properties": {
+              "context": {
+               "type": "object",
+               "properties": {
+                "contextVersion": {
+                 "type": "string",
+                 "maxLength": 40
+                },
+                "contextHash": {
+                 "$ref": "#/components/properties/modelHash"
+                }
+               },
+               "required": [
+                "contextVersion",
+                "contextHash"
+               ],
+               "additionalProperties": false
+              },
+              "brief": {
+               "type": "object",
+               "properties": {
+                "version": {
+                 "type": "integer",
+                 "exclusiveMinimum": true,
+                 "minimum": 0
+                },
+                "briefHash": {
+                 "$ref": "#/components/properties/modelHash"
+                },
+                "provenance": {
+                 "type": "string",
+                 "enum": [
+                  "USER_STATED_NOT_VERIFIED"
+                 ]
+                },
+                "fieldsUsed": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "enum": [
+                   "summary",
+                   "style.keywords",
+                   "constraints",
+                   "program.notes",
+                   "site.orientationNote"
+                  ]
+                 },
+                 "maxItems": 5
+                },
+                "fieldsWithheld": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "field": {
+                    "type": "string",
+                    "maxLength": 40
+                   },
+                   "reason": {
+                    "type": "string",
+                    "maxLength": 40
+                   }
+                  },
+                  "required": [
+                   "field",
+                   "reason"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 8
+                }
+               },
+               "required": [
+                "version",
+                "briefHash",
+                "provenance",
+                "fieldsUsed",
+                "fieldsWithheld"
+               ],
+               "additionalProperties": false,
+               "nullable": true
+              },
+              "references": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "referenceId": {
+                  "$ref": "#/components/properties/id"
+                 },
+                 "purpose": {
+                  "type": "string",
+                  "enum": [
+                   "SITE_PHOTO",
+                   "SITE_PLAN",
+                   "SKETCH",
+                   "INSPIRATION",
+                   "DOCUMENT",
+                   "OTHER"
+                  ]
+                 },
+                 "displayName": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "nullable": true
+                 },
+                 "mediaType": {
+                  "type": "string",
+                  "enum": [
+                   "image/png",
+                   "image/jpeg",
+                   "image/webp",
+                   "application/pdf"
+                  ]
+                 },
+                 "storedSha256": {
+                  "$ref": "#/components/properties/modelHash"
+                 },
+                 "contentUsed": {
+                  "type": "string",
+                  "enum": [
+                   "METADATA_ONLY"
+                  ]
+                 }
+                },
+                "required": [
+                 "referenceId",
+                 "purpose",
+                 "displayName",
+                 "mediaType",
+                 "storedSha256",
+                 "contentUsed"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 8
+              },
+              "spaces": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "spaceId": {
+                  "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                 },
+                 "name": {
+                  "type": "string",
+                  "maxLength": 80
+                 },
+                 "classification": {
+                  "type": "string",
+                  "maxLength": 80
+                 },
+                 "levelId": {
+                  "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                 }
+                },
+                "required": [
+                 "spaceId",
+                 "name",
+                 "classification",
+                 "levelId"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 12
+              },
+              "identity": {
+               "type": "object",
+               "properties": {
+                "version": {
+                 "type": "string",
+                 "enum": [
+                  "design-concept-set-v1"
+                 ]
+                },
+                "revisionId": {
+                 "$ref": "#/components/properties/id"
+                },
+                "modelHash": {
+                 "$ref": "#/components/properties/modelHash"
+                },
+                "request": {
+                 "$ref": "#/components/properties/conceptSet/properties/request"
+                },
+                "briefHash": {
+                 "allOf": [
+                  {
+                   "$ref": "#/components/properties/modelHash"
+                  }
+                 ],
+                 "nullable": true
+                },
+                "references": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "referenceId": {
+                    "$ref": "#/components/properties/id"
+                   },
+                   "storedSha256": {
+                    "$ref": "#/components/properties/modelHash"
+                   }
+                  },
+                  "required": [
+                   "referenceId",
+                   "storedSha256"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 8
+                }
+               },
+               "required": [
+                "version",
+                "revisionId",
+                "modelHash",
+                "request",
+                "briefHash",
+                "references"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "context",
+              "brief",
+              "references",
+              "spaces",
+              "identity"
+             ],
+             "additionalProperties": false
+            },
+            "source": {
+             "type": "string",
+             "enum": [
+              "PROVIDER",
+              "DETERMINISTIC_TEMPLATE"
+             ]
+            },
+            "alternatives": {
+             "type": "array",
+             "items": {
+              "anyOf": [
+               {
+                "type": "object",
+                "properties": {
+                 "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "summary": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "styleKeywords": {
+                  "type": "array",
+                  "items": {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 30,
+                   "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                  },
+                  "maxItems": 6
+                 },
+                 "palette": {
+                  "type": "array",
+                  "items": {
+                   "type": "object",
+                   "properties": {
+                    "role": {
+                     "type": "string",
+                     "enum": [
+                      "BASE",
+                      "SECONDARY",
+                      "ACCENT",
+                      "NEUTRAL"
+                     ]
+                    },
+                    "hex": {
+                     "type": "string",
+                     "pattern": "^#[0-9A-Fa-f]{6}$"
+                    },
+                    "name": {
+                     "type": "string",
+                     "minLength": 1,
+                     "maxLength": 40,
+                     "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                    }
+                   },
+                   "required": [
+                    "role",
+                    "hex",
+                    "name"
+                   ],
+                   "additionalProperties": false
+                  },
+                  "minItems": 2,
+                  "maxItems": 6
+                 },
+                 "basis": {
+                  "type": "object",
+                  "properties": {
+                   "briefFields": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/properties/conceptSet/properties/inputs/properties/brief/properties/fieldsUsed/items"
+                    },
+                    "maxItems": 5
+                   },
+                   "referenceIds": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/properties/id"
+                    },
+                    "maxItems": 8
+                   }
+                  },
+                  "required": [
+                   "briefFields",
+                   "referenceIds"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "finishes": {
+                  "type": "object",
+                  "properties": {
+                   "floor": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "walls": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "ceiling": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   }
+                  },
+                  "required": [
+                   "floor",
+                   "walls",
+                   "ceiling"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "lighting": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "alternativeId": {
+                  "type": "string",
+                  "enum": [
+                   "alt-1",
+                   "alt-2",
+                   "alt-3"
+                  ]
+                 },
+                 "scope": {
+                  "type": "string",
+                  "enum": [
+                   "INTERIOR"
+                  ]
+                 },
+                 "spaces": {
+                  "type": "array",
+                  "items": {
+                   "type": "object",
+                   "properties": {
+                    "spaceId": {
+                     "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                    },
+                    "spaceName": {
+                     "type": "string",
+                     "maxLength": 80
+                    },
+                    "levelId": {
+                     "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                    },
+                    "note": {
+                     "type": "string",
+                     "minLength": 1,
+                     "maxLength": 160,
+                     "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                    }
+                   },
+                   "required": [
+                    "spaceId",
+                    "spaceName",
+                    "levelId",
+                    "note"
+                   ],
+                   "additionalProperties": false
+                  },
+                  "maxItems": 8
+                 }
+                },
+                "required": [
+                 "title",
+                 "summary",
+                 "styleKeywords",
+                 "palette",
+                 "basis",
+                 "finishes",
+                 "lighting",
+                 "alternativeId",
+                 "scope",
+                 "spaces"
+                ],
+                "additionalProperties": false
+               },
+               {
+                "type": "object",
+                "properties": {
+                 "title": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/title"
+                 },
+                 "summary": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/summary"
+                 },
+                 "styleKeywords": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/styleKeywords"
+                 },
+                 "palette": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/palette"
+                 },
+                 "basis": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/basis"
+                 },
+                 "landscapeNote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "alternativeId": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/alternativeId"
+                 },
+                 "scope": {
+                  "type": "string",
+                  "enum": [
+                   "EXTERIOR"
+                  ]
+                 },
+                 "facadeFinish": {
+                  "type": "object",
+                  "properties": {
+                   "presetId": {
+                    "$ref": "#/components/schemas/Conversation/properties/state/properties/memory/items/properties/option/properties/presetId"
+                   },
+                   "presetLabel": {
+                    "type": "string",
+                    "maxLength": 100
+                   },
+                   "facades": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/target/properties/facades/items"
+                    },
+                    "minItems": 1,
+                    "maxItems": 4
+                   },
+                   "rationale": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 240,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "appearanceOnly": {
+                    "type": "boolean",
+                    "enum": [
+                     true
+                    ]
+                   }
+                  },
+                  "required": [
+                   "presetId",
+                   "presetLabel",
+                   "facades",
+                   "rationale",
+                   "appearanceOnly"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "proposedOperation": {
+                  "type": "object",
+                  "properties": {
+                   "status": {
+                    "type": "string",
+                    "enum": [
+                     "NOT_EXECUTED"
+                    ]
+                   },
+                   "submitTo": {
+                    "type": "string",
+                    "enum": [
+                     "/api/projects/:projectId/revision-operations"
+                    ]
+                   },
+                   "request": {
+                    "type": "object",
+                    "properties": {
+                     "baseRevisionId": {
+                      "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/1/properties/sourceRevisionId"
+                     },
+                     "request": {
+                      "anyOf": [
+                       {
+                        "type": "object",
+                        "properties": {
+                         "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2000
+                         }
+                        },
+                        "required": [
+                         "text"
+                        ],
+                        "additionalProperties": false
+                       },
+                       {
+                        "type": "object",
+                        "properties": {
+                         "operation": {
+                          "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request"
+                         }
+                        },
+                        "required": [
+                         "operation"
+                        ],
+                        "additionalProperties": false
+                       }
+                      ]
+                     }
+                    },
+                    "required": [
+                     "baseRevisionId",
+                     "request"
+                    ],
+                    "additionalProperties": false
+                   },
+                   "note": {
+                    "type": "string",
+                    "maxLength": 300
+                   }
+                  },
+                  "required": [
+                   "status",
+                   "submitTo",
+                   "request",
+                   "note"
+                  ],
+                  "additionalProperties": false
+                 }
+                },
+                "required": [
+                 "title",
+                 "summary",
+                 "styleKeywords",
+                 "palette",
+                 "basis",
+                 "landscapeNote",
+                 "alternativeId",
+                 "scope",
+                 "facadeFinish",
+                 "proposedOperation"
+                ],
+                "additionalProperties": false
+               }
+              ]
+             },
+             "minItems": 1,
+             "maxItems": 3
+            },
+            "provenance": {
+             "type": "object",
+             "properties": {
+              "generator": {
+               "$ref": "#/components/properties/conceptSet/properties/request/properties/generator"
+              },
+              "status": {
+               "type": "string",
+               "enum": [
+                "SUCCESS",
+                "FALLBACK",
+                "TEMPLATE"
+               ]
+              },
+              "capability": {
+               "type": "string",
+               "enum": [
+                "INTERIOR_DESIGN_CONCEPT",
+                "EXTERIOR_DESIGN_CONCEPT"
+               ]
+              },
+              "requestId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/id"
+                }
+               ],
+               "nullable": true
+              },
+              "providerId": {
+               "type": "string",
+               "maxLength": 64,
+               "nullable": true
+              },
+              "modelId": {
+               "type": "string",
+               "maxLength": 100,
+               "nullable": true
+              },
+              "routingReason": {
+               "type": "string",
+               "enum": [
+                "PREFERRED",
+                "SECONDARY"
+               ],
+               "nullable": true
+              },
+              "fallbackPosition": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 16,
+               "nullable": true
+              },
+              "fallbackReason": {
+               "type": "string",
+               "enum": [
+                "NO_ELIGIBLE_PROVIDER",
+                "ALL_PROVIDERS_FAILED",
+                "PROVIDER_QUOTA_EXHAUSTED"
+               ],
+               "nullable": true
+              },
+              "failures": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/attempts/items/properties/failure"
+               },
+               "maxItems": 16
+              },
+              "requests": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 6
+              },
+              "attempts": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "providerId": {
+                  "type": "string",
+                  "maxLength": 64
+                 },
+                 "modelId": {
+                  "type": "string",
+                  "maxLength": 100
+                 },
+                 "attempt": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 6
+                 },
+                 "routingReason": {
+                  "type": "string",
+                  "enum": [
+                   "PREFERRED",
+                   "SECONDARY"
+                  ]
+                 },
+                 "fallbackPosition": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 16
+                 },
+                 "latencyMs": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "status": {
+                  "type": "string",
+                  "enum": [
+                   "SUCCESS",
+                   "FAILED",
+                   "SKIPPED"
+                  ]
+                 },
+                 "failure": {
+                  "allOf": [
+                   {
+                    "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/attempts/items/properties/failure"
+                   }
+                  ],
+                  "nullable": true
+                 },
+                 "usage": {
+                  "type": "object",
+                  "properties": {
+                   "inputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "outputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "totalTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "estimatedCostMicroUsd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   }
+                  },
+                  "required": [
+                   "inputTokens",
+                   "outputTokens",
+                   "totalTokens",
+                   "estimatedCostMicroUsd"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                 }
+                },
+                "required": [
+                 "providerId",
+                 "modelId",
+                 "attempt",
+                 "routingReason",
+                 "fallbackPosition",
+                 "latencyMs",
+                 "status",
+                 "failure",
+                 "usage"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 22
+              },
+              "usage": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/conceptSet/properties/provenance/properties/attempts/items/properties/usage"
+                }
+               ],
+               "nullable": true
+              },
+              "templateVersion": {
+               "type": "string",
+               "enum": [
+                "design-concept-templates-v1"
+               ],
+               "nullable": true
+              },
+              "guardVersion": {
+               "type": "string",
+               "enum": [
+                "design-concept-guard-v1"
+               ]
+              }
+             },
+             "required": [
+              "generator",
+              "status",
+              "capability",
+              "requestId",
+              "providerId",
+              "modelId",
+              "routingReason",
+              "fallbackPosition",
+              "fallbackReason",
+              "failures",
+              "requests",
+              "attempts",
+              "usage",
+              "templateVersion",
+              "guardVersion"
+             ],
+             "additionalProperties": false
+            },
+            "assurance": {
+             "type": "object",
+             "properties": {
+              "status": {
+               "type": "string",
+               "enum": [
+                "ADVISORY_UNVERIFIED"
+               ]
+              },
+              "note": {
+               "type": "string",
+               "maxLength": 400
+              }
+             },
+             "required": [
+              "status",
+              "note"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "dimensionalAccuracy": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "engineeringValidity": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "structuralSafety": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "codeCompliance": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "costAccuracy": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "constructionReadiness": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "professionalCertification": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "dimensionalAccuracy",
+              "engineeringValidity",
+              "structuralSafety",
+              "codeCompliance",
+              "costAccuracy",
+              "constructionReadiness",
+              "professionalCertification"
+             ],
+             "additionalProperties": false
+            },
+            "limitations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "maxItems": 12
+            },
+            "inputHash": {
+             "$ref": "#/components/properties/modelHash"
+            },
+            "contentHash": {
+             "$ref": "#/components/properties/modelHash"
+            }
+           },
+           "required": [
+            "conceptSetVersion",
+            "scope",
+            "binding",
+            "request",
+            "inputs",
+            "source",
+            "alternatives",
+            "provenance",
+            "assurance",
+            "claims",
+            "limitations",
+            "inputHash",
+            "contentHash"
+           ],
+           "additionalProperties": false
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "HISTORICAL"
+             ]
+            },
+            "conceptRevisionId": {
+             "$ref": "#/components/properties/id"
+            },
+            "projectCurrentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/id"
+              }
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "conceptRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "replayed": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectRevisionId",
+          "scope",
+          "conceptSetVersion",
+          "source",
+          "providerId",
+          "modelId",
+          "alternativeCount",
+          "modelHash",
+          "inputHash",
+          "contentHash",
+          "createdAt",
+          "conceptSet",
+          "currency",
+          "replayed"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/design-concepts/{conceptSetId}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/design-concepts/:conceptSetId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "conceptSetId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "require",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "current"
+       ]
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "projectRevisionId": {
+           "$ref": "#/components/properties/id"
+          },
+          "scope": {
+           "type": "string",
+           "enum": [
+            "INTERIOR",
+            "EXTERIOR"
+           ]
+          },
+          "conceptSetVersion": {
+           "type": "string",
+           "enum": [
+            "design-concept-set-v1"
+           ]
+          },
+          "source": {
+           "type": "string",
+           "enum": [
+            "PROVIDER",
+            "DETERMINISTIC_TEMPLATE"
+           ]
+          },
+          "providerId": {
+           "type": "string",
+           "maxLength": 64,
+           "nullable": true
+          },
+          "modelId": {
+           "type": "string",
+           "maxLength": 100,
+           "nullable": true
+          },
+          "alternativeCount": {
+           "type": "integer",
+           "minimum": 1,
+           "maximum": 3
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "inputHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "contentHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "createdAt": {
+           "type": "string"
+          },
+          "conceptSet": {
+           "type": "object",
+           "properties": {
+            "conceptSetVersion": {
+             "type": "string",
+             "enum": [
+              "design-concept-set-v1"
+             ]
+            },
+            "scope": {
+             "$ref": "#/components/properties/scope"
+            },
+            "binding": {
+             "type": "object",
+             "properties": {
+              "projectId": {
+               "$ref": "#/components/properties/id"
+              },
+              "revisionId": {
+               "$ref": "#/components/properties/id"
+              },
+              "revisionNumber": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "modelHash": {
+               "$ref": "#/components/properties/modelHash"
+              },
+              "acceptanceQaId": {
+               "$ref": "#/components/properties/id"
+              },
+              "qaStatus": {
+               "type": "string",
+               "enum": [
+                "PASS",
+                "PASS_WITH_WARNINGS"
+               ]
+              }
+             },
+             "required": [
+              "projectId",
+              "revisionId",
+              "revisionNumber",
+              "modelHash",
+              "acceptanceQaId",
+              "qaStatus"
+             ],
+             "additionalProperties": false
+            },
+            "request": {
+             "type": "object",
+             "properties": {
+              "scope": {
+               "$ref": "#/components/properties/scope"
+              },
+              "text": {
+               "type": "string",
+               "maxLength": 1000,
+               "nullable": true
+              },
+              "alternatives": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 3
+              },
+              "spaceIds": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+               },
+               "maxItems": 12,
+               "nullable": true
+              },
+              "useBrief": {
+               "type": "boolean"
+              },
+              "referenceIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/id"
+               },
+               "maxItems": 8
+              },
+              "generator": {
+               "type": "string",
+               "enum": [
+                "AUTO",
+                "PROVIDER",
+                "TEMPLATE"
+               ]
+              },
+              "variation": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 99
+              }
+             },
+             "required": [
+              "scope",
+              "text",
+              "alternatives",
+              "spaceIds",
+              "useBrief",
+              "referenceIds",
+              "generator",
+              "variation"
+             ],
+             "additionalProperties": false
+            },
+            "inputs": {
+             "type": "object",
+             "properties": {
+              "context": {
+               "type": "object",
+               "properties": {
+                "contextVersion": {
+                 "type": "string",
+                 "maxLength": 40
+                },
+                "contextHash": {
+                 "$ref": "#/components/properties/modelHash"
+                }
+               },
+               "required": [
+                "contextVersion",
+                "contextHash"
+               ],
+               "additionalProperties": false
+              },
+              "brief": {
+               "type": "object",
+               "properties": {
+                "version": {
+                 "type": "integer",
+                 "exclusiveMinimum": true,
+                 "minimum": 0
+                },
+                "briefHash": {
+                 "$ref": "#/components/properties/modelHash"
+                },
+                "provenance": {
+                 "type": "string",
+                 "enum": [
+                  "USER_STATED_NOT_VERIFIED"
+                 ]
+                },
+                "fieldsUsed": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "enum": [
+                   "summary",
+                   "style.keywords",
+                   "constraints",
+                   "program.notes",
+                   "site.orientationNote"
+                  ]
+                 },
+                 "maxItems": 5
+                },
+                "fieldsWithheld": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "field": {
+                    "type": "string",
+                    "maxLength": 40
+                   },
+                   "reason": {
+                    "type": "string",
+                    "maxLength": 40
+                   }
+                  },
+                  "required": [
+                   "field",
+                   "reason"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 8
+                }
+               },
+               "required": [
+                "version",
+                "briefHash",
+                "provenance",
+                "fieldsUsed",
+                "fieldsWithheld"
+               ],
+               "additionalProperties": false,
+               "nullable": true
+              },
+              "references": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "referenceId": {
+                  "$ref": "#/components/properties/id"
+                 },
+                 "purpose": {
+                  "type": "string",
+                  "enum": [
+                   "SITE_PHOTO",
+                   "SITE_PLAN",
+                   "SKETCH",
+                   "INSPIRATION",
+                   "DOCUMENT",
+                   "OTHER"
+                  ]
+                 },
+                 "displayName": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "nullable": true
+                 },
+                 "mediaType": {
+                  "type": "string",
+                  "enum": [
+                   "image/png",
+                   "image/jpeg",
+                   "image/webp",
+                   "application/pdf"
+                  ]
+                 },
+                 "storedSha256": {
+                  "$ref": "#/components/properties/modelHash"
+                 },
+                 "contentUsed": {
+                  "type": "string",
+                  "enum": [
+                   "METADATA_ONLY"
+                  ]
+                 }
+                },
+                "required": [
+                 "referenceId",
+                 "purpose",
+                 "displayName",
+                 "mediaType",
+                 "storedSha256",
+                 "contentUsed"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 8
+              },
+              "spaces": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "spaceId": {
+                  "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                 },
+                 "name": {
+                  "type": "string",
+                  "maxLength": 80
+                 },
+                 "classification": {
+                  "type": "string",
+                  "maxLength": 80
+                 },
+                 "levelId": {
+                  "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                 }
+                },
+                "required": [
+                 "spaceId",
+                 "name",
+                 "classification",
+                 "levelId"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 12
+              },
+              "identity": {
+               "type": "object",
+               "properties": {
+                "version": {
+                 "type": "string",
+                 "enum": [
+                  "design-concept-set-v1"
+                 ]
+                },
+                "revisionId": {
+                 "$ref": "#/components/properties/id"
+                },
+                "modelHash": {
+                 "$ref": "#/components/properties/modelHash"
+                },
+                "request": {
+                 "$ref": "#/components/properties/conceptSet/properties/request"
+                },
+                "briefHash": {
+                 "allOf": [
+                  {
+                   "$ref": "#/components/properties/modelHash"
+                  }
+                 ],
+                 "nullable": true
+                },
+                "references": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "referenceId": {
+                    "$ref": "#/components/properties/id"
+                   },
+                   "storedSha256": {
+                    "$ref": "#/components/properties/modelHash"
+                   }
+                  },
+                  "required": [
+                   "referenceId",
+                   "storedSha256"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "maxItems": 8
+                }
+               },
+               "required": [
+                "version",
+                "revisionId",
+                "modelHash",
+                "request",
+                "briefHash",
+                "references"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "context",
+              "brief",
+              "references",
+              "spaces",
+              "identity"
+             ],
+             "additionalProperties": false
+            },
+            "source": {
+             "type": "string",
+             "enum": [
+              "PROVIDER",
+              "DETERMINISTIC_TEMPLATE"
+             ]
+            },
+            "alternatives": {
+             "type": "array",
+             "items": {
+              "anyOf": [
+               {
+                "type": "object",
+                "properties": {
+                 "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "summary": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "styleKeywords": {
+                  "type": "array",
+                  "items": {
+                   "type": "string",
+                   "minLength": 1,
+                   "maxLength": 30,
+                   "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                  },
+                  "maxItems": 6
+                 },
+                 "palette": {
+                  "type": "array",
+                  "items": {
+                   "type": "object",
+                   "properties": {
+                    "role": {
+                     "type": "string",
+                     "enum": [
+                      "BASE",
+                      "SECONDARY",
+                      "ACCENT",
+                      "NEUTRAL"
+                     ]
+                    },
+                    "hex": {
+                     "type": "string",
+                     "pattern": "^#[0-9A-Fa-f]{6}$"
+                    },
+                    "name": {
+                     "type": "string",
+                     "minLength": 1,
+                     "maxLength": 40,
+                     "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                    }
+                   },
+                   "required": [
+                    "role",
+                    "hex",
+                    "name"
+                   ],
+                   "additionalProperties": false
+                  },
+                  "minItems": 2,
+                  "maxItems": 6
+                 },
+                 "basis": {
+                  "type": "object",
+                  "properties": {
+                   "briefFields": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/properties/conceptSet/properties/inputs/properties/brief/properties/fieldsUsed/items"
+                    },
+                    "maxItems": 5
+                   },
+                   "referenceIds": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/properties/id"
+                    },
+                    "maxItems": 8
+                   }
+                  },
+                  "required": [
+                   "briefFields",
+                   "referenceIds"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "finishes": {
+                  "type": "object",
+                  "properties": {
+                   "floor": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "walls": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "ceiling": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   }
+                  },
+                  "required": [
+                   "floor",
+                   "walls",
+                   "ceiling"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "lighting": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "alternativeId": {
+                  "type": "string",
+                  "enum": [
+                   "alt-1",
+                   "alt-2",
+                   "alt-3"
+                  ]
+                 },
+                 "scope": {
+                  "type": "string",
+                  "enum": [
+                   "INTERIOR"
+                  ]
+                 },
+                 "spaces": {
+                  "type": "array",
+                  "items": {
+                   "type": "object",
+                   "properties": {
+                    "spaceId": {
+                     "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                    },
+                    "spaceName": {
+                     "type": "string",
+                     "maxLength": 80
+                    },
+                    "levelId": {
+                     "$ref": "#/components/properties/conceptSet/properties/request/properties/spaceIds/items"
+                    },
+                    "note": {
+                     "type": "string",
+                     "minLength": 1,
+                     "maxLength": 160,
+                     "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                    }
+                   },
+                   "required": [
+                    "spaceId",
+                    "spaceName",
+                    "levelId",
+                    "note"
+                   ],
+                   "additionalProperties": false
+                  },
+                  "maxItems": 8
+                 }
+                },
+                "required": [
+                 "title",
+                 "summary",
+                 "styleKeywords",
+                 "palette",
+                 "basis",
+                 "finishes",
+                 "lighting",
+                 "alternativeId",
+                 "scope",
+                 "spaces"
+                ],
+                "additionalProperties": false
+               },
+               {
+                "type": "object",
+                "properties": {
+                 "title": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/title"
+                 },
+                 "summary": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/summary"
+                 },
+                 "styleKeywords": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/styleKeywords"
+                 },
+                 "palette": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/palette"
+                 },
+                 "basis": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/basis"
+                 },
+                 "landscapeNote": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                 },
+                 "alternativeId": {
+                  "$ref": "#/components/properties/conceptSet/properties/alternatives/items/anyOf/0/properties/alternativeId"
+                 },
+                 "scope": {
+                  "type": "string",
+                  "enum": [
+                   "EXTERIOR"
+                  ]
+                 },
+                 "facadeFinish": {
+                  "type": "object",
+                  "properties": {
+                   "presetId": {
+                    "$ref": "#/components/schemas/Conversation/properties/state/properties/memory/items/properties/option/properties/presetId"
+                   },
+                   "presetLabel": {
+                    "type": "string",
+                    "maxLength": 100
+                   },
+                   "facades": {
+                    "type": "array",
+                    "items": {
+                     "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/target/properties/facades/items"
+                    },
+                    "minItems": 1,
+                    "maxItems": 4
+                   },
+                   "rationale": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 240,
+                    "pattern": "^[^<>\\p{Cc}\\p{Cf}]*$"
+                   },
+                   "appearanceOnly": {
+                    "type": "boolean",
+                    "enum": [
+                     true
+                    ]
+                   }
+                  },
+                  "required": [
+                   "presetId",
+                   "presetLabel",
+                   "facades",
+                   "rationale",
+                   "appearanceOnly"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "proposedOperation": {
+                  "type": "object",
+                  "properties": {
+                   "status": {
+                    "type": "string",
+                    "enum": [
+                     "NOT_EXECUTED"
+                    ]
+                   },
+                   "submitTo": {
+                    "type": "string",
+                    "enum": [
+                     "/api/projects/:projectId/revision-operations"
+                    ]
+                   },
+                   "request": {
+                    "type": "object",
+                    "properties": {
+                     "baseRevisionId": {
+                      "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/1/properties/sourceRevisionId"
+                     },
+                     "request": {
+                      "anyOf": [
+                       {
+                        "type": "object",
+                        "properties": {
+                         "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2000
+                         }
+                        },
+                        "required": [
+                         "text"
+                        ],
+                        "additionalProperties": false
+                       },
+                       {
+                        "type": "object",
+                        "properties": {
+                         "operation": {
+                          "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request"
+                         }
+                        },
+                        "required": [
+                         "operation"
+                        ],
+                        "additionalProperties": false
+                       }
+                      ]
+                     }
+                    },
+                    "required": [
+                     "baseRevisionId",
+                     "request"
+                    ],
+                    "additionalProperties": false
+                   },
+                   "note": {
+                    "type": "string",
+                    "maxLength": 300
+                   }
+                  },
+                  "required": [
+                   "status",
+                   "submitTo",
+                   "request",
+                   "note"
+                  ],
+                  "additionalProperties": false
+                 }
+                },
+                "required": [
+                 "title",
+                 "summary",
+                 "styleKeywords",
+                 "palette",
+                 "basis",
+                 "landscapeNote",
+                 "alternativeId",
+                 "scope",
+                 "facadeFinish",
+                 "proposedOperation"
+                ],
+                "additionalProperties": false
+               }
+              ]
+             },
+             "minItems": 1,
+             "maxItems": 3
+            },
+            "provenance": {
+             "type": "object",
+             "properties": {
+              "generator": {
+               "$ref": "#/components/properties/conceptSet/properties/request/properties/generator"
+              },
+              "status": {
+               "type": "string",
+               "enum": [
+                "SUCCESS",
+                "FALLBACK",
+                "TEMPLATE"
+               ]
+              },
+              "capability": {
+               "type": "string",
+               "enum": [
+                "INTERIOR_DESIGN_CONCEPT",
+                "EXTERIOR_DESIGN_CONCEPT"
+               ]
+              },
+              "requestId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/id"
+                }
+               ],
+               "nullable": true
+              },
+              "providerId": {
+               "type": "string",
+               "maxLength": 64,
+               "nullable": true
+              },
+              "modelId": {
+               "type": "string",
+               "maxLength": 100,
+               "nullable": true
+              },
+              "routingReason": {
+               "type": "string",
+               "enum": [
+                "PREFERRED",
+                "SECONDARY"
+               ],
+               "nullable": true
+              },
+              "fallbackPosition": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 16,
+               "nullable": true
+              },
+              "fallbackReason": {
+               "type": "string",
+               "enum": [
+                "NO_ELIGIBLE_PROVIDER",
+                "ALL_PROVIDERS_FAILED",
+                "PROVIDER_QUOTA_EXHAUSTED"
+               ],
+               "nullable": true
+              },
+              "failures": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/attempts/items/properties/failure"
+               },
+               "maxItems": 16
+              },
+              "requests": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 6
+              },
+              "attempts": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "providerId": {
+                  "type": "string",
+                  "maxLength": 64
+                 },
+                 "modelId": {
+                  "type": "string",
+                  "maxLength": 100
+                 },
+                 "attempt": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 6
+                 },
+                 "routingReason": {
+                  "type": "string",
+                  "enum": [
+                   "PREFERRED",
+                   "SECONDARY"
+                  ]
+                 },
+                 "fallbackPosition": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 16
+                 },
+                 "latencyMs": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "status": {
+                  "type": "string",
+                  "enum": [
+                   "SUCCESS",
+                   "FAILED",
+                   "SKIPPED"
+                  ]
+                 },
+                 "failure": {
+                  "allOf": [
+                   {
+                    "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/attempts/items/properties/failure"
+                   }
+                  ],
+                  "nullable": true
+                 },
+                 "usage": {
+                  "type": "object",
+                  "properties": {
+                   "inputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "outputTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "totalTokens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   },
+                   "estimatedCostMicroUsd": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "nullable": true
+                   }
+                  },
+                  "required": [
+                   "inputTokens",
+                   "outputTokens",
+                   "totalTokens",
+                   "estimatedCostMicroUsd"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                 }
+                },
+                "required": [
+                 "providerId",
+                 "modelId",
+                 "attempt",
+                 "routingReason",
+                 "fallbackPosition",
+                 "latencyMs",
+                 "status",
+                 "failure",
+                 "usage"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 22
+              },
+              "usage": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/conceptSet/properties/provenance/properties/attempts/items/properties/usage"
+                }
+               ],
+               "nullable": true
+              },
+              "templateVersion": {
+               "type": "string",
+               "enum": [
+                "design-concept-templates-v1"
+               ],
+               "nullable": true
+              },
+              "guardVersion": {
+               "type": "string",
+               "enum": [
+                "design-concept-guard-v1"
+               ]
+              }
+             },
+             "required": [
+              "generator",
+              "status",
+              "capability",
+              "requestId",
+              "providerId",
+              "modelId",
+              "routingReason",
+              "fallbackPosition",
+              "fallbackReason",
+              "failures",
+              "requests",
+              "attempts",
+              "usage",
+              "templateVersion",
+              "guardVersion"
+             ],
+             "additionalProperties": false
+            },
+            "assurance": {
+             "type": "object",
+             "properties": {
+              "status": {
+               "type": "string",
+               "enum": [
+                "ADVISORY_UNVERIFIED"
+               ]
+              },
+              "note": {
+               "type": "string",
+               "maxLength": 400
+              }
+             },
+             "required": [
+              "status",
+              "note"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "dimensionalAccuracy": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "engineeringValidity": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "structuralSafety": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "codeCompliance": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "costAccuracy": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "constructionReadiness": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "professionalCertification": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "dimensionalAccuracy",
+              "engineeringValidity",
+              "structuralSafety",
+              "codeCompliance",
+              "costAccuracy",
+              "constructionReadiness",
+              "professionalCertification"
+             ],
+             "additionalProperties": false
+            },
+            "limitations": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "maxItems": 12
+            },
+            "inputHash": {
+             "$ref": "#/components/properties/modelHash"
+            },
+            "contentHash": {
+             "$ref": "#/components/properties/modelHash"
+            }
+           },
+           "required": [
+            "conceptSetVersion",
+            "scope",
+            "binding",
+            "request",
+            "inputs",
+            "source",
+            "alternatives",
+            "provenance",
+            "assurance",
+            "claims",
+            "limitations",
+            "inputHash",
+            "contentHash"
+           ],
+           "additionalProperties": false
+          },
+          "currency": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "CURRENT",
+              "HISTORICAL"
+             ]
+            },
+            "conceptRevisionId": {
+             "$ref": "#/components/properties/id"
+            },
+            "projectCurrentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/id"
+              }
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "conceptRevisionId",
+            "projectCurrentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "replayed": {
+           "type": "boolean"
+          }
+         },
+         "required": [
+          "id",
+          "projectRevisionId",
+          "scope",
+          "conceptSetVersion",
+          "source",
+          "providerId",
+          "modelId",
+          "alternativeCount",
+          "modelHash",
+          "inputHash",
+          "contentHash",
+          "createdAt",
+          "conceptSet",
+          "currency",
+          "replayed"
          ],
          "additionalProperties": false
         }

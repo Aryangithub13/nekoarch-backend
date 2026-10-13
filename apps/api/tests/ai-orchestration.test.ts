@@ -50,7 +50,9 @@ describe('Phase 21 deterministic routing, failure policy and privacy',()=>{
     const a=adapter(),o=make({a},{providers:[provider('a',patch as Record<string,unknown>)]});const r=await o.interpret(req({text:'x'.repeat(300)}),fallback);expect(a.execute).not.toHaveBeenCalled();expect(r.provenance.attempts[0]?.failure).toBe(code);
   });
   it('keeps future capabilities explicitly unavailable',async()=>{
-    expect(AI_CAPABILITIES.filter(c=>c.status==='AVAILABLE').map(c=>c.capability)).toEqual([capability]);const a=adapter();await expect(make({a}).interpret(req({capability:'ENGINEERING_ASSISTANCE'}),fallback)).rejects.toMatchObject({code:'CAPABILITY_UNSUPPORTED'});expect(a.execute).not.toHaveBeenCalled();
+    // Phase 39 makes the two design-concept tasks operational; they are typed tasks (run), never routed through intent interpretation.
+    expect(AI_CAPABILITIES.filter(c=>c.status==='AVAILABLE').map(c=>c.capability)).toEqual([capability,'INTERIOR_DESIGN_CONCEPT','EXTERIOR_DESIGN_CONCEPT']);const a=adapter();await expect(make({a}).interpret(req({capability:'ENGINEERING_ASSISTANCE'}),fallback)).rejects.toMatchObject({code:'CAPABILITY_UNSUPPORTED'});expect(a.execute).not.toHaveBeenCalled();
+    await expect(make({a}).interpret(req({capability:'INTERIOR_DESIGN_CONCEPT'}),fallback)).rejects.toMatchObject({code:'CAPABILITY_UNSUPPORTED'});expect(a.execute).not.toHaveBeenCalled();
   });
   it.each(['PROVIDER_UNAVAILABLE','PROVIDER_TIMEOUT','PROVIDER_RATE_LIMITED'] as const)('bounds transient retry for %s then uses parser',async code=>{
     const a=failure(code),o=make({a},{maxAttempts:2,retries:2});const r=await o.interpret(req(),fallback);expect(a.execute).toHaveBeenCalledTimes(2);expect(r.intent).toEqual(fallback);expect(r.provenance.status).toBe('FALLBACK');
