@@ -145,7 +145,22 @@ Hashes are recomputed from the stored inputs, not just compared with each other.
 | Cost | The referenced construction and takeoff must be nodes, and the construction's `takeoffId` must equal the cost's `takeoffId` (`UPSTREAM_MISSING` / `LINK_INCONSISTENT`). Three hashes must match: `constructionReportHash = costHash(construction.report)`, `reportHash = costHash(cost.report)`, and `inputFingerprint = costInputFingerprint(…)`. |
 | The six analyses | `modelHash` must equal the recomputed revision hash (`MODEL_HASH_MISMATCH`). Every referenced upstream analysis id must be a node in the graph (`UPSTREAM_MISSING`). |
 
-Known limit: an analysis `inputHash` is reported but not recomputed, because recomputing it needs the full snapshot input. The SQL write path verified it. Its revision, QA and model-hash bindings are recomputed.
+**Analysis `inputHash` (`INPUT_HASH`, failure `INPUT_HASH_MISMATCH`), added during the repair pass.** Each analysis detail is read, and its `inputHash` is recomputed with the same function its write path uses, from the stored snapshot or manifest:
+
+| Family | Recomputation |
+|---|---|
+| Structural | `structuralInputHash(snapshot.binding, snapshot.input, stored solver identity)` |
+| Environmental | `environmentalInputHash(snapshot.binding, snapshot.input, stored calculator identity)` |
+| Building systems | `systemsInputHash(snapshot.binding, snapshot.input, stored calculator identity)`; this also hashes the current `ROUTING_WEIGHTS` constant |
+| Specialized knowledge | `knowledgeInputHash(snapshot.binding, snapshot.input)`. The write path's inline digest is now this exported function, unchanged. |
+| Design optimization | `costHash(snapshot.input)` |
+| Scene | `sceneInputHash(manifest.source)` |
+
+The check passes only when the row's `inputHash`, the snapshot's (or manifest's) own `inputHash` and the recomputed value are all equal.
+- An unreadable stored input fails the check instead of throwing.
+- If a canonicalization constant changes in a later release (for example `ROUTING_WEIGHTS`), older rows become `UNVERIFIED` rather than being verified against a rule they were not hashed with.
+
+What is still not recomputed: the solver and calculator outputs (`analysisModelHash`, `analysisInputHash`, `resultHash`, `factsHash`), because that would mean re-running the analyses. Those hashes describe results, not provenance, and the graph makes no claim about results.
 
 #### A2.2 Propagation
 
@@ -174,9 +189,9 @@ Further rules:
 | Nodes, revision and QA included | 128 | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (field `limit: NODES`) |
 | Per-family page | 20; a non-null `nextCursor` means the family could not be listed completely | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: FAMILY_PAGE`) |
 | Dependency depth (longest chain) | 8 (the real maximum is 5) | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: DEPTH`) |
-| Wall time | 5,000 ms, checked between reads and before evaluation | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: TIME`) |
+| Wall time | 5,000 ms, checked after each read phase and after evaluation. A single slow read is not interrupted; the overrun is reported when it returns. | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: TIME`) |
 | Cycles | Detected before evaluation (cannot occur under the stored foreign keys; checked anyway) | 422 `DEPENDENCY_GRAPH_CYCLE` |
-| Current-revision consistency | The `projectCurrentRevisionId` values reported by the separate reads must agree | 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` (retryable) |
+| Read consistency | Within each listing round, the `projectCurrentRevisionId` values of the six analysis listings must agree. After the detail reads, everything is listed a second time, and the second round's artifact ids and current revision must equal the first round's. | 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` (retryable) |
 
 Further rules:
 - A partial graph is never returned. Every successful response is complete (`complete: true`); any limit hit is a refusal.
@@ -239,7 +254,7 @@ Each criterion maps to at least one automated test. Criteria marked (−) are ne
 | AC9 (−) | Unaccepted or missing acceptance QA gives `ACCEPTANCE_QA` `UNVERIFIED`, and every artifact is `UNVERIFIED` | Unit |
 | AC10 (−) | A cycle in the supplied links gives `DEPENDENCY_GRAPH_CYCLE` and no graph | Unit |
 | AC11 (−) | Node, family-page, depth and time limits each give a `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` refusal with the right `limit` field, never a partial graph | Unit |
-| AC12 (−) | Disagreeing current-revision reads give 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` | Unit |
+| AC12 (−) | Disagreeing current-revision reads, an artifact committed between the two listing rounds, or a current revision that moves between them all give 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` | Integration |
 | AC13 | Two reads of unchanged state are byte-identical. Node and edge order is independent of input order | Unit and integration |
 | AC14 (−) | Anonymous → 401. Another user → 404. Another project's revision id under this project → 404. Any query parameter → 400 | Integration |
 | AC15 (−) | The response contains no assurance level, evidence class, domain status or solver field, and `claims` are all `NOT_CLAIMED`. A graph read leaves the engineering assessment unchanged | Unit and integration |
@@ -281,3 +296,27 @@ Each criterion maps to at least one automated test. Criteria marked (−) are ne
 2. Whether a later version should treat the artifacts of a model-equivalent base revision (Phase 30 lineage) as source-equivalent. Excluded here.
 3. Whether to add revision-wide list RPCs (a migration) if real projects exceed the 20-per-family page bound. Today that case is refused.
 4. Whether the graph should cover non-engine records (references, jobs, workflows) once their links are stored as foreign keys.
+
+---
+
+## 7. Read consistency: what is and is not guaranteed (repair pass)
+
+The graph is assembled from separate owner-scoped RPCs, not from one database transaction. The existing repository layer has no multi-RPC transaction, and adding one would need a new SQL function, which this phase deliberately avoids.
+
+The check relies on these confirmed properties of the schema:
+- Every artifact table has a `before update or delete` immutability trigger (for example `0007:30`, `0014:40`). Rows are only appended, and are removed only when their project is deleted.
+- Revisions and QA runs are immutable (`0006:98-99`).
+- The current-revision pointer only moves to a newly committed revision.
+
+On that basis, the loader works in four steps:
+1. Lists every family (and each takeoff's constructions).
+2. Reads every detail.
+3. Lists everything again.
+4. Compares the artifact ids and the current revision from both rounds.
+
+Equal rounds mean no artifact of this revision was committed, and the current revision did not move, between the first listing and the second. The graph therefore describes one state.
+
+Not guaranteed:
+- **Artifacts committed after the second listing.** They are simply not in this response; a later read shows them.
+- **A project deleted mid-read.** This surfaces as the existing 404 from the first read that misses.
+
