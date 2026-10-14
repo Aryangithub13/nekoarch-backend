@@ -4,9 +4,11 @@ import { buildDependencyGraph, type GraphInput, type GraphRecord } from '../src/
 import { buildProjectManifest, type ManifestInput } from '../src/graph/project-manifest.js';
 import { FRESHNESS_STATES, GRAPH_STATE_MAPPING, MODULES, ProjectManifestSchema } from '../src/contracts/project-manifest.js';
 import { NODE_STATES } from '../src/contracts/dependency-graph.js';
+import { modelHash } from '../src/lib/generation-identity.js';
+import { MANIFEST_DIFF_CHANGE_LIMIT } from '../src/contracts/project-manifest.js';
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${n.toString().padStart(12, '0')}`;
-const PROJECT = uuid(1), REV = uuid(2), QA = uuid(3), NEWER = uuid(4), HASH = 'a'.repeat(64);
+const PROJECT = uuid(1), REV = uuid(2), QA = uuid(3), NEWER = uuid(4), PARENT = uuid(5), HASH = modelHash(authored());
 const at = (n: number) => new Date(Date.UTC(2026, 9, 13, 0, 0, n)).toISOString();
 const ok = (...checks: GraphRecord['checks'][number]['check'][]) => checks.map(check => ({ check, result: 'VERIFIED' as const }));
 const anchored = [{ family: 'REVISION' as const, id: REV, kind: 'BOUND_TO_REVISION' as const }, { family: 'ACCEPTANCE_QA' as const, id: QA, kind: 'ACCEPTED_BY' as const }];
@@ -28,7 +30,8 @@ const concept = (n: number, patch: Record<string, unknown> = {}) => ({ id: uuid(
   source: 'DETERMINISTIC_TEMPLATE' as const, providerId: null, modelId: null, alternativeCount: 1, modelHash: HASH, inputHash: 'b'.repeat(64), contentHash: 'c'.repeat(64),
   createdAt: at(n), ...patch });
 const manifest = (records = chain(), current: string | null = REV, extra: Partial<ManifestInput> = {}) => buildProjectManifest({ projectId: PROJECT, revision: revision(),
-  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], lineage: null, integrityCheckedAt: at(99), ...extra });
+  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], integrityCheckedAt: at(99),
+  ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } }, ...extra });
 const mod = (m: ReturnType<typeof buildProjectManifest>, name: string) => m.modules.find(x => x.module === name)!;
 
 describe('B37 Unified Project Manifest v2 (pure builder)', () => {
@@ -96,43 +99,130 @@ describe('B37 Unified Project Manifest v2 (pure builder)', () => {
     expect(mod(manifest(chain(), REV, { designConcepts: null }), 'DESIGN_CONCEPTS')).toMatchObject({ availability: 'UNAVAILABLE', missingReason: 'PERSISTENCE_UNAVAILABLE' });
   });
 
-  it('roadmap L260/L253: lineage, diff and per-discipline change impact are derived from the revision and the manifest freshness', () => {
-    // A first revision: no parent, so no diff; lineage persistence not configured on this backend.
-    const first = manifest();
-    expect(first.lineage).toEqual({ parentRevisionId: null, operation: null, operationLineage: 'UNAVAILABLE' });
-    expect(first.diff).toEqual({ basis: 'BIM_SEMANTIC_DIFF', againstRevisionId: null, href: null, availability: 'NO_PARENT' });
-    expect(first.changeImpact.disciplines.every(d => !d.regenerate.length && !d.revalidate.length && !d.awaiting.length && !d.staleArtifacts && !d.blockedArtifacts)).toBe(true);
-    // A revision produced by a Phase 30 operation from a parent: the operation is carried, and the diff points at the existing BIM diff route.
-    const PARENT = uuid(5), OP = uuid(6);
-    const child = manifest(chain(), REV, { revision: { ...revision(), parentRevisionId: PARENT } as ManifestInput['revision'],
-      lineage: { operation: { id: OP, kind: 'APPEARANCE_MODIFY', baseRevisionId: PARENT }, modelEquivalentToBase: true } });
-    expect(child.lineage).toEqual({ parentRevisionId: PARENT, operationLineage: 'AVAILABLE',
-      operation: { operationId: OP, kind: 'APPEARANCE_MODIFY', baseRevisionId: PARENT, modelEquivalentToBase: true } });
-    expect(child.diff).toEqual({ basis: 'BIM_SEMANTIC_DIFF', againstRevisionId: PARENT, href: `/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}`,
-      availability: 'AVAILABLE' });
-    expect(manifest(chain(), REV, { lineage: { operation: null, modelEquivalentToBase: null } }).lineage).toEqual({ parentRevisionId: null, operation: null,
-      operationLineage: 'AVAILABLE' });
-    // Superseded: every stored and derived output of the base is listed for regeneration, by discipline, against the new current revision.
-    const stale = manifest(chain(), NEWER), impact = (m: typeof stale, d: string) => m.changeImpact.disciplines.find(x => x.discipline === d)!;
-    expect(stale.changeImpact.targetRevisionId).toBe(NEWER);
-    expect(impact(stale, 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
-      revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
-    expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], staleArtifacts: 1 });
-    expect(impact(stale, 'DOCUMENTATION').regenerate).toEqual(['CONSTRUCTION_DOCUMENTS']);
-    // A failed check asks for revalidation, never regeneration; an active job is awaited.
-    const records = chain().map(r => r.family === 'QUANTITY_TAKEOFF' ? { ...r, checks: r.checks.map(c => c.check === 'MODEL_HASH' ? { ...c, result: 'FAILED' as const } : c) } : r);
-    expect(impact(manifest(records), 'QUANTITIES_AND_COST')).toMatchObject({ regenerate: [], revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
-      blockedArtifacts: 3 });
-    expect(impact(manifest(base(), REV, { activeJobs: [{ jobId: uuid(40), module: 'SCENE_3D' }] }), 'VISUALIZATION').awaiting).toEqual(['SCENE_3D']);
-    // Nothing reads better than the module freshness it summarises.
-    for (const m of [first, child, stale]) for (const d of m.changeImpact.disciplines)
-      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
-  });
-
   it('is deterministic: record order and read time do not change the manifest hash', () => {
     const a = manifest(), b = manifest([...chain()].reverse(), REV, { integrityCheckedAt: at(500) });
     expect(b.manifestHash).toBe(a.manifestHash);
     expect({ ...b, integrityCheckedAt: a.integrityCheckedAt }).toEqual(a);
     expect(manifest(chain(), NEWER).manifestHash).not.toBe(a.manifestHash);
+  });
+});
+
+type Model = ReturnType<typeof authored>;
+/** Revision 2 of the fixture, with a parent (revision 1) whose model is `parentModel`. */
+const child = (patch: Record<string, unknown> = {}) => ({ ...(revision() as object), revisionNumber: 2, parentRevisionId: PARENT, ...patch }) as unknown as ManifestInput['revision'];
+const parentOf = (model: Model, patch: Record<string, unknown> = {}) => ({ id: PARENT, revisionNumber: 1, createdAt: at(-1), identity: null, model, ...patch }) as never;
+const withParent = (parentModel: Model | null, opts: { readable?: boolean; parentPatch?: Record<string, unknown>; childPatch?: Record<string, unknown>;
+  operation?: ManifestInput['ancestry']['operation'] } = {}) => buildProjectManifest({ projectId: PROJECT, revision: child(opts.childPatch), graph: graph(chain()),
+  designConcepts: { items: [], truncated: false }, activeJobs: [], integrityCheckedAt: at(99),
+  ancestry: { parent: parentModel ? parentOf(parentModel, opts.parentPatch) : null, parentReadable: opts.readable ?? true,
+    operation: opts.operation === undefined ? { operation: null, modelEquivalentToBase: null } : opts.operation } });
+
+describe('B37 change metadata: lineage, diff and per-discipline impact', () => {
+  it('a root revision has ROOT lineage and no comparison (NO_PARENT), distinct from an empty diff', () => {
+    const m = manifest();
+    expect(m.lineage).toEqual({ status: 'ROOT', revisionNumber: 1, parentRevisionId: null, parent: null, modelEquivalentToParent: null,
+      operation: { status: 'NONE', operationId: null, kind: null, baseRevisionId: null, restoreSourceRevisionId: null, modelEquivalentToBase: null },
+      reasons: [] });
+    expect(m.diff).toMatchObject({ status: 'NO_PARENT', counts: null, entitiesIdentical: null, modelHashChanged: null, changes: [], unavailableReason: null });
+    expect(m.changeImpact).toEqual({ status: 'NO_PARENT', basis: 'MODEL_BINDING', baseRevisionId: null, disciplines: [] });
+  });
+
+  it('an unchanged revision: LINKED, model-equivalent, a computed empty diff and no discipline affected', () => {
+    const m = withParent(authored());
+    expect(m.lineage).toMatchObject({ status: 'LINKED', parentRevisionId: PARENT, parent: { revisionId: PARENT, revisionNumber: 1, modelHash: HASH },
+      modelEquivalentToParent: true, reasons: [] });
+    expect(m.diff).toMatchObject({ status: 'COMPUTED', diffVersion: 'scoped-diff-v1', baseRevisionId: PARENT, baseModelHash: HASH, modelHash: HASH,
+      modelHashChanged: false, entitiesIdentical: true, counts: { added: 0, removed: 0, changed: 0 }, collections: [], changes: [], changesTruncated: false });
+    expect(m.changeImpact.status).toBe('COMPUTED');
+    expect(m.changeImpact.disciplines.every(d => d.impact === 'NOT_AFFECTED' && d.reason === 'MODEL_UNCHANGED' && d.changedCollections.length === 0)).toBe(true);
+    // Backward compatibility: the v2 identity still carries parentRevisionId, and it agrees with the lineage.
+    expect(m.identity.parentRevisionId).toBe(m.lineage.parentRevisionId);
+  });
+
+  it('an entity change affects architecture by entity and every other discipline by model binding', () => {
+    const parent = authored(), wall = parent.walls[0]!;
+    const changedParent = { ...parent, walls: [{ ...wall, heightMm: (wall.heightMm ?? 3000) + 100 }, ...parent.walls.slice(1)] } as Model;
+    const m = withParent(changedParent);
+    expect(m.diff).toMatchObject({ status: 'COMPUTED', modelHashChanged: true, entitiesIdentical: false, counts: { added: 0, removed: 0, changed: 1 },
+      collections: [{ collection: 'walls', added: 0, removed: 0, changed: 1 }], changes: [{ collection: 'walls', entityId: wall.id, change: 'CHANGED' }] });
+    const impact = Object.fromEntries(m.changeImpact.disciplines.map(d => [d.discipline, [d.impact, d.reason, d.changedCollections]]));
+    expect(impact).toEqual({ ARCHITECTURE: ['AFFECTED', 'MODEL_ENTITIES_CHANGED', ['walls']], QUANTITIES_AND_COST: ['AFFECTED', 'BOUND_TO_CHANGED_MODEL', []],
+      ENGINEERING: ['AFFECTED', 'BOUND_TO_CHANGED_MODEL', []], DESIGN: ['AFFECTED', 'BOUND_TO_CHANGED_MODEL', []], VISUALIZATION: ['AFFECTED', 'BOUND_TO_CHANGED_MODEL', []],
+      DOCUMENTATION: ['AFFECTED', 'BOUND_TO_CHANGED_MODEL', []] });
+    expect(m.changeImpact.disciplines.find(d => d.discipline === 'QUANTITIES_AND_COST')!.modules).toEqual(['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST']);
+  });
+
+  it('a change outside the compared collections is reported as such, not as an entity change', () => {
+    const m = withParent({ ...authored(), name: 'Renamed' } as Model);
+    expect(m.diff).toMatchObject({ modelHashChanged: true, entitiesIdentical: true, collections: [] });
+    expect(m.changeImpact.disciplines[0]).toMatchObject({ discipline: 'ARCHITECTURE', impact: 'AFFECTED', reason: 'MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS' });
+  });
+
+  it('caps the listed changes but keeps the counts complete', () => {
+    const parent = authored(), extra = Array.from({ length: MANIFEST_DIFF_CHANGE_LIMIT + 50 }, (_, i) => ({ id: `spec-extra-${i}`, name: `Spec ${i}`, material: 'concrete' }));
+    const m = withParent({ ...parent, specifications: [...(parent.specifications ?? []), ...extra] } as Model);
+    expect(m.diff.counts!.removed).toBe(MANIFEST_DIFF_CHANGE_LIMIT + 50);
+    expect([m.diff.changes.length, m.diff.changesTruncated]).toEqual([MANIFEST_DIFF_CHANGE_LIMIT, true]);
+  });
+
+  it('absent metadata is UNAVAILABLE, never an empty or unchanged result', () => {
+    const unreadable = withParent(null, { readable: false });
+    expect(unreadable.lineage).toMatchObject({ status: 'UNAVAILABLE', parent: null, modelEquivalentToParent: null, reasons: ['PARENT_UNREADABLE'] });
+    expect(unreadable.diff).toMatchObject({ status: 'UNAVAILABLE', unavailableReason: 'PARENT_UNREADABLE', counts: null, entitiesIdentical: null });
+    expect(unreadable.changeImpact).toMatchObject({ status: 'UNAVAILABLE', disciplines: [] });
+    expect(withParent(authored(), { operation: null }).lineage.operation).toMatchObject({ status: 'UNAVAILABLE', operationId: null });
+  });
+
+  it('invalid ancestry is INCONSISTENT with a reason, and nothing is compared against it', () => {
+    const cases: [Parameters<typeof withParent>[1], string][] = [
+      [{ parentPatch: { revisionNumber: 5 } }, 'PARENT_NUMBER_MISMATCH'],
+      [{ parentPatch: { identity: { modelHash: 'f'.repeat(64) } } }, 'PARENT_IDENTITY_INCONSISTENT'],
+      [{ operation: { operation: { id: uuid(70), kind: 'RESTORE', baseRevisionId: uuid(71), restoreSourceRevisionId: uuid(72), committedRevisionId: REV }, modelEquivalentToBase: null } }, 'OPERATION_BASE_MISMATCH'],
+      [{ operation: { operation: { id: uuid(70), kind: 'RESTORE', baseRevisionId: PARENT, restoreSourceRevisionId: uuid(72), committedRevisionId: uuid(73) }, modelEquivalentToBase: null } }, 'OPERATION_TARGET_MISMATCH'],
+    ];
+    for (const [opts, reason] of cases) {
+      const m = withParent(authored(), opts);
+      expect([m.lineage.status, m.lineage.reasons, m.lineage.modelEquivalentToParent], reason).toEqual(['INCONSISTENT', [reason], null]);
+      expect([m.diff.status, m.diff.unavailableReason, m.changeImpact.status], reason).toEqual(['UNAVAILABLE', 'LINEAGE_INCONSISTENT', 'UNAVAILABLE']);
+    }
+    const badRoot = buildProjectManifest({ projectId: PROJECT, revision: { ...(revision() as object), revisionNumber: 3 } as never, graph: graph(chain()),
+      designConcepts: null, activeJobs: null, integrityCheckedAt: at(99), ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } } });
+    expect(badRoot.lineage).toMatchObject({ status: 'INCONSISTENT', reasons: ['ROOT_PARENT_MISMATCH'] });
+  });
+
+  it('records the Phase 30 operation that committed a revision', () => {
+    const op = { id: uuid(70), kind: 'RESTORE' as const, baseRevisionId: PARENT, restoreSourceRevisionId: uuid(72), committedRevisionId: REV };
+    expect(withParent(authored(), { operation: { operation: op, modelEquivalentToBase: false } }).lineage).toMatchObject({ status: 'LINKED',
+      operation: { status: 'RECORDED', operationId: op.id, kind: 'RESTORE', baseRevisionId: PARENT, restoreSourceRevisionId: op.restoreSourceRevisionId,
+        modelEquivalentToBase: false } });
+  });
+
+  it('diff carries the existing BIM semantic diff route for the parent pair, and null without a parent', () => {
+    expect(manifest().diff.bimDiffHref).toBeNull();
+    expect(withParent(authored()).diff.bimDiffHref).toBe(`/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}`);
+    // The route is offered even when the comparison here is unavailable: the BIM diff reads both revisions itself.
+    expect(withParent(null, { readable: false }).diff).toMatchObject({ status: 'UNAVAILABLE', bimDiffHref: `/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}` });
+  });
+});
+
+describe('B37 freshness impact (what the manifest freshness asks of each discipline)', () => {
+  const impact = (m: ReturnType<typeof manifest>, d: string) => m.freshnessImpact.disciplines.find(x => x.discipline === d)!;
+  it('is empty for a current revision, and lists every stale output by discipline once the revision is superseded', () => {
+    const first = manifest();
+    expect(first.freshnessImpact.disciplines.every(d => !d.regenerate.length && !d.revalidate.length && !d.awaiting.length && !d.staleArtifacts && !d.blockedArtifacts)).toBe(true);
+    const stale = manifest(chain(), NEWER);
+    expect(stale.freshnessImpact.targetRevisionId).toBe(NEWER);
+    expect(impact(stale, 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
+      revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
+    expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], staleArtifacts: 1 });
+    expect(impact(stale, 'DOCUMENTATION').regenerate).toEqual(['CONSTRUCTION_DOCUMENTS']);
+  });
+  it('asks to revalidate a failed check, never to regenerate it, and to await an active job; it never reads better than module freshness', () => {
+    const records = chain().map(r => r.family === 'QUANTITY_TAKEOFF' ? { ...r, checks: r.checks.map(c => c.check === 'MODEL_HASH' ? { ...c, result: 'FAILED' as const } : c) } : r);
+    expect(impact(manifest(records), 'QUANTITIES_AND_COST')).toMatchObject({ regenerate: [], revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
+      blockedArtifacts: 3 });
+    expect(impact(manifest(base(), REV, { activeJobs: [{ jobId: uuid(40), module: 'SCENE_3D' }] }), 'VISUALIZATION').awaiting).toEqual(['SCENE_3D']);
+    for (const m of [manifest(), manifest(chain(), NEWER), manifest(records)]) for (const d of m.freshnessImpact.disciplines)
+      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
   });
 });

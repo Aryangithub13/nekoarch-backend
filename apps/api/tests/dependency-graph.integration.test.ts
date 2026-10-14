@@ -192,6 +192,43 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     expect(tampered[`ENVIRONMENTAL_ANALYSIS:${E.id}`]!.state).toBe('CURRENT');
   }, 300_000);
 
+  it('bounded reads: every per-artifact read path shares one pool of at most 8 (1 when narrowed), with the same graph and error contract', async () => {
+    const repo = backend.repository('owner');
+    // Count every list and detail RPC of the nine artifact families; a listing carries p_limit, a detail read does not.
+    const families = ['takeoffRpc', 'constructionRpc', 'costRpc', 'structuralRpc', 'environmentalRpc', 'systemsRpc', 'knowledgeRpc', 'optimizationRpc', 'sceneRpc'] as const;
+    const watch = (fail?: { rpc: typeof families[number] }) => {
+      const stats = { details: 0, detailPeak: 0, inFlight: 0, peak: 0, detailInFlight: 0 };
+      const wrapped: Repository = { ...repo };
+      for (const key of families) {
+        const call = repo[key]! as (name: never, args: Record<string, unknown>) => Promise<unknown>;
+        (wrapped as unknown as Record<string, unknown>)[key] = async (name: never, args: Record<string, unknown>) => {
+          const isDetail = !('p_limit' in args);
+          stats.inFlight++; stats.peak = Math.max(stats.peak, stats.inFlight);
+          if (isDetail) { stats.details++; stats.detailInFlight++; stats.detailPeak = Math.max(stats.detailPeak, stats.detailInFlight); }
+          try {
+            await new Promise(r => setTimeout(r, 5)); // hold each call open so concurrent calls overlap
+            if (isDetail && fail?.rpc === key) throw new ApiError(404, 'COST_ESTIMATE_NOT_FOUND', 'Resource not found');
+            return await call(name, args);
+          } finally { stats.inFlight--; if (isDetail) stats.detailInFlight--; }
+        };
+      }
+      return { wrapped, stats };
+    };
+    // The base suite's chain: one takeoff, one construction, two costs and one structural analysis = 5 detail reads.
+    const reference = await dependencyGraph(repo, a.projectId, a.revision.id);
+    const narrow = watch();
+    expect(await dependencyGraph(narrow.wrapped, a.projectId, a.revision.id, { readConcurrency: 1 })).toEqual(reference);
+    // One shared pool: with width 1 no two detail reads overlap, across all nine families (separate pools would overlap).
+    expect([narrow.stats.details, narrow.stats.detailPeak]).toEqual([5, 1]);
+    const wide = watch();
+    expect(await dependencyGraph(wide.wrapped, a.projectId, a.revision.id)).toEqual(reference);
+    expect(wide.stats.details).toBe(5);
+    expect(wide.stats.detailPeak).toBe(5); // fewer reads than the ceiling all run together
+    expect(wide.stats.peak).toBeLessThanOrEqual(8); // the eight family lists, then construction lists and details, never above 8
+    // A failed detail read keeps the existing contract: its ApiError is the result, no partial graph.
+    expect(await refusal(dependencyGraph(watch({ rpc: 'costRpc' }).wrapped, a.projectId, a.revision.id))).toEqual([404, 'COST_ESTIMATE_NOT_FOUND', null]);
+  }, 120_000);
+
   it('an artifact or revision committed between the first and second listing round is a 409, never a graph that mixes two states', async () => {
     const repo = backend.repository('owner');
     // Hide the newest cost on the first listing only: the second round sees it, as if it had been committed during the read.

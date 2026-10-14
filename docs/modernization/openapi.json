@@ -62785,6 +62785,563 @@
            ],
            "additionalProperties": false
           },
+          "lineage": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "ROOT",
+              "LINKED",
+              "INCONSISTENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "parent": {
+             "type": "object",
+             "properties": {
+              "revisionId": {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              },
+              "revisionNumber": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "modelHash": {
+               "$ref": "#/components/properties/identity/properties/modelHash"
+              },
+              "createdAt": {
+               "type": "string"
+              }
+             },
+             "required": [
+              "revisionId",
+              "revisionNumber",
+              "modelHash",
+              "createdAt"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "modelEquivalentToParent": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "operation": {
+             "type": "object",
+             "properties": {
+              "status": {
+               "type": "string",
+               "enum": [
+                "NONE",
+                "RECORDED",
+                "UNAVAILABLE"
+               ]
+              },
+              "operationId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "kind": {
+               "type": "string",
+               "enum": [
+                "APPEARANCE_MODIFY",
+                "RESTORE"
+               ],
+               "nullable": true
+              },
+              "baseRevisionId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "restoreSourceRevisionId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/identity/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "modelEquivalentToBase": {
+               "type": "boolean",
+               "nullable": true
+              }
+             },
+             "required": [
+              "status",
+              "operationId",
+              "kind",
+              "baseRevisionId",
+              "restoreSourceRevisionId",
+              "modelEquivalentToBase"
+             ],
+             "additionalProperties": false
+            },
+            "reasons": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "enum": [
+               "PARENT_UNREADABLE",
+               "PARENT_NUMBER_MISMATCH",
+               "PARENT_IDENTITY_INCONSISTENT",
+               "ROOT_PARENT_MISMATCH",
+               "OPERATION_BASE_MISMATCH",
+               "OPERATION_TARGET_MISMATCH"
+              ]
+             }
+            }
+           },
+           "required": [
+            "status",
+            "revisionNumber",
+            "parentRevisionId",
+            "parent",
+            "modelEquivalentToParent",
+            "operation",
+            "reasons"
+           ],
+           "additionalProperties": false
+          },
+          "diff": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "COMPUTED",
+              "NO_PARENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "diffVersion": {
+             "type": "string",
+             "enum": [
+              "scoped-diff-v1"
+             ],
+             "nullable": true
+            },
+            "baseRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "baseModelHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/modelHash"
+              }
+             ],
+             "nullable": true
+            },
+            "modelHash": {
+             "$ref": "#/components/properties/identity/properties/modelHash"
+            },
+            "modelHashChanged": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "entitiesIdentical": {
+             "type": "boolean",
+             "nullable": true
+            },
+            "counts": {
+             "type": "object",
+             "properties": {
+              "added": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "removed": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "changed": {
+               "type": "integer",
+               "minimum": 0
+              }
+             },
+             "required": [
+              "added",
+              "removed",
+              "changed"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "collections": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "type": "string",
+                "enum": [
+                 "levels",
+                 "spaces",
+                 "walls",
+                 "openings",
+                 "slabs",
+                 "columns",
+                 "stairs",
+                 "dimensions",
+                 "specifications",
+                 "site"
+                ]
+               },
+               "added": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "removed": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "changed": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "collection",
+               "added",
+               "removed",
+               "changed"
+              ],
+              "additionalProperties": false
+             }
+            },
+            "changes": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "$ref": "#/components/properties/diff/properties/collections/items/properties/collection"
+               },
+               "entityId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+               },
+               "change": {
+                "type": "string",
+                "enum": [
+                 "ADDED",
+                 "REMOVED",
+                 "CHANGED"
+                ]
+               },
+               "levelIds": {
+                "type": "array",
+                "items": {
+                 "type": "string"
+                },
+                "maxItems": 2
+               }
+              },
+              "required": [
+               "collection",
+               "entityId",
+               "change",
+               "levelIds"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 200
+            },
+            "changesTruncated": {
+             "type": "boolean"
+            },
+            "unavailableReason": {
+             "type": "string",
+             "enum": [
+              "PARENT_UNREADABLE",
+              "LINEAGE_INCONSISTENT"
+             ],
+             "nullable": true
+            },
+            "bimDiffHref": {
+             "type": "string",
+             "pattern": "^\\/api\\/projects\\/",
+             "nullable": true
+            }
+           },
+           "required": [
+            "status",
+            "diffVersion",
+            "baseRevisionId",
+            "baseModelHash",
+            "modelHash",
+            "modelHashChanged",
+            "entitiesIdentical",
+            "counts",
+            "collections",
+            "changes",
+            "changesTruncated",
+            "unavailableReason",
+            "bimDiffHref"
+           ],
+           "additionalProperties": false
+          },
+          "changeImpact": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "COMPUTED",
+              "NO_PARENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "enum": [
+              "MODEL_BINDING"
+             ]
+            },
+            "baseRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "disciplines": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "discipline": {
+                "type": "string",
+                "enum": [
+                 "ARCHITECTURE",
+                 "QUANTITIES_AND_COST",
+                 "ENGINEERING",
+                 "DESIGN",
+                 "VISUALIZATION",
+                 "DOCUMENTATION"
+                ]
+               },
+               "impact": {
+                "type": "string",
+                "enum": [
+                 "AFFECTED",
+                 "NOT_AFFECTED"
+                ]
+               },
+               "reason": {
+                "type": "string",
+                "enum": [
+                 "MODEL_ENTITIES_CHANGED",
+                 "MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS",
+                 "BOUND_TO_CHANGED_MODEL",
+                 "MODEL_UNCHANGED"
+                ]
+               },
+               "modules": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "changedCollections": {
+                "type": "array",
+                "items": {
+                 "$ref": "#/components/properties/diff/properties/collections/items/properties/collection"
+                }
+               }
+              },
+              "required": [
+               "discipline",
+               "impact",
+               "reason",
+               "modules",
+               "changedCollections"
+              ],
+              "additionalProperties": false
+             }
+            }
+           },
+           "required": [
+            "status",
+            "basis",
+            "baseRevisionId",
+            "disciplines"
+           ],
+           "additionalProperties": false
+          },
+          "freshnessImpact": {
+           "type": "object",
+           "properties": {
+            "targetRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "disciplines": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "discipline": {
+                "type": "string",
+                "enum": [
+                 "ARCHITECTURE",
+                 "QUANTITIES_AND_COST",
+                 "ENGINEERING",
+                 "DESIGN",
+                 "VISUALIZATION",
+                 "DOCUMENTATION"
+                ]
+               },
+               "regenerate": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "revalidate": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "awaiting": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "staleArtifacts": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "blockedArtifacts": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "discipline",
+               "regenerate",
+               "revalidate",
+               "awaiting",
+               "staleArtifacts",
+               "blockedArtifacts"
+              ],
+              "additionalProperties": false
+             }
+            }
+           },
+           "required": [
+            "targetRevisionId",
+            "disciplines"
+           ],
+           "additionalProperties": false
+          },
           "configuration": {
            "type": "object",
            "properties": {
@@ -62806,98 +63363,6 @@
            "required": [
             "sourceMode",
             "generatorVersion"
-           ],
-           "additionalProperties": false
-          },
-          "lineage": {
-           "type": "object",
-           "properties": {
-            "parentRevisionId": {
-             "allOf": [
-              {
-               "$ref": "#/components/properties/identity/properties/projectId"
-              }
-             ],
-             "nullable": true
-            },
-            "operation": {
-             "type": "object",
-             "properties": {
-              "operationId": {
-               "$ref": "#/components/properties/identity/properties/projectId"
-              },
-              "kind": {
-               "type": "string",
-               "maxLength": 40,
-               "nullable": true
-              },
-              "baseRevisionId": {
-               "$ref": "#/components/properties/identity/properties/projectId"
-              },
-              "modelEquivalentToBase": {
-               "type": "boolean",
-               "nullable": true
-              }
-             },
-             "required": [
-              "operationId",
-              "kind",
-              "baseRevisionId",
-              "modelEquivalentToBase"
-             ],
-             "additionalProperties": false,
-             "nullable": true
-            },
-            "operationLineage": {
-             "type": "string",
-             "enum": [
-              "AVAILABLE",
-              "UNAVAILABLE"
-             ]
-            }
-           },
-           "required": [
-            "parentRevisionId",
-            "operation",
-            "operationLineage"
-           ],
-           "additionalProperties": false
-          },
-          "diff": {
-           "type": "object",
-           "properties": {
-            "basis": {
-             "type": "string",
-             "enum": [
-              "BIM_SEMANTIC_DIFF"
-             ]
-            },
-            "againstRevisionId": {
-             "allOf": [
-              {
-               "$ref": "#/components/properties/identity/properties/projectId"
-              }
-             ],
-             "nullable": true
-            },
-            "href": {
-             "type": "string",
-             "pattern": "^\\/api\\/projects\\/",
-             "nullable": true
-            },
-            "availability": {
-             "type": "string",
-             "enum": [
-              "AVAILABLE",
-              "NO_PARENT"
-             ]
-            }
-           },
-           "required": [
-            "basis",
-            "againstRevisionId",
-            "href",
-            "availability"
            ],
            "additionalProperties": false
           },
@@ -63189,132 +63654,6 @@
             "additionalProperties": false
            }
           },
-          "changeImpact": {
-           "type": "object",
-           "properties": {
-            "targetRevisionId": {
-             "allOf": [
-              {
-               "$ref": "#/components/properties/identity/properties/projectId"
-              }
-             ],
-             "nullable": true
-            },
-            "disciplines": {
-             "type": "array",
-             "items": {
-              "type": "object",
-              "properties": {
-               "discipline": {
-                "type": "string",
-                "enum": [
-                 "ARCHITECTURE",
-                 "QUANTITIES_AND_COST",
-                 "ENGINEERING",
-                 "DESIGN",
-                 "VISUALIZATION",
-                 "DOCUMENTATION"
-                ]
-               },
-               "regenerate": {
-                "type": "array",
-                "items": {
-                 "type": "string",
-                 "enum": [
-                  "BUILDING_MODEL",
-                  "ACCEPTANCE_QA",
-                  "BIM",
-                  "COMPLEX_VERIFICATION",
-                  "QUANTITY_TAKEOFF",
-                  "CONSTRUCTION_CALCULATION",
-                  "BOQ_COST",
-                  "STRUCTURAL_ANALYSIS",
-                  "ENVIRONMENTAL_ANALYSIS",
-                  "BUILDING_SYSTEMS_ANALYSIS",
-                  "SPECIALIZED_KNOWLEDGE",
-                  "ENGINEERING_ASSESSMENT",
-                  "DESIGN_OPTIMIZATION",
-                  "DESIGN_CONCEPTS",
-                  "SCENE_3D",
-                  "CONSTRUCTION_DOCUMENTS"
-                 ]
-                }
-               },
-               "revalidate": {
-                "type": "array",
-                "items": {
-                 "type": "string",
-                 "enum": [
-                  "BUILDING_MODEL",
-                  "ACCEPTANCE_QA",
-                  "BIM",
-                  "COMPLEX_VERIFICATION",
-                  "QUANTITY_TAKEOFF",
-                  "CONSTRUCTION_CALCULATION",
-                  "BOQ_COST",
-                  "STRUCTURAL_ANALYSIS",
-                  "ENVIRONMENTAL_ANALYSIS",
-                  "BUILDING_SYSTEMS_ANALYSIS",
-                  "SPECIALIZED_KNOWLEDGE",
-                  "ENGINEERING_ASSESSMENT",
-                  "DESIGN_OPTIMIZATION",
-                  "DESIGN_CONCEPTS",
-                  "SCENE_3D",
-                  "CONSTRUCTION_DOCUMENTS"
-                 ]
-                }
-               },
-               "awaiting": {
-                "type": "array",
-                "items": {
-                 "type": "string",
-                 "enum": [
-                  "BUILDING_MODEL",
-                  "ACCEPTANCE_QA",
-                  "BIM",
-                  "COMPLEX_VERIFICATION",
-                  "QUANTITY_TAKEOFF",
-                  "CONSTRUCTION_CALCULATION",
-                  "BOQ_COST",
-                  "STRUCTURAL_ANALYSIS",
-                  "ENVIRONMENTAL_ANALYSIS",
-                  "BUILDING_SYSTEMS_ANALYSIS",
-                  "SPECIALIZED_KNOWLEDGE",
-                  "ENGINEERING_ASSESSMENT",
-                  "DESIGN_OPTIMIZATION",
-                  "DESIGN_CONCEPTS",
-                  "SCENE_3D",
-                  "CONSTRUCTION_DOCUMENTS"
-                 ]
-                }
-               },
-               "staleArtifacts": {
-                "type": "integer",
-                "minimum": 0
-               },
-               "blockedArtifacts": {
-                "type": "integer",
-                "minimum": 0
-               }
-              },
-              "required": [
-               "discipline",
-               "regenerate",
-               "revalidate",
-               "awaiting",
-               "staleArtifacts",
-               "blockedArtifacts"
-              ],
-              "additionalProperties": false
-             }
-            }
-           },
-           "required": [
-            "targetRevisionId",
-            "disciplines"
-           ],
-           "additionalProperties": false
-          },
           "freshnessVocabulary": {
            "type": "object",
            "properties": {
@@ -63510,12 +63849,13 @@
           "manifestVersion",
           "identity",
           "canonicalModel",
-          "configuration",
           "lineage",
           "diff",
+          "changeImpact",
+          "freshnessImpact",
+          "configuration",
           "modules",
           "disciplines",
-          "changeImpact",
           "freshnessVocabulary",
           "verification",
           "accessPolicy",

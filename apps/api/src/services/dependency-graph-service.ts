@@ -19,6 +19,7 @@ import { KnowledgeRepository } from '../lib/knowledge-repository.js';
 import { OptimizationRepository } from '../lib/optimization-repository.js';
 import { SceneRepository } from '../lib/scene-repository.js';
 import { buildDependencyGraph, GRAPH_LIMITS, limitExceeded, type GraphLimits, type GraphRecord } from '../graph/dependency-graph.js';
+import { pooled, READ_CONCURRENCY } from '../lib/bounded-reads.js';
 import { takeoffFingerprint } from './takeoff-service.js';
 import { constructionFingerprint } from './construction-service.js';
 import { costInputFingerprint } from './cost-service.js';
@@ -119,32 +120,12 @@ export function analysisRecord<F extends AnalysisFamily>(c: Context, family: F, 
     checks: [...bindings(c, d), check('MODEL_HASH', d.modelHash === c.hash), check('INPUT_HASH', inputHashVerified(family, d))] };
 }
 
-/** Per-artifact reads in flight per graph request (ported from `phase37/read-cap`, 0bf1c89): bounds one request's database fan-out to a fixed width. */
-export const READ_CONCURRENCY = 8;
-/**
- * A request-scoped gate: at most `width` reads in flight, started in submission order, with the time budget checked before each one starts.
- * Callers keep their typed Promise.all structure; only the start of each read is deferred.
- */
-function readGate(width: number, tick: () => void) {
-  let active = 0;
-  const queue: (() => void)[] = [];
-  const release = () => { active--; queue.shift()?.(); };
-  return <T>(read: () => Promise<T>): Promise<T> => new Promise<T>((resolve, reject) => {
-    const start = () => {
-      active++;
-      try { tick(); } catch (error) { release(); reject(error); return; }
-      read().then(resolve, reject).finally(release);
-    };
-    if (active < width) start(); else queue.push(start);
-  });
-}
-type Gate = ReturnType<typeof readGate>;
-
+/** `readConcurrency` may lower the per-artifact read width (tests); it can never raise it above READ_CONCURRENCY (8). */
 export type GraphOptions = { limits?: Partial<GraphLimits>; now?: () => number; readConcurrency?: number };
 const inconsistent = (): never => { throw new ApiError(409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', 'The project changed while the graph was read; retry'); };
 
 /** One round of the bounded listings: every family's ids, each takeoff's construction ids and the project's current revision. */
-async function listAll(repository: Repository, projectId: string, revisionId: string, limits: GraphLimits, tick: () => void, gate: Gate) {
+async function listAll(repository: Repository, projectId: string, revisionId: string, limits: GraphLimits, tick: () => void, width: number) {
   const page = { limit: limits.familyPage };
   const [takeoffs, costs, ...analyses] = await Promise.all([
     new TakeoffRepository(repository).list(projectId, revisionId, page), new CostRepository(repository).list(projectId, revisionId, page),
@@ -158,7 +139,7 @@ async function listAll(repository: Repository, projectId: string, revisionId: st
   if (currents.size !== 1) inconsistent();
   const listed = () => 2 + lists.reduce((n, l) => n + l.items.length, 0);
   if (listed() > limits.maxNodes) limitExceeded('NODES');
-  const constructions = await Promise.all(takeoffs!.items.map(t => gate(() => new ConstructionRepository(repository).list(projectId, revisionId, t.id, page))));
+  const constructions = await pooled(takeoffs!.items.map(t => () => new ConstructionRepository(repository).list(projectId, revisionId, t.id, page)), width, tick);
   tick();
   if (constructions.some(l => l.nextCursor !== null)) limitExceeded('FAMILY_PAGE');
   if (listed() + constructions.reduce((n, l) => n + l.items.length, 0) > limits.maxNodes) limitExceeded('NODES');
@@ -175,25 +156,30 @@ async function listAll(repository: Repository, projectId: string, revisionId: st
 export async function dependencyGraph(repository: Repository, projectId: string, revisionId: string, options: GraphOptions = {}) {
   const limits: GraphLimits = { ...GRAPH_LIMITS, ...options.limits }, now = options.now ?? Date.now, deadline = now() + limits.timeBudgetMs;
   const tick = () => { if (now() > deadline) limitExceeded('TIME'); };
-  const gate = readGate(options.readConcurrency ?? READ_CONCURRENCY, tick);
   const revision = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
   tick();
-  const before = await listAll(repository, projectId, revisionId, limits, tick, gate);
+  const width = options.readConcurrency ?? READ_CONCURRENCY;
+  const before = await listAll(repository, projectId, revisionId, limits, tick, width);
   const [structural, environmental, systems, knowledge, optimization, scene] = before.analyses;
-  const details = <T>(items: { id: string }[], read: (id: string) => Promise<{ detail: T }>) => Promise.all(items.map(i => gate(() => read(i.id)).then(r => r.detail)));
-  const [takeoffDetails, constructionDetails, costDetails, analysisDetails] = await Promise.all([
-    Promise.all(before.takeoffs.map(t => gate(() => new TakeoffRepository(repository).read(projectId, revisionId, t.id)))),
-    Promise.all(before.constructions.map(k => gate(() => new ConstructionRepository(repository).read(projectId, revisionId, k.takeoffId, k.id)))),
-    Promise.all(before.costs.map(e => gate(() => new CostRepository(repository).read(projectId, revisionId, e.id)))),
-    Promise.all([
-      details(structural!.items, id => new StructuralRepository(repository).read(projectId, revisionId, id)),
-      details(environmental!.items, id => new EnvironmentalRepository(repository).read(projectId, revisionId, id)),
-      details(systems!.items, id => new SystemsRepository(repository).read(projectId, revisionId, id)),
-      details(knowledge!.items, id => new KnowledgeRepository(repository).read(projectId, revisionId, id)),
-      details(optimization!.items, id => new OptimizationRepository(repository).read(projectId, revisionId, id)),
-      details(scene!.items, id => new SceneRepository(repository).read(projectId, revisionId, id))])]);
+  // Every per-artifact detail read goes through one pool (at most `width` ≤ 8 in flight, the time budget checked before each starts); the
+  // groups are flattened, not pooled separately, so they cannot add up past the bound. Results come back in input order.
+  const detail = <T>(items: { id: string }[], read: (id: string) => Promise<{ detail: T }>) => items.map(i => () => read(i.id).then(r => r.detail));
+  const takeoffReads = before.takeoffs.map(t => () => new TakeoffRepository(repository).read(projectId, revisionId, t.id));
+  const constructionReads = before.constructions.map(k => () => new ConstructionRepository(repository).read(projectId, revisionId, k.takeoffId, k.id));
+  const costReads = before.costs.map(e => () => new CostRepository(repository).read(projectId, revisionId, e.id));
+  const sReads = detail(structural!.items, id => new StructuralRepository(repository).read(projectId, revisionId, id));
+  const eReads = detail(environmental!.items, id => new EnvironmentalRepository(repository).read(projectId, revisionId, id));
+  const yReads = detail(systems!.items, id => new SystemsRepository(repository).read(projectId, revisionId, id));
+  const kReads = detail(knowledge!.items, id => new KnowledgeRepository(repository).read(projectId, revisionId, id));
+  const oReads = detail(optimization!.items, id => new OptimizationRepository(repository).read(projectId, revisionId, id));
+  const cReads = detail(scene!.items, id => new SceneRepository(repository).read(projectId, revisionId, id));
+  const flat = await pooled<unknown>([...takeoffReads, ...constructionReads, ...costReads, ...sReads, ...eReads, ...yReads, ...kReads, ...oReads, ...cReads], width, tick);
+  let at = 0;
+  const take = <R>(reads: (() => Promise<R>)[]) => flat.slice(at, at += reads.length) as R[];
+  const takeoffDetails = take(takeoffReads), constructionDetails = take(constructionReads), costDetails = take(costReads);
+  const analysisDetails = [take(sReads), take(eReads), take(yReads), take(kReads), take(oReads), take(cReads)] as const;
   tick();
-  const after = await listAll(repository, projectId, revisionId, limits, tick, gate);
+  const after = await listAll(repository, projectId, revisionId, limits, tick, width);
   if (JSON.stringify(after.ids) !== JSON.stringify(before.ids)) inconsistent();
 
   const c: Context = { revision, hash: modelHash(revision.model) };
