@@ -113,12 +113,12 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     for (const name of ['CONSTRUCTION_CALCULATION', 'BOQ_COST']) stale(name, 'UPSTREAM_STALE');
     expect(old.disciplines.filter(d => d.freshness !== null).every(d => d.freshness === 'stale')).toBe(true);
     // Every stored artifact of the base is accounted for: none is silently current.
-    expect(old.modules.flatMap(x => x.artifacts).every(x => x.freshness.state === 'stale')).toBe(true);
+    expect(old.modules.flatMap(x => x.artifacts!).every(x => x.freshness.state === 'stale')).toBe(true);
     // ROADMAP L262: the base's freshness impact lists, by discipline, every base output to regenerate against the new revision.
     expect(old.freshnessImpact.targetRevisionId).toBe(edited.id);
     const regenerate = old.freshnessImpact.disciplines.flatMap(d => d.regenerate);
     for (const name of ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D', 'DESIGN_CONCEPTS', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate).toContain(name);
-    expect(old.freshnessImpact.disciplines.reduce((n, d) => n + d.staleArtifacts, 0)).toBe(old.modules.reduce((n, x) => n + x.artifacts.length, 0));
+    expect(old.freshnessImpact.disciplines.reduce((n, d) => n + d.staleArtifacts, 0)).toBe(old.modules.reduce((n, x) => n + x.artifacts!.length, 0));
     expect([old.lineage.parentRevisionId, old.diff.bimDiffHref]).toEqual([null, null]);
 
     const fresh = await manifest(`/api/projects/${a.projectId}/revisions/${edited.id}`);
@@ -159,6 +159,48 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(same.changeImpact.disciplines.every(d => d.impact === 'NOT_AFFECTED' && d.reason === 'MODEL_UNCHANGED')).toBe(true);
   }, 180_000);
 
+  it('roadmap L258: a Phase 30 candidate is listed on its base as not accepted, never resolved; once approved it is lineage of the new revision', async () => {
+    const p = await project('B37 candidates'), ops = `/api/projects/${p.projectId}/revision-operations`;
+    const before = await manifest(p.base);
+    expect(before.candidates).toEqual({ modulesResolve: 'ACCEPTED_REVISION_ONLY', availability: 'AVAILABLE', completeness: 'COMPLETE', items: [] });
+    const text = 'Redesign the exterior of my building using a contemporary glass-inspired façade. Keep the exact floor plans, internal rooms, stairs, structure, '
+      + 'building dimensions, and existing interior unchanged.';
+    const pre = (await ok('POST', ops, { baseRevisionId: p.revision.id, request: { text } })).json() as Json;
+    const awaiting = await manifest(p.base);
+    expect(awaiting.candidates.items).toEqual([{ operationId: pre.id, kind: 'APPEARANCE_MODIFY', status: 'AWAITING_CONSENT', candidateHash: null, createdAt: pre.createdAt,
+      expiresAt: pre.expiresAt, acceptance: 'NOT_ACCEPTED', href: `${ops}/${pre.id}`, comparisonHref: `${ops}/${pre.id}/comparison` }]);
+    const cand = (await ok('POST', `${ops}/${pre.id}/execute`, { preflightHash: pre.preflightHash, consent: { acceptLocks: true, acceptQuote: true } }, 200)).json() as Json;
+    const ready = await manifest(p.base);
+    expect(ready.candidates.items).toMatchObject([{ operationId: pre.id, status: 'CANDIDATE_READY', candidateHash: cand.candidateHash, acceptance: 'NOT_ACCEPTED' }]);
+    await ok('GET', ready.candidates.items[0]!.comparisonHref);
+    // The candidate is listed, not resolved: every module, impact and diff still reads the accepted revision exactly as before it existed.
+    for (const m of [awaiting, ready]) for (const key of ['identity', 'modules', 'disciplines', 'lineage', 'diff', 'changeImpact', 'freshnessImpact', 'verification'] as const)
+      expect(m[key], key).toEqual(before[key]);
+    const committed = (await ok('POST', `${ops}/${pre.id}/approve`, { preflightHash: pre.preflightHash, candidateHash: cand.candidateHash })).json().commit.revision as Json;
+    const base = await manifest(p.base), child = await manifest(`/api/projects/${p.projectId}/revisions/${committed.id}`);
+    expect([base.identity.revisionCurrency, base.candidates.items]).toEqual(['HISTORICAL', []]);
+    expect(child.lineage).toMatchObject({ status: 'LINKED', parentRevisionId: p.revision.id, modelEquivalentToParent: true,
+      operation: { status: 'RECORDED', operationId: pre.id, kind: 'APPEARANCE_MODIFY', baseRevisionId: p.revision.id, modelEquivalentToBase: true } });
+    expect(child.candidates.items).toEqual([]);
+  }, 300_000);
+
+  it('roadmap L259: a partial view filters one discipline or omits artifact lists, keeps the full hash, and every indexed paged view answers', async () => {
+    const full = await manifest(a.base);
+    const part = ProjectManifestSchema.parse((await ok('GET', `${a.base}/manifest?discipline=QUANTITIES_AND_COST&artifacts=omit`)).json());
+    expect(part.view).toEqual({ scope: 'PARTIAL', discipline: 'QUANTITIES_AND_COST', artifacts: 'OMITTED' });
+    expect(part.manifestHash).toBe(full.manifestHash);
+    expect(part.modules.map(x => [x.module, x.artifacts, x.artifactCount])).toEqual(full.modules.filter(x => x.discipline === 'QUANTITIES_AND_COST')
+      .map(x => [x.module, null, x.artifacts!.length]));
+    expect(part.modules.every(x => x.artifactCount > 0)).toBe(true);
+    expect(part.freshnessImpact.disciplines).toEqual(full.freshnessImpact.disciplines.filter(d => d.discipline === 'QUANTITIES_AND_COST'));
+    for (const bad of ['discipline=COST', 'artifacts=none', 'discipline=ENGINEERING&discipline=DESIGN'])
+      expect((await app.inject({ url: `${a.base}/manifest?${bad}`, headers: owner })).statusCode, bad).toBe(400);
+    expect((await app.inject({ url: `${a.base}/manifest?artifacts=omit`, headers: other })).statusCode).toBe(404);
+    const views = full.modules.flatMap(x => x.views.map(v => [x.module, v.href] as const));
+    expect(views.length).toBe(11);
+    for (const [module, href] of views) expect((await app.inject({ url: `${href}?limit=1`, headers: owner })).statusCode, `${module} ${href}`).toBe(200);
+  }, 180_000);
+
   it('M3: a revision committed while the manifest is read is a 409, never a manifest that mixes revisions', async () => {
     const repo = backend.repository('owner');
     const moved: Repository = { ...repo, designConceptRpc: async (name, args) => {
@@ -180,5 +222,27 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     const m = await projectManifest(bare as Repository, a.projectId, a.revision.id);
     expect(mod(m, 'DESIGN_CONCEPTS')).toMatchObject({ availability: 'UNAVAILABLE', missingReason: 'PERSISTENCE_UNAVAILABLE', freshness: null });
     expect(m.lineage.operation.status).toBe('UNAVAILABLE');
+    expect(m.candidates).toEqual({ modulesResolve: 'ACCEPTED_REVISION_ONLY', availability: 'UNAVAILABLE', completeness: 'COMPLETE', items: [] });
+  }, 120_000);
+
+  it('M3/M6: the operation listing completes before the pointer-checking concept listing starts, and a full page of live operations is TRUNCATED', async () => {
+    const repo = backend.repository('owner'), order: string[] = [];
+    const traced: Repository = { ...repo,
+      revisionRpc: async (name, args) => {
+        if (args.p_action !== 'list') return repo.revisionRpc!(name, args);
+        order.push('operations:start'); const r = await repo.revisionRpc!(name, args); order.push('operations:end'); return r;
+      },
+      designConceptRpc: async (name, args) => { if (args.p_action === 'list') order.push('concepts:start'); return repo.designConceptRpc!(name, args); } };
+    await projectManifest(traced, a.projectId, a.revision.id);
+    expect(order).toEqual(['operations:start', 'operations:end', 'concepts:start']);
+    // One bounded page: when it is full and its oldest operation could still be live, more may follow, so the candidates say TRUNCATED.
+    const page = (createdAt: string): Repository => ({ ...repo, revisionRpc: async (name, args) => args.p_action !== 'list' ? repo.revisionRpc!(name, args)
+      : { items: [{ id: randomUUID(), projectId: a.projectId, baseRevisionId: a.revision.id, kind: 'APPEARANCE_MODIFY', status: 'CANDIDATE_READY',
+        operationVersion: 'revision-operation-v1', preflightHash: 'a'.repeat(64), appearanceHash: null, restoreSourceRevisionId: null, candidateHash: 'b'.repeat(64),
+        committedRevisionId: null, createdAt, updatedAt: createdAt, expiresAt: new Date(Date.parse(createdAt) + 86_400_000).toISOString() }],
+        nextCursor: { createdAt, id: randomUUID() } } });
+    const now = Date.now(), at = (hoursAgo: number) => new Date(now - hoursAgo * 3_600_000).toISOString();
+    expect((await projectManifest(page(at(1)), a.projectId, a.revision.id)).candidates).toMatchObject({ completeness: 'TRUNCATED', items: [{ status: 'CANDIDATE_READY' }] });
+    expect((await projectManifest(page(at(26)), a.projectId, a.revision.id)).candidates.completeness).toBe('COMPLETE');
   }, 120_000);
 });

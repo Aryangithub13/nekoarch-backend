@@ -29,21 +29,27 @@
 ### Route and contract
 
 - `GET /api/projects/:projectId/revisions/:revisionId/manifest`, contract `project-manifest-v2`.
-- Strict empty query. Owner-only. `read` rate-limit group (automatic for GET).
+- Strict query: optional `discipline` and `artifacts` (`include` | `omit`), see §6. Owner-only. `read` rate-limit group (automatic for GET).
 - **Derived on read. No migration, table, RPC, environment variable or dependency.**
 
 ### Reads
 
 1. The revision (owner check; 404 otherwise).
 2. The unchanged Phase 37 `dependencyGraph()`: two listing rounds, recomputed hashes, and a 409 on any change.
-3. The revision's design-concept listing (Phase 39 RPC).
-4. Queued and running durable jobs (Phase 32 RPC) with up to 4 detail reads in flight.
+3. One page (100) of the project's Phase 30 operations, newest first (§6). It completes before step 4 starts.
+4. The revision's design-concept listing (Phase 39 RPC).
+5. Queued and running durable jobs (Phase 32 RPC) with up to 4 detail reads in flight.
+6. The parent revision and the Phase 30 lineage (§5.2).
+
+Steps 5 and 6 run alongside steps 3 and 4.
 
 At most `JOB_LIMITS.activePerProject` (4) jobs can be active, so one page of 8 per status holds them all. Otherwise the read is refused with 422 `PROJECT_MANIFEST_LIMIT_EXCEEDED`.
 
 ### Coherence (ROADMAP L258; scenario 17, L747)
 
 The design-concept listing reports the project's current revision after the graph's second round. The pointer only moves forward, so equality with the graph's pointer shows that no revision was committed during the read. A difference is 409 `PROJECT_MANIFEST_READ_INCONSISTENT`.
+
+The operation listing (step 3) finishes before that listing starts, so the same check covers it: a candidate approved after the graph read moves the pointer and is refused, rather than reported as still awaiting approval.
 
 ### Contents (ROADMAP L257, L260)
 
@@ -100,6 +106,8 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 | M8 | Build, typecheck, lint, full suite, route catalog and OpenAPI drift, telemetry allowlist | ROADMAP §K L788 | Local runs; CI on the PR |
 | M9 | Phase tag and staging proof | ROADMAP §K L788 | **Not done.** Owner-authorized only |
 | M10 | ROADMAP L260 `lineage` and `diff`, L253 per-discipline change impact, and L262 dependent-output impact, as machine-readable fields | ROADMAP L253, L260, L262 | Unit and integration tests in §5.3 |
+| M11 | ROADMAP L258 candidates: Phase 30 operations awaiting consent or approval on the revision are listed as `NOT_ACCEPTED`; no module, freshness, impact, diff or verification count reads them; one bounded page, `TRUNCATED` when live operations may lie beyond it (added 2026-10-14) | ROADMAP L258 | §6.3 |
+| M12 | ROADMAP L259 partial-data view and paged-view index: `?discipline=` keeps one discipline's entries, `?artifacts=omit` drops artifact lists, the full manifest's hash is kept, and each module indexes its existing paged or filterable listings (added 2026-10-14) | ROADMAP L259 | §6.3 |
 
 ## 4. Out of scope
 
@@ -110,6 +118,8 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 - Evidence packages, zone assessment and partitions, appearance variants: listed in `notIncluded`.
 - Changes to the graph, overview or discovery semantics beyond one additive `PROJECT_MANIFEST` service row.
 - Merging `phase37/read-cap` (its change is ported by hand in §5.1, not merged).
+- New paged or filterable views. M12 indexes the existing ones, so these modules have none: the building model, acceptance QA, complex verification, construction calculations (listed per takeoff, so there is no per-revision href), engineering assessment and construction documents. Drawing/layer, room-navigation and site/plot views for the frontend workspaces (ROADMAP L259, frontend 31–40, 45–48, 55) are not built here.
+- Resolving a manifest *for* a candidate. A candidate has no revision row until it is approved, so its modules cannot be resolved; the manifest lists it against its base.
 
 ## 5. Follow-up on PR #17: bounded reads and change metadata
 
@@ -129,7 +139,7 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 | The eight family listings per round | Unchanged (`Promise.all` of exactly 8) |
 | `limits.maxNodes`, `familyPage`, `timeBudgetMs` | Unchanged: concurrency control does not replace them |
 | `GraphOptions.readConcurrency` | Can only lower the width (tests use 1) |
-| Manifest side reads | 1 concept listing; 2 job listings, then job details pooled at 4; 1 parent read; 1 lineage read. At most 8 together |
+| Manifest side reads | 1 operation listing, then 1 concept listing (§6); 2 job listings, then job details pooled at 4; 1 parent read; 1 lineage read. At most 7 together |
 
 ### 5.2 Change metadata (ROADMAP L253, L260)
 
@@ -171,3 +181,47 @@ PR #17's branch received `913b584` (read gate) and `aa20a0e` (`lineage`, `diff` 
 
 The rename is a contract change only to the unmerged PR #17; no client consumes `project-manifest-v2` yet.
 
+## 6. Follow-up on PR #17: candidates and partial views (ROADMAP L258–259)
+
+Added 2026-10-14 on top of `2455652`. Derived on read; no migration, table, RPC, environment variable or dependency.
+
+### 6.1 Candidates (M11)
+
+`candidates: { modulesResolve: 'ACCEPTED_REVISION_ONLY', availability, completeness, items }`.
+
+- **Items:** Phase 30 operations based on this revision in `AWAITING_CONSENT` or `CANDIDATE_READY`, oldest first.
+  - The SQL reports a lapsed operation as `EXPIRED`, so it is not listed.
+  - Fields: operation id, kind, status, candidate hash, `createdAt`, `expiresAt`, `acceptance: 'NOT_ACCEPTED'`, the operation `href` and its `comparisonHref`.
+- **Listed, never resolved:** modules, freshness, `changeImpact`, `freshnessImpact`, `diff`, `lineage` and verification counts always describe the accepted revision. A candidate has no revision row until it is approved; after approval it appears in the new revision's `lineage.operation`.
+- **Bounded read:** one page of 100 operations, newest first.
+  - An operation is live for 24 hours (`REVISION_LIMITS.expiryHours`).
+  - If the page is full and its oldest entry is under 25 hours old (one hour allowed for clock skew), live operations may lie beyond it, so the list is `TRUNCATED`. It is not read further.
+- **Coherence:** the listing completes before the pointer-checking concept listing starts (§2).
+- **Without revision-operation persistence:** `availability: 'UNAVAILABLE'`.
+
+### 6.2 Partial view and paged-view index (M12)
+
+**Query:** `?discipline=<one of DISCIPLINES>` and/or `?artifacts=omit`. Anything else, including a repeated `discipline`, is 400.
+
+**The view:**
+- It is cut from the full manifest after that manifest is built; nothing is recomputed.
+- `modules`, `disciplines`, `changeImpact.disciplines` and `freshnessImpact.disciplines` are filtered.
+- Every other section is unchanged, including `manifestHash`, which stays the full manifest's.
+- `view: { scope: 'FULL' | 'PARTIAL', discipline, artifacts: 'INCLUDED' | 'OMITTED' }` says which part the response holds, and is outside the hash.
+- Every module carries `artifactCount`. Its `artifacts` is `null` only in an `artifacts=omit` view.
+
+**`views`:** each module lists its existing per-revision paged listings, with the paging style (`AFTER_ID` for BIM, `CURSOR` otherwise) and filters (`kind` for BIM). There are 11, covering:
+- BIM elements and relationships;
+- takeoffs and cost estimates;
+- structural, environmental, systems and knowledge analyses;
+- optimization studies, design concepts and scene artifacts.
+
+The other modules have no paged view yet and list none (§4).
+
+### 6.3 Tests
+
+| Test | Covers |
+|---|---|
+| `project-manifest.test.ts` | Only this revision's `AWAITING_CONSENT` / `CANDIDATE_READY` operations are listed, oldest first. Identity, modules, disciplines, both impacts, lineage, diff and verification are identical with and without candidates. `UNAVAILABLE` and `TRUNCATED`. Views: BIM, takeoff and none; all 11 indexed routes are GET routes of the catalog. A discipline view keeps exactly that discipline in modules, disciplines and both impacts, both with and without a parent. `artifacts=omit` keeps counts and freshness. The hash and the other sections are unchanged. Bad queries are refused |
+| `project-manifest.integration.test.ts` | Preflight: listed as `AWAITING_CONSENT`. Execute: `CANDIDATE_READY` with its hash, `comparisonHref` answers 200, and every other section is unchanged. Approve: gone from the base; the child's lineage is `LINKED` with the `RECORDED` operation. The operation listing completes before the concept listing starts. A full page whose oldest entry is 1 hour old is `TRUNCATED`; one 26 hours old is `COMPLETE`. Without operation persistence: `UNAVAILABLE`. Partial view over HTTP; 400 on a bad discipline, a bad `artifacts` value or a repeated `discipline`; 404 for another user; every indexed view answers 200 with `limit=1` |
+| Mutation checks | 10 of 10 caught:<ul><li>the base-revision filter;</li><li>the status filter;</li><li>the `changeImpact` filter;</li><li>the `freshnessImpact` filter;</li><li>the module filter;</li><li>hashing without candidates;</li><li>a wrong view route;</li><li>artifacts not omitted;</li><li>truncation never reported;</li><li>the operation and concept listings run in parallel.</li></ul> |

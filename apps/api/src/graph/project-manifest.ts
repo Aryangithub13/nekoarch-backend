@@ -6,8 +6,9 @@ import type { z } from 'zod';
 import type { ProjectRevisionDetailSchema } from '../contracts/projects.js';
 import type { DesignConceptSummarySchema } from '../contracts/design-concepts.js';
 import { NODE_STATES, type DependencyGraph, type GraphFamily, type NodeState } from '../contracts/dependency-graph.js';
-import { DISCIPLINES, FRESHNESS_ASSIGNMENT, GRAPH_STATE_MAPPING, MANIFEST_DIFF_CHANGE_LIMIT, MODULES, NOT_INCLUDED, PROJECT_MANIFEST_VERSION, ProjectManifestSchema,
-  type ChangeImpact, type FreshnessState, type Lineage, type ManifestDiff, type ManifestModule, type ManifestModuleEntry, type ProjectManifest } from '../contracts/project-manifest.js';
+import { CANDIDATE_STATUSES, DISCIPLINES, FRESHNESS_ASSIGNMENT, GRAPH_STATE_MAPPING, MANIFEST_DIFF_CHANGE_LIMIT, MODULES, NOT_INCLUDED, PROJECT_MANIFEST_VERSION,
+  ProjectManifestSchema, type ChangeImpact, type FreshnessState, type Lineage, type ManifestDiff, type ManifestModule, type ManifestModuleEntry, type ManifestQuery,
+  type ProjectManifest } from '../contracts/project-manifest.js';
 import { SERVICES } from '../services/overview-service.js';
 
 /** The revision fields the manifest reads; a full revision detail satisfies it. */
@@ -16,6 +17,7 @@ type Revision = Pick<z.infer<typeof ProjectRevisionDetailSchema>, 'id' | 'revisi
 type Concept = z.infer<typeof DesignConceptSummarySchema>;
 type Freshness = NonNullable<ManifestModuleEntry['freshness']>;
 type Reason = Freshness['reasons'][number];
+type Artifact = NonNullable<ManifestModuleEntry['artifacts']>[number];
 type Def = { module: ManifestModule; discipline: typeof DISCIPLINES[number]; source: ManifestModuleEntry['source']; editability: ManifestModuleEntry['editability'];
   family?: GraphFamily; serviceId?: string; route?: string };
 
@@ -43,6 +45,17 @@ const DEFS: readonly Def[] = Object.freeze([
 ] as const satisfies readonly Def[]);
 if (DEFS.map(d => d.module).join() !== MODULES.join()) throw new Error('Manifest module table and contract disagree');
 
+/** Roadmap L259: the existing paged or filterable listings of a module's resource for this revision. Modules not listed have no such view yet. */
+const page = (path: string, paging: 'AFTER_ID' | 'CURSOR' = 'CURSOR', filters: string[] = []) => ({ route: `${REVISION_ROUTE}/${path}`, paging, filters });
+const VIEWS: Partial<Record<ManifestModule, readonly ReturnType<typeof page>[]>> = Object.freeze({
+  BIM: [page('bim/elements', 'AFTER_ID', ['kind']), page('bim/relationships', 'AFTER_ID', ['kind'])],
+  QUANTITY_TAKEOFF: [page('takeoffs')], BOQ_COST: [page('cost-estimates')],
+  STRUCTURAL_ANALYSIS: [page('structural/analyses')], ENVIRONMENTAL_ANALYSIS: [page('environmental/analyses')],
+  BUILDING_SYSTEMS_ANALYSIS: [page('systems/analyses')], SPECIALIZED_KNOWLEDGE: [page('knowledge/analyses')],
+  DESIGN_OPTIMIZATION: [page('optimization/studies')], DESIGN_CONCEPTS: [page('design-concepts')], SCENE_3D: [page('scene/artifacts')],
+});
+export const MANIFEST_VIEW_ROUTES = Object.freeze(Object.values(VIEWS).flatMap(v => v.map(x => x.route)));
+
 /** Durable-job kinds that produce a stored artifact of a manifest module (Phase 32 `SCENE_COMPILE`, `OPTIMIZATION_STUDY`). */
 export const JOB_MODULES = Object.freeze({ SCENE_COMPILE: 'SCENE_3D', OPTIMIZATION_STUDY: 'DESIGN_OPTIMIZATION' } as const);
 export type ActiveJob = { jobId: string; module: typeof JOB_MODULES[keyof typeof JOB_MODULES] };
@@ -61,8 +74,12 @@ export type ManifestInput = {
   designConcepts: { items: Concept[]; truncated: boolean } | null;
   /** null when durable-job persistence is not configured; otherwise the active jobs bound to this revision. */
   activeJobs: ActiveJob[] | null;
+  /** null when revision-operation persistence is not configured; otherwise the newest Phase 30 operations of the project (one bounded page). */
+  operations: { items: Operation[]; truncated: boolean } | null;
   integrityCheckedAt: string;
 };
+type Operation = { id: string; baseRevisionId: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | null; status: string; candidateHash: string | null; createdAt: string;
+  expiresAt: string };
 
 // blocked outranks stale outranks pending outranks current: an aggregate never reads better than its worst member.
 const RANK: Record<FreshnessState, number> = { current: 0, pending: 1, stale: 2, blocked: 3, not_applicable: -1, verified: -1 };
@@ -157,10 +174,11 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     return anchorFreshness.state === 'stale' ? { ...anchorFreshness, reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED', nodeId: revisionKey }] } : anchorFreshness;
   };
 
-  const modules = DEFS.map((d): ManifestModuleEntry => {
+  const modules = DEFS.map((d): Omit<ManifestModuleEntry, 'artifactCount' | 'artifacts'> & { artifacts: Artifact[] } => {
     const service = d.serviceId ? SERVICES.find(s => s.serviceId === d.serviceId)! : null;
     const base = { module: d.module, discipline: d.discipline, version: service?.version ?? revision.qa.qaVersion, href: href(d.route ?? service!.route),
-      source: d.source, editability: d.editability, completeness: 'COMPLETE' as const, missingReason: null, activeJobIds: [] as string[], artifacts: [] as ManifestModuleEntry['artifacts'] };
+      source: d.source, editability: d.editability, completeness: 'COMPLETE' as const, missingReason: null, activeJobIds: [] as string[], artifacts: [] as Artifact[],
+      views: (VIEWS[d.module] ?? []).map(v => ({ href: href(v.route), paging: v.paging, filters: [...v.filters] })) };
     if (d.source === 'DERIVED_ON_READ') return { ...base, availability: 'DERIVED_ON_READ', freshness: anchorFreshness };
     if (d.module === 'DESIGN_CONCEPTS') {
       if (!input.designConcepts) return { ...base, availability: 'UNAVAILABLE', freshness: null, missingReason: 'PERSISTENCE_UNAVAILABLE' };
@@ -200,18 +218,26 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     return { discipline, regenerate: withState('stale'), revalidate: withState('blocked'), awaiting: withState('pending'), staleArtifacts: count('stale'),
       blockedArtifacts: count('blocked') };
   }) };
+  // Candidates on this revision (roadmap L258), oldest first like the artifacts. Listed only: no module, freshness, impact or diff above reads them.
+  const candidates = { modulesResolve: 'ACCEPTED_REVISION_ONLY' as const, availability: input.operations ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,
+    completeness: input.operations?.truncated ? 'TRUNCATED' as const : 'COMPLETE' as const,
+    items: (input.operations?.items ?? []).filter(o => o.baseRevisionId === revision.id && (CANDIDATE_STATUSES as readonly string[]).includes(o.status))
+      .sort((x, y) => Date.parse(x.createdAt) - Date.parse(y.createdAt) || (x.id < y.id ? -1 : x.id > y.id ? 1 : 0))
+      .map(o => { const at = `/api/projects/${projectId}/revision-operations/${o.id}`;
+        return { operationId: o.id, kind: o.kind, status: o.status as typeof CANDIDATE_STATUSES[number], candidateHash: o.candidateHash, createdAt: o.createdAt,
+          expiresAt: o.expiresAt, acceptance: 'NOT_ACCEPTED' as const, href: at, comparisonHref: `${at}/comparison` }; }) };
   const site = revision.model.site;
   const body = {
     manifestVersion: PROJECT_MANIFEST_VERSION,
     identity: { projectId, revisionId: revision.id, revisionNumber: revision.revisionNumber, parentRevisionId: revision.parentRevisionId,
       projectCurrentRevisionId: current, revisionCurrency: current === null ? 'NO_CURRENT_REVISION' as const : current === revision.id ? 'CURRENT' as const : 'HISTORICAL' as const,
       modelHash: hash, acceptanceQaId: revision.qa.id, createdAt: revision.createdAt },
-    lineage, diff, changeImpact: buildChangeImpact(diff), freshnessImpact,
+    lineage, diff, changeImpact: buildChangeImpact(diff), freshnessImpact, candidates,
     canonicalModel: { schemaVersion: revision.model.schemaVersion, completeness: revision.completeness, units: revision.model.units, coordinateSystem: revision.model.coordinateSystem,
       site: { present: site !== null, northMilliDegrees: site?.northMilliDegrees ?? null, referenceDatum: site?.referenceOrigin?.datum ?? null },
       counts: { levels: revision.model.levels.length, spaces: revision.model.spaces.length, walls: revision.model.walls.length, openings: revision.model.openings.length } },
     configuration: { sourceMode: revision.sourceMode, generatorVersion: revision.generatorVersion, generationIdentity: revision.identity ?? null },
-    modules, disciplines,
+    modules: modules.map(m => ({ ...m, artifactCount: m.artifacts.length })), disciplines,
     freshnessVocabulary: { states: FRESHNESS_ASSIGNMENT.map(s => ({ ...s })), graphStateMapping: { ...GRAPH_STATE_MAPPING } },
     verification: { scope: 'PROVENANCE_INTEGRITY' as const, graphVersion: graph.graphVersion, graphHash: graph.graphHash,
       nodeStates: Object.fromEntries(NODE_STATES.map(s => [s, graph.nodes.filter(n => n.state === s).length])) },
@@ -219,5 +245,21 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     notIncluded: NOT_INCLUDED.map(n => ({ ...n })),
     claims: { engineeringCorrectness: 'NOT_CLAIMED' as const, solverValidation: 'NOT_CLAIMED' as const, professionalReview: 'NOT_CLAIMED' as const },
   };
-  return ProjectManifestSchema.parse({ ...body, integrityCheckedAt: input.integrityCheckedAt, manifestHash: costHash(body) });
+  return ProjectManifestSchema.parse({ ...body, integrityCheckedAt: input.integrityCheckedAt, manifestHash: costHash(body),
+    view: { scope: 'FULL', discipline: null, artifacts: 'INCLUDED' } });
+}
+
+/**
+ * Roadmap L259 partial-data view: one discipline's modules, discipline freshness and impact entries, and/or the modules without their artifact lists. Cut
+ * from the full manifest, so it keeps that manifest's hash, identity, lineage, diff, candidates and verification counts; nothing is recomputed for the view.
+ */
+export function manifestView(manifest: ProjectManifest, query: ManifestQuery): ProjectManifest {
+  const { discipline = null, artifacts } = query, keep = (d: { discipline: string }) => discipline === null || d.discipline === discipline;
+  if (discipline === null && artifacts === 'include') return manifest;
+  return ProjectManifestSchema.parse({ ...manifest,
+    modules: manifest.modules.filter(keep).map(m => artifacts === 'omit' ? { ...m, artifacts: null } : m),
+    disciplines: manifest.disciplines.filter(keep),
+    changeImpact: { ...manifest.changeImpact, disciplines: manifest.changeImpact.disciplines.filter(keep) },
+    freshnessImpact: { ...manifest.freshnessImpact, disciplines: manifest.freshnessImpact.disciplines.filter(keep) },
+    view: { scope: 'PARTIAL', discipline, artifacts: artifacts === 'omit' ? 'OMITTED' : 'INCLUDED' } });
 }

@@ -92,12 +92,30 @@ const ReasonSchema = z.object({ code: z.enum(MANIFEST_REASON_CODES), nodeId: nod
 const FreshnessSchema = z.object({ state: freshness, reasons: z.array(ReasonSchema), sourceRevisionId: id, targetRevisionId: id.nullable() }).strict();
 export const ManifestArtifactSchema = z.object({ artifactId: id, nodeId: nodeId.nullable(), revisionId: id, createdAt: z.string(),
   graphState: z.enum(NODE_STATES).nullable(), freshness: FreshnessSchema }).strict();
+const path = z.string().startsWith('/api/projects/');
+/** Roadmap L259: an existing paged or filterable view of the module's resource, so a workspace can read it in parts. */
+export const ManifestViewSchema = z.object({ href: path, paging: z.enum(['AFTER_ID', 'CURSOR']), filters: z.array(z.string().max(40)) }).strict();
 export const ManifestModuleSchema = z.object({
-  module: z.enum(MODULES), discipline: z.enum(DISCIPLINES), version: z.string().max(100), href: z.string().startsWith('/api/projects/'),
+  module: z.enum(MODULES), discipline: z.enum(DISCIPLINES), version: z.string().max(100), href: path,
   source: z.enum(SOURCE_KINDS), editability: z.enum(EDITABILITY), availability: z.enum(AVAILABILITY),
   completeness: z.enum(['COMPLETE', 'TRUNCATED']), freshness: FreshnessSchema.nullable(), missingReason: z.enum(MISSING_REASONS).nullable(),
-  activeJobIds: z.array(id), artifacts: z.array(ManifestArtifactSchema),
+  activeJobIds: z.array(id), artifactCount: z.number().int().min(0),
+  /** null only in a view requested with `artifacts=omit`; `artifactCount` is always present. */
+  artifacts: z.array(ManifestArtifactSchema).nullable(), views: z.array(ManifestViewSchema),
 }).strict();
+/** Phase 30 operation states that hold an unaccepted candidate of a revision (the SQL reports an expired one as EXPIRED). */
+export const CANDIDATE_STATUSES = ['AWAITING_CONSENT', 'CANDIDATE_READY'] as const;
+/**
+ * Roadmap L258 candidates: Phase 30 operations based on this revision that await consent or approval. They are listed, never resolved: every module
+ * reads the accepted revision only, and a candidate never feeds freshness, impact, diff or the graph.
+ */
+export const CandidatesSchema = z.object({ modulesResolve: z.literal('ACCEPTED_REVISION_ONLY'), availability: z.enum(['AVAILABLE', 'UNAVAILABLE']),
+  completeness: z.enum(['COMPLETE', 'TRUNCATED']),
+  items: z.array(z.object({ operationId: id, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(), status: z.enum(CANDIDATE_STATUSES), candidateHash: hash.nullable(),
+    createdAt: z.string(), expiresAt: z.string(), acceptance: z.literal('NOT_ACCEPTED'), href: path, comparisonHref: path }).strict()) }).strict();
+/** Roadmap L259 partial-data view of the manifest. Without a query the view is the full manifest. */
+export const ManifestQuerySchema = z.object({ discipline: z.enum(DISCIPLINES).optional(), artifacts: z.enum(['include', 'omit']).default('include') }).strict();
+export type ManifestQuery = z.infer<typeof ManifestQuerySchema>;
 /**
  * What the manifest's own freshness asks of each discipline, against the project's current revision (ROADMAP L262): modules to regenerate (stale),
  * revalidate (blocked) or await (pending), with artifact counts. Read only from module freshness, so it never reads better than that freshness.
@@ -114,7 +132,7 @@ export const ProjectManifestSchema = z.object({
     coordinateSystem: z.literal('x-right-y-up-z-depth'),
     site: z.object({ present: z.boolean(), northMilliDegrees: z.number().int().nullable(), referenceDatum: z.string().nullable() }).strict(),
     counts: z.object({ levels: z.number().int(), spaces: z.number().int(), walls: z.number().int(), openings: z.number().int() }).strict() }).strict(),
-  lineage: LineageSchema, diff: DiffSchema, changeImpact: ChangeImpactSchema, freshnessImpact: FreshnessImpactSchema,
+  lineage: LineageSchema, diff: DiffSchema, changeImpact: ChangeImpactSchema, freshnessImpact: FreshnessImpactSchema, candidates: CandidatesSchema,
   configuration: z.object({ sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), generationIdentity: z.unknown().nullable() }).strict(),
   modules: z.array(ManifestModuleSchema),
   disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), freshness: freshness.nullable(), modules: z.array(z.enum(MODULES)) }).strict()),
@@ -127,7 +145,13 @@ export const ProjectManifestSchema = z.object({
   claims: z.object({ engineeringCorrectness: z.literal('NOT_CLAIMED'), solverValidation: z.literal('NOT_CLAIMED'), professionalReview: z.literal('NOT_CLAIMED') }).strict(),
   /** Read time of the integrity recomputation (roadmap `last_verified`). Not covered by manifestHash, so the hash is deterministic per stored state. */
   integrityCheckedAt: z.string().datetime(),
+  /** Hash of the full manifest, whatever the view: a partial view carries the hash of the manifest it was cut from. */
   manifestHash: hash,
+  /**
+   * Which part of the manifest this response holds. `PARTIAL` keeps one discipline's modules, discipline freshness and impact entries, or omits artifact
+   * lists. Outside the hash.
+   */
+  view: z.object({ scope: z.enum(['FULL', 'PARTIAL']), discipline: z.enum(DISCIPLINES).nullable(), artifacts: z.enum(['INCLUDED', 'OMITTED']) }).strict(),
 }).strict();
 export type ProjectManifest = z.infer<typeof ProjectManifestSchema>;
 export type ManifestModuleEntry = z.infer<typeof ManifestModuleSchema>;

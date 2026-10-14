@@ -38,7 +38,7 @@ import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSch
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
-import { ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
+import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
 import { DesignConceptDetailSchema, DesignConceptListSchema, DesignConceptPageQuerySchema, DesignConceptReadQuerySchema, DesignConceptRequestSchema } from '../apps/api/src/contracts/design-concepts.js';
@@ -68,7 +68,7 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/revisions/generate`]: { body: GenerateRevisionRequestSchema, response: RevisionCommitResponseSchema, status: 201 },
   [`GET ${R}`]: { response: ProjectRevisionDetailSchema }, [`GET ${R}/overview`]: { query: empty, response: null },
   [`GET ${R}/dependency-graph`]: { query: empty, response: DependencyGraphSchema },
-  [`GET ${R}/manifest`]: { query: empty, response: ProjectManifestSchema },
+  [`GET ${R}/manifest`]: { query: ManifestQuerySchema, response: ProjectManifestSchema },
   [`GET ${R}/documents`]: { query: DocumentsQuerySchema, response: DocumentsManifestSchema },
   [`GET ${R}/documents/plan-sheets/:levelId`]: { query: DocumentsQuerySchema, media: 'image/svg+xml' },
   [`GET ${R}/documents/schedules`]: { query: DocumentsQuerySchema, response: SchedulesResponseSchema },

@@ -62622,6 +62622,35 @@
        "type": "string",
        "format": "uuid"
       }
+     },
+     {
+      "name": "discipline",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "ARCHITECTURE",
+        "QUANTITIES_AND_COST",
+        "ENGINEERING",
+        "DESIGN",
+        "VISUALIZATION",
+        "DOCUMENTATION"
+       ]
+      }
+     },
+     {
+      "name": "artifacts",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "include",
+        "omit"
+       ],
+       "default": "include"
+      }
      }
     ],
     "responses": {
@@ -63342,6 +63371,103 @@
            ],
            "additionalProperties": false
           },
+          "candidates": {
+           "type": "object",
+           "properties": {
+            "modulesResolve": {
+             "type": "string",
+             "enum": [
+              "ACCEPTED_REVISION_ONLY"
+             ]
+            },
+            "availability": {
+             "type": "string",
+             "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE"
+             ]
+            },
+            "completeness": {
+             "type": "string",
+             "enum": [
+              "COMPLETE",
+              "TRUNCATED"
+             ]
+            },
+            "items": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "operationId": {
+                "$ref": "#/components/properties/identity/properties/projectId"
+               },
+               "kind": {
+                "type": "string",
+                "enum": [
+                 "APPEARANCE_MODIFY",
+                 "RESTORE"
+                ],
+                "nullable": true
+               },
+               "status": {
+                "type": "string",
+                "enum": [
+                 "AWAITING_CONSENT",
+                 "CANDIDATE_READY"
+                ]
+               },
+               "candidateHash": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/properties/identity/properties/modelHash"
+                 }
+                ],
+                "nullable": true
+               },
+               "createdAt": {
+                "type": "string"
+               },
+               "expiresAt": {
+                "type": "string"
+               },
+               "acceptance": {
+                "type": "string",
+                "enum": [
+                 "NOT_ACCEPTED"
+                ]
+               },
+               "href": {
+                "type": "string",
+                "pattern": "^\\/api\\/projects\\/"
+               },
+               "comparisonHref": {
+                "$ref": "#/components/properties/candidates/properties/items/items/properties/href"
+               }
+              },
+              "required": [
+               "operationId",
+               "kind",
+               "status",
+               "candidateHash",
+               "createdAt",
+               "expiresAt",
+               "acceptance",
+               "href",
+               "comparisonHref"
+              ],
+              "additionalProperties": false
+             }
+            }
+           },
+           "required": [
+            "modulesResolve",
+            "availability",
+            "completeness",
+            "items"
+           ],
+           "additionalProperties": false
+          },
           "configuration": {
            "type": "object",
            "properties": {
@@ -63408,8 +63534,7 @@
               "maxLength": 100
              },
              "href": {
-              "type": "string",
-              "pattern": "^\\/api\\/projects\\/"
+              "$ref": "#/components/properties/candidates/properties/items/items/properties/href"
              },
              "source": {
               "type": "string",
@@ -63532,6 +63657,10 @@
                "$ref": "#/components/properties/identity/properties/projectId"
               }
              },
+             "artifactCount": {
+              "type": "integer",
+              "minimum": 0
+             },
              "artifacts": {
               "type": "array",
               "items": {
@@ -63577,6 +63706,38 @@
                 "freshness"
                ],
                "additionalProperties": false
+              },
+              "nullable": true
+             },
+             "views": {
+              "type": "array",
+              "items": {
+               "type": "object",
+               "properties": {
+                "href": {
+                 "$ref": "#/components/properties/candidates/properties/items/items/properties/href"
+                },
+                "paging": {
+                 "type": "string",
+                 "enum": [
+                  "AFTER_ID",
+                  "CURSOR"
+                 ]
+                },
+                "filters": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "maxLength": 40
+                 }
+                }
+               },
+               "required": [
+                "href",
+                "paging",
+                "filters"
+               ],
+               "additionalProperties": false
               }
              }
             },
@@ -63592,7 +63753,9 @@
              "freshness",
              "missingReason",
              "activeJobIds",
-             "artifacts"
+             "artifactCount",
+             "artifacts",
+             "views"
             ],
             "additionalProperties": false
            }
@@ -63843,6 +64006,43 @@
           },
           "manifestHash": {
            "$ref": "#/components/properties/identity/properties/modelHash"
+          },
+          "view": {
+           "type": "object",
+           "properties": {
+            "scope": {
+             "type": "string",
+             "enum": [
+              "FULL",
+              "PARTIAL"
+             ]
+            },
+            "discipline": {
+             "type": "string",
+             "enum": [
+              "ARCHITECTURE",
+              "QUANTITIES_AND_COST",
+              "ENGINEERING",
+              "DESIGN",
+              "VISUALIZATION",
+              "DOCUMENTATION"
+             ],
+             "nullable": true
+            },
+            "artifacts": {
+             "type": "string",
+             "enum": [
+              "INCLUDED",
+              "OMITTED"
+             ]
+            }
+           },
+           "required": [
+            "scope",
+            "discipline",
+            "artifacts"
+           ],
+           "additionalProperties": false
           }
          },
          "required": [
@@ -63853,6 +64053,7 @@
           "diff",
           "changeImpact",
           "freshnessImpact",
+          "candidates",
           "configuration",
           "modules",
           "disciplines",
@@ -63862,7 +64063,8 @@
           "notIncluded",
           "claims",
           "integrityCheckedAt",
-          "manifestHash"
+          "manifestHash",
+          "view"
          ],
          "additionalProperties": false
         }

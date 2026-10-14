@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { buildDependencyGraph, type GraphInput, type GraphRecord } from '../src/graph/dependency-graph.js';
-import { buildProjectManifest, type ManifestInput } from '../src/graph/project-manifest.js';
-import { FRESHNESS_STATES, GRAPH_STATE_MAPPING, MODULES, ProjectManifestSchema } from '../src/contracts/project-manifest.js';
+import { readFileSync } from 'node:fs';
+import { buildProjectManifest, manifestView, MANIFEST_VIEW_ROUTES, type ManifestInput } from '../src/graph/project-manifest.js';
+import { DISCIPLINES, FRESHNESS_STATES, GRAPH_STATE_MAPPING, ManifestQuerySchema, MODULES, ProjectManifestSchema } from '../src/contracts/project-manifest.js';
 import { NODE_STATES } from '../src/contracts/dependency-graph.js';
 import { modelHash } from '../src/lib/generation-identity.js';
 import { MANIFEST_DIFF_CHANGE_LIMIT } from '../src/contracts/project-manifest.js';
@@ -30,7 +31,7 @@ const concept = (n: number, patch: Record<string, unknown> = {}) => ({ id: uuid(
   source: 'DETERMINISTIC_TEMPLATE' as const, providerId: null, modelId: null, alternativeCount: 1, modelHash: HASH, inputHash: 'b'.repeat(64), contentHash: 'c'.repeat(64),
   createdAt: at(n), ...patch });
 const manifest = (records = chain(), current: string | null = REV, extra: Partial<ManifestInput> = {}) => buildProjectManifest({ projectId: PROJECT, revision: revision(),
-  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], integrityCheckedAt: at(99),
+  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, integrityCheckedAt: at(99),
   ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } }, ...extra });
 const mod = (m: ReturnType<typeof buildProjectManifest>, name: string) => m.modules.find(x => x.module === name)!;
 
@@ -83,7 +84,7 @@ describe('B37 Unified Project Manifest v2 (pure builder)', () => {
     expect(mod(withScene, 'SCENE_3D')).toMatchObject({ activeJobIds: [uuid(51)], freshness: { state: 'current' } });
     expect(m.freshnessVocabulary.states.filter(s => !s.assigned).map(s => s.state)).toEqual(['not_applicable', 'verified']);
     for (const variant of [m, withScene, manifest(chain(), NEWER), manifest(chain(), null)]) {
-      const states = [...variant.modules.flatMap(x => [x.freshness?.state, ...x.artifacts.map(a => a.freshness.state)]), ...variant.disciplines.map(d => d.freshness)];
+      const states = [...variant.modules.flatMap(x => [x.freshness?.state, ...x.artifacts!.map(a => a.freshness.state)]), ...variant.disciplines.map(d => d.freshness)];
       expect(states).not.toContain('verified');
       expect(states).not.toContain('not_applicable');
     }
@@ -93,10 +94,68 @@ describe('B37 Unified Project Manifest v2 (pure builder)', () => {
     const m = manifest(chain(), REV, { designConcepts: { items: [concept(60), concept(61, { modelHash: 'd'.repeat(64) })], truncated: true } });
     const d = mod(m, 'DESIGN_CONCEPTS');
     expect(d).toMatchObject({ availability: 'AVAILABLE', completeness: 'TRUNCATED', source: 'ADVISORY_ARTIFACT', editability: 'ADVISORY_READ_ONLY' });
-    expect(d.artifacts.map(a => [a.artifactId, a.freshness.state, a.freshness.reasons[0]?.code ?? null])).toEqual([[uuid(60), 'current', null], [uuid(61), 'blocked', 'MODEL_HASH_MISMATCH']]);
+    expect(d.artifacts!.map(a => [a.artifactId, a.freshness.state, a.freshness.reasons[0]?.code ?? null])).toEqual([[uuid(60), 'current', null], [uuid(61), 'blocked', 'MODEL_HASH_MISMATCH']]);
     expect(d.freshness!.state).toBe('blocked');
     expect(mod(manifest(chain(), NEWER, { designConcepts: { items: [concept(60)], truncated: false } }), 'DESIGN_CONCEPTS').freshness!.state).toBe('stale');
     expect(mod(manifest(chain(), REV, { designConcepts: null }), 'DESIGN_CONCEPTS')).toMatchObject({ availability: 'UNAVAILABLE', missingReason: 'PERSISTENCE_UNAVAILABLE' });
+  });
+
+  it('roadmap L258: candidates on this revision are listed as not accepted and never feed a module, freshness, impact or diff', () => {
+    const op = (n: number, status: string, baseRevisionId = REV) => ({ id: uuid(n), baseRevisionId, kind: 'APPEARANCE_MODIFY' as const, status,
+      candidateHash: status === 'CANDIDATE_READY' ? 'e'.repeat(64) : null, createdAt: at(n), expiresAt: at(n + 86_400) });
+    // Newest first, as the Phase 30 listing returns them; another revision's candidate and finished operations are not candidates of this one.
+    const items = [op(75, 'REJECTED'), op(74, 'EXPIRED'), op(73, 'COMMITTED'), op(72, 'CANDIDATE_READY', NEWER), op(71, 'AWAITING_CONSENT'), op(70, 'CANDIDATE_READY')];
+    const without = manifest(), withOps = manifest(chain(), REV, { operations: { items, truncated: false } });
+    const ops = `/api/projects/${PROJECT}/revision-operations`;
+    expect(withOps.candidates).toEqual({ modulesResolve: 'ACCEPTED_REVISION_ONLY', availability: 'AVAILABLE', completeness: 'COMPLETE', items: [
+      { operationId: uuid(70), kind: 'APPEARANCE_MODIFY', status: 'CANDIDATE_READY', candidateHash: 'e'.repeat(64), createdAt: at(70), expiresAt: at(86_470),
+        acceptance: 'NOT_ACCEPTED', href: `${ops}/${uuid(70)}`, comparisonHref: `${ops}/${uuid(70)}/comparison` },
+      { operationId: uuid(71), kind: 'APPEARANCE_MODIFY', status: 'AWAITING_CONSENT', candidateHash: null, createdAt: at(71), expiresAt: at(86_471),
+        acceptance: 'NOT_ACCEPTED', href: `${ops}/${uuid(71)}`, comparisonHref: `${ops}/${uuid(71)}/comparison` }] });
+    // Every module still resolves the accepted revision: everything but the candidate list is identical with or without candidates.
+    for (const key of ['identity', 'modules', 'disciplines', 'changeImpact', 'freshnessImpact', 'verification', 'lineage', 'diff'] as const)
+      expect(withOps[key], key).toEqual(without[key]);
+    expect(withOps.manifestHash).not.toBe(without.manifestHash);
+    expect(without.candidates).toEqual({ modulesResolve: 'ACCEPTED_REVISION_ONLY', availability: 'UNAVAILABLE', completeness: 'COMPLETE', items: [] });
+    expect(manifest(chain(), REV, { operations: { items: [], truncated: true } }).candidates).toMatchObject({ availability: 'AVAILABLE', completeness: 'TRUNCATED' });
+  });
+
+  it('roadmap L259: modules index their existing paged views, and a partial view is cut from the full manifest without recomputing it', () => {
+    const m = manifest(chain(), NEWER), R = `/api/projects/${PROJECT}/revisions/${REV}`;
+    expect(mod(m, 'BIM').views).toEqual([{ href: `${R}/bim/elements`, paging: 'AFTER_ID', filters: ['kind'] }, { href: `${R}/bim/relationships`, paging: 'AFTER_ID', filters: ['kind'] }]);
+    expect(mod(m, 'QUANTITY_TAKEOFF').views).toEqual([{ href: `${R}/takeoffs`, paging: 'CURSOR', filters: [] }]);
+    expect(mod(m, 'BUILDING_MODEL').views).toEqual([]);
+    // Every indexed view is a real GET route of the catalog.
+    const catalog = (JSON.parse(readFileSync(new URL('../../../docs/modernization/api-routes.json', import.meta.url), 'utf8')) as { method: string; url: string }[])
+      .filter(r => r.method === 'GET').map(r => r.url);
+    expect(MANIFEST_VIEW_ROUTES.length).toBe(11);
+    for (const route of MANIFEST_VIEW_ROUTES) expect(catalog, route).toContain(route);
+    expect(m.modules.every(x => x.artifactCount === x.artifacts!.length)).toBe(true);
+    expect(m.view).toEqual({ scope: 'FULL', discipline: null, artifacts: 'INCLUDED' });
+
+    const query = (q: Record<string, string>) => ManifestQuerySchema.parse(q);
+    expect(manifestView(m, query({}))).toBe(m);
+    const cost = manifestView(m, query({ discipline: 'QUANTITIES_AND_COST' }));
+    expect(ProjectManifestSchema.parse(cost)).toEqual(cost);
+    expect(cost.view).toEqual({ scope: 'PARTIAL', discipline: 'QUANTITIES_AND_COST', artifacts: 'INCLUDED' });
+    expect(cost.modules.map(x => x.module)).toEqual(['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST']);
+    expect(cost.modules).toEqual(m.modules.filter(x => x.discipline === 'QUANTITIES_AND_COST'));
+    expect([cost.disciplines, cost.freshnessImpact.disciplines].map(list => list.map(d => d.discipline))).toEqual([['QUANTITIES_AND_COST'], ['QUANTITIES_AND_COST']]);
+    expect(cost.freshnessImpact.disciplines).toEqual(m.freshnessImpact.disciplines.filter(d => d.discipline === 'QUANTITIES_AND_COST'));
+    // A root revision has no change impact entries; with a parent there is one per discipline, and the view keeps the selected one.
+    expect([m.changeImpact.status, cost.changeImpact]).toEqual(['NO_PARENT', m.changeImpact]);
+    const changed = withParent(authored()), cut = manifestView(changed, query({ discipline: 'ENGINEERING' }));
+    expect(changed.changeImpact.disciplines.length).toBe(DISCIPLINES.length);
+    expect(cut.changeImpact).toEqual({ ...changed.changeImpact, disciplines: changed.changeImpact.disciplines.filter(d => d.discipline === 'ENGINEERING') });
+    // The view keeps the full manifest's hash, identity, lineage, diff, candidates and verification counts.
+    for (const key of ['manifestHash', 'identity', 'lineage', 'diff', 'candidates', 'verification'] as const) expect(cost[key], key).toEqual(m[key]);
+    expect([cost.changeImpact.status, cost.freshnessImpact.targetRevisionId]).toEqual([m.changeImpact.status, m.freshnessImpact.targetRevisionId]);
+    const slim = manifestView(m, query({ artifacts: 'omit' }));
+    expect(slim.view).toEqual({ scope: 'PARTIAL', discipline: null, artifacts: 'OMITTED' });
+    expect(slim.modules.map(x => [x.module, x.artifacts, x.artifactCount, x.freshness])).toEqual(m.modules.map(x => [x.module, null, x.artifactCount, x.freshness]));
+    expect([slim.changeImpact, slim.freshnessImpact]).toEqual([m.changeImpact, m.freshnessImpact]);
+    for (const discipline of DISCIPLINES) expect(manifestView(m, query({ discipline, artifacts: 'omit' })).modules.every(x => x.discipline === discipline)).toBe(true);
+    for (const bad of [{ discipline: 'COST' }, { artifacts: 'none' }, { expand: '1' }]) expect(ManifestQuerySchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
   });
 
   it('is deterministic: record order and read time do not change the manifest hash', () => {
@@ -113,7 +172,7 @@ const child = (patch: Record<string, unknown> = {}) => ({ ...(revision() as obje
 const parentOf = (model: Model, patch: Record<string, unknown> = {}) => ({ id: PARENT, revisionNumber: 1, createdAt: at(-1), identity: null, model, ...patch }) as never;
 const withParent = (parentModel: Model | null, opts: { readable?: boolean; parentPatch?: Record<string, unknown>; childPatch?: Record<string, unknown>;
   operation?: ManifestInput['ancestry']['operation'] } = {}) => buildProjectManifest({ projectId: PROJECT, revision: child(opts.childPatch), graph: graph(chain()),
-  designConcepts: { items: [], truncated: false }, activeJobs: [], integrityCheckedAt: at(99),
+  designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, integrityCheckedAt: at(99),
   ancestry: { parent: parentModel ? parentOf(parentModel, opts.parentPatch) : null, parentReadable: opts.readable ?? true,
     operation: opts.operation === undefined ? { operation: null, modelEquivalentToBase: null } : opts.operation } });
 
@@ -186,7 +245,7 @@ describe('B37 change metadata: lineage, diff and per-discipline impact', () => {
       expect([m.diff.status, m.diff.unavailableReason, m.changeImpact.status], reason).toEqual(['UNAVAILABLE', 'LINEAGE_INCONSISTENT', 'UNAVAILABLE']);
     }
     const badRoot = buildProjectManifest({ projectId: PROJECT, revision: { ...(revision() as object), revisionNumber: 3 } as never, graph: graph(chain()),
-      designConcepts: null, activeJobs: null, integrityCheckedAt: at(99), ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } } });
+      designConcepts: null, activeJobs: null, operations: null, integrityCheckedAt: at(99), ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } } });
     expect(badRoot.lineage).toMatchObject({ status: 'INCONSISTENT', reasons: ['ROOT_PARENT_MISMATCH'] });
   });
 
