@@ -198,10 +198,16 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
   const conceptFreshness = (c: Concept): Freshness =>
     revisionBound(c.projectRevisionId !== revision.id ? 'REVISION_BINDING_MISMATCH' : c.modelHash !== hash ? 'MODEL_HASH_MISMATCH' : null);
   // Phase 30 appearances are not graph nodes either. Their stored binding, the model hash against the recomputed revision hash, the appearance hash
-  // recomputed from the stored appearance, and the compiled artifact's link to both are all re-checked here.
+  // recomputed from the stored appearance, and the compiled artifact's link to both are all re-checked here. A RESTORE commits the source revision's
+  // appearance under its own operation and reuses the source's artifact (0020 approve), so the artifact's operation may differ only when this revision's
+  // recorded lineage shows that RESTORE committed it.
+  const committedBy = input.ancestry.operation?.operation ?? null;
+  const restoredBy = (operationId: string | null) => committedBy !== null && committedBy.kind === 'RESTORE' && committedBy.id === operationId
+    && committedBy.committedRevisionId === revision.id;
   const appearanceFreshness = (a: AppearanceEvidence): Freshness => revisionBound(a.revisionId !== revision.id ? 'REVISION_BINDING_MISMATCH'
     : a.modelHash !== hash ? 'MODEL_HASH_MISMATCH' : a.appearanceHash !== costHash(a.appearance) ? 'INPUT_HASH_MISMATCH'
-    : !a.artifact || a.artifact.modelHash !== a.modelHash || a.artifact.appearanceHash !== a.appearanceHash || a.artifact.operationId !== a.operationId ? 'LINK_INCONSISTENT'
+    : !a.artifact || a.artifact.modelHash !== a.modelHash || a.artifact.appearanceHash !== a.appearanceHash
+      || (a.artifact.operationId !== a.operationId && !restoredBy(a.operationId)) ? 'LINK_INCONSISTENT'
     : null);
 
   const view = (v: ViewDef) => (v.each === 'STOREY' ? revision.model.levels.filter(l => l.kind === 'storey').map(l => v.route.replace(':levelId', encodeURIComponent(l.id)))
