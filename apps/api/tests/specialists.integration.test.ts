@@ -364,6 +364,23 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect((await ok('GET', `/api/projects/${q.projectId}/revisions/${q.revision.id}/takeoffs`)).items).toEqual([]);
   }, 300_000);
 
+  it('a specialist request is charged to the generation quota, refusals included; a throttled request stores nothing and reads stay on the read quota', async () => {
+    const p = await project('B39 quotas'), base = p.revision.id;
+    const limited = buildApp({ env: parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent',
+      RATE_LIMIT_ENABLED: 'true', RATE_LIMIT_GENERATE: '1', RATE_LIMIT_WRITE: '50', RATE_LIMIT_READ: '50', PROJECT_COMMIT_SECRET: secret }), backend, captureError: () => undefined });
+    try {
+      const post = (module: string, body: Json) => limited.inject({ method: 'POST', url: p.url(module), headers: owner, payload: body });
+      // A typed refusal still runs the envelope (ownership, references, manifest reads), so it is charged like any other specialist request.
+      const refused = await post('INTERIOR', envelope(base, 'modify', ['interior.materials']));
+      expect([refused.statusCode, refused.json().status]).toEqual([200, 'UNSUPPORTED']);
+      const throttled = await post('MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification() }));
+      expect([throttled.statusCode, throttled.json().error.code]).toEqual([429, 'RATE_LIMITED']);
+      expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
+      for (const read of [`/api/projects/${p.projectId}/revisions/${base}/manifest`, `/api/projects/${p.projectId}/revisions/${base}/takeoffs`])
+        expect((await limited.inject({ url: read, headers: owner })).statusCode, read).toBe(200);
+    } finally { await limited.close(); }
+  }, 120_000);
+
   it('scenario 39 and gate L297: once one specialist commits a new revision, every other specialist output and candidate of the old base is surfaced as stale and blocked', async () => {
     // One authored base (the structural source profile), with Materials, Budget, Structural and an executed Exterior candidate all on it.
     const projectId = (await ok('POST', '/api/projects', { title: 'B39 cross-module propagation' })).id as string;
