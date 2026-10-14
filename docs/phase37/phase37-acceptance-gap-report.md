@@ -361,3 +361,25 @@ The owner chose D-8(a). The closure slice is recorded in [phase37-completion-sco
 - **D-6:** reuse or supersede the PR #16 design-concept routes.
 - **D-7:** the optional discovery clarification.
 - PR #18, which carries readiness r3, is unmerged.
+
+## 11. Owner decisions (recorded 2026-10-14)
+
+| ID | Decision | Effect |
+|---|---|---|
+| **D-8** | **Accept** | B37 is accepted as **development-complete** on PR #17 (closure slice §10; scope §8, with the U1/U2 waiver). This is not a release: the gates below stay open, PR #17 stays unmerged until the owner merges it, and there is no tag |
+| **D-9** | **Operator** | An authorized operator runs the read-only hosted ledger check with [`scripts/verify-hosted-migrations.mjs`](../../scripts/verify-hosted-migrations.mjs), per the [runbook](../release/b37-release-gates-runbook.md) §1. **Not run.** No hosted contact from this session |
+| **D-10** | **Prepare** | Staging proof is prepared, not run: [`scripts/staging-workflow-b37.mjs`](../../scripts/staging-workflow-b37.mjs) is rehearsed locally only (runbook §2). **No staging proof is claimed** |
+| **D-11** | **Wait** | No phase tag (runbook §3) |
+| **D-4** | **Scope** | The B39 module order and the meaning of "interior" are settled in the B39 scope document, before any code |
+| **D-6** | **Reuse** | B39 reuses the PR #16 design-concept routes as an advisory sub-output (Interior/Exterior), not as the specialists themselves |
+| **D-7** | **Defer** | No discovery change now; the phase39 API guidance stays the interim |
+
+**Release gates after these decisions:**
+
+| Gate | Status |
+|---|---|
+| CI on the PR head | Passed (run 38514055560, `dcd15c5`) |
+| Local Supabase acceptance | Passed: 122/122 |
+| Hosted migration history | **Outstanding:** operator run pending (D-9) |
+| Staging proof | **Outstanding:** prepared, not run (D-10) |
+| Phase tag | **On hold** (D-11) |
