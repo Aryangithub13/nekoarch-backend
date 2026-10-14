@@ -159,7 +159,7 @@ No existing route changes.
 
 ## 4. Modules: first supported request, reuse and typed refusals (PROPOSED)
 
-Order from readiness §5.2 (decision D-4 confirms it).
+Order from readiness §5.2. It stays PROPOSED until the owner accepts this document (D-4, §9).
 
 | # | Module | First supported request (scenario) | Reuses | Typed refusals and statuses | Migration? |
 |---|---|---|---|---|---|
@@ -183,9 +183,9 @@ B39 is complete only after S3. Interior is not waived by this document.
   - Artifact freshness is read from the B37 manifest (`modules[].artifacts[].freshness`), never recomputed.
   - Candidates appear in `manifest.candidates` until approved. Committed changes appear in `lineage`, `diff`, `changeImpact` and `freshnessImpact`.
 - **U2: element-level differential invalidation (L258; scenario 34).** The B37 acceptance record (PR #17: `phase37-completion-scope.md` §8.4, `phase37-acceptance-gap-report.md` §5) assigns U2 to the B39 exterior specialist, with retrofits #24 and #04. The roadmap text to meet (L258): "façade cladding alone differs from changing curtain-wall glazing area". This document's reading of it: a cladding-only edit leaves quantities current; a glazing-area edit marks them stale.
-  - **Why it fails today:** stored outputs bind to the whole model hash, so any change invalidates them all.
+  - **Why it fails today:** freshness binds to revision identity, not to what each output read. Any committed change, even a model-equivalent one, makes a new revision current, and every stored output of the base reads `stale` with `SOURCE_REVISION_SUPERSEDED`. Its quantities and cost are then listed under `freshnessImpact.regenerate` (PR #17 gap report §5, U2).
   - **What closes it:** per-output **input scopes**. Each output records the model collections or entities it read, and invalidation compares those.
-  - **Note:** a Phase 30 appearance edit is already model-equivalent (`changeImpact` reports `MODEL_UNCHANGED`). That covers cladding swaps. A glazing change is unsupported today (§4, row 4).
+  - **Note:** a Phase 30 appearance edit is model-equivalent: `changeImpact` reports `NOT_AFFECTED` / `MODEL_UNCHANGED`. **It does not close U2.** After a cladding-only edit, the base's takeoff, construction calculation, cost and scene are still `stale` and listed under `regenerate`, and the new revision starts with none of them. The PR #17 test "M4 gate with the B30 exterior-appearance fixture" in `apps/api/tests/project-manifest.integration.test.ts` asserts exactly this. So today a cladding-only change still requires downstream quantity and cost regeneration. A glazing change is unsupported (§4, row 4).
   - **Proposed handling:** U2 becomes a B39 acceptance criterion when the first geometry-changing Exterior request is supported. That needs a geometry-editing engine, which does not exist (`capability-limits.ts:42`).
 
 ## 6. Migrations (PROPOSED; none authorized)
