@@ -412,5 +412,26 @@ The owner chose D-8(a). The closure slice is recorded in [phase37-completion-sco
 | | State |
 |---|---|
 | **B37 development** | **Development-complete** (D-8), including D4. CI on the fix commit is in the PR #17 description |
-| **B37 release readiness** | **Not ready.** Hosted migration history: prepared, **unverified** (D-9, operator run pending). Staging proof: prepared and rehearsed locally, **unverified** (D-10). Phase tag: on hold (D-11). PR #17 is an unmerged draft |
-| **B39** | Scope document in draft PR #20 (`phase39/specialist-scope`, docs only). No B39 code. Waiting on the scope and schema decisions and on the PR #17 / PR #18 merges |
+| **B37 release readiness** | **Not ready.** Hosted migration history: prepared, **unverified** (D-9, operator run pending). Staging proof: prepared and rehearsed locally, **unverified** (D-10). Phase tag: on hold (D-11). PR #17 was then an unmerged draft (superseded: merged, §13) |
+| **B39** | Scope document in draft PR #20 (`phase39/specialist-scope`, docs only). No B39 code. Waiting on the scope and schema decisions and on the PR #17 / PR #18 merges (superseded: both merged, §13) |
+
+## 13. Post-merge status (2026-10-14)
+
+**Recorded after the owner merged PR #17.** Documentation only. §1–§12 keep the state at the time they were written.
+
+| Item | Verified state |
+|---|---|
+| PR #18 | Merged by the owner into `phase31/development` as `aac8e89` (07:08Z) |
+| PR #17 | **Merged** by the owner, on explicit authorization, as merge commit `4d1da13` (parents `aac8e89`, `f6f4de7`; 07:35Z). Not a draft, not tagged |
+| CI on the PR #17 head `f6f4de7` | Run 38519880125: 109 files and 3,071 tests passed on Node 22.22.0 and 22.23.3; container smoke passed; `supabase-acceptance` skipped (manual dispatch only) |
+| CI on the merge `4d1da13` (push to `phase31/development`) | Run 38529349027: 109 files and 3,071 tests passed on both Node versions. Build, typecheck, lint and `npm audit` success; container smoke passed; `supabase-acceptance` skipped |
+| Local Supabase acceptance | 122/122 on `09a5e7c` (receipt `docs/phase16-evidence/supabase-2026-10-14T03-59-25.281Z.json`). **Not re-run** on `f6f4de7` or `4d1da13`. The later changes are builder-only TypeScript (D4) and documents: no SQL, RPC or contract change |
+| Mutation checks | 10 of 10 in the closure slice (scope §8.3); 5 of 5 on D4 (§12) |
+
+**Status, kept apart:**
+
+| | State |
+|---|---|
+| **B37 development** | **Development-complete** (D-8) and **merged** (`4d1da13`). The U1/U2 waivers (§10, scope §8.4) are unchanged. B37 is not expanded into detail-level paging |
+| **B37 release readiness** | **Not ready.** Hosted migration history: prepared, **unverified** (D-9). Staging proof: prepared and rehearsed locally, **unverified** (D-10). Phase tag: none, on hold (D-11). Before any tag, re-run local Supabase acceptance on the tag target |
+| **B39** | Scope accepted (D-4) in draft PR #20; results computed on read (D-8b); Interior schema D-12 pending. S1 code is in draft PR #21, from a parallel session, and is not merged |
