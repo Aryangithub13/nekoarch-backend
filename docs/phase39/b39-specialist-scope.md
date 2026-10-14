@@ -166,7 +166,7 @@ Order from readiness §5.2 (decision D-4 confirms it).
 | 1 | **Blueprint** | Blueprint-only regenerate from requirements on the current base: a new revision with QA and the B34 verifier, and **no render or scene jobs** (35, L765) | Generators, `blueprint-qa-v1`, `complex-verification-v1` | `UNSUPPORTED` above 2 floors or 24 rooms; QA failure → `FAILED` with the report | None |
 | 2 | **Materials** | Takeoff and construction calculation for a revision, with units, recipes and provenance (37, L767) | Takeoff, construction calculations | `PARTIAL` for partial recipes; **substitutions `UNSUPPORTED`** (no provenance exists, §2.2); `STALE_DEPENDENCY` when the takeoff is stale | None |
 | 3 | **Budget** | Cost estimate with an explicit rate book and currency (38, L768) | BOQ/cost | **Always `REQUIRES_REVIEW` while only the synthetic rate books exist**; `PARTIAL` with `unpricedLineIds`; never zero; regional versioned rates `UNSUPPORTED` until a sourced rate book exists | None |
-| 4 | **Exterior** | Cladding swap through Phase 30 `APPEARANCE_MODIFY` with plan and structure locks (34, L764) | Phase 30 lifecycle, `APPEARANCE_VARIANT` in the manifest | Glazing or massing geometry → `UNSUPPORTED` (`ENVELOPE_GEOMETRY_REGENERATION`), with the impacted engineering listed. This is where waiver **W-2** (per-output invalidation, PR #17) must be closed | None for cladding; W-2 needs per-output input scopes (§5) |
+| 4 | **Exterior** | Cladding swap through Phase 30 `APPEARANCE_MODIFY` with plan and structure locks (34, L764) | Phase 30 lifecycle, `APPEARANCE_VARIANT` in the manifest | Glazing or massing geometry → `UNSUPPORTED` (`ENVELOPE_GEOMETRY_REGENERATION`), with the impacted engineering listed. This is where the waived B37 item **U2** (element-level differential invalidation, PR #17) must be closed | None for cladding; U2 needs per-output input scopes (§5) |
 | 5 | **Structural** | Structural-only analysis on a revision, with solver evidence, assumptions and review state (36, L766) | Structural routes, engineering assessment | **Always `REQUIRES_REVIEW`**; certification is never claimed; validated solvers `UNSUPPORTED` | None |
 | 6 | **Interior** | **None today.** A design-only change needs finish data on V2 spaces, and no interior operation exists (33, L763) | PR #16 advisory concept, as an advisory sub-output (D-6) | `UNSUPPORTED` for every edit until a typed interior operation exists | **Yes**: a new operation kind (`0020:9` check) and V2 space finish fields. Owner approval required |
 
@@ -176,17 +176,17 @@ Order from readiness §5.2 (decision D-4 confirms it).
 
 B39 is complete only after S3. Interior is not waived by this document.
 
-## 5. B37 manifest integration and the W-2 obligation
+## 5. B37 manifest integration and the U2 obligation
 
 - **Revision identity and freshness (gate L297; scenario 39, L769).**
   - Every result carries `baseRevisionId` / `resultRevisionId` and a `manifestHref`.
   - Artifact freshness is read from the B37 manifest (`modules[].artifacts[].freshness`), never recomputed.
   - Candidates appear in `manifest.candidates` until approved. Committed changes appear in `lineage`, `diff`, `changeImpact` and `freshnessImpact`.
-- **W-2: per-output invalidation (L258; scenario 34).** The B37 acceptance record assigns W-2 to B39. Its exit condition: "a cladding-only edit leaves quantities current; a glazing-area edit marks them stale".
+- **U2: element-level differential invalidation (L258; scenario 34).** The B37 acceptance record (PR #17: `phase37-completion-scope.md` §8.4, `phase37-acceptance-gap-report.md` §5) assigns U2 to the B39 exterior specialist, with retrofits #24 and #04. The roadmap text to meet (L258): "façade cladding alone differs from changing curtain-wall glazing area". This document's reading of it: a cladding-only edit leaves quantities current; a glazing-area edit marks them stale.
   - **Why it fails today:** stored outputs bind to the whole model hash, so any change invalidates them all.
   - **What closes it:** per-output **input scopes**. Each output records the model collections or entities it read, and invalidation compares those.
   - **Note:** a Phase 30 appearance edit is already model-equivalent (`changeImpact` reports `MODEL_UNCHANGED`). That covers cladding swaps. A glazing change is unsupported today (§4, row 4).
-  - **Proposed handling:** W-2 becomes a B39 acceptance criterion when the first geometry-changing Exterior request is supported. That needs a geometry-editing engine, which does not exist (`capability-limits.ts:42`).
+  - **Proposed handling:** U2 becomes a B39 acceptance criterion when the first geometry-changing Exterior request is supported. That needs a geometry-editing engine, which does not exist (`capability-limits.ts:42`).
 
 ## 6. Migrations (PROPOSED; none authorized)
 
