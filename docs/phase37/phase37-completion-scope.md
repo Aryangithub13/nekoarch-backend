@@ -99,9 +99,9 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 | M1 | Manifest fields per §2 | ROADMAP L257, L260 | Unit: schema and fields. Integration: fresh revision |
 | M2 | Mapping exactly as §2; `UNVERIFIED` → `blocked`; `pending` only with an active job; `verified` and `not_applicable` never emitted | ROADMAP L251; PROPOSED rules | Unit: every graph state, a tampered check, no current revision, jobs. Integration: a queued `SCENE_COMPILE` job |
 | M3 | No mixed revisions: a pointer change during the read → 409 | ROADMAP L258, L747 | Integration: a skewed design-concept listing |
-| M4 | An accepted edit marks every dependent output of the base `stale` with a reason and target revision; the scene stays linked by revision id and verified model hash | ROADMAP L262 | Integration: takeoff → construction → cost, scene and design concept on revision A; supplied edit B; manifests of A and B Closed for Phase 30 edits by §7 (D2, T1/T5) |
+| M4 | An accepted edit marks every dependent output of the base `stale` with a reason and target revision; the scene stays linked by revision id and verified model hash | ROADMAP L262 | Integration: takeoff → construction → cost, scene and design concept on revision A; supplied edit B; manifests of A and B Closed for Phase 30 edits by §8 (D2, T1/T5) |
 | M5 | Additive: `project-overview-v1`, `dependency-graph-v1`, Phase 38/39 responses unchanged | ROADMAP A4 L51 | Existing suites unchanged |
-| M6 | Bounded reads: at most 8 in flight | PROPOSED (R14); `0bf1c89` | **Done (§5.1).** The graph's construction listings and all per-artifact detail reads share one pool (`pooled`, `READ_CONCURRENCY = 8`). The manifest's own side reads stay ≤ 8 together §7 adds a whole-read in-flight test: graph and side reads together peak at ≤ 8 |
+| M6 | Bounded reads: at most 8 in flight | PROPOSED (R14); `0bf1c89` | **Done (§5.1).** The graph's construction listings and all per-artifact detail reads share one pool (`pooled`, `READ_CONCURRENCY = 8`). The manifest's own side reads stay ≤ 8 together §8 adds a whole-read in-flight test: graph and side reads together peak at ≤ 8 |
 | M7 | Engineering flags and claims unchanged; the manifest carries no assessment values | ROADMAP A4 L50 | Unit: `claims`; existing engineering/evidence tests unchanged |
 | M8 | Build, typecheck, lint, full suite, route catalog and OpenAPI drift, telemetry allowlist | ROADMAP §K L788 | Local runs; CI on the PR |
 | M9 | Phase tag and staging proof | ROADMAP §K L788 | **Not done.** Owner-authorized only |
@@ -115,7 +115,7 @@ Why the last row: no evidence-backed rule exists for "not applicable", and no ou
 - Any migration (`0028` already belongs to Phase 39; none is needed here).
 - Persisting manifests.
 - Component-level (per-element) impact.
-- Evidence packages, zone assessment and partitions: listed in `notIncluded`. (Appearance variants were listed there until §7 added them as a module.)
+- Evidence packages, zone assessment and partitions: listed in `notIncluded`. (Appearance variants were listed there until §8 added them as a module.)
 - Changes to the graph, overview or discovery semantics beyond one additive `PROJECT_MANIFEST` service row.
 - Merging `phase37/read-cap` (its change is ported by hand in §5.1, not merged).
 - New paged or filterable views. M12 indexes the existing ones, so these modules have none: the building model, acceptance QA, complex verification, construction calculations (listed per takeoff, so there is no per-revision href), engineering assessment and construction documents. Drawing/layer, room-navigation and site/plot views for the frontend workspaces (ROADMAP L259, frontend 31–40, 45–48, 55) are not built here.
@@ -175,7 +175,7 @@ PR #17's branch received `913b584` (read gate) and `aa20a0e` (`lineage`, `diff` 
 |---|---|---|
 | Read bound | `pooled()` (hard cap 8, no reads after a failure) | Its width-1/3 integration test still runs, against `pooled()` |
 | `lineage` | §5.2 (`ROOT`/`LINKED`/`INCONSISTENT`/`UNAVAILABLE`, ancestry checks) | `operation.modelEquivalentToBase` (the Phase 30 lineage read's own value); `operationLineage: UNAVAILABLE` is `operation.status: UNAVAILABLE` |
-| `diff` | Computed `scopedDiff` against the parent | `bimDiffHref`: the existing `…/bim/diff/:parentRevisionId` route, null without a parent |
+| `diff` | Computed `scopedDiff` against the parent | `bimDiffHref`: the existing BIM diff route for the same pair, null without a parent. Its direction was corrected in §7 |
 | `changeImpact` | Change since the parent, by model binding (§5.2) | — |
 | `freshnessImpact` | — | **Its `changeImpact`, renamed:** per discipline, modules to `regenerate` (stale), `revalidate` (blocked) and `await` (pending), with artifact counts, against the current revision (ROADMAP L262) |
 
@@ -226,21 +226,66 @@ The other modules have no paged view yet and list none (§4).
 | `project-manifest.integration.test.ts` | Preflight: listed as `AWAITING_CONSENT`. Execute: `CANDIDATE_READY` with its hash, `comparisonHref` answers 200, and every other section is unchanged. Approve: gone from the base; the child's lineage is `LINKED` with the `RECORDED` operation. The operation listing completes before the concept listing starts. A full page whose oldest entry is 1 hour old is `TRUNCATED`; one 26 hours old is `COMPLETE`. Without operation persistence: `UNAVAILABLE`. Partial view over HTTP; 400 on a bad discipline, a bad `artifacts` value or a repeated `discipline`; 404 for another user; every indexed view answers 200 with `limit=1` |
 | Mutation checks | 10 of 10 caught:<ul><li>the base-revision filter;</li><li>the status filter;</li><li>the `changeImpact` filter;</li><li>the `freshnessImpact` filter;</li><li>the module filter;</li><li>hashing without candidates;</li><li>a wrong view route;</li><li>artifacts not omitted;</li><li>truncation never reported;</li><li>the operation and concept listings run in parallel.</li></ul> |
 
-## 7. B37 closure slice and waiver (owner decision D-8(a), 2026-10-14)
+## 7. Completion pass on PR #17 (2026-10-14)
+
+Checked against roadmap Phase 37 (L245–262) on head `4a57aa5`.
+
+### 7.1 Fix: BIM diff link direction
+
+- **Defect:** `GET …/revisions/:revisionId/bim/diff/:otherRevisionId` compares the path revision (before) with the parameter (after). The existing callers put the older revision in the path (`modernization.integration.test.ts`, `revision.integration.test.ts`).
+- **Before:** `diff.bimDiffHref` was `…/revisions/<this>/bim/diff/<parent>`. The linked BIM diff therefore ran revision → parent, opposite to the manifest's own parent → revision `diff`: an entity the edit added would read `REMOVED` there.
+- **After:** `…/revisions/<parent>/bim/diff/<this>`, so both describe the same pair in the same direction.
+- **Test:** the unit test pins the href. The M4 integration test reads the linked BIM diff and checks that its `before`/`after` bindings are the parent and the edited revision, with the model hashes the manifest `diff` reports.
+
+### 7.2 Fix: `freshnessImpact` no longer asks to regenerate the source model (gap report D1)
+
+- **Defect:** for a superseded revision, `regenerate` listed `BUILDING_MODEL` and `ACCEPTANCE_QA`. A revision's model and its acceptance are replaced only by a new revision, never regenerated.
+- **After:** each discipline entry gains `superseded`: the stale modules that only a new revision replaces (the graph's `REVISION` and `ACCEPTANCE_QA` anchors). `regenerate` never contains them. Outputs derived on read from the model (BIM, complex verification, engineering assessment, construction documents) stay in `regenerate`. `staleArtifacts` still counts every stale artifact of the discipline.
+- **Tests:** unit (the `ARCHITECTURE` entry of a superseded revision, and no variant ever lists either module to regenerate) and the M4 integration test.
+
+### 7.3 Added acceptance tests on PostgreSQL
+
+| Behaviour | Before | Added |
+|---|---|---|
+| `freshnessImpact.revalidate` (a failed provenance check) | Unit only | A tampered stored takeoff fingerprint: takeoff, construction and cost are `blocked`, listed under `revalidate` (never `regenerate`), `blockedArtifacts: 3`, the other disciplines untouched, nothing `verified` |
+| `freshnessImpact.awaiting` (an active job) | Unit only | A queued `SCENE_COMPILE` job: `VISUALIZATION` awaits `SCENE_3D`; nothing else is awaited |
+| BIM diff linkage | Status 200 only | Pair and direction, as §7.1 |
+
+### 7.4 Traced and left as is
+
+- **`scopedDiff` change cap (50,000).** `scopedDiff` validates its report, so a comparison with more than 50,000 changes would fail the whole manifest read. Reaching that needs two revisions with about 25,000 or more disjoint entities each. The model schema allows up to 42,240 entities, but the save route's default body limit is 1 MiB (`BODY_LIMIT_BYTES`), far below such a model. No code is added for it. It becomes reachable only if that limit is raised by about two orders of magnitude.
+
+### 7.5 Roadmap items still open
+
+These are why the PR is not marked ready for review:
+
+| Roadmap text | State |
+|---|---|
+| L251: `not_applicable` and `verified` | Defined in the vocabulary, never assigned. There is no evidence-backed rule for either (§2) |
+| L252: material and façade variations as explicit, semantically typed changes | Not in this slice. Phase 30 `APPEARANCE_MODIFY` operations are reported in `lineage.operation` and `candidates`; `APPEARANCE_VARIANT` is in `notIncluded` |
+| L262: "no lost linkage between model and visible 3D object", after a Phase 30 appearance edit (gap report D2) | Not met. The visible 3D object of such a revision is its Phase 30 appearance variant, which the manifest does not link (`APPEARANCE_VARIANT` is in `notIncluded`; `SCENE_3D` reads `NOT_GENERATED`). The gap report's proposal: an `APPEARANCE` entry derived from the existing `revision_operation_read('appearance')` |
+| L258: "façade cladding alone differs from changing curtain-wall glazing area" | Not met. Invalidation is by whole-model binding (`changeImpact.basis: MODEL_BINDING`), because every stored output is bound to the whole model hash. Telling those two edits apart needs per-output input scopes that the stored artifacts do not record |
+| L259: drawing/layer, room-navigation and site/plot paged views | Not built (§4) |
+| L260: `confidence/assumptions` (when applicable) | Not surfaced as a manifest field. The other L260 fields are: `diff`, `lineage`, `source`, `units`, the local coordinate system (L260 asks for a CRS *or* a local system), `completeness`, `last_verified` (`integrityCheckedAt`) and `missing_reason` |
+| M9: phase tag and staging proof; Supabase acceptance; hosted migration history | Owner-authorized release gates; not run |
+
+## 8. B37 closure slice and waiver (owner decision D-8(a), 2026-10-14)
+
+This section closes or waives every item §7.5 lists as open, except the release gates.
 
 The owner chose D-8(a) from [phase37-acceptance-gap-report.md](phase37-acceptance-gap-report.md) §9: close the defects, the scenario 17 gap and the missing tests, then accept B37 with an explicit waiver for U1 and U2. Derived on read: **no migration**, table, RPC, environment variable or dependency. No existing field changes meaning; every change is additive to the unmerged `project-manifest-v2` contract.
 
-### 7.1 Changes
+### 8.1 Changes
 
 | ID | Gap (report §5) | Change |
 |---|---|---|
-| C1 | **D1:** `freshnessImpact.regenerate` listed the source model and acceptance QA | Each `freshnessImpact` entry gains `superseded`. A stale module that is part of the revision itself (`BUILDING_MODEL`, `ACCEPTANCE_QA`, `APPEARANCE_VARIANT`; `regenerable: false` in the module table) is listed there, never under `regenerate`. Every stale module appears in exactly one of the two lists |
+| C1 | **D1:** `freshnessImpact.regenerate` listed the source model and acceptance QA | Fixed in parallel by `63b7fce` (§7.2), with the same field. This slice extends it to the committed appearance. Each `freshnessImpact` entry has `superseded`. A stale module that is part of the revision itself (`BUILDING_MODEL`, `ACCEPTANCE_QA`, `APPEARANCE_VARIANT`; `regenerable: false` in the module table) is listed there, never under `regenerate`. Every stale module appears in exactly one of the two lists |
 | C2 | **D2:** after a Phase 30 appearance edit the visible 3D object was not linked (ROADMAP L262) | New module `APPEARANCE_VARIANT` (discipline `VISUALIZATION`, `STORED_ARTIFACT`, `NEW_REVISION_ONLY`, href `…/appearance`). It is read from the existing `revision_operation_read('appearance')`. Its artifact is the committed GLB's candidate artifact. Removed from `notIncluded` |
 | C3 | Scenario 17 (L747) "failed" outputs (U3) | The newest 8 `FAILED` durable jobs of the project are examined. A module with nothing stored and no active job, whose job for this revision failed, reads `missingReason: GENERATION_FAILED` with `failedJobIds`. Top-level `failedGenerations: { availability, completeness, window }` says how far that evidence reaches (`TRUNCATED` when older failures were not examined) |
 | C4 | Existing document views not indexed (report §4) | `CONSTRUCTION_DOCUMENTS.views`: `documents/schedules`, one `documents/schedules/:schedule/csv` per schedule id (5), one `documents/plan-sheets/:levelId` per **storey** (non-storey levels have no sheet). New paging value `NONE` for unpaged partial views |
-| C5 | Missing tests T1–T5 | See §7.3 |
+| C5 | Missing tests T1–T5 | See §8.3 |
 
-### 7.2 Safeguards applied (Phase 35/35.1 principles)
+### 8.2 Safeguards applied (Phase 35/35.1 principles)
 
 - **Fail closed, reported, never repaired.** The appearance is re-checked on read. Each failed check makes it `blocked` with its own reason:
 
@@ -255,9 +300,9 @@ The owner chose D-8(a) from [phase37-acceptance-gap-report.md](phase37-acceptanc
 - **Missing is never passing.** A failed generation is reported, not hidden as merely missing. Its truncated evidence is stated, so the absence of `GENERATION_FAILED` is never presented as proof that nothing failed. A failure never becomes a freshness state, because nothing exists to judge.
 - **Job binding is read, never inferred.** A failed job is tied to a revision only by its stored request (job detail read), like active jobs.
 - **No claim is upgraded.** `claims` stay `NOT_CLAIMED`. Engineering flags (`REQUIRES_SOLVER`, `NO_VALIDATED_SOLVER`) are not read or changed. The manifest still writes nothing.
-- **Bounded reads.** New side reads: 1 `FAILED` job list, its ≤ 8 detail reads (pooled at 4, after the active ones), and 1 appearance read. Graph and side reads together never exceed 8 RPCs in flight; this is now measured (§7.3).
+- **Bounded reads.** New side reads: 1 `FAILED` job list, its ≤ 8 detail reads (pooled at 4, after the active ones), and 1 appearance read. Graph and side reads together never exceed 8 RPCs in flight; this is now measured (§8.3).
 
-### 7.3 Tests
+### 8.3 Tests
 
 | Test | Covers |
 |---|---|
@@ -279,7 +324,7 @@ The owner chose D-8(a) from [phase37-acceptance-gap-report.md](phase37-acceptanc
 
 The new live Supabase case was not mutation-tested; it needs the local stack.
 
-### 7.4 Waiver of U1 and U2, and where the work goes
+### 8.4 Waiver of U1 and U2, and where the work goes
 
 **Waived for B37 (owner decision D-8(a)):**
 - **U1:** detail-level paged and filterable views. These are takeoff and BOQ lines, analysis results, QA and verification reports, drawing layers and room-navigation routes (ROADMAP L259, R05 L501).
@@ -297,7 +342,7 @@ The waiver does **not** close the B37 roadmap text; it assigns it. Phase 37 is n
 | U5 time budget over the manifest's side reads | Stays open as a minor B37 follow-up; reads are count-bounded (≤ 8 in flight, measured) | Readiness M6 |
 | U6 evidence packages and zone outputs in the manifest | Stays listed in `notIncluded`; B41/B43 consumers | — |
 
-### 7.5 Release gates (unchanged; none closed by this slice)
+### 8.5 Release gates (unchanged; none closed by this slice)
 
 | Gate | Status |
 |---|---|

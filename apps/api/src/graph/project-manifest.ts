@@ -136,7 +136,8 @@ export function buildLineage(revision: Revision, ancestry: ManifestInput['ancest
 
 /** Entity-level comparison with the parent through the Phase 34 `scopedDiff` (canonical hash per entity), only when the lineage is LINKED. */
 export function buildDiff(projectId: string, revision: Revision, hash: string, parent: ParentRevision | null, lineage: Lineage & { parentHash: string | null }): ManifestDiff {
-  const bimDiffHref = revision.parentRevisionId ? `/api/projects/${projectId}/revisions/${revision.id}/bim/diff/${revision.parentRevisionId}` : null;
+  // The BIM diff route compares its path revision (before) with its parameter (after); parent first, so it reads in the same direction as this diff.
+  const bimDiffHref = revision.parentRevisionId ? `/api/projects/${projectId}/revisions/${revision.parentRevisionId}/bim/diff/${revision.id}` : null;
   const empty = { diffVersion: null, baseRevisionId: null, baseModelHash: null, modelHash: hash, modelHashChanged: null, entitiesIdentical: null, counts: null,
     collections: [], changes: [], changesTruncated: false, bimDiffHref };
   if (lineage.status === 'ROOT') return { ...empty, status: 'NO_PARENT', unavailableReason: null };
@@ -254,7 +255,8 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     const members = modules.filter(m => m.discipline === discipline);
     return { discipline, freshness: worst(members.flatMap(m => m.freshness ? [m.freshness.state] : [])), modules: members.map(m => m.module) };
   });
-  // Freshness impact (from the parallel M10 design), read straight from the module freshness above: nothing new is inferred.
+  // Freshness impact (from the parallel M10 design), read straight from the module freshness above: nothing new is inferred. A stale source model and its
+  // acceptance QA are superseded by the target revision; they are never regenerated (a new model is a new revision), so they are not listed to regenerate.
   const freshnessImpact = { targetRevisionId: target, disciplines: DISCIPLINES.map(discipline => {
     const members = modules.filter(m => m.discipline === discipline), withState = (s: FreshnessState) => members.filter(m => m.freshness?.state === s).map(m => m.module);
     const count = (s: FreshnessState) => members.reduce((n, m) => n + m.artifacts.filter(x => x.freshness.state === s).length, 0);

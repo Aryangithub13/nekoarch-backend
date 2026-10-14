@@ -81,7 +81,10 @@ export const DiffSchema = z.object({
   changes: z.array(z.object({ collection: diffCollection, entityId: z.string().min(1).max(200), change: z.enum(['ADDED', 'REMOVED', 'CHANGED']),
     levelIds: z.array(z.string()).max(2) }).strict()).max(MANIFEST_DIFF_CHANGE_LIMIT),
   changesTruncated: z.boolean(), unavailableReason: z.enum(DIFF_UNAVAILABLE_REASONS).nullable(),
-  /** The existing BIM semantic diff of this revision against its parent (`…/bim/diff/:parentRevisionId`); null without a parent. BIM profile limits apply there. */
+  /**
+   * The existing BIM semantic diff for the same pair and direction: `…/revisions/:parentRevisionId/bim/diff/:revisionId` (parent before, this revision after);
+   * null without a parent. BIM profile limits apply there.
+   */
   bimDiffHref: z.string().startsWith('/api/projects/').nullable(),
 }).strict();
 export const ChangeImpactSchema = z.object({
@@ -129,8 +132,9 @@ export type ManifestQuery = z.infer<typeof ManifestQuerySchema>;
  * never regenerated), revalidate (blocked) or await (pending), with artifact counts. Read only from module freshness, so it never reads better than it.
  */
 export const FreshnessImpactSchema = z.object({ targetRevisionId: id.nullable(),
-  disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), superseded: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
-    awaiting: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0), blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
+  disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
+    awaiting: z.array(z.enum(MODULES)), superseded: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0),
+    blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
 export const ProjectManifestSchema = z.object({
   manifestVersion: z.literal(PROJECT_MANIFEST_VERSION),
   identity: z.object({ projectId: id, revisionId: id, revisionNumber: z.number().int().positive(), parentRevisionId: id.nullable(),
