@@ -1,8 +1,8 @@
 # B39 Slice S2 and S1 Follow-ups: Exterior, Structural, References, Execution Budget — Implementation Record
 
-**Status:** implemented on `phase39/s1-specialists` (PR #21), on top of S1 (`ce3d2c2`; see [`b39-s1-implementation.md`](b39-s1-implementation.md)). **Not merged; not a release.** No migration. No hosted, staging, merge or tag action.
+**Status:** merged into `phase31/development` via PR #23 (`6e54470`, head `b55ad21`), on top of S1 (PR #21, `b543268`; see [`b39-s1-implementation.md`](b39-s1-implementation.md)). Post-merge CI run 38586942339 green. **Not a release:** D-9 and D-10 unverified, no tag (D-11). No migration. No hosted or staging action.
 
-**Scope of record:** [`b39-specialist-scope.md`](https://github.com/Aryangithub13/nekoarch-backend/blob/phase39/specialist-scope/docs/phase39/b39-specialist-scope.md) on PR #20 (§3.1, §4 rows 4–5, §7 S2). The roadmap is cited as ROADMAP Lnnn.
+**Scope of record:** [`b39-specialist-scope.md`](b39-specialist-scope.md) (merged via PR #20, `25c2a27`) (§3.1, §4 rows 4–5, §7 S2). The roadmap is cited as ROADMAP Lnnn.
 
 ## 1. Owner decisions applied (2026-10-14)
 
@@ -70,7 +70,7 @@ Typed `UNSUPPORTED` / `MODULE_NOT_AVAILABLE`. The message names D-12 and states 
 
 **Consequence for the gate (L297):** "one supported request for each of six modules" is met for five modules. Interior needs D-12, or an explicit owner waiver, before B39 can close.
 
-## 4. Contract changes (additive to the unmerged `specialist-request-v1`)
+## 4. Contract changes (additive to `specialist-request-v1`)
 
 **Request:**
 - `referenceIds`;
@@ -117,4 +117,4 @@ Typed `UNSUPPORTED` / `MODULE_NOT_AVAILABLE`. The message names D-12 and states 
 - **Validated engineering solvers, regional or sourced rate books, substitution provenance:** unchanged, still refused by type.
 - **Durable specialist results, history or fetch-by-id:** D-8b.
 
-Evidence (local runs, CI and the local Supabase receipt) is in the PR #21 description.
+Evidence (local runs, CI and the local Supabase receipt) is in the PR #23 description.
