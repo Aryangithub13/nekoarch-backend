@@ -1,6 +1,6 @@
 # Phase 37 Completion Slice: Unified Project Manifest v2 and Freshness States — Scope and Acceptance
 
-**Status:** scope of record for implementation. Written 2026-10-13, before any code in this slice.
+**Status:** scope of record for implementation. Written 2026-10-13, before any code in this slice. Acceptance verification and gaps (2026-10-14): [phase37-acceptance-gap-report.md](phase37-acceptance-gap-report.md).
 
 **Base:** `phase31/development` at `d0cd38b` (Phase 39 merged as PR #16). Citations refer to that commit.
 
