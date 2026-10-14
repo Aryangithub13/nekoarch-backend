@@ -2,8 +2,13 @@
 
 **Status:** scope of record **before any B39 code**, as readiness r3 §9.2 and the B37 acceptance record (§10.1 on PR #17) require. Written 2026-10-14. **Documentation only:** no code, migration, test, OpenAPI or deployment change.
 
+**Owner decisions recorded 2026-10-14 (§9):**
+- **D-4 accepted:** this scope and its module order.
+- **D-8b:** specialist results are computed on read for S1 and S2.
+- **D-12** (formerly D-9b): the Interior schema decision stays **pending**.
+
 **Bases:**
-- This branch is based on PR #18 (`docs/b39-scope-correction` @ `8dd7880`), which carries the authoritative roadmap into the development branch.
+- This branch is based on PR #18 (`docs/b39-scope-correction` @ `8dd7880`), which carries the authoritative roadmap into the development branch. PR #18 is merged into `phase31/development` as `aac8e89`.
 - Code citations refer to `phase37/manifest-v2` @ `dcd15c5` (PR #17). That is `phase31/development` @ `d0cd38b` plus the B37 manifest. Paths are repository-relative.
 
 **Authority:** [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`), cited as ROADMAP Lnnn.
@@ -11,7 +16,8 @@
 **Labels:**
 - **ROADMAP:** roadmap text.
 - **CONFIRMED:** a repository fact, with a citation.
-- **PROPOSED:** this document's design. Each item needs owner acceptance.
+- **ACCEPTED:** this document's design, accepted by the owner (D-4, §9).
+- **PROPOSED:** this document's design, still awaiting an owner decision.
 - **UNCERTAIN:** not established.
 
 ---
@@ -84,7 +90,7 @@
 - **Workflows:** `INTERIOR_DESIGN` / `EXTERIOR_DESIGN` are `PLANNED` and `contract-v1`. Their modes are blocked with `CAPABILITY_NOT_IMPLEMENTED`. A run has no scope, lock, quote or job fields. (`apps/api/src/workflows/registry.ts:17,32-33,43-44`; `workflows/planner.ts:35-42`; `contracts/workflows.ts:60-66`)
 - **Conversation:** it proposes Phase 30 operations under leases, with re-preflight on confirm. Its operation kinds are `REQUIREMENTS_CHANGE, EXTERIOR_APPEARANCE, RESTORE, ZONE_REGENERATION`. (`contracts/conversation-memory.ts:18`; `conversation/actions.ts:148-174`)
 
-## 3. Envelope contract `specialist-request-v1` (PROPOSED)
+## 3. Envelope contract `specialist-request-v1` (ACCEPTED, D-4)
 
 **Principle:** one envelope over the existing lifecycle, not a parallel one.
 - §E tells implementers to "confirm names and shapes against real backend code" and to "introduce additional routes only when necessary" (L511, L514, L579).
@@ -93,7 +99,7 @@
 ### 3.1 Request
 
 ```ts
-// PROPOSED. Names follow §E where they match existing code; existing names win where they differ.
+// ACCEPTED (D-4). Names follow §E where they match existing code; existing names win where they differ.
 type SpecialistModule = 'INTERIOR' | 'EXTERIOR' | 'BLUEPRINT' | 'STRUCTURAL' | 'MATERIALS' | 'BUDGET';
 type ComponentScope = /* §E L519–525, verbatim */ string;
 interface SpecialistRequest {
@@ -115,7 +121,7 @@ interface SpecialistRequest {
 ### 3.2 Result
 
 ```ts
-// PROPOSED.
+// ACCEPTED (D-4).
 type SpecialistStatus = 'COMPLETED' | 'CANDIDATE_READY' | 'AWAITING_CONSENT' | 'NEEDS_CLARIFICATION'
   | 'UNSUPPORTED' | 'REQUIRES_REVIEW' | 'DEGRADED_PROVIDER' | 'STALE_DEPENDENCY' | 'PARTIAL' | 'BLOCKED_BY_LOCK' | 'FAILED';
 interface SpecialistResult {
@@ -151,28 +157,30 @@ Rules:
 
 ### 3.4 Surfaces (§E L569–577)
 
-**PROPOSED, minimal.** One new route family, `…/projects/:projectId/specialists/:module/requests`, carrying POST (preflight or run) and GET (by id). It composes existing services:
+**ACCEPTED (D-4), minimal.** One new route family, `…/projects/:projectId/specialists/:module/requests`, carrying POST (preflight or run). It composes existing services:
 - model-changing modules return the Phase 30 `operationId`, and the existing execute/approve/comparison routes complete the lifecycle;
 - derived modules return the engine's stored artifact ids.
 
 No existing route changes.
 
-## 4. Modules: first supported request, reuse and typed refusals (PROPOSED)
+**No GET by id (D-8b).** Results are computed on read and not stored, so there is no specialist-result history and nothing to fetch by request id. The stored outputs stay readable through their engine routes and the B37 manifest. A retry with the same `Idempotency-Key` replays the engines' durable receipts. Durable result history or fetch-by-id would need a separate owner decision and a migration.
 
-Order from readiness §5.2. It stays PROPOSED until the owner accepts this document (D-4, §9).
+## 4. Modules: first supported request, reuse and typed refusals (ACCEPTED, D-4)
+
+Order from readiness §5.2, **accepted by the owner (D-4, 2026-10-14)**: 1 Blueprint, 2 Materials, 3 Budget, 4 Exterior, 5 Structural, 6 Interior.
 
 | # | Module | First supported request (scenario) | Reuses | Typed refusals and statuses | Migration? |
 |---|---|---|---|---|---|
-| 1 | **Blueprint** | Blueprint-only regenerate from requirements on the current base: a new revision with QA and the B34 verifier, and **no render or scene jobs** (35, L765) | Generators, `blueprint-qa-v1`, `complex-verification-v1` | `UNSUPPORTED` above 2 floors or 24 rooms; QA failure → `FAILED` with the report | None |
+| 1 | **Blueprint** | Blueprint-only regenerate from requirements on the current base: a new revision with QA and the B34 verifier, and **no render or scene jobs** (35, L765) | Generators, `blueprint-qa-v1`, `complex-verification-v1` | `UNSUPPORTED` above 2 floors. More than 24 requested rooms is **not** a typed refusal: the existing requirements schema rejects it with a 400 validation error (`packages/generator/src/blueprint/input.ts:38`), and that input contract is unchanged. QA failure → `FAILED` with the report | None |
 | 2 | **Materials** | Takeoff and construction calculation for a revision, with units, recipes and provenance (37, L767) | Takeoff, construction calculations | `PARTIAL` for partial recipes; **substitutions `UNSUPPORTED`** (no provenance exists, §2.2); `STALE_DEPENDENCY` when the takeoff is stale | None |
 | 3 | **Budget** | Cost estimate with an explicit rate book and currency (38, L768) | BOQ/cost | **Always `REQUIRES_REVIEW` while only the synthetic rate books exist**; `PARTIAL` with `unpricedLineIds`; never zero; regional versioned rates `UNSUPPORTED` until a sourced rate book exists | None |
 | 4 | **Exterior** | Cladding swap through Phase 30 `APPEARANCE_MODIFY` with plan and structure locks (34, L764) | Phase 30 lifecycle, `APPEARANCE_VARIANT` in the manifest | Glazing or massing geometry → `UNSUPPORTED` (`ENVELOPE_GEOMETRY_REGENERATION`), with the impacted engineering listed. This is where the waived B37 item **U2** (element-level differential invalidation, PR #17) must be closed | None for cladding; U2 needs per-output input scopes (§5) |
 | 5 | **Structural** | Structural-only analysis on a revision, with solver evidence, assumptions and review state (36, L766) | Structural routes, engineering assessment | **Always `REQUIRES_REVIEW`**; certification is never claimed; validated solvers `UNSUPPORTED` | None |
-| 6 | **Interior** | **None today.** A design-only change needs finish data on V2 spaces, and no interior operation exists (33, L763) | PR #16 advisory concept, as an advisory sub-output (D-6) | `UNSUPPORTED` for every edit until a typed interior operation exists | **Yes**: a new operation kind (`0020:9` check) and V2 space finish fields. Owner approval required |
+| 6 | **Interior** | **None today.** A design-only change needs finish data on V2 spaces, and no interior operation exists (33, L763) | PR #16 advisory concept, as an advisory sub-output (D-6) | `UNSUPPORTED` for every edit until a typed interior operation exists. The advisory concept routes are not a supported Interior implementation | **Yes**: a new operation kind (`0020:9` check) and V2 space finish fields. **Pending owner decision D-12** |
 
-**Gate reading (L297), PROPOSED.** "One supported request for each of six modules" cannot be met for Interior without a model change. The scope therefore splits into:
+**Gate reading (L297), ACCEPTED (D-4).** "One supported request for each of six modules" cannot be met for Interior without a model change. The scope therefore splits into:
 - **S1–S2:** the five modules that can be met with no migration;
-- **S3:** Interior, which needs owner-approved schema work.
+- **S3:** Interior, which needs owner-approved schema work (D-12, pending).
 
 B39 is complete only after S3. Interior is not waived by this document.
 
@@ -188,22 +196,22 @@ B39 is complete only after S3. Interior is not waived by this document.
   - **Note:** a Phase 30 appearance edit is model-equivalent: `changeImpact` reports `NOT_AFFECTED` / `MODEL_UNCHANGED`. **It does not close U2.** After a cladding-only edit, the base's takeoff, construction calculation, cost and scene are still `stale` and listed under `regenerate`, and the new revision starts with none of them. The PR #17 test "M4 gate with the B30 exterior-appearance fixture" in `apps/api/tests/project-manifest.integration.test.ts` asserts exactly this. So today a cladding-only change still requires downstream quantity and cost regeneration. A glazing change is unsupported (§4, row 4).
   - **Proposed handling:** U2 becomes a B39 acceptance criterion when the first geometry-changing Exterior request is supported. That needs a geometry-editing engine, which does not exist (`capability-limits.ts:42`).
 
-## 6. Migrations (PROPOSED; none authorized)
+## 6. Migrations (none authorized)
 
 | Slice | Need | Migration |
 |---|---|---|
-| S1 envelope + Blueprint, Materials, Budget | Derived modules over existing routes; envelope results may be computed on read | **None** if the envelope result is derived. If results must be durable: `0029_specialist_requests` (owner decision D-8b below) |
-| S2 Exterior (cladding) + Structural | Existing Phase 30 and structural persistence | None |
-| S3 Interior | New revision-operation kind and V2 space finish data | `0029`/`0030`: extend the `0020:9` kind check (superset), plus the shared V2 schema. Replay pin, local Supabase receipt, owner approval |
+| S1 envelope + Blueprint, Materials, Budget | Derived modules over existing routes; envelope results computed on read (D-8b) | **None.** No `0029_specialist_requests` and no durable result storage (D-8b, 2026-10-14) |
+| S2 Exterior (cladding) + Structural | Existing Phase 30 and structural persistence; envelope results computed on read (D-8b) | None |
+| S3 Interior | New revision-operation kind and V2 space finish data | **Only if D-12 is approved:** the next sequential migration extends the `0020:9` kind check (superset), plus the shared V2 schema. Replay pin, local Supabase receipt, owner approval. Not authorized |
 | Specialist jobs | Only if a specialist runs as a durable job | Extend `0022:8` (and `0025:10` if gateway-eligible), plus `JobKindSchema`, executors and runner records (`jobs/contracts.ts:6`; `jobs/executors.ts:60-77`; `jobs/runner.ts:21-22`) |
 
-## 7. Slices and acceptance criteria (PROPOSED)
+## 7. Slices and acceptance criteria (ACCEPTED, D-4)
 
 | Slice | Contents | Acceptance (each has automated tests; ROADMAP scenario) |
 |---|---|---|
 | **S1** | Envelope contract and route family; Blueprint, Materials, Budget | Envelope schema strict. Each module's supported request succeeds on Postgres with common revision ids (35, 37, 38). Typed refusals for >2 floors, substitutions and synthetic rates (46). Unpriced is never zero (38). `STALE_DEPENDENCY` from a stale manifest input. Results link the manifest. No render or scene job is created by Blueprint (35) |
 | **S2** | Exterior (cladding) and Structural | Cladding swap through Phase 30 with locks; protected geometry is hash-identical (42); the manifest links `APPEARANCE_VARIANT` (34). A glazing change is `UNSUPPORTED` with impacted engineering listed. Structural is always `REQUIRES_REVIEW`; no certification claim (36) |
-| **S3** | Interior operation (needs D-9b approval) | A design-only change preserves exterior and structural locks; an unsupported space-planning edit asks for scope expansion (33) |
+| **S3** | Interior operation (needs D-12 approval; pending) | A design-only change preserves exterior and structural locks; an unsupported space-planning edit asks for scope expansion (33) |
 | **Gate** | All six | One supported request per module through real adapters; one source revision across the manifest, cost and engineering freshness (L297, scenario 39); live Supabase case; full suite, CI, OpenAPI and route catalog |
 
 ## 8. Safeguards carried forward
@@ -225,16 +233,16 @@ The B37 acceptance record (PR #17, `phase37-acceptance-gap-report.md` §11, reco
 - D-6 **Reuse**;
 - D-7 **Defer**.
 
-This document follows those entries. The table shows what is still open.
+This document follows those entries. The owner recorded the decisions below on 2026-10-14, after the scope corrections in `229d470` and `11f8c2c`.
 
 | ID | Decision | State |
 |---|---|---|
-| D-4 | Module order (§4) and interior meaning: finish and furnishing data on V2 spaces (L289) | **Proposed here**; the owner confirms by accepting this document |
+| D-4 | This scope, the module order (§4) and the interior meaning: finish and furnishing data on V2 spaces (L289) | **Accepted** (2026-10-14). Order: Blueprint, Materials, Budget, Exterior, Structural, Interior |
 | D-6 | PR #16 design-concept routes | **Recorded: reuse** as an advisory sub-output of Interior/Exterior, not as the specialists (§4) |
 | D-7 | Discovery clarification (readiness r3 §9.5) | **Recorded: defer**; the phase39 API guidance stays the interim |
-| D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results for S1 | Open |
-| D-9b | Approve the S3 interior schema work (operation kind and V2 space finish fields) | Open |
-| — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | Open |
+| D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results | **Recorded: computed on read for S1 and S2** (2026-10-14). No `0029` for result storage. Why: freshness is read from the current manifest rather than stored where it would go stale, and this matches the derived-on-read architecture (B37 manifest) without migration or operational risk. Trade-off: no durable result history and no fetch-by-id (§3.4), unless separately decided later |
+| D-12 | Approve the S3 interior schema work: a new revision-operation kind and V2 space finish fields. **Renamed from D-9b** (2026-10-14) so it cannot be confused with the D-9 hosted migration-history gate | **Pending.** Until approved, Interior answers a typed `UNSUPPORTED`, and the PR #16 advisory concepts do not count as a supported Interior request. The L297 gate cannot be met for Interior without it |
+| — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | PR #18 **merged** (`aac8e89`). PR #17 **pending owner authorization** |
 
 ## 10. Out of scope
 
