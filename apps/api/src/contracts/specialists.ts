@@ -31,6 +31,11 @@ export type ComponentScope = typeof COMPONENT_SCOPES[number];
 export const SPECIALIST_STATUSES = ['COMPLETED', 'CANDIDATE_READY', 'AWAITING_CONSENT', 'NEEDS_CLARIFICATION', 'UNSUPPORTED', 'REQUIRES_REVIEW',
   'DEGRADED_PROVIDER', 'STALE_DEPENDENCY', 'PARTIAL', 'BLOCKED_BY_LOCK', 'FAILED'] as const;
 export type SpecialistStatus = typeof SPECIALIST_STATUSES[number];
+/**
+ * Requested-room limit of every blueprint requirements version (rooms are per-type counts; the total may not exceed it). The API reaches the generator only
+ * through its allowlisted boundary, so this mirrors BLUEPRINT_LIMITS.maxRooms and GENERATION_LIMITS.maxRooms and is pinned to both by a test.
+ */
+export const MAX_REQUESTED_ROOMS = 24;
 /** The reported status is the most restrictive that applies; every reason is still listed. */
 export const STATUS_PRECEDENCE: readonly SpecialistStatus[] = ['UNSUPPORTED', 'BLOCKED_BY_LOCK', 'STALE_DEPENDENCY', 'FAILED', 'REQUIRES_REVIEW', 'PARTIAL',
   'DEGRADED_PROVIDER', 'COMPLETED'];
@@ -68,7 +73,8 @@ export const ArtifactReferenceSchema = z.object({ artifactId: id, logicalCompone
   inputHash: hash, producerVersion: z.string().min(1).max(100), providerId: z.null(), freshness: z.enum(FRESHNESS_STATES).nullable() }).strict();
 const ReasonSchema = z.object({ code: z.string().min(1).max(80), message: z.string().min(1).max(500) }).strict();
 const BlueprintDetails = z.object({ kind: z.literal('BLUEPRINT'), generatorVersion: z.string().nullable(), qaStatus: z.string().max(40),
-  verificationStatus: z.enum(['VERIFIED', 'VERIFIED_WITH_WARNINGS', 'PARTIAL', 'FAILED']), renderJobs: z.literal(0) }).strict();
+  /** null only when independent verification could not be run after the revision was stored (reason VERIFICATION_UNAVAILABLE). */
+  verificationStatus: z.enum(['VERIFIED', 'VERIFIED_WITH_WARNINGS', 'PARTIAL', 'FAILED']).nullable(), renderJobs: z.literal(0) }).strict();
 const MaterialsDetails = z.object({ kind: z.literal('MATERIALS'), takeoffStatus: z.enum(['EVALUATED', 'PARTIAL']),
   constructionStatus: z.enum(['EVALUATED', 'PARTIAL', 'NOT_EVALUATED']), recipePack: z.object({ id: text, version: text }).strict(),
   materials: z.array(z.object({ materialCode: text, unit: text, final: z.string().max(80) }).strict()).max(32) }).strict();

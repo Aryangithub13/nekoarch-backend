@@ -7,20 +7,25 @@ import { specification } from '../../../packages/construction-calculations/tests
 import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
-import { SpecialistResultSchema, SPECIALIST_VERSION } from '../src/contracts/specialists.js';
+import { SpecialistRequestSchema, SpecialistResultSchema, SPECIALIST_VERSION } from '../src/contracts/specialists.js';
+import { runSpecialist } from '../src/services/specialist-service.js';
+import type { Repository } from '../src/lib/repository.js';
+import { randomUUID } from 'node:crypto';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = Record<string, any>;
 const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
 
 describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget; typed refusals for the rest)', () => {
-  let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>;
+  let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>, backend: ReturnType<typeof createPgBackend>, ownerId: string, secret: string;
   beforeAll(async () => {
     db = await startTestDatabase();
-    const ownerId = await createTestUser(db.pool), otherId = await createTestUser(db.pool);
-    const secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
+    ownerId = await createTestUser(db.pool);
+    const otherId = await createTestUser(db.pool);
+    secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
+    backend = createPgBackend(db.pool, { owner: ownerId, other: otherId });
     app = buildApp({ env: parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent', RATE_LIMIT_ENABLED: 'false',
-      PROJECT_COMMIT_SECRET: secret }), backend: createPgBackend(db.pool, { owner: ownerId, other: otherId }), captureError: () => undefined });
+      PROJECT_COMMIT_SECRET: secret }), backend, captureError: () => undefined });
     await app.ready();
   }, 120_000);
   afterAll(async () => { await app?.close(); await db?.stop(); });
@@ -158,4 +163,80 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
     expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'INPUT_NOT_CURRENT', false]);
     expect(stale.reasons[0]!.message).toContain('blocked');
   }, 300_000);
+  it('idempotency: a reused key with a different envelope is a conflict; concurrent duplicates make one revision; a later replay reports its outputs as no longer current', async () => {
+    const p = await project('B39 idempotency'), key = { ...owner, 'idempotency-key': 'idem-bp' };
+    const body = envelope(p.revision.id, 'regenerate', ['building.floor_plans'], { requirements: parametricInput(false) });
+    // Two identical keyed requests at once: exactly one revision is generated; the other answer is that same revision or a retryable conflict.
+    const [x, y] = await Promise.all([call('POST', p.url('BLUEPRINT'), body, key), call('POST', p.url('BLUEPRINT'), body, key)]);
+    const ok2 = [x, y].filter(r => r.statusCode === 201 || r.statusCode === 200).map(r => SpecialistResultSchema.parse(r.json()));
+    expect(ok2.length, `${x.statusCode} ${y.statusCode}: ${y.body.slice(0, 300)}`).toBeGreaterThanOrEqual(1);
+    for (const r of [x, y]) expect([200, 201, 409], r.body.slice(0, 300)).toContain(r.statusCode);
+    expect(new Set(ok2.map(r => r.resultRevisionId)).size).toBe(1);
+    expect(await revisionCount(p.projectId)).toBe(2);
+    const first = ok2[0]!;
+    // The same key with a different envelope (here only the target scope) is a conflict, as on every durable route; nothing new is generated.
+    const conflict = await call('POST', p.url('BLUEPRINT'), { ...body, targetScopes: ['building.geometry'] }, key);
+    expect([conflict.statusCode, conflict.json().error?.code]).toEqual([409, 'IDEMPOTENCY_CONFLICT']);
+    expect(await revisionCount(p.projectId)).toBe(2);
+    // Unkeyed concurrent duplicates: one commits, the other is refused by the base check or the commit's stale-base guard; never two revisions from one base.
+    const q = await project('B39 unkeyed race');
+    const qBody = envelope(q.revision.id, 'regenerate', ['building.floor_plans'], { requirements: parametricInput(false) });
+    const race = await Promise.all([call('POST', q.url('BLUEPRINT'), qBody), call('POST', q.url('BLUEPRINT'), qBody)]);
+    expect(race.filter(r => r.statusCode === 201).length, race.map(r => `${r.statusCode} ${r.body.slice(0, 200)}`).join(' | ')).toBe(1);
+    expect(await revisionCount(q.projectId)).toBe(2);
+    // Once a newer revision exists, replaying the first request returns the same stored revision, now reported as no longer current.
+    await ok('POST', `/api/projects/${p.projectId}/revisions`, { model: (await ok('GET', `/api/projects/${p.projectId}/revisions/${first.resultRevisionId}`)).model,
+      baseRevisionId: first.resultRevisionId });
+    const later = await run(p.url('BLUEPRINT'), body, 200, key);
+    expect([later.replayed, later.resultRevisionId, later.status, later.artifacts[0]!.freshness]).toEqual([true, first.resultRevisionId, 'STALE_DEPENDENCY', 'stale']);
+    expect(later.reasons.map(r => r.code)).toContain('OUTPUT_NOT_CURRENT');
+    expect(await revisionCount(p.projectId)).toBe(3);
+  }, 300_000);
+
+  it('idempotency for Materials and Budget: keyed retries replay the stored artifacts; unkeyed repeats converge on the same engine rows', async () => {
+    const p = await project('B39 replay materials'), base = p.revision.id, key = { ...owner, 'idempotency-key': 'idem-mat' };
+    const matBody = envelope(base, 'recompute', ['quantities'], { specification: specification() });
+    const m1 = await run(p.url('MATERIALS'), matBody, 201, key), m2 = await run(p.url('MATERIALS'), matBody, 200, key);
+    expect([m2.replayed, m2.artifacts.map(a => a.artifactId)]).toEqual([true, m1.artifacts.map(a => a.artifactId)]);
+    const unkeyed = await run(p.url('MATERIALS'), matBody, 201);
+    expect(unkeyed.artifacts.map(a => a.artifactId)).toEqual(m1.artifacts.map(a => a.artifactId));
+    expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toHaveLength(1);
+    const cfg = { takeoffId: m1.artifacts[0]!.artifactId, constructionCalculationId: m1.artifacts[1]!.artifactId, costingPolicy: sampleCostingPolicy(), rateBookId: 'sample-inr-v1' };
+    const budgetKey = { ...owner, 'idempotency-key': 'idem-budget' }, budgetBody = envelope(base, 'recompute', ['cost'], cfg);
+    const b1 = await run(p.url('BUDGET'), budgetBody, 201, budgetKey), b2 = await run(p.url('BUDGET'), budgetBody, 200, budgetKey);
+    expect([b2.replayed, b2.artifacts[2]!.artifactId, b2.status]).toEqual([true, b1.artifacts[2]!.artifactId, b1.status]);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/cost-estimates`)).items).toHaveLength(1);
+    // A different budget body under the same key is a conflict, not a silent replay of the first estimate.
+    const conflict = await call('POST', p.url('BUDGET'), envelope(base, 'recompute', ['cost'], { ...cfg, rateBookId: 'sample-inr-v2' }), budgetKey);
+    expect([conflict.statusCode, conflict.json().error?.code]).toEqual([409, 'IDEMPOTENCY_CONFLICT']);
+  }, 300_000);
+
+  it('a room count above the generator limit is a typed UNSUPPORTED result, like the floor limit (scope §4 row 1)', async () => {
+    const p = await project('B39 room limit');
+    const requirements = { ...parametricInput(false), rooms: [{ type: 'bedroom', count: 13 }, { type: 'bathroom', count: 12 }] };
+    const r = await run(p.url('BLUEPRINT'), envelope(p.revision.id, 'regenerate', ['building.floor_plans'], { requirements }), 200);
+    expect([r.status, r.reasons.map(x => x.code), r.written]).toEqual(['UNSUPPORTED', ['ROOM_LIMIT_EXCEEDED'], false]);
+    expect(await revisionCount(p.projectId)).toBe(1);
+    // Within the limit, an invalid room entry stays a validation error.
+    const bad = { ...parametricInput(false), rooms: [{ type: 'ballroom', count: 1 }] };
+    expect((await call('POST', p.url('BLUEPRINT'), envelope(p.revision.id, 'regenerate', ['building.floor_plans'], { requirements: bad }))).statusCode).toBe(400);
+  }, 120_000);
+
+  it('a manifest that cannot be read after a write gives a controlled result: written, freshness unverified, review required (no error inviting a duplicate)', async () => {
+    const p = await project('B39 manifest unavailable');
+    const repo = backend.repository('owner');
+    // The B37 manifest refuses with 409 when the pointer appears to move during its read; simulate that only after the write.
+    const skewed: Repository = { ...repo, designConceptRpc: async (name, args) => {
+      const r = await repo.designConceptRpc!(name, args) as Json;
+      return args.p_action === 'list' ? { ...r, projectCurrentRevisionId: randomUUID() } : r;
+    } };
+    const request = SpecialistRequestSchema.parse(envelope(p.revision.id, 'recompute', ['quantities'], { specification: specification() }));
+    const r = SpecialistResultSchema.parse(await runSpecialist(skewed, ownerId, p.projectId, 'MATERIALS', request, { secret }));
+    expect([r.written, r.status, r.artifacts.map(a => a.freshness)]).toEqual([true, 'REQUIRES_REVIEW', [null, null]]);
+    expect(r.reasons.map(x => x.code)).toEqual(expect.arrayContaining(['MANIFEST_UNAVAILABLE']));
+    // The stored rows are the engines' own; reading again through the normal path reports them current.
+    const again = await run(p.url('MATERIALS'), envelope(p.revision.id, 'recompute', ['quantities'], { specification: specification() }), 201);
+    expect([again.artifacts.map(a => a.artifactId), again.artifacts.map(a => a.freshness)]).toEqual([r.artifacts.map(a => a.artifactId), ['current', 'current']]);
+  }, 180_000);
 });
+

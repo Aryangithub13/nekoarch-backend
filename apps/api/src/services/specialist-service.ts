@@ -4,7 +4,7 @@ import { GenerateRevisionRequestSchema, ProjectDetailSchema, ProjectRevisionDeta
 import { TakeoffDetailSchema } from '../contracts/takeoffs.js';
 import { ConstructionDetailSchema } from '../contracts/construction.js';
 import { CostDetailSchema } from '../contracts/costs.js';
-import { BlueprintConfigSchema, BudgetConfigSchema, MaterialsConfigSchema, MODULE_SCOPES, S1_MODULES, SPECIALIST_VERSION, SpecialistResultSchema,
+import { BlueprintConfigSchema, BudgetConfigSchema, MaterialsConfigSchema, MAX_REQUESTED_ROOMS, MODULE_SCOPES, S1_MODULES, SPECIALIST_VERSION, SpecialistResultSchema,
   STATUS_PRECEDENCE, type ComponentScope, type SpecialistModule, type SpecialistRequest, type SpecialistResult, type SpecialistStatus } from '../contracts/specialists.js';
 import type { ManifestModule, ProjectManifest } from '../contracts/project-manifest.js';
 import { ApiError, parseRequest } from '../lib/errors.js';
@@ -72,9 +72,11 @@ export async function runSpecialist(repository: Repository, userId: string, proj
       current === null ? 'The project has no current revision' : `Revision ${base.revisionNumber} is not the project's current revision; start from the current one`));
   };
 
-  // A retried request replays each stored step instead of repeating it, keyed by the caller's Idempotency-Key, the module and the step.
+  // A retried request replays each stored step instead of repeating it, keyed by the caller's Idempotency-Key, the module and the step. The receipt's
+  // fingerprint covers the whole envelope as well as the step's own input, so reusing a key for a different request is a 409 IDEMPOTENCY_CONFLICT, as on
+  // every durable route, never a silent replay of the earlier request.
   const step = async <T>(operation: string, name: string, input: unknown, run: (context?: IdempotencyContext) => Promise<T>) =>
-    deps.idempotencyKey ? internalCommand(repository, operation, `specialist:${module}:${deps.idempotencyKey}:${name}`, input, run)
+    deps.idempotencyKey ? internalCommand(repository, operation, `specialist:${module}:${deps.idempotencyKey}:${name}`, { envelope: { module, request }, step: input }, run)
       : { result: await run(), replayed: false };
   // An engine's own refusal (422) is a typed result with nothing stored; ownership (404), concurrency (409) and outages (503) stay errors.
   const engine = async <T>(run: () => Promise<T>): Promise<T | SpecialistResult> => {
@@ -89,16 +91,38 @@ export async function runSpecialist(repository: Repository, userId: string, proj
   const isResult = (v: unknown): v is SpecialistResult => !!v && typeof v === 'object' && 'envelopeVersion' in v;
   const freshness = (m: ProjectManifest, module: ManifestModule, artifactId: string) =>
     m.modules.find(x => x.module === module)?.artifacts?.find(a => a.artifactId === artifactId)?.freshness.state ?? null;
-  const done = (statuses: SpecialistStatus[], reasons: Reason[], fields: Partial<SpecialistResult>): SpecialistResult => SpecialistResultSchema.parse({
-    ...shell(overallStatus(statuses), reasons), written: true, quote: { execution: 'LOCAL_DETERMINISTIC', externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE' },
-    ...fields });
+  // After a write, the B37 manifest is read back for freshness. If it cannot be read (for example a 409 while another revision commits), the stored
+  // result is still returned, with freshness unverified, rather than an error that would invite an unkeyed retry to run the engine again.
+  const readBack = async (revisionId: string): Promise<ProjectManifest | null> => {
+    try { return await projectManifest(repository, projectId, revisionId); }
+    catch (error) { deps.log?.warn({ projectId, revisionId, err: error }, 'specialist manifest read-back failed'); return null; }
+  };
+  // Output freshness comes from the manifest only. An output that is not current (a newer revision exists, or it is blocked) or whose freshness could not
+  // be read is never reported as a plain success.
+  const done = (statuses: SpecialistStatus[], reasons: Reason[], fields: Partial<SpecialistResult>, manifest: ProjectManifest | null): SpecialistResult => {
+    const artifacts = fields.artifacts ?? [];
+    if (!manifest) { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'MANIFEST_UNAVAILABLE',
+      message: 'The project manifest could not be read after the write; the outputs are stored but their freshness is unverified. Read the manifest again' }); }
+    else if (artifacts.some(a => a.freshness === null)) { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'FRESHNESS_UNVERIFIED',
+      message: 'An output is not listed in the project manifest, so its freshness is unverified' }); }
+    const behind = artifacts.filter(a => a.freshness !== null && a.freshness !== 'current');
+    if (behind.length) { statuses.push('STALE_DEPENDENCY'); reasons.push({ code: 'OUTPUT_NOT_CURRENT',
+      message: `${behind.map(a => `${a.logicalComponentId} ${a.artifactId} is ${a.freshness}`).join('; ')} in the project manifest` }); }
+    return SpecialistResultSchema.parse({ ...shell(overallStatus(statuses), reasons), written: true,
+      quote: { execution: 'LOCAL_DETERMINISTIC', externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE' }, ...fields });
+  };
+  const fresh = (m: ProjectManifest | null, module: ManifestModule, artifactId: string) => m ? freshness(m, module, artifactId) : null;
 
   if (module === 'BLUEPRINT') {
     // Floors beyond the generators' limit are unsupported, not invalid (scope §4): checked before the requirements schema refuses them. The limit is the
     // API's own mirror of BLUEPRINT_LIMITS.maxFloors, pinned to it by a test.
-    const raw = request.outputConfig['requirements'] as { floors?: unknown } | undefined;
+    const raw = request.outputConfig['requirements'] as { floors?: unknown; rooms?: unknown } | undefined;
     if (typeof raw?.floors === 'number' && raw.floors > MAX_FLOORS)
       return refuse('UNSUPPORTED', 'FLOOR_LIMIT_EXCEEDED', `Blueprint generation supports at most ${MAX_FLOORS} floors`);
+    // Rooms are per-type counts in every requirements version; their total is limited like the floors (scope §4 row 1).
+    const rooms = Array.isArray(raw?.rooms) ? raw.rooms.reduce((n: number, r: unknown) => n + (typeof (r as { count?: unknown })?.count === 'number' ? (r as { count: number }).count : 0), 0) : 0;
+    if (rooms > MAX_REQUESTED_ROOMS)
+      return refuse('UNSUPPORTED', 'ROOM_LIMIT_EXCEEDED', `Blueprint generation supports at most ${MAX_REQUESTED_ROOMS} requested rooms; ${rooms} were requested`);
     const config = parseRequest(BlueprintConfigSchema, request.outputConfig);
     const input = GenerateRevisionRequestSchema.parse({ requirements: config.requirements, baseRevisionId: base.id });
     const saved = await engine(() => step(GENERATE_ROUTE, 'revision', { projectId, ...input }, ctx => {
@@ -108,16 +132,17 @@ export async function runSpecialist(repository: Repository, userId: string, proj
     if (isResult(saved)) return saved;
     const revision = RevisionCommitResponseSchema.parse(saved.result).revision;
     // Independent checks on the stored revision: the B34 verifier and the B37 manifest (which also gives the change since the base). No render or scene job.
-    const [verification, manifest] = await Promise.all([verifyRevision(repository, projectId, revision.id, null), projectManifest(repository, projectId, revision.id)]);
+    const [verification, manifest] = await Promise.all([verifyRevision(repository, projectId, revision.id, null).catch(() => null), readBack(revision.id)]);
     const hash = modelHash(revision.model), statuses: SpecialistStatus[] = [], reasons: Reason[] = [];
-    if (verification.status === 'PARTIAL') { statuses.push('PARTIAL'); reasons.push({ code: 'VERIFICATION_PARTIAL', message: 'Independent verification could not evaluate every check' }); }
-    if (verification.status === 'FAILED') { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'VERIFICATION_FAILED', message: 'The revision passed acceptance QA but independent verification failed; review it before relying on it' }); }
-    return done(statuses, reasons, { resultRevisionId: revision.id, replayed: saved.replayed, manifestHref: manifestHref(revision.id), changeImpact: manifest.changeImpact,
+    if (!verification) { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'VERIFICATION_UNAVAILABLE', message: 'Independent verification could not be run on the stored revision' }); }
+    else if (verification.status === 'PARTIAL') { statuses.push('PARTIAL'); reasons.push({ code: 'VERIFICATION_PARTIAL', message: 'Independent verification could not evaluate every check' }); }
+    else if (verification.status === 'FAILED') { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'VERIFICATION_FAILED', message: 'The revision passed acceptance QA but independent verification failed; review it before relying on it' }); }
+    return done(statuses, reasons, { resultRevisionId: revision.id, replayed: saved.replayed, manifestHref: manifestHref(revision.id), changeImpact: manifest?.changeImpact ?? null,
       artifacts: [{ artifactId: revision.id, logicalComponentId: 'BUILDING_MODEL', sourceRevisionId: revision.id, contentHash: hash,
         inputHash: revision.identity?.requirementsHash ?? hash, producerVersion: revision.generatorVersion ?? 'project-revision-v1', providerId: null,
-        freshness: freshness(manifest, 'BUILDING_MODEL', revision.id) }],
-      details: { kind: 'BLUEPRINT', generatorVersion: revision.generatorVersion, qaStatus: revision.qa.status, verificationStatus: verification.status, renderJobs: 0 },
-      provenance: { engine: 'blueprint-generator', engineVersion: revision.generatorVersion, providerId: null, inputHash: revision.identity?.requirementsHash ?? null } });
+        freshness: fresh(manifest, 'BUILDING_MODEL', revision.id) }],
+      details: { kind: 'BLUEPRINT', generatorVersion: revision.generatorVersion, qaStatus: revision.qa.status, verificationStatus: verification?.status ?? null, renderJobs: 0 },
+      provenance: { engine: 'blueprint-generator', engineVersion: revision.generatorVersion, providerId: null, inputHash: revision.identity?.requirementsHash ?? null } }, manifest);
   }
 
   if (module === 'MATERIALS') {
@@ -136,19 +161,19 @@ export async function runSpecialist(repository: Repository, userId: string, proj
       createConstruction(repository, userId, projectId, base.id, t.id, config.specification, config.constructionOptions, deps.secret, ctx)));
     if (isResult(construction)) return { ...construction, written: true, reasons: [...construction.reasons,
       { code: 'TAKEOFF_STORED', message: `Takeoff ${t.id} was stored before the construction calculation was refused` }] };
-    const k = ConstructionDetailSchema.parse(construction.result), manifest = await projectManifest(repository, projectId, base.id);
+    const k = ConstructionDetailSchema.parse(construction.result), manifest = await readBack(base.id);
     const statuses: SpecialistStatus[] = [], reasons: Reason[] = [];
     if (t.status === 'PARTIAL') { statuses.push('PARTIAL'); reasons.push({ code: 'TAKEOFF_PARTIAL', message: 'The takeoff could not evaluate every entity category' }); }
     if (k.status !== 'EVALUATED') { statuses.push('PARTIAL'); reasons.push({ code: 'CONSTRUCTION_PARTIAL', message: `The construction calculation is ${k.status}; see its coverage` }); }
     return done(statuses, reasons, { replayed: takeoff.replayed || construction.replayed,
       artifacts: [
         { artifactId: t.id, logicalComponentId: 'QUANTITY_TAKEOFF', sourceRevisionId: base.id, contentHash: costHash(t.report), inputHash: t.inputFingerprint,
-          producerVersion: t.engineVersion, providerId: null, freshness: freshness(manifest, 'QUANTITY_TAKEOFF', t.id) },
+          producerVersion: t.engineVersion, providerId: null, freshness: fresh(manifest, 'QUANTITY_TAKEOFF', t.id) },
         { artifactId: k.id, logicalComponentId: 'CONSTRUCTION_CALCULATION', sourceRevisionId: base.id, contentHash: costHash(k.report), inputHash: k.inputFingerprint,
-          producerVersion: k.engineVersion, providerId: null, freshness: freshness(manifest, 'CONSTRUCTION_CALCULATION', k.id) }],
+          producerVersion: k.engineVersion, providerId: null, freshness: fresh(manifest, 'CONSTRUCTION_CALCULATION', k.id) }],
       details: { kind: 'MATERIALS', takeoffStatus: t.status, constructionStatus: k.status, recipePack: k.recipePack,
         materials: k.summary.totals.map(m => ({ materialCode: m.materialCode, unit: m.unit, final: m.final })) },
-      provenance: { engine: 'quantity-takeoff+construction-calculations', engineVersion: k.engineVersion, providerId: null, inputHash: k.inputFingerprint } });
+      provenance: { engine: 'quantity-takeoff+construction-calculations', engineVersion: k.engineVersion, providerId: null, inputHash: k.inputFingerprint } }, manifest);
   }
 
   // BUDGET
@@ -180,7 +205,7 @@ export async function runSpecialist(repository: Repository, userId: string, proj
   const c = CostDetailSchema.parse(cost.result);
   const [t, k, after] = await Promise.all([new TakeoffRepository(repository).read(projectId, base.id, config.takeoffId).then(r => TakeoffDetailSchema.parse(r)),
     new ConstructionRepository(repository).read(projectId, base.id, config.takeoffId, config.constructionCalculationId).then(r => ConstructionDetailSchema.parse(r)),
-    projectManifest(repository, projectId, base.id)]);
+    readBack(base.id)]);
   const synthetic = c.report.rateBook.source.kind === 'SYNTHETIC', statuses: SpecialistStatus[] = [], reasons: Reason[] = [];
   if (synthetic) { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'SYNTHETIC_RATE_BOOK', message: `${c.rateBookId} is synthetic sample data, not current market rates` }); }
   // Coverage is partial when a line has no rate or when the upstream quantities are themselves partial; either way no complete total is given.
@@ -192,15 +217,15 @@ export async function runSpecialist(repository: Repository, userId: string, proj
   return done(statuses, reasons, { replayed: cost.replayed,
     artifacts: [
       { artifactId: t.id, logicalComponentId: 'QUANTITY_TAKEOFF', sourceRevisionId: base.id, contentHash: costHash(t.report), inputHash: t.inputFingerprint,
-        producerVersion: t.engineVersion, providerId: null, freshness: freshness(after, 'QUANTITY_TAKEOFF', t.id) },
+        producerVersion: t.engineVersion, providerId: null, freshness: fresh(after, 'QUANTITY_TAKEOFF', t.id) },
       { artifactId: k.id, logicalComponentId: 'CONSTRUCTION_CALCULATION', sourceRevisionId: base.id, contentHash: costHash(k.report), inputHash: k.inputFingerprint,
-        producerVersion: k.engineVersion, providerId: null, freshness: freshness(after, 'CONSTRUCTION_CALCULATION', k.id) },
+        producerVersion: k.engineVersion, providerId: null, freshness: fresh(after, 'CONSTRUCTION_CALCULATION', k.id) },
       { artifactId: c.id, logicalComponentId: 'BOQ_COST', sourceRevisionId: base.id, contentHash: c.reportHash, inputHash: c.inputFingerprint,
-        producerVersion: c.engineVersion, providerId: null, freshness: freshness(after, 'BOQ_COST', c.id) }],
+        producerVersion: c.engineVersion, providerId: null, freshness: fresh(after, 'BOQ_COST', c.id) }],
     details: { kind: 'BUDGET', rateBookId: c.rateBookId, rateBookVersion: c.rateBookVersion, rateBookSynthetic: synthetic, currency: c.currency, region: c.region,
       coverage: c.coverage, unpricedLineIds: c.report.unpricedLineIds, pricedTotal: c.finalTotals.pricedGrandTotal,
       completeTotal: c.finalTotals.completeTotalAvailable ? c.finalTotals.completeRepresentedScopeTotal : null },
-    provenance: { engine: 'boq-cost', engineVersion: c.engineVersion, providerId: null, inputHash: c.inputFingerprint } });
+    provenance: { engine: 'boq-cost', engineVersion: c.engineVersion, providerId: null, inputHash: c.inputFingerprint } }, after);
 }
 
 const CLAIMS = Object.freeze({ engineeringCorrectness: 'NOT_CLAIMED', solverValidation: 'NOT_CLAIMED', professionalReview: 'NOT_CLAIMED' } as const);

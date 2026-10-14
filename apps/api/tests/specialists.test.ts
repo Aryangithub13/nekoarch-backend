@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { COMPONENT_SCOPES, MODULE_SCOPES, S1_MODULES, SPECIALIST_MODULES, SPECIALIST_OPERATIONS, SPECIALIST_STATUSES, SPECIALIST_VERSION,
+import { BLUEPRINT_LIMITS } from '@designflow/generator';
+import { GENERATION_LIMITS } from '../../../packages/generator/src/input.js';
+import { COMPONENT_SCOPES, MAX_REQUESTED_ROOMS, MODULE_SCOPES, S1_MODULES, SPECIALIST_MODULES, SPECIALIST_OPERATIONS, SPECIALIST_STATUSES, SPECIALIST_VERSION,
   SpecialistRequestSchema, SpecialistResultSchema, STATUS_PRECEDENCE } from '../src/contracts/specialists.js';
 import { overallStatus } from '../src/services/specialist-service.js';
 
@@ -30,6 +32,8 @@ describe('B39 S1 specialist envelope contract', () => {
     // A blueprint regeneration rewrites the whole model, so it can preserve nothing; Materials and Budget rewrite only their own output.
     expect(MODULE_SCOPES.BLUEPRINT.rewrites).toEqual(COMPONENT_SCOPES);
     expect([MODULE_SCOPES.MATERIALS.rewrites, MODULE_SCOPES.BUDGET.rewrites]).toEqual([['quantities'], ['cost']]);
+    // The API cannot import the generator outside its boundary, so the room limit is mirrored; it must stay equal to both generator limits.
+    expect([MAX_REQUESTED_ROOMS, MAX_REQUESTED_ROOMS]).toEqual([BLUEPRINT_LIMITS.maxRooms, GENERATION_LIMITS.maxRooms]);
   });
 
   it('reports the most restrictive status that applies, and COMPLETED when none does', () => {
