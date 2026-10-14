@@ -1,6 +1,6 @@
 # B39 Slice S1: Specialist Envelope with Blueprint, Materials and Budget — Implementation Record
 
-**Status:** implemented on `phase39/s1-specialists`, stacked on PR #17 (`phase37/manifest-v2` @ `20a7620`), which S1 needs for the B37 manifest. **Not merged; not a release.**
+**Status:** implemented on `phase39/s1-specialists`, stacked on PR #17 (`phase37/manifest-v2`; merged into S1 at `f6f4de7`), which S1 needs for the B37 manifest. **Not merged; not a release.** The S1 correctness pass of 2026-10-14 (§5) is committed locally and **not pushed**: pushing needs owner authorization.
 
 **Scope of record:** [`b39-specialist-scope.md`](https://github.com/Aryangithub13/nekoarch-backend/blob/phase39/specialist-scope/docs/phase39/b39-specialist-scope.md) on PR #20 (§3, §4 rows 1–3, §7 S1). The roadmap is cited as ROADMAP Lnnn.
 
@@ -18,7 +18,11 @@ The owner confirmed these explicitly on 2026-10-14:
 | D-6 | Reuse | The PR #16 design-concept routes stay an advisory sub-output; S1 does not touch them |
 | D-7 | Defer | No discovery clarification |
 
-**D-8b (derived vs durable results) was not decided.** S1 therefore takes the option that needs no migration and no authorization:
+**Still open (no decision on record):**
+- **D-8b (derived vs durable results).** S1 keeps the option that needs no migration and no authorization, described below. Storage semantics will not change without a decision.
+- **D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).** It is only *proposed* in the B39 scope (§4 row 6, §6). Nothing in the repository implements or approves it, and S2 does not depend on it. Interior stays a typed `UNSUPPORTED` until D-9b is decided.
+
+**D-8b as built.** S1 takes the option that needs no migration and no authorization:
 - results are **derived**, not stored as envelopes;
 - everything a request produces is stored by the existing engines in their existing tables;
 - retries replay through the existing durable receipts.
@@ -40,17 +44,29 @@ The owner confirmed these explicitly on 2026-10-14:
    - target scope outside the module → `SCOPE_NOT_SUPPORTED`;
    - a preservation lock on anything the module rewrites → `BLOCKED_BY_LOCK` / `PRESERVATION_CONFLICT`;
    - per module:
-     - Blueprint above 2 floors → `FLOOR_LIMIT_EXCEEDED`. Room counts above the generator's limit remain a 400 from the existing requirements schema; S1 does not reinterpret them;
+     - Blueprint above 2 floors → `FLOOR_LIMIT_EXCEEDED`, or above 24 requested rooms (the total of the per-type counts) → `ROOM_LIMIT_EXCEEDED`, as the scope requires (§4 row 1). Any other invalid requirement stays a 400;
      - Materials substitutions → `SUBSTITUTION_PROVENANCE_UNAVAILABLE`;
      - Budget with a rate book that does not exist → `RATE_BOOK_UNAVAILABLE`;
      - Budget with a region no rate book covers → `REGION_NOT_COVERED`.
 3. **The engine runs unchanged:** `saveProjectRevision` (generated), `createTakeoff`, `createConstruction`, `createCost`.
-   - Each runs under its own route's durable receipt (`internalCommand`), keyed by the caller's `Idempotency-Key`, the module and the step.
+   - Each runs under its own route's durable receipt (`internalCommand`), keyed by the caller's `Idempotency-Key`, the module and the step. The receipt's fingerprint covers the **whole envelope** and the step input, so reusing a key for a different request is a 409 `IDEMPOTENCY_CONFLICT`, as on every durable route.
+   - Without a key, a repeat runs again. The engines converge where their tables are unique: one takeoff per revision and options, and one construction calculation per input fingerprint. Two concurrent Blueprint requests from one base commit one revision; the other is refused (`STALE_DEPENDENCY`) or gets the commit's 409.
    - The checks that depend on mutable state run **inside** the stored step, so a retry of a successful request replays it instead of being refused:
      - the base must be the current revision, else `STALE_DEPENDENCY` / `BASE_REVISION_SUPERSEDED`;
      - for Budget, the input takeoff and construction must be `current` in the B37 manifest, else `STALE_DEPENDENCY` / `INPUT_NOT_CURRENT`.
    - An engine's own 422 becomes a typed result with nothing stored: `UNSUPPORTED` for the generator's unsupported-geometry codes, otherwise `FAILED`.
 4. **Freshness is read back from the B37 manifest** of the result revision, never computed by the envelope. Blueprint results also carry the manifest's `changeImpact`.
+   - An output the manifest no longer reports as `current` makes the result `STALE_DEPENDENCY` / `OUTPUT_NOT_CURRENT`. This covers a concurrent commit, or a replay after the project moved on. The replay still returns the same stored revision or artifacts; only the derived status reflects the present.
+   - If the manifest cannot be read after a write, the stored result is still returned, with `freshness: null` and `REQUIRES_REVIEW` / `MANIFEST_UNAVAILABLE`. An error here would invite an unkeyed retry that runs the engine again.
+   - If independent verification cannot be run after a Blueprint write, the result is `REQUIRES_REVIEW` / `VERIFICATION_UNAVAILABLE`.
+   - A manifest failure *before* a write (the Budget input check) is the manifest's own error, with nothing stored.
+
+**HTTP semantics** (S1 contract; the scope fixes typed refusals, not status codes):
+- 200 for a typed refusal or a replay;
+- 201 when the request stored something;
+- 400 for an invalid envelope or module configuration;
+- 401 without a token, 404 for another user's project or revision;
+- 409 for an idempotency conflict or the commit's own stale-base conflict.
 
 **Statuses actually assigned** (most restrictive wins; every reason is listed):
 
@@ -72,7 +88,7 @@ The owner confirmed these explicitly on 2026-10-14:
 
 ## 3. Tests
 
-**`apps/api/tests/specialists.test.ts`** (unit, 5 tests):
+**`apps/api/tests/specialists.test.ts`** (unit, 5 tests; the room limit is pinned to both generator limits):
 - the §E operation and scope vocabularies, verbatim;
 - the six modules and the five L293 statuses;
 - S1 module scopes (Blueprint can preserve nothing);
@@ -80,13 +96,17 @@ The owner confirmed these explicitly on 2026-10-14:
 - the strict request: duplicate or empty scopes, unknown fields, other versions;
 - the result can never claim an operation, a job, provider cost, a provider or an engineering claim.
 
-**`apps/api/tests/specialists.integration.test.ts`** (embedded PostgreSQL, 3 tests):
+**`apps/api/tests/specialists.integration.test.ts`** (embedded PostgreSQL, 7 tests; the correctness pass of §5 added the last four rows):
 
 | Scenario | What is checked |
 |---|---|
 | 35, Blueprint | One new revision (number 2, parent = base) through the canonical generator and QA. The result, its artifact, its manifest and `changeImpact` name the same revision (gate L297). No job and no scene artifact is created. The same `Idempotency-Key` replays the same revision (200, `replayed`, still 2 revisions). The superseded base is then `STALE_DEPENDENCY` |
 | 46, refusals | Ten typed refusals covering limits, operation, scope, two locks, substitutions, a foreign target and the three unimplemented modules. Each stores nothing: no revision, no takeoff. Validation is 400, another user 404, no token 401 |
 | 37 and 38, Materials then Budget | Units, recipe pack and stored hashes match the takeoff route. Budget is `REQUIRES_REVIEW` with the synthetic rate book; a complete total exists only when fully priced. Every artifact is in the B37 manifest of the same revision. An unknown rate book or uncovered region is `UNSUPPORTED`. A tampered takeoff makes the next budget `STALE_DEPENDENCY` (`blocked` in the manifest) |
+| Idempotency and concurrency | Two concurrent keyed Blueprint duplicates make one revision. Two unkeyed ones from the same base commit one. The same key with a different envelope is 409. A replay after a newer revision returns the same revision as `STALE_DEPENDENCY` / `OUTPUT_NOT_CURRENT` (`stale`) |
+| Materials and Budget replay | Keyed retries replay the same takeoff, construction and cost rows (200, `replayed`). Unkeyed repeats converge on the same rows. A different Budget body under the same key is 409 |
+| Room limit | 25 requested rooms → `UNSUPPORTED` / `ROOM_LIMIT_EXCEEDED`, nothing stored. An invalid room type stays 400 |
+| Manifest read-back failure | Injected through the service: written, `REQUIRES_REVIEW` / `MANIFEST_UNAVAILABLE`, freshness `null`. A normal re-read reports the same rows `current` |
 
 **Mutation checks** (each restored afterwards): 5 of 5 caught:
 - the current-base check removed;
@@ -94,6 +114,20 @@ The owner confirmed these explicitly on 2026-10-14:
 - input freshness ignored;
 - substitutions accepted;
 - preservation locks ignored.
+
+**Correctness-pass mutation checks:** 4 of 4 caught:
+- the fingerprint without the envelope;
+- no room limit;
+- read-back errors rethrown;
+- output freshness ignored.
+
+**Live local Supabase case** (`apps/api/tests/supabase.live.test.ts`, "B39 S1 specialist envelope through actual JWT and PostgREST"), through real anonymous-user JWTs, GoTrue, PostgREST and RLS on the repository's disposable local stack:
+- a typed refusal stores nothing;
+- another user gets 404 and no token gets 401;
+- Materials stores the engines' own rows, owner-only through RLS;
+- a keyed replay through the Supabase receipt adapter returns the same rows, and a key conflict is 409;
+- Budget is `REQUIRES_REVIEW` on the synthetic rate book, with every artifact in the same revision's manifest;
+- Blueprint commits one revision with no job, after which the old base is `STALE_DEPENDENCY`.
 
 **Two defects were found by these tests before the first push:**
 - A retry of a successful Blueprint request was refused as stale, because the base had moved. The fix moves the check into the stored step.
@@ -106,3 +140,40 @@ The owner confirmed these explicitly on 2026-10-14:
 - Durable envelope storage, if the owner chooses it (D-8b).
 - Regional or sourced rate books, and substitution provenance.
 - No migration. No hosted, staging, merge or tag action.
+
+## 5. Correctness pass (2026-10-14) and acceptance evidence
+
+**Defects found and fixed** (each first reproduced by a failing regression test):
+1. **Key reuse.** Reusing an `Idempotency-Key` with a different envelope replayed silently. Only engine inputs were fingerprinted, so a changed `targetScopes` alone returned the earlier result. It now returns 409 `IDEMPOTENCY_CONFLICT`.
+2. **Room limit.** More than 24 requested rooms was a 400; the scope requires typed `UNSUPPORTED`. It is now `ROOM_LIMIT_EXCEEDED`.
+3. **Manifest read-back.** A failure after a write surfaced as an error. It is now a controlled result (§2, step 4).
+4. **Output freshness.** An output no longer current was reported without any flag. It is now `OUTPUT_NOT_CURRENT`.
+
+**Verified as already correct:**
+- Concurrent duplicates do not produce two revisions.
+- Refusals store nothing.
+- Materials and Budget engine rows converge.
+- Pricing never counts a missing rate as zero.
+
+**Phase 35 research and source integrity.**
+- The Phase 35 Engineering Research Enhanced V2 document is a reconstructed **process framework**: owner review required, no validated values. It is on the unmerged `docs/roadmap-research-baseline` branch. The reconciliation keeps it valid as a process; the original V2 research is still absent.
+- S1 follows it by adding none of the following:
+  - no standard, clause, factor, material property, rate or supplier price;
+  - no professional-review claim (all three claims are `NOT_CLAIMED`).
+- It labels the only rate books as synthetic (`REQUIRES_REVIEW`), refuses substitutions it cannot trace, and keeps engine outputs separate from any AI assumption: no AI step runs in S1.
+
+**Gates:**
+
+| Gate | State |
+|---|---|
+| Local unit, PostgreSQL and full suite | See the PR #21 description for the exact commit and counts |
+| Local disposable Supabase acceptance (real JWTs) | **Passed, 123/123**, including the S1 case. Receipt `docs/phase16-evidence/supabase-2026-10-14T07-27-16.304Z.json`: 3,857 requests, 0 API errors, 23 deliberate anonymous 401s from the existing cases. The first stack start failed its own health checks (realtime, storage) before any test ran; an unchanged retry started cleanly. The PostgREST image helper (`ensure-local-postgrest.mjs`) was not run in this pass (see the B37 gap report §6 for its registry deviation). **Not hosted** |
+| Hosted Supabase acceptance, hosted migration history, staging, tag | Not run (D-9 operator, D-10 prepare, D-11 wait) |
+| Push of the correctness pass | **Not done.** Needs owner authorization; the work is committed locally on `phase39/s1-specialists` |
+
+**PR order:**
+- PR #18 (merged by the owner on 2026-10-14, `aac8e89`).
+- PR #17: B37, base `phase31/development`.
+- PR #21: S1, base `phase37/manifest-v2`; retarget after PR #17 merges.
+- PR #20 (scope) still targets the merged `docs/b39-scope-correction`. It needs a base change to `phase31/development`, which the owner has not authorized.
+

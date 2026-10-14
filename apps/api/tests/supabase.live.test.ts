@@ -35,6 +35,10 @@ import {
 import { generatePlan, parseRequirements } from '@designflow/generator';
 import { buildApp } from '../src/app.js';
 import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
+import { SpecialistResultSchema, SPECIALIST_VERSION } from '../src/contracts/specialists.js';
+import { parametricInput } from '../../../test-support/parametric-fixtures.js';
+import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
+import { sampleCostingPolicy } from '@designflow/boq-cost';
 import { parseEnv, type Env } from '../src/config/env.js';
 import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
 import { fixtureEstimate, fixturePlan } from '../../../test-support/fixtures.js';
@@ -549,6 +553,51 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect((await publicClient.rpc('compute_read', { p_action: 'job', p_project_id: id, p_job_id: jobId })).error).not.toBeNull();
     expect((await owner.client.from('project_compute_dispatches').select('job_id').eq('project_id', id)).data).toHaveLength(1);
   }, 90_000);
+
+  it('B39 S1 specialist envelope through actual JWT and PostgREST: Materials and Budget run through the engines, keyed retries replay, refusals and other users store nothing', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const call = (url: string, payload: Record<string, unknown>, headers: Record<string, string>) => app!.inject({ method: 'POST', url, headers, payload });
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'B39 S1 live' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id as string;
+    const gen = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions/generate`, headers: owner.headers, payload: { requirements: parametricInput(true) } });
+    expect(gen.statusCode, gen.body.slice(0, 300)).toBe(201); const base = gen.json().revision.id as string;
+    const url = (module: string) => `/api/projects/${id}/specialists/${module}/requests`;
+    const envelope = (operation: string, targetScopes: string[], outputConfig: Record<string, unknown>) =>
+      ({ envelopeVersion: SPECIALIST_VERSION, baseRevisionId: base, operation, targetScopes, outputConfig });
+    const parse = (r: { statusCode: number; body: string; json(): unknown }, status: number) => {
+      expect(r.statusCode, r.body.slice(0, 400)).toBe(status); return SpecialistResultSchema.parse(r.json());
+    };
+    // Typed refusals and other principals store nothing.
+    expect(parse(await call(url('EXTERIOR'), envelope('modify', ['exterior.materials'], {}), owner.headers), 200)).toMatchObject({ status: 'UNSUPPORTED', written: false });
+    const matBody = envelope('recompute', ['quantities'], { specification: specification() });
+    expect((await call(url('MATERIALS'), matBody, other.headers)).statusCode).toBe(404);
+    expect((await call(url('MATERIALS'), matBody, {})).statusCode).toBe(401);
+    expect((await owner.client.from('project_revision_takeoffs').select('id').eq('project_revision_id', base)).data).toEqual([]);
+    // Materials, then a keyed replay through the Supabase receipt adapter: the same rows, no second engine run.
+    const key = { ...owner.headers, 'idempotency-key': 'b39-live-materials' };
+    const mat = parse(await call(url('MATERIALS'), matBody, key), 201);
+    expect(mat.artifacts.map(a => [a.logicalComponentId, a.sourceRevisionId, a.freshness])).toEqual([['QUANTITY_TAKEOFF', base, 'current'], ['CONSTRUCTION_CALCULATION', base, 'current']]);
+    const replay = parse(await call(url('MATERIALS'), matBody, key), 200);
+    expect([replay.replayed, replay.artifacts.map(a => a.artifactId)]).toEqual([true, mat.artifacts.map(a => a.artifactId)]);
+    const conflict = await call(url('MATERIALS'), { ...matBody, preserveScopes: ['cost'] }, key);
+    expect([conflict.statusCode, conflict.json().error?.code]).toEqual([409, 'IDEMPOTENCY_CONFLICT']);
+    // The rows are the engines' own, owner-only through RLS; another user sees none.
+    expect((await owner.client.from('project_revision_takeoffs').select('id').eq('project_revision_id', base)).data).toEqual([{ id: mat.artifacts[0]!.artifactId }]);
+    expect((await other.client.from('project_revision_takeoffs').select('id').eq('project_revision_id', base)).data).toEqual([]);
+    // Budget on the synthetic rate book: always review; never a complete total unless fully priced; every artifact in the manifest of the same revision.
+    const budget = parse(await call(url('BUDGET'), envelope('recompute', ['cost'], { takeoffId: mat.artifacts[0]!.artifactId,
+      constructionCalculationId: mat.artifacts[1]!.artifactId, rateBookId: 'sample-inr-v1', costingPolicy: sampleCostingPolicy() }), owner.headers), 201);
+    if (budget.details.kind !== 'BUDGET') throw new Error('unreachable');
+    expect([budget.status, budget.details.rateBookSynthetic, budget.details.completeTotal === null]).toEqual(['REQUIRES_REVIEW', true, budget.details.coverage !== 'FULLY_PRICED']);
+    const manifest = await app.inject({ url: `/api/projects/${id}/revisions/${base}/manifest`, headers: owner.headers });
+    const m = ProjectManifestSchema.parse(manifest.json());
+    for (const a of budget.artifacts) expect(m.modules.find(x => x.module === a.logicalComponentId)!.artifacts!.map(x => x.artifactId), a.logicalComponentId).toContain(a.artifactId);
+    // Blueprint commits a revision; the superseded base is then a stale dependency for further specialist runs.
+    const bp = parse(await call(url('BLUEPRINT'), envelope('regenerate', ['building.floor_plans'], { requirements: parametricInput(false) }), owner.headers), 201);
+    expect([bp.resultRevisionId !== null, bp.jobIds, bp.details.kind === 'BLUEPRINT' && bp.details.renderJobs]).toEqual([true, [], 0]);
+    expect(parse(await call(url('MATERIALS'), matBody, owner.headers), 200)).toMatchObject({ status: 'STALE_DEPENDENCY', written: false,
+      reasons: [{ code: 'BASE_REVISION_SUPERSEDED' }] });
+  }, 120_000);
 
   it('0027/0028 and the B37 manifest through actual JWT and PostgREST: evidence packages and design concepts are owner-only, immutable and unforgeable', async () => {
     if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
