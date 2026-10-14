@@ -378,8 +378,39 @@ The owner chose D-8(a). The closure slice is recorded in [phase37-completion-sco
 
 | Gate | Status |
 |---|---|
-| CI on the PR head | Passed (run 38514055560, `dcd15c5`) |
+| CI on the PR head | Passed: run 38514055560 (`dcd15c5`); run 38516535574 (`20a7620`), 109 files and 3,070 tests on both Node versions. The fix commit is in §12 |
 | Local Supabase acceptance | Passed: 122/122 |
 | Hosted migration history | **Outstanding:** operator run pending (D-9) |
 | Staging proof | **Outstanding:** prepared, not run (D-10) |
 | Phase tag | **On hold** (D-11) |
+
+## 12. Closure re-verification (2026-10-14, after `20a7620`)
+
+**Scope:** each D-8(a) closure item (§10) was re-read against the code, the SQL it reads, and its tests. Only a demonstrated defect is fixed. Nothing was added beyond the closure scope.
+
+| Item | Result |
+|---|---|
+| D1 (`superseded`) | Holds. Read from the module-table flag; every stale module is in exactly one list (T4) |
+| D2 (`APPEARANCE_VARIANT`) | **Defect D4 found and fixed (below).** The other checks hold: binding, model hash, appearance hash, artifact link |
+| Scenario 17 (`GENERATION_FAILED`) | Holds. Active and failed jobs are disjoint. Failures are listed only when nothing is stored and no job is active. Truncation is reported |
+| Document views | Holds. Plan sheets for storeys only; every indexed route answers (integration test) |
+| T1–T5, M6 (≤ 8 in flight) | Hold. Unchanged |
+| D-9 / D-10 kits | Unchanged. Prepared, tested locally only, **not run** |
+
+**D4: a restored appearance read as `blocked`.**
+- **Cause:** `0020` approve, `RESTORE` branch. A RESTORE copies the source revision's appearance row with `operation_id` set to the RESTORE operation, and keeps the source's `artifact_id`. That artifact's operation is the original `APPEARANCE_MODIFY`. The manifest required the row's operation to equal the artifact's.
+- **Effect:** after "restore revision 2", where revision 2 carried an appearance edit, the restored revision's visible 3D object read `blocked` / `LINK_INCONSISTENT` and was listed under `revalidate`.
+- **Reproduced:** on PostgreSQL with the real `0020` SQL: appearance edit B, restore revision 1 as C, restore revision 2 as D. The row's operation is D's RESTORE and the artifact's operation is B's edit.
+- **Fix:** the two operation ids may differ only when this revision's recorded lineage shows a `RESTORE` with the row's operation id that committed this revision. The artifact must still be bound to the same model hash and appearance hash. Builder-only change: no contract, OpenAPI, migration or SQL change.
+- **Tests:**
+  - PostgreSQL: the restored appearance is `current` and shares B's artifact; C, a restore of a revision without an appearance, is `NOT_GENERATED`. With the lineage operation removed, the same row is `blocked`.
+  - Unit: the restored case is `current`, and six mislinked variants are `blocked`: no lineage, another operation, an appearance-edit lineage, a RESTORE of another revision, and an artifact bound to another model or appearance.
+  - Mutation checks: **5 of 5 caught** (kind check removed, id check removed, target check removed, restore always accepted, fix reverted).
+
+**Status, kept apart:**
+
+| | State |
+|---|---|
+| **B37 development** | **Development-complete** (D-8), including D4. CI on the fix commit is in the PR #17 description |
+| **B37 release readiness** | **Not ready.** Hosted migration history: prepared, **unverified** (D-9, operator run pending). Staging proof: prepared and rehearsed locally, **unverified** (D-10). Phase tag: on hold (D-11). PR #17 is an unmerged draft |
+| **B39** | Scope document in draft PR #20 (`phase39/specialist-scope`, docs only). No B39 code. Waiting on the scope and schema decisions and on the PR #17 / PR #18 merges |

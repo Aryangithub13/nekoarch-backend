@@ -273,6 +273,37 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(mod(base, 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'NOT_GENERATED', missingReason: 'NOT_GENERATED_FOR_REVISION' });
   }, 300_000);
 
+  it('L262 after a restore: a restored appearance stays linked through the RESTORE operation that committed it, and a mislinked one is still blocked', async () => {
+    const p = await project('B37 restored appearance'), ops = `/api/projects/${p.projectId}/revision-operations`;
+    const consent = { acceptLocks: true, acceptQuote: true };
+    const commit = async (baseRevisionId: string, text: string) => {
+      const pre = (await ok('POST', ops, { baseRevisionId, request: { text } })).json() as Json;
+      const cand = (await ok('POST', `${ops}/${pre.id}/execute`, { preflightHash: pre.preflightHash, consent }, 200)).json() as Json;
+      return { pre, revision: (await ok('POST', `${ops}/${pre.id}/approve`, { preflightHash: pre.preflightHash, candidateHash: cand.candidateHash })).json().commit.revision as Json };
+    };
+    const b = await commit(p.revision.id, 'Redesign the exterior of my building using a contemporary glass-inspired façade. Keep the exact floor plans, internal rooms, stairs, '
+      + 'structure, building dimensions, and existing interior unchanged.');
+    const c = await commit(b.revision.id, 'Restore revision 1');
+    const d = await commit(c.revision.id, 'Restore revision 2');
+    expect(d.pre).toMatchObject({ kind: 'RESTORE', restoreSourceRevisionId: b.revision.id });
+    const at = (r: Json) => `/api/projects/${p.projectId}/revisions/${r.id}`;
+    // D's appearance row records D's RESTORE operation; its compiled artifact is B's, produced by B's APPEARANCE_MODIFY operation.
+    const read = (await ok('GET', `${at(d.revision)}/appearance`)).json() as Json;
+    expect([read.status, read.operationId, read.artifact.operationId]).toEqual(['APPEARANCE_VARIANT', d.pre.id, b.pre.id]);
+    const restored = await manifest(at(d.revision)), edited = await manifest(at(b.revision));
+    expect(mod(restored, 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current', reasons: [] },
+      artifacts: [{ artifactId: mod(edited, 'APPEARANCE_VARIANT').artifacts[0].artifactId }] });
+    expect(restored.lineage.operation).toMatchObject({ status: 'RECORDED', operationId: d.pre.id, kind: 'RESTORE', restoreSourceRevisionId: b.revision.id });
+    expect(mod(await manifest(at(c.revision)), 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'NOT_GENERATED', missingReason: 'NOT_GENERATED_FOR_REVISION' });
+    // Fail closed is kept: the same restored row with lineage that does not record its RESTORE operation is blocked.
+    const repo = backend.repository('owner'), unlinked: Repository = { ...repo, revisionRpc: async (name, args) => {
+      const result = await repo.revisionRpc!(name, args) as Json;
+      return args.p_action === 'lineage' ? { ...result, operation: null } : result;
+    } };
+    expect(mod(await projectManifest(unlinked, p.projectId, d.revision.id), 'APPEARANCE_VARIANT'))
+      .toMatchObject({ freshness: { state: 'blocked', reasons: [{ code: 'LINK_INCONSISTENT' }] } });
+  }, 300_000);
+
   it('scenario 17: a durable job that really failed for this revision is reported as GENERATION_FAILED, and a job for another revision is not', async () => {
     const p = await project('B37 failed generation'), jobs = `/api/projects/${p.projectId}/jobs`;
     const submitted = await app.inject({ method: 'POST', url: jobs, headers: owner, payload: { kind: 'OPTIMIZATION_STUDY', revisionId: p.revision.id, input: { version: 'nope' } } });

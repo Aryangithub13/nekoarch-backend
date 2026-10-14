@@ -343,6 +343,22 @@ describe('B37 closure: visible 3D linkage, failed generation and document views'
       expect(t.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness, code).toBe('blocked');
       expect(t.freshnessImpact.disciplines.find(d => d.discipline === 'VISUALIZATION')!.revalidate, code).toEqual(['APPEARANCE_VARIANT']);
     }
+    // A RESTORE commits the source's appearance under its own operation and reuses the source's artifact (0020 approve). That is linked only when this
+    // revision's recorded lineage shows the RESTORE committed it; the hash links are still required.
+    const committedBy = (patch: Record<string, unknown> = {}) => ({ ancestry: { parent: null, parentReadable: true, operation: { modelEquivalentToBase: null,
+      operation: { id: uuid(92), kind: 'RESTORE', baseRevisionId: PARENT, restoreSourceRevisionId: uuid(93), committedRevisionId: REV, ...patch } } } } as Partial<ManifestInput>);
+    const restored = appearanceOf({ operationId: uuid(92) });
+    expect(mod(manifest(chain(), REV, { appearance: restored, ...committedBy() }), 'APPEARANCE_VARIANT').freshness).toMatchObject({ state: 'current', reasons: [] });
+    for (const [label, input] of [
+      ['no recorded lineage', { appearance: restored }],
+      ['lineage records another operation', { appearance: restored, ...committedBy({ id: uuid(94) }) }],
+      ['lineage records an appearance edit', { appearance: restored, ...committedBy({ kind: 'APPEARANCE_MODIFY' }) }],
+      ['the RESTORE committed another revision', { appearance: restored, ...committedBy({ committedRevisionId: NEWER }) }],
+      ['restored artifact bound to another model', { appearance: appearanceOf({ operationId: uuid(92) }, { modelHash: 'f'.repeat(64) }), ...committedBy() }],
+      ['restored artifact bound to another appearance', { appearance: appearanceOf({ operationId: uuid(92) }, { appearanceHash: 'f'.repeat(64) }), ...committedBy() }],
+    ] as [string, Partial<ManifestInput>][]) {
+      expect(mod(manifest(chain(), REV, input), 'APPEARANCE_VARIANT').freshness, label).toMatchObject({ state: 'blocked', reasons: [{ code: 'LINK_INCONSISTENT' }] });
+    }
     // Superseded: stale like every output of the revision, and replaced rather than regenerated (D1).
     expect(mod(manifest(chain(), NEWER, { appearance: appearanceOf() }), 'APPEARANCE_VARIANT').freshness).toMatchObject({ state: 'stale',
       reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED' }], targetRevisionId: NEWER });
