@@ -5,7 +5,8 @@
 **Owner decisions recorded 2026-10-14 (§9):**
 - **D-4 accepted:** this scope and its module order.
 - **D-8b:** specialist results are computed on read for S1 and S2.
-- **D-12** (formerly D-9b): the Interior schema decision stays **pending**.
+- **D-12** (formerly D-9b), the Interior schema decision: **deferred**. S1 and S2 go ahead; Interior stays a typed `UNSUPPORTED`.
+- **Blueprint verification:** a failed independent B34 verification after the commit is reported as `FAILED` (§4 row 1).
 
 **Bases:**
 - This branch is based on PR #18 (`docs/b39-scope-correction` @ `8dd7880`), which carries the authoritative roadmap into the development branch. PR #18 is merged into `phase31/development` as `aac8e89`.
@@ -110,9 +111,9 @@ interface SpecialistRequest {
   instruction?: string;                   // ≤ 2,000 chars (Phase 30 limit)
   targetScopes: ComponentScope[];
   preserveScopes: ComponentScope[];       // mapped to Phase 30 PRESERVATION_SCOPES (revision/contracts.ts:52)
-  referenceIds?: string[];                // Phase 31 references, metadata only (as PR #16)
+  referenceIds?: string[];                // Phase 31 references (≤ 8, active), metadata only (as PR #16); recorded, never consumed by S1/S2 engines
   outputConfig?: Record<string, unknown>; // module-specific and strict, e.g. a Budget rateBookId and currency
-  budget?: { ceiling: string; currency: 'INR' | 'USD' | 'EUR' };
+  budget?: { ceiling: string; currency: 'INR' | 'USD' | 'EUR' };   // execution-cost ceiling (§E budget_exceeded), not a construction-cost target
 }
 ```
 
@@ -171,16 +172,16 @@ Order from readiness §5.2, **accepted by the owner (D-4, 2026-10-14)**: 1 Bluep
 
 | # | Module | First supported request (scenario) | Reuses | Typed refusals and statuses | Migration? |
 |---|---|---|---|---|---|
-| 1 | **Blueprint** | Blueprint-only regenerate from requirements on the current base: a new revision with QA and the B34 verifier, and **no render or scene jobs** (35, L765) | Generators, `blueprint-qa-v1`, `complex-verification-v1` | `UNSUPPORTED` above 2 floors (`FLOOR_LIMIT_EXCEEDED`) or above 24 requested rooms, counted as the total of the per-type counts (`ROOM_LIMIT_EXCEEDED`). Both are checked by the envelope before the requirements schema runs, and nothing is stored. **Amended by the owner, 2026-10-14:** the room limit was previously recorded here as a 400. The existing generation route's input contract is unchanged: `POST …/revisions/generate` still rejects more than 24 rooms with its 400 validation error (`packages/generator/src/blueprint/input.ts:38`). Any other invalid requirement stays a 400 on the envelope too. QA failure → `FAILED` with the report | None |
+| 1 | **Blueprint** | Blueprint-only regenerate from requirements on the current base: a new revision with QA and the B34 verifier, and **no render or scene jobs** (35, L765) | Generators, `blueprint-qa-v1`, `complex-verification-v1` | `UNSUPPORTED` above 2 floors (`FLOOR_LIMIT_EXCEEDED`) or above 24 requested rooms, counted as the total of the per-type counts (`ROOM_LIMIT_EXCEEDED`). Both are checked by the envelope before the requirements schema runs, and nothing is stored. **Amended by the owner, 2026-10-14:** the room limit was previously recorded here as a 400. The existing generation route's input contract is unchanged: `POST …/revisions/generate` still rejects more than 24 rooms with its 400 validation error (`packages/generator/src/blueprint/input.ts:38`). Any other invalid requirement stays a 400 on the envelope too. QA failure → `FAILED` with the report. **Independent B34 verification `FAILED` after the commit → `FAILED`** (owner decision, 2026-10-14), with a reason that the revision was committed and is current and how to restore the base | None |
 | 2 | **Materials** | Takeoff and construction calculation for a revision, with units, recipes and provenance (37, L767) | Takeoff, construction calculations | `PARTIAL` for partial recipes; **substitutions `UNSUPPORTED`** (no provenance exists, §2.2); `STALE_DEPENDENCY` when the takeoff is stale | None |
 | 3 | **Budget** | Cost estimate with an explicit rate book and currency (38, L768) | BOQ/cost | **Always `REQUIRES_REVIEW` while only the synthetic rate books exist**; `PARTIAL` with `unpricedLineIds`; never zero; regional versioned rates `UNSUPPORTED` until a sourced rate book exists | None |
 | 4 | **Exterior** | Cladding swap through Phase 30 `APPEARANCE_MODIFY` with plan and structure locks (34, L764) | Phase 30 lifecycle, `APPEARANCE_VARIANT` in the manifest | Glazing or massing geometry → `UNSUPPORTED` (`ENVELOPE_GEOMETRY_REGENERATION`), with the impacted engineering listed. This is where the waived B37 item **U2** (element-level differential invalidation, PR #17) must be closed | None for cladding; U2 needs per-output input scopes (§5) |
 | 5 | **Structural** | Structural-only analysis on a revision, with solver evidence, assumptions and review state (36, L766) | Structural routes, engineering assessment | **Always `REQUIRES_REVIEW`**; certification is never claimed; validated solvers `UNSUPPORTED` | None |
-| 6 | **Interior** | **None today.** A design-only change needs finish data on V2 spaces, and no interior operation exists (33, L763) | PR #16 advisory concept, as an advisory sub-output (D-6) | `UNSUPPORTED` for every edit until a typed interior operation exists. The advisory concept routes are not a supported Interior implementation | **Yes**: a new operation kind (`0020:9` check) and V2 space finish fields. **Pending owner decision D-12** |
+| 6 | **Interior** | **None today.** A design-only change needs finish data on V2 spaces, and no interior operation exists (33, L763) | PR #16 advisory concept, as an advisory sub-output (D-6) | `UNSUPPORTED` for every edit until a typed interior operation exists. The advisory concept routes are not a supported Interior implementation | **Yes**: a new operation kind (`0020:9` check) and V2 space finish fields. **Owner decision D-12: deferred** (2026-10-14) |
 
 **Gate reading (L297), ACCEPTED (D-4).** "One supported request for each of six modules" cannot be met for Interior without a model change. The scope therefore splits into:
 - **S1–S2:** the five modules that can be met with no migration;
-- **S3:** Interior, which needs owner-approved schema work (D-12, pending).
+- **S3:** Interior, which needs owner-approved schema work (D-12, deferred).
 
 B39 is complete only after S3. Interior is not waived by this document.
 
@@ -211,7 +212,7 @@ B39 is complete only after S3. Interior is not waived by this document.
 |---|---|---|
 | **S1** | Envelope contract and route family; Blueprint, Materials, Budget | Envelope schema strict. Each module's supported request succeeds on Postgres with common revision ids (35, 37, 38). Typed refusals for >2 floors, >24 requested rooms, substitutions and synthetic rates (46). Unpriced is never zero (38). `STALE_DEPENDENCY` from a stale manifest input. Results link the manifest. No render or scene job is created by Blueprint (35) |
 | **S2** | Exterior (cladding) and Structural | Cladding swap through Phase 30 with locks; protected geometry is hash-identical (42); the manifest links `APPEARANCE_VARIANT` (34). A glazing change is `UNSUPPORTED` with impacted engineering listed. Structural is always `REQUIRES_REVIEW`; no certification claim (36) |
-| **S3** | Interior operation (needs D-12 approval; pending) | A design-only change preserves exterior and structural locks; an unsupported space-planning edit asks for scope expansion (33) |
+| **S3** | Interior operation (needs D-12 approval; deferred) | A design-only change preserves exterior and structural locks; an unsupported space-planning edit asks for scope expansion (33) |
 | **Gate** | All six | One supported request per module through real adapters; one source revision across the manifest, cost and engineering freshness (L297, scenario 39); live Supabase case; full suite, CI, OpenAPI and route catalog |
 
 ## 8. Safeguards carried forward
@@ -241,7 +242,8 @@ This document follows those entries. The owner recorded the decisions below on 2
 | D-6 | PR #16 design-concept routes | **Recorded: reuse** as an advisory sub-output of Interior/Exterior, not as the specialists (§4) |
 | D-7 | Discovery clarification (readiness r3 §9.5) | **Recorded: defer**; the phase39 API guidance stays the interim |
 | D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results | **Recorded: computed on read for S1 and S2** (2026-10-14). No `0029` for result storage. Why: freshness is read from the current manifest rather than stored where it would go stale, and this matches the derived-on-read architecture (B37 manifest) without migration or operational risk. Trade-off: no durable result history and no fetch-by-id (§3.4), unless separately decided later |
-| D-12 | Approve the S3 interior schema work: a new revision-operation kind and V2 space finish fields. **Renamed from D-9b** (2026-10-14) so it cannot be confused with the D-9 hosted migration-history gate | **Pending.** Until approved, Interior answers a typed `UNSUPPORTED`, and the PR #16 advisory concepts do not count as a supported Interior request. The L297 gate cannot be met for Interior without it |
+| D-12 | Approve the S3 interior schema work: a new revision-operation kind and V2 space finish fields. **Renamed from D-9b** (2026-10-14) so it cannot be confused with the D-9 hosted migration-history gate | **Deferred** (owner, 2026-10-14). S1 and S2 proceed without it. Interior answers a typed `UNSUPPORTED`, and the PR #16 advisory concepts do not count as a supported Interior request. The L297 gate cannot be met for Interior until D-12 is approved and implemented, or the owner waives Interior explicitly |
+| — | Blueprint: independent verification `FAILED` after the commit | **Recorded: `FAILED`** (owner, 2026-10-14), not `REQUIRES_REVIEW` |
 | — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | PR #18 **merged** (`aac8e89`). PR #17 **merged** on owner authorization (`4d1da13`, 2026-10-14) |
 
 ## 10. Out of scope
