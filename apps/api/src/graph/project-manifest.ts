@@ -115,7 +115,8 @@ export function buildLineage(revision: Revision, ancestry: ManifestInput['ancest
 
 /** Entity-level comparison with the parent through the Phase 34 `scopedDiff` (canonical hash per entity), only when the lineage is LINKED. */
 export function buildDiff(projectId: string, revision: Revision, hash: string, parent: ParentRevision | null, lineage: Lineage & { parentHash: string | null }): ManifestDiff {
-  const bimDiffHref = revision.parentRevisionId ? `/api/projects/${projectId}/revisions/${revision.id}/bim/diff/${revision.parentRevisionId}` : null;
+  // The BIM diff route compares its path revision (before) with its parameter (after); parent first, so it reads in the same direction as this diff.
+  const bimDiffHref = revision.parentRevisionId ? `/api/projects/${projectId}/revisions/${revision.parentRevisionId}/bim/diff/${revision.id}` : null;
   const empty = { diffVersion: null, baseRevisionId: null, baseModelHash: null, modelHash: hash, modelHashChanged: null, entitiesIdentical: null, counts: null,
     collections: [], changes: [], changesTruncated: false, bimDiffHref };
   if (lineage.status === 'ROOT') return { ...empty, status: 'NO_PARENT', unavailableReason: null };

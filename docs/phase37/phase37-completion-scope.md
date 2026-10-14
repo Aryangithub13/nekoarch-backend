@@ -175,7 +175,7 @@ PR #17's branch received `913b584` (read gate) and `aa20a0e` (`lineage`, `diff` 
 |---|---|---|
 | Read bound | `pooled()` (hard cap 8, no reads after a failure) | Its width-1/3 integration test still runs, against `pooled()` |
 | `lineage` | §5.2 (`ROOT`/`LINKED`/`INCONSISTENT`/`UNAVAILABLE`, ancestry checks) | `operation.modelEquivalentToBase` (the Phase 30 lineage read's own value); `operationLineage: UNAVAILABLE` is `operation.status: UNAVAILABLE` |
-| `diff` | Computed `scopedDiff` against the parent | `bimDiffHref`: the existing `…/bim/diff/:parentRevisionId` route, null without a parent |
+| `diff` | Computed `scopedDiff` against the parent | `bimDiffHref`: the existing BIM diff route for the same pair, null without a parent. Its direction was corrected in §7 |
 | `changeImpact` | Change since the parent, by model binding (§5.2) | — |
 | `freshnessImpact` | — | **Its `changeImpact`, renamed:** per discipline, modules to `regenerate` (stale), `revalidate` (blocked) and `await` (pending), with artifact counts, against the current revision (ROADMAP L262) |
 
@@ -225,3 +225,40 @@ The other modules have no paged view yet and list none (§4).
 | `project-manifest.test.ts` | Only this revision's `AWAITING_CONSENT` / `CANDIDATE_READY` operations are listed, oldest first. Identity, modules, disciplines, both impacts, lineage, diff and verification are identical with and without candidates. `UNAVAILABLE` and `TRUNCATED`. Views: BIM, takeoff and none; all 11 indexed routes are GET routes of the catalog. A discipline view keeps exactly that discipline in modules, disciplines and both impacts, both with and without a parent. `artifacts=omit` keeps counts and freshness. The hash and the other sections are unchanged. Bad queries are refused |
 | `project-manifest.integration.test.ts` | Preflight: listed as `AWAITING_CONSENT`. Execute: `CANDIDATE_READY` with its hash, `comparisonHref` answers 200, and every other section is unchanged. Approve: gone from the base; the child's lineage is `LINKED` with the `RECORDED` operation. The operation listing completes before the concept listing starts. A full page whose oldest entry is 1 hour old is `TRUNCATED`; one 26 hours old is `COMPLETE`. Without operation persistence: `UNAVAILABLE`. Partial view over HTTP; 400 on a bad discipline, a bad `artifacts` value or a repeated `discipline`; 404 for another user; every indexed view answers 200 with `limit=1` |
 | Mutation checks | 10 of 10 caught:<ul><li>the base-revision filter;</li><li>the status filter;</li><li>the `changeImpact` filter;</li><li>the `freshnessImpact` filter;</li><li>the module filter;</li><li>hashing without candidates;</li><li>a wrong view route;</li><li>artifacts not omitted;</li><li>truncation never reported;</li><li>the operation and concept listings run in parallel.</li></ul> |
+
+## 7. Completion pass on PR #17 (2026-10-14)
+
+Checked against roadmap Phase 37 (L245–262) on head `4a57aa5`.
+
+### 7.1 Fix: BIM diff link direction
+
+- **Defect:** `GET …/revisions/:revisionId/bim/diff/:otherRevisionId` compares the path revision (before) with the parameter (after). The existing callers put the older revision in the path (`modernization.integration.test.ts`, `revision.integration.test.ts`).
+- **Before:** `diff.bimDiffHref` was `…/revisions/<this>/bim/diff/<parent>`. The linked BIM diff therefore ran revision → parent, opposite to the manifest's own parent → revision `diff`: an entity the edit added would read `REMOVED` there.
+- **After:** `…/revisions/<parent>/bim/diff/<this>`, so both describe the same pair in the same direction.
+- **Test:** the unit test pins the href. The M4 integration test reads the linked BIM diff and checks that its `before`/`after` bindings are the parent and the edited revision, with the model hashes the manifest `diff` reports.
+
+### 7.2 Added acceptance tests on PostgreSQL
+
+| Behaviour | Before | Added |
+|---|---|---|
+| `freshnessImpact.revalidate` (a failed provenance check) | Unit only | A tampered stored takeoff fingerprint: takeoff, construction and cost are `blocked`, listed under `revalidate` (never `regenerate`), `blockedArtifacts: 3`, the other disciplines untouched, nothing `verified` |
+| `freshnessImpact.awaiting` (an active job) | Unit only | A queued `SCENE_COMPILE` job: `VISUALIZATION` awaits `SCENE_3D`; nothing else is awaited |
+| BIM diff linkage | Status 200 only | Pair and direction, as §7.1 |
+
+### 7.3 Traced and left as is
+
+- **`scopedDiff` change cap (50,000).** `scopedDiff` validates its report, so a comparison with more than 50,000 changes would fail the whole manifest read. Reaching that needs two revisions with about 25,000 or more disjoint entities each. The model schema allows up to 42,240 entities, but the save route's default body limit is 1 MiB (`BODY_LIMIT_BYTES`), far below such a model. No code is added for it. It becomes reachable only if that limit is raised by about two orders of magnitude.
+
+### 7.4 Roadmap items still open
+
+These are why the PR is not marked ready for review:
+
+| Roadmap text | State |
+|---|---|
+| L251: `not_applicable` and `verified` | Defined in the vocabulary, never assigned. There is no evidence-backed rule for either (§2) |
+| L252: material and façade variations as explicit, semantically typed changes | Not in this slice. Phase 30 `APPEARANCE_MODIFY` operations are reported in `lineage.operation` and `candidates`; `APPEARANCE_VARIANT` is in `notIncluded` |
+| L258: "façade cladding alone differs from changing curtain-wall glazing area" | Not met. Invalidation is by whole-model binding (`changeImpact.basis: MODEL_BINDING`), because every stored output is bound to the whole model hash. Telling those two edits apart needs per-output input scopes that the stored artifacts do not record |
+| L259: drawing/layer, room-navigation and site/plot paged views | Not built (§4) |
+| L260: `confidence/assumptions` (when applicable) | Not surfaced as a manifest field. The other L260 fields are: `diff`, `lineage`, `source`, `units`, the local coordinate system (L260 asks for a CRS *or* a local system), `completeness`, `last_verified` (`integrityCheckedAt`) and `missing_reason` |
+| M9: phase tag and staging proof; Supabase acceptance; hosted migration history | Owner-authorized release gates; not run |
+

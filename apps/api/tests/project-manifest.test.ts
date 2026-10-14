@@ -256,11 +256,12 @@ describe('B37 change metadata: lineage, diff and per-discipline impact', () => {
         modelEquivalentToBase: false } });
   });
 
-  it('diff carries the existing BIM semantic diff route for the parent pair, and null without a parent', () => {
+  it('diff carries the existing BIM semantic diff route for the parent pair, in the same direction (parent before), and null without a parent', () => {
     expect(manifest().diff.bimDiffHref).toBeNull();
-    expect(withParent(authored()).diff.bimDiffHref).toBe(`/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}`);
+    // `…/revisions/:revisionId/bim/diff/:otherRevisionId` compares the path revision (before) with the parameter (after): the parent goes in the path.
+    expect(withParent(authored()).diff.bimDiffHref).toBe(`/api/projects/${PROJECT}/revisions/${PARENT}/bim/diff/${REV}`);
     // The route is offered even when the comparison here is unavailable: the BIM diff reads both revisions itself.
-    expect(withParent(null, { readable: false }).diff).toMatchObject({ status: 'UNAVAILABLE', bimDiffHref: `/api/projects/${PROJECT}/revisions/${REV}/bim/diff/${PARENT}` });
+    expect(withParent(null, { readable: false }).diff).toMatchObject({ status: 'UNAVAILABLE', bimDiffHref: `/api/projects/${PROJECT}/revisions/${PARENT}/bim/diff/${REV}` });
   });
 });
 

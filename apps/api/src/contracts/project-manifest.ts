@@ -79,7 +79,10 @@ export const DiffSchema = z.object({
   changes: z.array(z.object({ collection: diffCollection, entityId: z.string().min(1).max(200), change: z.enum(['ADDED', 'REMOVED', 'CHANGED']),
     levelIds: z.array(z.string()).max(2) }).strict()).max(MANIFEST_DIFF_CHANGE_LIMIT),
   changesTruncated: z.boolean(), unavailableReason: z.enum(DIFF_UNAVAILABLE_REASONS).nullable(),
-  /** The existing BIM semantic diff of this revision against its parent (`…/bim/diff/:parentRevisionId`); null without a parent. BIM profile limits apply there. */
+  /**
+   * The existing BIM semantic diff for the same pair and direction: `…/revisions/:parentRevisionId/bim/diff/:revisionId` (parent before, this revision after);
+   * null without a parent. BIM profile limits apply there.
+   */
   bimDiffHref: z.string().startsWith('/api/projects/').nullable(),
 }).strict();
 export const ChangeImpactSchema = z.object({

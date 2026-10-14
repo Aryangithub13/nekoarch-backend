@@ -128,8 +128,10 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
       parent: { revisionId: a.revision.id, revisionNumber: 1, modelHash: a.revision.identity.modelHash }, modelEquivalentToParent: false, operation: { status: 'NONE' } });
     expect(fresh.diff).toMatchObject({ status: 'COMPUTED', baseRevisionId: a.revision.id, modelHashChanged: true, entitiesIdentical: false,
       counts: { added: 0, removed: 0, changed: 1 }, collections: [{ collection: 'spaces', changed: 1 }], changes: [{ collection: 'spaces', entityId: spaces[0]!.id, change: 'CHANGED' }] });
-    // The existing BIM semantic diff answers for the same pair; the new revision has nothing to regenerate yet.
-    await ok('GET', fresh.diff.bimDiffHref!);
+    // The linked BIM semantic diff compares the same pair in the same direction (parent before, edited revision after); nothing to regenerate yet.
+    const bim = (await ok('GET', fresh.diff.bimDiffHref!)).json() as Json;
+    expect([bim.before.revisionId, bim.before.modelHash, bim.after.revisionId, bim.after.modelHash])
+      .toEqual([a.revision.id, fresh.diff.baseModelHash, edited.id, fresh.diff.modelHash]);
     expect(fresh.freshnessImpact.disciplines.every(d => !d.regenerate.length && !d.revalidate.length)).toBe(true);
     expect(fresh.changeImpact.disciplines.map(d => [d.discipline, d.impact, d.reason])).toEqual([['ARCHITECTURE', 'AFFECTED', 'MODEL_ENTITIES_CHANGED'],
       ...['QUANTITIES_AND_COST', 'ENGINEERING', 'DESIGN', 'VISUALIZATION', 'DOCUMENTATION'].map(d => [d, 'AFFECTED', 'BOUND_TO_CHANGED_MODEL'])]);
@@ -150,6 +152,10 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(mod(m, 'SCENE_3D')).toMatchObject({ availability: 'NOT_GENERATED', activeJobIds: [job.id], freshness: { state: 'pending', reasons: [{ code: 'JOB_ACTIVE' }] } });
     expect(mod(m, 'DESIGN_OPTIMIZATION').freshness).toBeNull();
     expect(m.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness).toBe('pending');
+    // ROADMAP L262: an output an active job will produce is awaited, never regenerated or revalidated.
+    expect(m.freshnessImpact.disciplines.find(d => d.discipline === 'VISUALIZATION')).toEqual({ discipline: 'VISUALIZATION', regenerate: [], revalidate: [],
+      awaiting: ['SCENE_3D'], staleArtifacts: 0, blockedArtifacts: 0 });
+    expect(m.freshnessImpact.disciplines.filter(d => d.discipline !== 'VISUALIZATION').every(d => !d.awaiting.length)).toBe(true);
     const second = (await ok('POST', `/api/projects/${p.projectId}/revisions`, { model: p.revision.model, baseRevisionId: p.revision.id })).json().revision as Json;
     const same = await manifest(`/api/projects/${p.projectId}/revisions/${second.id}`);
     expect(mod(same, 'SCENE_3D').freshness).toBeNull();
@@ -157,6 +163,32 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(same.lineage).toMatchObject({ status: 'LINKED', modelEquivalentToParent: true });
     expect(same.diff).toMatchObject({ status: 'COMPUTED', modelHashChanged: false, entitiesIdentical: true, counts: { added: 0, removed: 0, changed: 0 }, changes: [] });
     expect(same.changeImpact.disciplines.every(d => d.impact === 'NOT_AFFECTED' && d.reason === 'MODEL_UNCHANGED')).toBe(true);
+  }, 180_000);
+
+  it('M2/L262: a stored output that fails a provenance check is blocked and listed to revalidate with its dependents, never to regenerate', async () => {
+    const t = await project('B37 revalidate');
+    const takeoff = (await ok('POST', `${t.base}/takeoffs`, {})).json();
+    const construction = (await ok('POST', `${t.base}/takeoffs/${takeoff.id}/construction-calculations`, { specification: specification() })).json();
+    await ok('POST', `${t.base}/takeoffs/${takeoff.id}/construction-calculations/${construction.id}/cost-estimates`,
+      { rateBookId: 'sample-inr-v1', costingPolicy: sampleCostingPolicy() });
+    const client = await db.pool.connect();
+    try {
+      await client.query('begin');
+      await client.query('set local session_replication_role = replica'); // bypass the immutability trigger to simulate corruption
+      await client.query('update project_revision_takeoffs set input_fingerprint = $1 where id = $2', ['f'.repeat(64), takeoff.id]);
+      await client.query('commit');
+    } finally { client.release(); }
+    const m = await manifest(t.base);
+    expect(m.identity.revisionCurrency).toBe('CURRENT');
+    expect(mod(m, 'QUANTITY_TAKEOFF').freshness).toMatchObject({ state: 'blocked', reasons: [{ code: 'FINGERPRINT_MISMATCH' }] });
+    for (const name of ['CONSTRUCTION_CALCULATION', 'BOQ_COST']) expect(mod(m, name).freshness.state, name).toBe('blocked');
+    expect(m.disciplines.find(d => d.discipline === 'QUANTITIES_AND_COST')!.freshness).toBe('blocked');
+    expect(m.freshnessImpact.disciplines.find(d => d.discipline === 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: [],
+      revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'], awaiting: [], staleArtifacts: 0, blockedArtifacts: 3 });
+    // Fail closed, and only where the failure reaches: the other disciplines are untouched and nothing is ever reported verified.
+    expect(m.freshnessImpact.disciplines.filter(d => d.discipline !== 'QUANTITIES_AND_COST').every(d => !d.regenerate.length && !d.revalidate.length)).toBe(true);
+    expect(m.modules.flatMap(x => [x.freshness?.state, ...x.artifacts!.map(y => y.freshness.state)])).not.toContain('verified');
+    expect(m.verification.nodeStates.UNVERIFIED).toBe(3);
   }, 180_000);
 
   it('roadmap L258: a Phase 30 candidate is listed on its base as not accepted, never resolved; once approved it is lineage of the new revision', async () => {
