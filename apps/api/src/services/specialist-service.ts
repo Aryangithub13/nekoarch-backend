@@ -265,8 +265,8 @@ export async function runSpecialist(repository: Repository, userId: string, proj
     return SpecialistResultSchema.parse({ ...shell('AWAITING_CONSENT', [
       { code: 'CONSENT_REQUIRED', message: 'Review the locks, impacts and quote, then execute with the preflight hash and consent, compare the candidate, and approve or '
         + 'reject it. Nothing changes the model until approval' },
-      { code: 'DOWNSTREAM_REGENERATION', message: 'Once approved, the new revision supersedes the base: its quantities, cost, scene and engineering outputs become stale '
-        + 'and need regenerating, even though the model is unchanged (B37 waiver U2: no element-level invalidation yet)' }]),
+      { code: 'DOWNSTREAM_REGENERATION', message: 'Once approved, the new revision supersedes the base. The model is unchanged, so its quantities, construction, cost '
+        + 'and structural, environmental and systems analyses stay current (SOURCE_MODEL_EQUIVALENT); its scene, BIM and documents need regenerating (U2, whole model)' }]),
     written: true, replayed: stored.replayed, operationId: op.id, locks: op.preflight.locks, impacts: op.preflight.impacts,
     quote: { execution: op.preflight.quote.execution, externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE' },
     details: { kind: 'EXTERIOR', preflightStatus: op.preflight.status, operationKind: 'APPEARANCE_MODIFY', preflightHash: op.preflightHash, appearanceHash: op.preflight.appearanceHash,

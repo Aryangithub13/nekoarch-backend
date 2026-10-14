@@ -108,7 +108,8 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
   }, 180_000);
 
   it('AC4: after a new revision, the old chain is STALE_SOURCE_CHANGED at its sources and STALE_UPSTREAM_STALE downstream, explained to the revision', async () => {
-    const b = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: authored(), baseRevisionId: a.revision.id })).json().revision as Json;
+    // A real model change (U2: an identical model would leave model-only outputs source-equivalent; see the U2 case).
+    const b = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: { ...authored(), name: 'Authored fixture, edited' }, baseRevisionId: a.revision.id })).json().revision as Json;
     const old = await graph(a.base), s = states(old);
     expect(old.inputIdentity.projectCurrentRevisionId).toBe(b.id);
     expect([s[`REVISION:${a.revision.id}`], s[`QUANTITY_TAKEOFF:${made.takeoff.id}`], s[`STRUCTURAL_ANALYSIS:${made.structural.id}`]])
@@ -120,6 +121,19 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     const fresh = await graph(`/api/projects/${a.projectId}/revisions/${b.id}`);
     expect(fresh.nodes.map(n => n.state)).toEqual(['CURRENT', 'CURRENT']);
     expect(fresh.families.filter(f => f.state === 'NOT_GENERATED')).toHaveLength(9);
+  }, 120_000);
+
+  it('U2 (whole model): a new revision with the identical canonical model leaves the takeoff, construction, cost and structural chain CURRENT, saying why', async () => {
+    const u = await project('B39 U2 source-equivalent'), m = await artifacts(u.base, u.revision);
+    const b = (await ok('POST', `/api/projects/${u.projectId}/revisions`, { model: authored(), baseRevisionId: u.revision.id })).json().revision as Json;
+    const g = await graph(u.base), s = states(g);
+    expect([g.inputIdentity.projectCurrentRevisionId, g.inputIdentity.currentRevisionModelHash]).toEqual([b.id, g.inputIdentity.modelHash]);
+    expect([s[`REVISION:${u.revision.id}`], s[`QUANTITY_TAKEOFF:${m.takeoff.id}`], s[`CONSTRUCTION_CALCULATION:${m.construction.id}`],
+      ...m.costs.map(c => s[`BOQ_COST:${c.id}`]), s[`STRUCTURAL_ANALYSIS:${m.structural.id}`]])
+      .toEqual(['STALE_SOURCE_CHANGED', 'CURRENT', 'CURRENT', 'CURRENT', 'CURRENT', 'CURRENT']);
+    for (const n of g.nodes.filter(n => n.state === 'CURRENT')) expect(n.causes, n.nodeId).toEqual([{ code: 'SOURCE_MODEL_EQUIVALENT', nodeId: `REVISION:${u.revision.id}` }]);
+    // The new revision still starts empty: equivalence is reported on the outputs' own revision, nothing is copied across revisions.
+    expect((await graph(`/api/projects/${u.projectId}/revisions/${b.id}`)).nodes.map(n => n.state)).toEqual(['CURRENT', 'CURRENT']);
   }, 120_000);
 
   it('AC6: a tampered stored fingerprint is UNVERIFIED and poisons every dependent; nothing downstream is CURRENT', async () => {

@@ -257,6 +257,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
 
   it('scenario 34 and 42: an Exterior cladding change is a Phase 30 preflight with the plan and structure locks; the existing routes complete it, geometry untouched', async () => {
     const p = await project('B39 exterior'), base = p.revision.id, key = { ...owner, 'idempotency-key': 'ext-1' };
+    const mat = await run(p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: specification() }), 201);
     const appearance = { target: { kind: 'EXTERIOR_WALLS', facades: ['NORTH', 'EAST', 'SOUTH', 'WEST'] }, finish: { presetId: 'warm-render' } };
     const body = envelope(base, 'modify', ['exterior.facade', 'exterior.materials'], { appearance }, ['building.structure', 'building.floor_plans', 'quantities']);
     const r = await run(p.url('EXTERIOR'), body, 201, key);
@@ -284,6 +285,11 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect(m.identity.modelHash).toBe((await manifest(p.projectId, base)).identity.modelHash);
     expect(m.modules.find(x => x.module === 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current' } });
     expect(m.lineage.operation).toMatchObject({ status: 'RECORDED', operationId: r.operationId, kind: 'APPEARANCE_MODIFY' });
+    // U2 (whole model): the cladding change left the model identical, so the base's quantities stay current against the new revision and say why.
+    // (Scenario 39 below is the counterpart: a model change makes them stale.)
+    const baseManifest = await manifest(p.projectId, base);
+    for (const a of mat.artifacts) expect(baseManifest.modules.find(x => x.module === a.logicalComponentId)!.artifacts!.find(x => x.artifactId === a.artifactId)!.freshness,
+      a.logicalComponentId).toMatchObject({ state: 'current', reasons: [{ code: 'SOURCE_MODEL_EQUIVALENT' }], targetRevisionId: child.id });
     // The superseded base is now a stale dependency for the next Exterior request.
     const stale = await run(p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], { appearance }), 200);
     expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);

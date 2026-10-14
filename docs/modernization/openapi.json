@@ -42897,13 +42897,22 @@
               }
              ],
              "nullable": true
+            },
+            "currentRevisionModelHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/inputIdentity/properties/modelHash"
+              }
+             ],
+             "nullable": true
             }
            },
            "required": [
             "projectId",
             "revisionId",
             "modelHash",
-            "projectCurrentRevisionId"
+            "projectCurrentRevisionId",
+            "currentRevisionModelHash"
            ],
            "additionalProperties": false
           },
@@ -43053,7 +43062,8 @@
                   "NO_CURRENT_REVISION",
                   "UPSTREAM_UNVERIFIED",
                   "UPSTREAM_STALE",
-                  "SOURCE_REVISION_SUPERSEDED"
+                  "SOURCE_REVISION_SUPERSEDED",
+                  "SOURCE_MODEL_EQUIVALENT"
                  ]
                 },
                 "nodeId": {
@@ -46023,7 +46033,8 @@
                    "NO_CURRENT_REVISION",
                    "UPSTREAM_UNVERIFIED",
                    "UPSTREAM_STALE",
-                   "SOURCE_REVISION_SUPERSEDED"
+                   "SOURCE_REVISION_SUPERSEDED",
+                   "SOURCE_MODEL_EQUIVALENT"
                   ]
                  },
                  "nodeId": {
@@ -46077,7 +46088,8 @@
                    "NO_CURRENT_REVISION",
                    "UPSTREAM_UNVERIFIED",
                    "UPSTREAM_STALE",
-                   "SOURCE_REVISION_SUPERSEDED"
+                   "SOURCE_REVISION_SUPERSEDED",
+                   "SOURCE_MODEL_EQUIVALENT"
                   ]
                  },
                  "nodeId": {
@@ -46587,7 +46599,8 @@
                    "NO_CURRENT_REVISION",
                    "UPSTREAM_UNVERIFIED",
                    "UPSTREAM_STALE",
-                   "SOURCE_REVISION_SUPERSEDED"
+                   "SOURCE_REVISION_SUPERSEDED",
+                   "SOURCE_MODEL_EQUIVALENT"
                   ]
                  },
                  "nodeId": {
@@ -46641,7 +46654,8 @@
                    "NO_CURRENT_REVISION",
                    "UPSTREAM_UNVERIFIED",
                    "UPSTREAM_STALE",
-                   "SOURCE_REVISION_SUPERSEDED"
+                   "SOURCE_REVISION_SUPERSEDED",
+                   "SOURCE_MODEL_EQUIVALENT"
                   ]
                  },
                  "nodeId": {
@@ -56797,13 +56811,22 @@
                   }
                  ],
                  "nullable": true
+                },
+                "currentRevisionModelHash": {
+                 "allOf": [
+                  {
+                   "$ref": "#/components/properties/package/properties/dependencyGraph/properties/inputIdentity/properties/modelHash"
+                  }
+                 ],
+                 "nullable": true
                 }
                },
                "required": [
                 "projectId",
                 "revisionId",
                 "modelHash",
-                "projectCurrentRevisionId"
+                "projectCurrentRevisionId",
+                "currentRevisionModelHash"
                ],
                "additionalProperties": false
               },
@@ -56953,7 +56976,8 @@
                       "NO_CURRENT_REVISION",
                       "UPSTREAM_UNVERIFIED",
                       "UPSTREAM_STALE",
-                      "SOURCE_REVISION_SUPERSEDED"
+                      "SOURCE_REVISION_SUPERSEDED",
+                      "SOURCE_MODEL_EQUIVALENT"
                      ]
                     },
                     "nodeId": {
@@ -58785,7 +58809,8 @@
                        "NO_CURRENT_REVISION",
                        "UPSTREAM_UNVERIFIED",
                        "UPSTREAM_STALE",
-                       "SOURCE_REVISION_SUPERSEDED"
+                       "SOURCE_REVISION_SUPERSEDED",
+                       "SOURCE_MODEL_EQUIVALENT"
                       ]
                      },
                      "nodeId": {
@@ -58839,7 +58864,8 @@
                        "NO_CURRENT_REVISION",
                        "UPSTREAM_UNVERIFIED",
                        "UPSTREAM_STALE",
-                       "SOURCE_REVISION_SUPERSEDED"
+                       "SOURCE_REVISION_SUPERSEDED",
+                       "SOURCE_MODEL_EQUIVALENT"
                       ]
                      },
                      "nodeId": {
@@ -59623,13 +59649,22 @@
                   }
                  ],
                  "nullable": true
+                },
+                "currentRevisionModelHash": {
+                 "allOf": [
+                  {
+                   "$ref": "#/components/properties/package/properties/dependencyGraph/properties/inputIdentity/properties/modelHash"
+                  }
+                 ],
+                 "nullable": true
                 }
                },
                "required": [
                 "projectId",
                 "revisionId",
                 "modelHash",
-                "projectCurrentRevisionId"
+                "projectCurrentRevisionId",
+                "currentRevisionModelHash"
                ],
                "additionalProperties": false
               },
@@ -59779,7 +59814,8 @@
                       "NO_CURRENT_REVISION",
                       "UPSTREAM_UNVERIFIED",
                       "UPSTREAM_STALE",
-                      "SOURCE_REVISION_SUPERSEDED"
+                      "SOURCE_REVISION_SUPERSEDED",
+                      "SOURCE_MODEL_EQUIVALENT"
                      ]
                     },
                     "nodeId": {
@@ -61611,7 +61647,8 @@
                        "NO_CURRENT_REVISION",
                        "UPSTREAM_UNVERIFIED",
                        "UPSTREAM_STALE",
-                       "SOURCE_REVISION_SUPERSEDED"
+                       "SOURCE_REVISION_SUPERSEDED",
+                       "SOURCE_MODEL_EQUIVALENT"
                       ]
                      },
                      "nodeId": {
@@ -61665,7 +61702,8 @@
                        "NO_CURRENT_REVISION",
                        "UPSTREAM_UNVERIFIED",
                        "UPSTREAM_STALE",
-                       "SOURCE_REVISION_SUPERSEDED"
+                       "SOURCE_REVISION_SUPERSEDED",
+                       "SOURCE_MODEL_EQUIVALENT"
                       ]
                      },
                      "nodeId": {
@@ -63665,6 +63703,7 @@
                     "UPSTREAM_UNVERIFIED",
                     "UPSTREAM_STALE",
                     "SOURCE_REVISION_SUPERSEDED",
+                    "SOURCE_MODEL_EQUIVALENT",
                     "JOB_ACTIVE"
                    ]
                   },

@@ -1,6 +1,6 @@
 import { costHash } from '@designflow/boq-cost';
 import { ApiError } from '../lib/errors.js';
-import { CHECK_FAILURES, CHECKS, DEPENDENCY_GRAPH_VERSION, DependencyGraphSchema, GRAPH_FAMILIES, NODE_STATES,
+import { CHECK_FAILURES, CHECKS, DEPENDENCY_GRAPH_VERSION, DependencyGraphSchema, GRAPH_FAMILIES, NODE_STATES, SOURCE_EQUIVALENT_FAMILIES,
   type DependencyGraph, type GraphCause, type GraphCheck, type GraphFamily, type NodeState } from '../contracts/dependency-graph.js';
 
 export type GraphLimits = { maxNodes: number; maxDepth: number; familyPage: number; timeBudgetMs: number };
@@ -9,7 +9,9 @@ export type GraphEdgeKind = 'QA_OF' | 'BOUND_TO_REVISION' | 'ACCEPTED_BY' | 'DER
 /** One stored record with its own verified checks and the dependencies its stored columns name. */
 export type GraphRecord = { family: GraphFamily; id: string; revisionId: string; createdAt: string;
   checks: { check: GraphCheck; result: 'VERIFIED' | 'FAILED' }[]; dependsOn: { family: GraphFamily; id: string; kind: GraphEdgeKind }[] };
-export type GraphInput = { projectId: string; revisionId: string; modelHash: string; projectCurrentRevisionId: string | null; records: GraphRecord[] };
+/** `currentRevisionModelHash` is the current revision's canonical model hash when the caller read it (U2); omitted or null keeps every superseded node stale. */
+export type GraphInput = { projectId: string; revisionId: string; modelHash: string; projectCurrentRevisionId: string | null; currentRevisionModelHash?: string | null;
+  records: GraphRecord[] };
 
 export const NOT_REPRESENTED = Object.freeze([
   ...['BIM', 'ENGINEERING_ASSESSMENT', 'ZONE_ASSESSMENT', 'ZONE_PARTITIONS', 'PROJECT_CONTEXT'].map(item => ({ item, reason: 'DERIVED_ON_READ' as const })),
@@ -81,6 +83,7 @@ export function buildDependencyGraph(input: GraphInput, limits: GraphLimits = GR
 
   // States in dependency order: own checks, then unverified dependencies, then stale DERIVED_FROM inputs, then revision currency.
   const revisionKey = nodeKey('REVISION', input.revisionId), state = new Map<string, { state: NodeState; causes: GraphCause[] }>();
+  const currentModelHash = input.currentRevisionModelHash ?? null, sourceEquivalent = currentModelHash !== null && currentModelHash === input.modelHash;
   for (const key of topo) {
     const list = deps.get(key)!, failed = CHECKS.map(check => checks.get(key)!.find(c => c.check === check)).find(c => c?.result === 'FAILED');
     let result: { state: NodeState; causes: GraphCause[] };
@@ -92,7 +95,11 @@ export function buildDependencyGraph(input: GraphInput, limits: GraphLimits = GR
       if (unverified) result = { state: 'UNVERIFIED', causes: [upstream('UPSTREAM_UNVERIFIED', unverified.key), ...state.get(unverified.key)!.causes] };
       else if (stale) result = { state: 'STALE_UPSTREAM_STALE', causes: [upstream('UPSTREAM_STALE', stale.key), ...state.get(stale.key)!.causes] };
       else if (input.projectCurrentRevisionId === null) result = { state: 'UNVERIFIED', causes: [{ code: 'NO_CURRENT_REVISION', nodeId: revisionKey }] };
-      else if (byKey.get(key)!.revisionId !== input.projectCurrentRevisionId) result = { state: 'STALE_SOURCE_CHANGED', causes: [{ code: 'SOURCE_REVISION_SUPERSEDED', nodeId: revisionKey }] };
+      else if (byKey.get(key)!.revisionId !== input.projectCurrentRevisionId)
+        // U2 (whole model): a superseding revision with the identical canonical model leaves model-only outputs current, and says why.
+        result = sourceEquivalent && (SOURCE_EQUIVALENT_FAMILIES as readonly GraphFamily[]).includes(byKey.get(key)!.family)
+          ? { state: 'CURRENT', causes: [{ code: 'SOURCE_MODEL_EQUIVALENT', nodeId: revisionKey }] }
+          : { state: 'STALE_SOURCE_CHANGED', causes: [{ code: 'SOURCE_REVISION_SUPERSEDED', nodeId: revisionKey }] };
       else result = { state: 'CURRENT', causes: [] };
     }
     state.set(key, result);
@@ -107,7 +114,8 @@ export function buildDependencyGraph(input: GraphInput, limits: GraphLimits = GR
       state: members.length ? members.reduce<NodeState>((worst, n) => rank(n.state) > rank(worst) ? n.state : worst, 'CURRENT') : 'NOT_GENERATED' as const };
   });
   const body = { graphVersion: DEPENDENCY_GRAPH_VERSION, complete: true as const,
-    inputIdentity: { projectId: input.projectId, revisionId: input.revisionId, modelHash: input.modelHash, projectCurrentRevisionId: input.projectCurrentRevisionId },
+    inputIdentity: { projectId: input.projectId, revisionId: input.revisionId, modelHash: input.modelHash, projectCurrentRevisionId: input.projectCurrentRevisionId,
+      currentRevisionModelHash: currentModelHash },
     families, nodes, edges, limits: { ...limits }, notRepresented: NOT_REPRESENTED.map(n => ({ ...n })), claims: { ...CLAIMS } };
   return DependencyGraphSchema.parse({ ...body, graphHash: costHash(body) });
 }
