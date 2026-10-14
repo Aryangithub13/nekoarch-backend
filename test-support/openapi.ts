@@ -39,6 +39,7 @@ import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSch
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
+import { SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
 import { DesignConceptDetailSchema, DesignConceptListSchema, DesignConceptPageQuerySchema, DesignConceptReadQuerySchema, DesignConceptRequestSchema } from '../apps/api/src/contracts/design-concepts.js';
@@ -125,6 +126,8 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${P}/revision-operations/:operationId/candidate/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
   [`GET ${R}/appearance`]: { query: EmptySchema, response: AppearanceResponseSchema },
   [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
+  // B39 S1: 201 when the request stored a revision or artifact; a typed refusal or a replay is 200 with the same schema.
+  [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201 },
   // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
   [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
   [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },

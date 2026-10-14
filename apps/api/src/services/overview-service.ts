@@ -52,6 +52,7 @@ import { EVIDENCE_ROOT } from './evidence-service.js';
 import { DESIGN_CONCEPT_VERSION } from '../contracts/design-concepts.js';
 import { DESIGN_ROOT } from './design-concept-service.js';
 import { PROJECT_MANIFEST_ROUTE, PROJECT_MANIFEST_VERSION } from '../contracts/project-manifest.js';
+import { SPECIALIST_ROUTE, SPECIALIST_VERSION } from '../contracts/specialists.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -102,6 +103,9 @@ export const SERVICES = Object.freeze([
   { serviceId: 'DESIGN_CONCEPTS', version: DESIGN_CONCEPT_VERSION, persistence: 'ADVISORY_ARTIFACT', route: DESIGN_ROOT, workflowCapability: null },
   // B37 completion: Unified Project Manifest v2 (identity, canonical frame, modules, per-discipline freshness in the roadmap vocabulary). Provenance, never correctness.
   { serviceId: 'PROJECT_MANIFEST', version: PROJECT_MANIFEST_VERSION, persistence: 'DERIVED_ON_READ', route: PROJECT_MANIFEST_ROUTE, workflowCapability: null },
+  // B39 S1: the specialist request envelope. Blueprint, Materials and Budget run the existing engines and store through their own routes' tables; every
+  // other module is a typed UNSUPPORTED result. Nothing is stored by the envelope itself.
+  { serviceId: 'SPECIALISTS', version: SPECIALIST_VERSION, persistence: 'EXISTING_ENGINE_ARTIFACTS', route: SPECIALIST_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

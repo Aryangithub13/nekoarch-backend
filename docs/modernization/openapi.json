@@ -67541,6 +67541,808 @@
     }
    }
   },
+  "/api/projects/{projectId}/specialists/{module}/requests": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/specialists/:module/requests",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "module",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "envelopeVersion": {
+          "type": "string",
+          "enum": [
+           "specialist-request-v1"
+          ]
+         },
+         "baseRevisionId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "operation": {
+          "type": "string",
+          "enum": [
+           "modify",
+           "regenerate",
+           "generate_alternative",
+           "recompute",
+           "compare",
+           "restore"
+          ]
+         },
+         "instruction": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+         },
+         "targetScopes": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "enum": [
+            "building.geometry",
+            "building.floor_plans",
+            "building.structure",
+            "exterior.facade",
+            "exterior.materials",
+            "exterior.render",
+            "interior.layout",
+            "interior.materials",
+            "interior.render",
+            "bim",
+            "engineering.structural",
+            "engineering.environmental",
+            "engineering.mep",
+            "quantities",
+            "cost",
+            "documents",
+            "scene3d",
+            "walkthrough"
+           ]
+          },
+          "minItems": 1,
+          "maxItems": 18
+         },
+         "preserveScopes": {
+          "type": "array",
+          "items": {
+           "$ref": "#/components/properties/targetScopes/items"
+          },
+          "maxItems": 18,
+          "default": []
+         },
+         "outputConfig": {
+          "type": "object",
+          "additionalProperties": {},
+          "default": {}
+         }
+        },
+        "required": [
+         "envelopeVersion",
+         "baseRevisionId",
+         "operation",
+         "targetScopes"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "envelopeVersion": {
+           "type": "string",
+           "enum": [
+            "specialist-request-v1"
+           ]
+          },
+          "module": {
+           "type": "string",
+           "enum": [
+            "INTERIOR",
+            "EXTERIOR",
+            "BLUEPRINT",
+            "STRUCTURAL",
+            "MATERIALS",
+            "BUDGET"
+           ]
+          },
+          "operation": {
+           "type": "string",
+           "enum": [
+            "modify",
+            "regenerate",
+            "generate_alternative",
+            "recompute",
+            "compare",
+            "restore"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "resultRevisionId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "COMPLETED",
+            "CANDIDATE_READY",
+            "AWAITING_CONSENT",
+            "NEEDS_CLARIFICATION",
+            "UNSUPPORTED",
+            "REQUIRES_REVIEW",
+            "DEGRADED_PROVIDER",
+            "STALE_DEPENDENCY",
+            "PARTIAL",
+            "BLOCKED_BY_LOCK",
+            "FAILED"
+           ]
+          },
+          "reasons": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+             },
+             "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+             }
+            },
+            "required": [
+             "code",
+             "message"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "targetScopes": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "building.geometry",
+             "building.floor_plans",
+             "building.structure",
+             "exterior.facade",
+             "exterior.materials",
+             "exterior.render",
+             "interior.layout",
+             "interior.materials",
+             "interior.render",
+             "bim",
+             "engineering.structural",
+             "engineering.environmental",
+             "engineering.mep",
+             "quantities",
+             "cost",
+             "documents",
+             "scene3d",
+             "walkthrough"
+            ]
+           }
+          },
+          "preserveScopes": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/properties/targetScopes/items"
+           }
+          },
+          "written": {
+           "type": "boolean"
+          },
+          "replayed": {
+           "type": "boolean"
+          },
+          "operationId": {
+           "enum": [
+            "null"
+           ],
+           "nullable": true
+          },
+          "jobIds": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/properties/projectId"
+           },
+           "maxItems": 0
+          },
+          "artifacts": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "artifactId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "logicalComponentId": {
+              "type": "string",
+              "enum": [
+               "BUILDING_MODEL",
+               "ACCEPTANCE_QA",
+               "BIM",
+               "COMPLEX_VERIFICATION",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "ENVIRONMENTAL_ANALYSIS",
+               "BUILDING_SYSTEMS_ANALYSIS",
+               "SPECIALIZED_KNOWLEDGE",
+               "ENGINEERING_ASSESSMENT",
+               "DESIGN_OPTIMIZATION",
+               "DESIGN_CONCEPTS",
+               "SCENE_3D",
+               "APPEARANCE_VARIANT",
+               "CONSTRUCTION_DOCUMENTS"
+              ]
+             },
+             "sourceRevisionId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "contentHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+             },
+             "inputHash": {
+              "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+             },
+             "producerVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+             },
+             "providerId": {
+              "enum": [
+               "null"
+              ],
+              "nullable": true
+             },
+             "freshness": {
+              "type": "string",
+              "enum": [
+               "current",
+               "stale",
+               "pending",
+               "blocked",
+               "not_applicable",
+               "verified"
+              ],
+              "nullable": true
+             }
+            },
+            "required": [
+             "artifactId",
+             "logicalComponentId",
+             "sourceRevisionId",
+             "contentHash",
+             "inputHash",
+             "producerVersion",
+             "providerId",
+             "freshness"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "details": {
+           "anyOf": [
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "BLUEPRINT"
+               ]
+              },
+              "generatorVersion": {
+               "type": "string",
+               "nullable": true
+              },
+              "qaStatus": {
+               "type": "string",
+               "maxLength": 40
+              },
+              "verificationStatus": {
+               "type": "string",
+               "enum": [
+                "VERIFIED",
+                "VERIFIED_WITH_WARNINGS",
+                "PARTIAL",
+                "FAILED"
+               ]
+              },
+              "renderJobs": {
+               "type": "number",
+               "enum": [
+                0
+               ]
+              }
+             },
+             "required": [
+              "kind",
+              "generatorVersion",
+              "qaStatus",
+              "verificationStatus",
+              "renderJobs"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "MATERIALS"
+               ]
+              },
+              "takeoffStatus": {
+               "type": "string",
+               "enum": [
+                "EVALUATED",
+                "PARTIAL"
+               ]
+              },
+              "constructionStatus": {
+               "type": "string",
+               "enum": [
+                "EVALUATED",
+                "PARTIAL",
+                "NOT_EVALUATED"
+               ]
+              },
+              "recipePack": {
+               "type": "object",
+               "properties": {
+                "id": {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 200
+                },
+                "version": {
+                 "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+                }
+               },
+               "required": [
+                "id",
+                "version"
+               ],
+               "additionalProperties": false
+              },
+              "materials": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "materialCode": {
+                  "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+                 },
+                 "unit": {
+                  "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+                 },
+                 "final": {
+                  "type": "string",
+                  "maxLength": 80
+                 }
+                },
+                "required": [
+                 "materialCode",
+                 "unit",
+                 "final"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              }
+             },
+             "required": [
+              "kind",
+              "takeoffStatus",
+              "constructionStatus",
+              "recipePack",
+              "materials"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "BUDGET"
+               ]
+              },
+              "rateBookId": {
+               "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+              },
+              "rateBookVersion": {
+               "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+              },
+              "rateBookSynthetic": {
+               "type": "boolean"
+              },
+              "currency": {
+               "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy/properties/currency"
+              },
+              "region": {
+               "$ref": "#/components/schemas/CostDetail/properties/region"
+              },
+              "coverage": {
+               "type": "string",
+               "enum": [
+                "FULLY_PRICED",
+                "PARTIALLY_PRICED",
+                "NOT_PRICED"
+               ]
+              },
+              "unpricedLineIds": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+               },
+               "maxItems": 10000
+              },
+              "pricedTotal": {
+               "type": "string",
+               "maxLength": 80
+              },
+              "completeTotal": {
+               "type": "string",
+               "maxLength": 80,
+               "nullable": true
+              }
+             },
+             "required": [
+              "kind",
+              "rateBookId",
+              "rateBookVersion",
+              "rateBookSynthetic",
+              "currency",
+              "region",
+              "coverage",
+              "unpricedLineIds",
+              "pricedTotal",
+              "completeTotal"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "NONE"
+               ]
+              }
+             },
+             "required": [
+              "kind"
+             ],
+             "additionalProperties": false
+            }
+           ]
+          },
+          "changeImpact": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "COMPUTED",
+              "NO_PARENT",
+              "UNAVAILABLE"
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "enum": [
+              "MODEL_BINDING"
+             ]
+            },
+            "baseRevisionId": {
+             "type": "string",
+             "format": "uuid",
+             "nullable": true
+            },
+            "disciplines": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "discipline": {
+                "type": "string",
+                "enum": [
+                 "ARCHITECTURE",
+                 "QUANTITIES_AND_COST",
+                 "ENGINEERING",
+                 "DESIGN",
+                 "VISUALIZATION",
+                 "DOCUMENTATION"
+                ]
+               },
+               "impact": {
+                "type": "string",
+                "enum": [
+                 "AFFECTED",
+                 "NOT_AFFECTED"
+                ]
+               },
+               "reason": {
+                "type": "string",
+                "enum": [
+                 "MODEL_ENTITIES_CHANGED",
+                 "MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS",
+                 "BOUND_TO_CHANGED_MODEL",
+                 "MODEL_UNCHANGED"
+                ]
+               },
+               "modules": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "APPEARANCE_VARIANT",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "changedCollections": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "levels",
+                  "spaces",
+                  "walls",
+                  "openings",
+                  "slabs",
+                  "columns",
+                  "stairs",
+                  "dimensions",
+                  "specifications",
+                  "site"
+                 ]
+                }
+               }
+              },
+              "required": [
+               "discipline",
+               "impact",
+               "reason",
+               "modules",
+               "changedCollections"
+              ],
+              "additionalProperties": false
+             }
+            }
+           },
+           "required": [
+            "status",
+            "basis",
+            "baseRevisionId",
+            "disciplines"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "quote": {
+           "type": "object",
+           "properties": {
+            "execution": {
+             "type": "string",
+             "enum": [
+              "LOCAL_DETERMINISTIC",
+              "NONE"
+             ]
+            },
+            "externalProviders": {
+             "type": "array",
+             "items": {
+              "type": "string"
+             },
+             "maxItems": 0
+            },
+            "externalCostUsd": {
+             "type": "number",
+             "enum": [
+              0
+             ]
+            },
+            "dataTransfer": {
+             "type": "string",
+             "enum": [
+              "NONE"
+             ]
+            }
+           },
+           "required": [
+            "execution",
+            "externalProviders",
+            "externalCostUsd",
+            "dataTransfer"
+           ],
+           "additionalProperties": false
+          },
+          "provenance": {
+           "type": "object",
+           "properties": {
+            "engine": {
+             "type": "string",
+             "maxLength": 100,
+             "nullable": true
+            },
+            "engineVersion": {
+             "type": "string",
+             "maxLength": 100,
+             "nullable": true
+            },
+            "providerId": {
+             "enum": [
+              "null"
+             ],
+             "nullable": true
+            },
+            "inputHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+              }
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "engine",
+            "engineVersion",
+            "providerId",
+            "inputHash"
+           ],
+           "additionalProperties": false
+          },
+          "manifestHref": {
+           "type": "string",
+           "pattern": "^\\/api\\/projects\\/"
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "engineeringCorrectness": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "solverValidation": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "professionalReview": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "engineeringCorrectness",
+            "solverValidation",
+            "professionalReview"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "envelopeVersion",
+          "module",
+          "operation",
+          "projectId",
+          "baseRevisionId",
+          "resultRevisionId",
+          "status",
+          "reasons",
+          "targetScopes",
+          "preserveScopes",
+          "written",
+          "replayed",
+          "operationId",
+          "jobIds",
+          "artifacts",
+          "details",
+          "changeImpact",
+          "quote",
+          "provenance",
+          "manifestHref",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/workflows": {
    "get": {
     "operationId": "get /api/projects/:projectId/workflows",

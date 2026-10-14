@@ -1,0 +1,161 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { sampleCostingPolicy } from '@designflow/boq-cost';
+import { createTestUser, startTestDatabase } from '../../../test-support/postgres.js';
+import { createPgBackend } from '../../../test-support/pg-backend.js';
+import { parametricInput } from '../../../test-support/parametric-fixtures.js';
+import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
+import { buildApp } from '../src/app.js';
+import { parseEnv } from '../src/config/env.js';
+import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
+import { SpecialistResultSchema, SPECIALIST_VERSION } from '../src/contracts/specialists.js';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Json = Record<string, any>;
+const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
+
+describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget; typed refusals for the rest)', () => {
+  let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>;
+  beforeAll(async () => {
+    db = await startTestDatabase();
+    const ownerId = await createTestUser(db.pool), otherId = await createTestUser(db.pool);
+    const secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
+    app = buildApp({ env: parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent', RATE_LIMIT_ENABLED: 'false',
+      PROJECT_COMMIT_SECRET: secret }), backend: createPgBackend(db.pool, { owner: ownerId, other: otherId }), captureError: () => undefined });
+    await app.ready();
+  }, 120_000);
+  afterAll(async () => { await app?.close(); await db?.stop(); });
+
+  const call = (method: 'GET' | 'POST', url: string, payload?: unknown, headers: Record<string, string> = owner) =>
+    app.inject({ method, url, headers, ...(payload === undefined ? {} : { payload: payload as Json }) });
+  const ok = async (method: 'GET' | 'POST', url: string, payload?: unknown, status = method === 'POST' ? 201 : 200) => {
+    const r = await call(method, url, payload);
+    expect(r.statusCode, `${method} ${url}: ${r.body.slice(0, 500)}`).toBe(status);
+    return r.json() as Json;
+  };
+  const project = async (title: string) => {
+    const projectId = (await ok('POST', '/api/projects', { title })).id as string;
+    const revision = (await ok('POST', `/api/projects/${projectId}/revisions/generate`, { requirements: parametricInput(true) })).revision as Json;
+    return { projectId, revision, url: (module: string) => `/api/projects/${projectId}/specialists/${module}/requests` };
+  };
+  const envelope = (baseRevisionId: string, operation: string, targetScopes: string[], outputConfig: Json = {}, preserveScopes: string[] = []) =>
+    ({ envelopeVersion: SPECIALIST_VERSION, baseRevisionId, operation, targetScopes, preserveScopes, outputConfig });
+  /** POST and parse; `status` is the HTTP status, `expected` the typed status. */
+  const run = async (url: string, body: Json, status: number, headers: Record<string, string> = owner) => {
+    const r = await call('POST', url, body, headers);
+    expect(r.statusCode, r.body.slice(0, 600)).toBe(status);
+    return SpecialistResultSchema.parse(r.json());
+  };
+  const revisionCount = async (projectId: string) => ((await ok('GET', `/api/projects/${projectId}/revisions`)).items as Json[]).length;
+  const manifest = async (projectId: string, revisionId: string) => ProjectManifestSchema.parse(await ok('GET', `/api/projects/${projectId}/revisions/${revisionId}/manifest`));
+
+  it('scenario 35: a blueprint-only run regenerates through the canonical solver and QA, emits one revision and no render or scene job; retries replay', async () => {
+    const p = await project('B39 blueprint');
+    const body = envelope(p.revision.id, 'regenerate', ['building.floor_plans'], { requirements: parametricInput(false) });
+    const r = await run(p.url('BLUEPRINT'), body, 201, { ...owner, 'idempotency-key': 'bp-1' });
+    expect(r).toMatchObject({ module: 'BLUEPRINT', baseRevisionId: p.revision.id, written: true, replayed: false, operationId: null, jobIds: [],
+      details: { kind: 'BLUEPRINT', generatorVersion: 'parametric-architecture-v1', renderJobs: 0 }, quote: { execution: 'LOCAL_DETERMINISTIC', externalCostUsd: 0 },
+      claims: { engineeringCorrectness: 'NOT_CLAIMED', solverValidation: 'NOT_CLAIMED', professionalReview: 'NOT_CLAIMED' } });
+    expect(['COMPLETED', 'PARTIAL', 'REQUIRES_REVIEW']).toContain(r.status);
+    const child = await ok('GET', `/api/projects/${p.projectId}/revisions/${r.resultRevisionId}`);
+    expect(child).toMatchObject({ parentRevisionId: p.revision.id, revisionNumber: 2, qa: { status: r.details.kind === 'BLUEPRINT' ? r.details.qaStatus : '' } });
+    // Common revision identity (gate L297): the result, its artifact, its manifest and the change impact all name the same revision.
+    expect(r.artifacts).toEqual([expect.objectContaining({ artifactId: r.resultRevisionId, logicalComponentId: 'BUILDING_MODEL', sourceRevisionId: r.resultRevisionId,
+      contentHash: child.identity.modelHash, freshness: 'current' })]);
+    expect(r.manifestHref).toBe(`/api/projects/${p.projectId}/revisions/${r.resultRevisionId}/manifest`);
+    const m = await manifest(p.projectId, r.resultRevisionId!);
+    expect([m.identity.revisionCurrency, m.changeImpact]).toEqual(['CURRENT', r.changeImpact]);
+    expect(r.changeImpact).toMatchObject({ status: 'COMPUTED', baseRevisionId: p.revision.id });
+    // No render, scene or other job was created by the blueprint run.
+    expect((await ok('GET', `/api/projects/${p.projectId}/jobs`)).items).toEqual([]);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${r.resultRevisionId}/scene/artifacts`)).items).toEqual([]);
+    // The same key and body replay the stored revision instead of generating another.
+    const again = await run(p.url('BLUEPRINT'), body, 200, { ...owner, 'idempotency-key': 'bp-1' });
+    expect([again.replayed, again.resultRevisionId, await revisionCount(p.projectId)]).toEqual([true, r.resultRevisionId, 2]);
+    // The superseded base is now a stale dependency for any further specialist run.
+    const stale = await run(p.url('BLUEPRINT'), body, 200);
+    expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);
+  }, 300_000);
+
+  it('scenario 46 and locks: limits, foreign scopes, preservation conflicts and unimplemented modules are typed refusals that store nothing', async () => {
+    const p = await project('B39 refusals'), base = p.revision.id;
+    const cases: [string, Json, string, string][] = [
+      ['BLUEPRINT', envelope(base, 'regenerate', ['building.floor_plans'], { requirements: { ...parametricInput(true), floors: 3 } }), 'UNSUPPORTED', 'FLOOR_LIMIT_EXCEEDED'],
+      ['BLUEPRINT', envelope(base, 'modify', ['building.floor_plans'], {}), 'UNSUPPORTED', 'OPERATION_NOT_SUPPORTED'],
+      ['BLUEPRINT', envelope(base, 'regenerate', ['exterior.facade'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
+      ['BLUEPRINT', envelope(base, 'regenerate', ['building.floor_plans'], { requirements: parametricInput(true) }, ['building.structure']), 'BLOCKED_BY_LOCK', 'PRESERVATION_CONFLICT'],
+      ['MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification() }, ['quantities']), 'BLOCKED_BY_LOCK', 'PRESERVATION_CONFLICT'],
+      ['MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification(), substitutions: [{ from: 'CEMENT', to: 'FLY_ASH' }] }), 'UNSUPPORTED',
+        'SUBSTITUTION_PROVENANCE_UNAVAILABLE'],
+      ['BUDGET', envelope(base, 'recompute', ['quantities'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
+      ['EXTERIOR', envelope(base, 'modify', ['exterior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+      ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+      ['INTERIOR', envelope(base, 'modify', ['interior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+    ];
+    for (const [module, body, status, code] of cases) {
+      const r = await run(p.url(module), body, 200);
+      expect([r.status, r.reasons.map(x => x.code), r.written, r.artifacts, r.resultRevisionId], `${module} ${code}`).toEqual([status, [code], false, [], null]);
+    }
+    expect(await revisionCount(p.projectId)).toBe(1);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
+    // Validation, ownership and authentication stay HTTP errors.
+    for (const bad of [{ ...envelope(base, 'recompute', ['quantities']), envelopeVersion: 'v0' }, { ...envelope(base, 'recompute', ['quantities']), extra: 1 },
+      envelope(base, 'recompute', ['quantities', 'quantities']), envelope(base, 'recompute', [])])
+      expect((await call('POST', p.url('MATERIALS'), bad)).statusCode, JSON.stringify(bad).slice(0, 120)).toBe(400);
+    expect((await call('POST', p.url('LANDSCAPE'), envelope(base, 'recompute', ['quantities']))).statusCode).toBe(400);
+    expect((await call('POST', p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: {} }))).statusCode).toBe(400);
+    expect((await call('POST', p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: specification() }), other)).statusCode).toBe(404);
+    expect((await call('POST', p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: specification() }), {})).statusCode).toBe(401);
+  }, 300_000);
+
+  it('scenarios 37 and 38: materials track units, recipes and provenance; budget states its rate basis and never prices a missing rate as zero', async () => {
+    const p = await project('B39 materials and budget'), base = p.revision.id;
+    const mat = await run(p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: specification() }, ['building.geometry', 'exterior.facade']), 201);
+    expect(mat).toMatchObject({ module: 'MATERIALS', written: true, resultRevisionId: null, details: { kind: 'MATERIALS', recipePack: { id: 'construction-recipes' } } });
+    expect(mat.artifacts.map(a => [a.logicalComponentId, a.sourceRevisionId, a.freshness])).toEqual([['QUANTITY_TAKEOFF', base, 'current'],
+      ['CONSTRUCTION_CALCULATION', base, 'current']]);
+    if (mat.details.kind !== 'MATERIALS') throw new Error('unreachable');
+    expect(mat.details.materials.length).toBeGreaterThan(0);
+    for (const m of mat.details.materials) expect(m.unit, m.materialCode).toMatch(/\S/);
+    expect(mat.status === 'PARTIAL').toBe(mat.details.constructionStatus !== 'EVALUATED' || mat.details.takeoffStatus === 'PARTIAL');
+    // The artifacts are the stored engine rows, with the hashes their own routes report.
+    const [takeoff, construction] = mat.artifacts;
+    const t = await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs/${takeoff!.artifactId}`);
+    expect([t.inputFingerprint, t.engineVersion]).toEqual([takeoff!.inputHash, takeoff!.producerVersion]);
+
+    const cfg = { takeoffId: takeoff!.artifactId, constructionCalculationId: construction!.artifactId, costingPolicy: sampleCostingPolicy() };
+    const budget = await run(p.url('BUDGET'), envelope(base, 'recompute', ['cost'], { ...cfg, rateBookId: 'sample-inr-v1' }, ['quantities']), 201);
+    if (budget.details.kind !== 'BUDGET') throw new Error('unreachable');
+    // Only synthetic rate books exist, so a budget always needs review; unpriced lines are listed and the complete total is withheld (scenario 38).
+    expect(budget).toMatchObject({ status: 'REQUIRES_REVIEW', details: { rateBookId: 'sample-inr-v1', rateBookSynthetic: true, currency: 'INR' } });
+    expect(budget.reasons.map(r => r.code)).toContain('SYNTHETIC_RATE_BOOK');
+    // A complete total exists only when everything is priced from evaluated quantities; otherwise it is withheld and the reason is named.
+    const codes = budget.reasons.map(r => r.code);
+    expect(budget.details.completeTotal === null).toBe(budget.details.coverage !== 'FULLY_PRICED');
+    expect(codes.includes('UNPRICED_LINES')).toBe(budget.details.unpricedLineIds.length > 0);
+    if (budget.details.coverage !== 'FULLY_PRICED') expect(codes.some(c => c === 'UNPRICED_LINES' || c === 'UPSTREAM_PARTIAL')).toBe(true);
+    expect(budget.details.pricedTotal).toMatch(/^\d+\.\d{2}$/);
+    expect(budget.artifacts.map(a => [a.logicalComponentId, a.freshness])).toEqual([['QUANTITY_TAKEOFF', 'current'], ['CONSTRUCTION_CALCULATION', 'current'],
+      ['BOQ_COST', 'current']]);
+    // The manifest of the same revision holds the same artifacts (gate L297: the changes are fed to the shared B37 manifest).
+    const m = await manifest(p.projectId, base);
+    for (const a of budget.artifacts)
+      expect(m.modules.find(x => x.module === a.logicalComponentId)!.artifacts!.map(x => x.artifactId), a.logicalComponentId).toContain(a.artifactId);
+
+    // A rate basis that does not exist, or a region no rate book covers, is unsupported, not priced.
+    expect((await run(p.url('BUDGET'), envelope(base, 'recompute', ['cost'], { ...cfg, rateBookId: 'in-maharashtra-2026' }), 200)).reasons[0]!.code).toBe('RATE_BOOK_UNAVAILABLE');
+    expect((await run(p.url('BUDGET'), envelope(base, 'recompute', ['cost'], { ...cfg, rateBookId: 'sample-inr-v1', region: { country: 'IN', region: 'Maharashtra' } }), 200))
+      .reasons[0]!.code).toBe('REGION_NOT_COVERED');
+
+    // A budget over inputs that are no longer current is a stale dependency (scenario 39): tamper the takeoff, as a corrupted row.
+    const client = await db.pool.connect();
+    try {
+      await client.query('begin');
+      await client.query('set local session_replication_role = replica'); // bypass the immutability trigger to simulate corruption
+      await client.query('update project_revision_takeoffs set input_fingerprint = $1 where id = $2', ['f'.repeat(64), takeoff!.artifactId]);
+      await client.query('commit');
+    } finally { client.release(); }
+    const stale = await run(p.url('BUDGET'), envelope(base, 'recompute', ['cost'], { ...cfg, rateBookId: 'sample-inr-v2' }), 200);
+    expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'INPUT_NOT_CURRENT', false]);
+    expect(stale.reasons[0]!.message).toContain('blocked');
+  }, 300_000);
+});
