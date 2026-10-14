@@ -18,11 +18,11 @@ The owner confirmed these explicitly on 2026-10-14:
 | D-6 | Reuse | The PR #16 design-concept routes stay an advisory sub-output; S1 does not touch them |
 | D-7 | Defer | No discovery clarification |
 
-**Recorded elsewhere; not confirmed in this session:**
-- **D-8b (derived vs durable results).**
-  - The B39 scope on PR #20 (`1d8f01e`, committed by another session on 2026-10-14) records "specialist results are computed on read for S1 and S2" as an owner decision.
-  - This session has not received that decision from the owner, so it is listed here as recorded in the scope, pending the owner's confirmation.
-  - S1 already implements exactly that option, described below. It needs no migration, and storage semantics will not change without a decision.
+**Recorded in the scope:**
+- **D-8b (derived vs durable results): computed on read.**
+  - The B39 scope on PR #20 (`1d8f01e`) records "specialist results are computed on read for S1 and S2" as an owner decision of 2026-10-14.
+  - On 2026-10-14 the owner told this session to "choose what's best for the project and finish it". S1 keeps computed on read: it needs no migration, reads freshness from the current manifest instead of storing it where it would go stale, and matches the derived-on-read B37 manifest. The trade-off (no result history, no fetch by id) is the scope's.
+- **Blueprint room limit.** The scope's §4 row 1 was amended on 2026-10-14 (`8c42a35`): more than 24 requested rooms is a typed `UNSUPPORTED` / `ROOM_LIMIT_EXCEEDED`, as S1 implements. Between `1d8f01e` and `8c42a35` the scope had called it a 400. The existing `POST …/revisions/generate` contract is unchanged and still answers 400.
 - **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).**
   - **Pending** in the same scope revision.
   - Nothing in the repository implements or approves it, and S2 does not depend on it.
@@ -175,7 +175,7 @@ The owner confirmed these explicitly on 2026-10-14:
 | Local unit, PostgreSQL and full suite | **Passed on `16bd11c`** (Node 22.22.0, unprivileged user, embedded PostgreSQL): build, typecheck, lint exit 0; **111 files, 3,083/3,083 tests**. Of these: `specialists.test.ts` 5, `specialists.integration.test.ts` 7, `project-manifest` 22 + 13, `bounded-reads` 6, `dependency-graph` 12 + 9, `modernization` 6 + 6, `foundation` (import boundary) 30. The run before regenerating OpenAPI (`ba43aec`) failed only the R01-G3 drift test, fixed in `16bd11c`. Later commits are docs only |
 | Local disposable Supabase acceptance (real JWTs) | **Passed, 123/123**, including the S1 case. Receipt `docs/phase16-evidence/supabase-2026-10-14T07-27-16.304Z.json`: 3,857 requests, 0 API errors, 23 deliberate anonymous 401s from the existing cases. The first stack start failed its own health checks (realtime, storage) before any test ran; an unchanged retry started cleanly. The PostgREST image helper (`ensure-local-postgrest.mjs`) was not run in this pass (see the B37 gap report §6 for its registry deviation). **Not hosted** |
 | Hosted Supabase acceptance, hosted migration history, staging, tag | Not run (D-9 operator, D-10 prepare, D-11 wait) |
-| Push of the correctness pass | **Not done.** Needs owner authorization; the work is committed locally on `phase39/s1-specialists` |
+| Push of the correctness pass | Pushed on owner instruction (`ce3d2c2`). CI run 38565757636: `backend (node 22.22.0)`, `backend (node 22.23.3)` and `container smoke` success; `supabase-acceptance` skipped (manual dispatch only) |
 
 **PR order** (verified 2026-10-14 after the correctness pass):
 
@@ -183,13 +183,13 @@ The owner confirmed these explicitly on 2026-10-14:
 |---|---|
 | PR #18 | Merged by the owner (`aac8e89`) |
 | PR #17 (B37) | Merged by the owner (`4d1da13`). S1 already contained its head `f6f4de7` |
-| PR #20 (B39 scope) | Draft. Its base is now `phase31/development` |
-| PR #21 (S1) | Draft. Its base is now `phase31/development` |
+| PR #20 (B39 scope) | Draft, base `phase31/development`; head `8c42a35` carries the room-limit amendment |
+| PR #21 (S1) | Base `phase31/development`. Marked ready for review once CI is green on the head carrying this record |
 
-**Before PR #21 can be marked ready:**
-1. The owner authorizes a push of this pass's local commits.
-2. CI runs on that head.
-3. The owner confirms D-8b, which the scope records as "computed on read".
-4. The owner reviews.
+**Readiness of PR #21:**
+1. Correctness pass pushed and green: **done**.
+2. D-8b: computed on read, as recorded in the scope and kept on the owner's instruction: **done**.
+3. Scope and code agree on every S1 refusal, including the room limit (`8c42a35`): **done**.
+4. Owner review and merge: **the owner's**. Hosted gates stay D-9 operator, D-10 prepare, D-11 wait. D-12 (Interior) stays pending and does not affect S1.
 
 No merge, base change or tag was made by this session.
