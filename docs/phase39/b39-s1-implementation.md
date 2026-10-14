@@ -23,10 +23,10 @@ The owner confirmed these explicitly on 2026-10-14:
   - The B39 scope on PR #20 (`1d8f01e`) records "specialist results are computed on read for S1 and S2" as an owner decision of 2026-10-14.
   - On 2026-10-14 the owner told this session to "choose what's best for the project and finish it". S1 keeps computed on read: it needs no migration, reads freshness from the current manifest instead of storing it where it would go stale, and matches the derived-on-read B37 manifest. The trade-off (no result history, no fetch by id) is the scope's.
 - **Blueprint room limit.** The scope's §4 row 1 was amended on 2026-10-14 (`8c42a35`): more than 24 requested rooms is a typed `UNSUPPORTED` / `ROOM_LIMIT_EXCEEDED`, as S1 implements. Between `1d8f01e` and `8c42a35` the scope had called it a 400. The existing `POST …/revisions/generate` contract is unchanged and still answers 400.
-- **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).**
-  - **Pending** in the same scope revision.
-  - Nothing in the repository implements or approves it, and S2 does not depend on it.
-  - Interior stays a typed `UNSUPPORTED` until D-12 is decided.
+- **Failed Blueprint verification.** The scope (`04667c6`, owner decision of 2026-10-14) records that a failed independent B34 verification after the commit is `FAILED`, not `REQUIRES_REVIEW`, with a reason that the revision was committed and is current and how to restore the base. S1 implements it in `verificationOutcome` (§5, follow-up).
+- **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields): deferred** (scope `04667c6`, owner decision of 2026-10-14).
+  - Nothing in the repository implements or approves it. S1 and S2 go ahead without it.
+  - Interior stays a typed `UNSUPPORTED`. The L297 gate cannot close for Interior until D-12 is approved and implemented, or Interior is waived explicitly.
 
 **D-8b as built.** S1 takes the option that needs no migration and no authorization:
 - results are **derived**, not stored as envelopes;
@@ -78,7 +78,8 @@ The owner confirmed these explicitly on 2026-10-14:
 
 | Module | Status | Assigned when |
 |---|---|---|
-| Blueprint | `REQUIRES_REVIEW` | Independent B34 verification `FAILED` after QA passed |
+| Blueprint | `FAILED` | Independent B34 verification `FAILED` after QA passed (`VERIFICATION_FAILED`). The revision is committed and current; the reason names it and the `RESTORE` operation that returns to the base |
+| Blueprint | `REQUIRES_REVIEW` | Independent verification could not be run (`VERIFICATION_UNAVAILABLE`) |
 | Blueprint | `PARTIAL` | Verification `PARTIAL` |
 | Materials | `PARTIAL` | The takeoff or construction calculation is not fully evaluated |
 | Budget | `REQUIRES_REVIEW` | **Always, while only synthetic rate books exist** (`SYNTHETIC_RATE_BOOK`) |
@@ -94,11 +95,12 @@ The owner confirmed these explicitly on 2026-10-14:
 
 ## 3. Tests
 
-**`apps/api/tests/specialists.test.ts`** (unit, 5 tests; the room limit is pinned to both generator limits):
+**`apps/api/tests/specialists.test.ts`** (unit, 6 tests; the room limit is pinned to both generator limits):
 - the §E operation and scope vocabularies, verbatim;
 - the six modules and the five L293 statuses;
 - S1 module scopes (Blueprint can preserve nothing);
 - status precedence;
+- the verification outcome: `FAILED` with a committed-and-current reason naming the base restore; `PARTIAL`, unavailable and passed unchanged;
 - the strict request: duplicate or empty scopes, unknown fields, other versions;
 - the result can never claim an operation, a job, provider cost, a provider or an engineering claim.
 
@@ -142,7 +144,7 @@ The owner confirmed these explicitly on 2026-10-14:
 ## 4. Not in S1
 
 - **S2:** Exterior (cladding through Phase 30) and Structural.
-- **S3:** Interior, which needs owner-approved schema work (D-12, formerly D-9b; pending).
+- **S3:** Interior, which needs owner-approved schema work (D-12, formerly D-9b; deferred).
 - Durable envelope storage. The scope records D-8b as "computed on read"; durable storage would need a new decision and a migration.
 - Regional or sourced rate books, and substitution provenance.
 - No migration. No hosted, staging, merge or tag action.
@@ -183,13 +185,19 @@ The owner confirmed these explicitly on 2026-10-14:
 |---|---|
 | PR #18 | Merged by the owner (`aac8e89`) |
 | PR #17 (B37) | Merged by the owner (`4d1da13`). S1 already contained its head `f6f4de7` |
-| PR #20 (B39 scope) | Draft, base `phase31/development`; head `8c42a35` carries the room-limit amendment |
-| PR #21 (S1) | Base `phase31/development`. Marked ready for review once CI is green on the head carrying this record |
+| PR #20 (B39 scope) | Draft, base `phase31/development`; head `04667c6` (room-limit amendment `8c42a35`; D-12 deferred and failed verification `FAILED`, `04667c6`) |
+| PR #21 (S1) | Base `phase31/development`. Marked ready for review on `17421ca` after CI run 38569860122 passed; the follow-up below re-runs CI |
 
 **Readiness of PR #21:**
 1. Correctness pass pushed and green: **done**.
 2. D-8b: computed on read, as recorded in the scope and kept on the owner's instruction: **done**.
 3. Scope and code agree on every S1 refusal, including the room limit (`8c42a35`): **done**.
-4. Owner review and merge: **the owner's**. Hosted gates stay D-9 operator, D-10 prepare, D-11 wait. D-12 (Interior) stays pending and does not affect S1.
+4. Owner review and merge: **the owner's**. Hosted gates stay D-9 operator, D-10 prepare, D-11 wait. D-12 (Interior) is deferred and does not affect S1.
+
+**Follow-up (scope `04667c6`): failed Blueprint verification is `FAILED`.**
+- Before: `REQUIRES_REVIEW` / `VERIFICATION_FAILED`. After: `FAILED` / `VERIFICATION_FAILED`. The message names the committed revision, says it is the current revision, and names the `RESTORE` operation (`POST /api/projects/:projectId/revision-operations`) that returns to the base revision.
+- The mapping is the exported `verificationOutcome`, unit-tested directly, because the real verifier cannot be made to fail on a generated model from a test. `PARTIAL` and unavailable verification are unchanged.
+- No schema, route or OpenAPI change: `FAILED` and `VERIFICATION_FAILED` were already part of the result contract.
+- Mutation checks, 2 of 2 caught: `FAILED` reverted to `REQUIRES_REVIEW`; the restore guidance removed.
 
 No merge, base change or tag was made by this session.

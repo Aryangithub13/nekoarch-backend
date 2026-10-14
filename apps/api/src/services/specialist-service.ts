@@ -36,6 +36,20 @@ export function overallStatus(statuses: SpecialistStatus[]): SpecialistStatus {
 }
 
 /**
+ * Status contribution of the independent B34 verification of a committed Blueprint revision (scope §4 row 1). The revision is already committed and
+ * current when this runs, so a failure says so and names the restore that returns to the base (owner decision 2026-10-14: FAILED, not REQUIRES_REVIEW).
+ */
+export function verificationOutcome(status: 'VERIFIED' | 'VERIFIED_WITH_WARNINGS' | 'PARTIAL' | 'FAILED' | null, ids: { projectId: string; baseRevisionId: string;
+  revisionId: string }): { status: SpecialistStatus; reason: Reason } | null {
+  if (status === null) return { status: 'REQUIRES_REVIEW', reason: { code: 'VERIFICATION_UNAVAILABLE', message: 'Independent verification could not be run on the stored revision' } };
+  if (status === 'PARTIAL') return { status: 'PARTIAL', reason: { code: 'VERIFICATION_PARTIAL', message: 'Independent verification could not evaluate every check' } };
+  if (status === 'FAILED') return { status: 'FAILED', reason: { code: 'VERIFICATION_FAILED', message: `Independent verification failed on revision ${ids.revisionId}. `
+    + `The revision passed acceptance QA and was committed as the project's current revision. To return to the base, restore revision ${ids.baseRevisionId} `
+    + `with a RESTORE operation (POST /api/projects/${ids.projectId}/revision-operations)` } };
+  return null;
+}
+
+/**
  * B39 S1: one specialist request through the shared envelope. Read-only checks and typed refusals come first and write nothing. A supported request
  * then runs the existing engine service unchanged, under the existing route's durable receipt when the caller sent an Idempotency-Key, so a retry
  * replays rather than repeats. Freshness is read back from the B37 manifest of the resulting revision, never computed here.
@@ -134,9 +148,8 @@ export async function runSpecialist(repository: Repository, userId: string, proj
     // Independent checks on the stored revision: the B34 verifier and the B37 manifest (which also gives the change since the base). No render or scene job.
     const [verification, manifest] = await Promise.all([verifyRevision(repository, projectId, revision.id, null).catch(() => null), readBack(revision.id)]);
     const hash = modelHash(revision.model), statuses: SpecialistStatus[] = [], reasons: Reason[] = [];
-    if (!verification) { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'VERIFICATION_UNAVAILABLE', message: 'Independent verification could not be run on the stored revision' }); }
-    else if (verification.status === 'PARTIAL') { statuses.push('PARTIAL'); reasons.push({ code: 'VERIFICATION_PARTIAL', message: 'Independent verification could not evaluate every check' }); }
-    else if (verification.status === 'FAILED') { statuses.push('REQUIRES_REVIEW'); reasons.push({ code: 'VERIFICATION_FAILED', message: 'The revision passed acceptance QA but independent verification failed; review it before relying on it' }); }
+    const outcome = verificationOutcome(verification?.status ?? null, { projectId, baseRevisionId: base.id, revisionId: revision.id });
+    if (outcome) { statuses.push(outcome.status); reasons.push(outcome.reason); }
     return done(statuses, reasons, { resultRevisionId: revision.id, replayed: saved.replayed, manifestHref: manifestHref(revision.id), changeImpact: manifest?.changeImpact ?? null,
       artifacts: [{ artifactId: revision.id, logicalComponentId: 'BUILDING_MODEL', sourceRevisionId: revision.id, contentHash: hash,
         inputHash: revision.identity?.requirementsHash ?? hash, producerVersion: revision.generatorVersion ?? 'project-revision-v1', providerId: null,

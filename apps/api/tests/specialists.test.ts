@@ -3,7 +3,7 @@ import { BLUEPRINT_LIMITS } from '@designflow/generator';
 import { GENERATION_LIMITS } from '../../../packages/generator/src/input.js';
 import { COMPONENT_SCOPES, MAX_REQUESTED_ROOMS, MODULE_SCOPES, S1_MODULES, SPECIALIST_MODULES, SPECIALIST_OPERATIONS, SPECIALIST_STATUSES, SPECIALIST_VERSION,
   SpecialistRequestSchema, SpecialistResultSchema, STATUS_PRECEDENCE } from '../src/contracts/specialists.js';
-import { overallStatus } from '../src/services/specialist-service.js';
+import { overallStatus, verificationOutcome } from '../src/services/specialist-service.js';
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${n.toString().padStart(12, '0')}`;
 const request = (patch: Record<string, unknown> = {}) => ({ envelopeVersion: SPECIALIST_VERSION, baseRevisionId: uuid(1), operation: 'recompute',
@@ -43,6 +43,20 @@ describe('B39 S1 specialist envelope contract', () => {
     expect(overallStatus(['PARTIAL', 'STALE_DEPENDENCY', 'REQUIRES_REVIEW'])).toBe('STALE_DEPENDENCY');
     expect(overallStatus(['DEGRADED_PROVIDER', 'PARTIAL'])).toBe('PARTIAL');
     expect(overallStatus(['BLOCKED_BY_LOCK', 'UNSUPPORTED'])).toBe('UNSUPPORTED');
+  });
+
+  it('a failed independent verification after a Blueprint commit is FAILED, says the revision is committed and current, and names the restore (scope §4 row 1)', () => {
+    const ids = { projectId: uuid(1), baseRevisionId: uuid(2), revisionId: uuid(3) };
+    const failed = verificationOutcome('FAILED', ids)!;
+    expect([failed.status, failed.reason.code]).toEqual(['FAILED', 'VERIFICATION_FAILED']);
+    for (const part of [uuid(3), 'committed', 'current revision', `restore revision ${uuid(2)}`, 'RESTORE', `/api/projects/${uuid(1)}/revision-operations`])
+      expect(failed.reason.message).toContain(part);
+    // The other outcomes are unchanged; a passed verification adds nothing. Every reason fits the result schema.
+    expect([verificationOutcome('PARTIAL', ids)!.status, verificationOutcome(null, ids)!.status]).toEqual(['PARTIAL', 'REQUIRES_REVIEW']);
+    expect([verificationOutcome('VERIFIED', ids), verificationOutcome('VERIFIED_WITH_WARNINGS', ids)]).toEqual([null, null]);
+    for (const s of ['FAILED', 'PARTIAL', null] as const) expect(SpecialistResultSchema.safeParse(result({ reasons: [verificationOutcome(s, ids)!.reason] })).success).toBe(true);
+    // FAILED outranks REQUIRES_REVIEW and PARTIAL, and a stale output still outranks it.
+    expect([overallStatus(['REQUIRES_REVIEW', 'FAILED', 'PARTIAL']), overallStatus(['FAILED', 'STALE_DEPENDENCY'])]).toEqual(['FAILED', 'STALE_DEPENDENCY']);
   });
 
   it('the request is strict: duplicate or empty scopes, unknown fields and other envelope versions are refused', () => {
