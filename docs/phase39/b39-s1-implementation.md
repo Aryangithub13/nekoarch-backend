@@ -1,6 +1,6 @@
 # B39 Slice S1: Specialist Envelope with Blueprint, Materials and Budget — Implementation Record
 
-**Status:** implemented on `phase39/s1-specialists`, stacked on PR #17 (`phase37/manifest-v2`; merged into S1 at `f6f4de7`), which S1 needs for the B37 manifest. **Not merged; not a release.** The S1 correctness pass of 2026-10-14 (§5) is committed locally and **not pushed**: pushing needs owner authorization.
+**Status:** implemented on `phase39/s1-specialists` (PR #21). It builds on the B37 manifest of PR #17, which the owner has merged (`4d1da13`). **Not merged; not a release.** The S1 correctness pass of 2026-10-14 (§5) is committed locally and **not pushed**: pushing needs owner authorization.
 
 **Scope of record:** [`b39-specialist-scope.md`](https://github.com/Aryangithub13/nekoarch-backend/blob/phase39/specialist-scope/docs/phase39/b39-specialist-scope.md) on PR #20 (§3, §4 rows 1–3, §7 S1). The roadmap is cited as ROADMAP Lnnn.
 
@@ -172,14 +172,24 @@ The owner confirmed these explicitly on 2026-10-14:
 
 | Gate | State |
 |---|---|
-| Local unit, PostgreSQL and full suite | See the PR #21 description for the exact commit and counts |
+| Local unit, PostgreSQL and full suite | **Passed on `16bd11c`** (Node 22.22.0, unprivileged user, embedded PostgreSQL): build, typecheck, lint exit 0; **111 files, 3,083/3,083 tests**. Of these: `specialists.test.ts` 5, `specialists.integration.test.ts` 7, `project-manifest` 22 + 13, `bounded-reads` 6, `dependency-graph` 12 + 9, `modernization` 6 + 6, `foundation` (import boundary) 30. The run before regenerating OpenAPI (`ba43aec`) failed only the R01-G3 drift test, fixed in `16bd11c`. Later commits are docs only |
 | Local disposable Supabase acceptance (real JWTs) | **Passed, 123/123**, including the S1 case. Receipt `docs/phase16-evidence/supabase-2026-10-14T07-27-16.304Z.json`: 3,857 requests, 0 API errors, 23 deliberate anonymous 401s from the existing cases. The first stack start failed its own health checks (realtime, storage) before any test ran; an unchanged retry started cleanly. The PostgREST image helper (`ensure-local-postgrest.mjs`) was not run in this pass (see the B37 gap report §6 for its registry deviation). **Not hosted** |
 | Hosted Supabase acceptance, hosted migration history, staging, tag | Not run (D-9 operator, D-10 prepare, D-11 wait) |
 | Push of the correctness pass | **Not done.** Needs owner authorization; the work is committed locally on `phase39/s1-specialists` |
 
-**PR order:**
-- PR #18 (merged by the owner on 2026-10-14, `aac8e89`).
-- PR #17: B37, base `phase31/development`.
-- PR #21: S1, base `phase37/manifest-v2`; retarget after PR #17 merges.
-- PR #20 (scope) still targets the merged `docs/b39-scope-correction`. It needs a base change to `phase31/development`, which the owner has not authorized.
+**PR order** (verified 2026-10-14 after the correctness pass):
 
+| PR | State |
+|---|---|
+| PR #18 | Merged by the owner (`aac8e89`) |
+| PR #17 (B37) | Merged by the owner (`4d1da13`). S1 already contained its head `f6f4de7` |
+| PR #20 (B39 scope) | Draft. Its base is now `phase31/development` |
+| PR #21 (S1) | Draft. Its base is now `phase31/development` |
+
+**Before PR #21 can be marked ready:**
+1. The owner authorizes a push of this pass's local commits.
+2. CI runs on that head.
+3. The owner confirms D-8b, which the scope records as "computed on read".
+4. The owner reviews.
+
+No merge, base change or tag was made by this session.
