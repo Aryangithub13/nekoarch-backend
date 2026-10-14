@@ -2,7 +2,7 @@
 
 **Status:** prepared 2026-10-14 for the owner decisions D-9 (*operator*) and D-10 (*prepare*). **Neither gate has been run.** No hosted database, staging deployment or production system has been contacted by the session that wrote this. The phase tag (D-11) is on hold.
 
-**Subject:** PR #17 (`phase37/manifest-v2`); B37 accepted as development-complete (D-8). Gap report: [phase37-acceptance-gap-report.md](../phase37/phase37-acceptance-gap-report.md) §7, §8 and §11.
+**Subject:** PR #17 (`phase37/manifest-v2`), **merged 2026-10-14 as `4d1da13`** on `phase31/development`; B37 accepted as development-complete (D-8). Merging is not a release: D-9, D-10 and D-11 below are unchanged. Gap report: [phase37-acceptance-gap-report.md](../phase37/phase37-acceptance-gap-report.md) §7, §8 and §11.
 
 ---
 
@@ -25,7 +25,7 @@ What it never does:
 Tested on PostgreSQL by `apps/api/tests/hosted-migration-ledger.test.ts`: the ledger is unchanged after the read, and a failure message contains no credential or host.
 
 **Steps:**
-1. Check out the commit under review (PR #17 head) and run `npm ci`.
+1. Check out `4d1da13` (the PR #17 merge) or the later `phase31/development` commit under review, and run `npm ci`.
 2. Run, with the credential in the environment only and never on the command line in shared history:
    ```sh
    HOSTED_DB_URL='postgresql://<read-only role>@<host>:<port>/postgres' node scripts/verify-hosted-migrations.mjs > ledger.json
@@ -50,7 +50,7 @@ Tested on PostgreSQL by `apps/api/tests/hosted-migration-ledger.test.ts`: the le
 **Prerequisites (owner):**
 1. A **disposable** staging Supabase project and API deployment. Never production.
 2. Its ledger checked with §1 (pointed at staging). Migrations `0001`–`0028` must be present before the API is deployed.
-3. The deployed commit recorded: the PR #17 merge commit, or `dcd15c5` (or later) if staging is run before merging.
+3. The deployed commit recorded: the PR #17 merge commit `4d1da13`, or a later `phase31/development` commit (record which).
 4. Two dedicated staging test users and their access tokens.
 
 **Tool:** [`scripts/staging-workflow-b37.mjs`](../../scripts/staging-workflow-b37.mjs). It uses only the public API, as the two test users.
@@ -107,5 +107,5 @@ Exit codes:
 No tag is created. When the owner lifts the hold, the proposed order is:
 1. D-9 result recorded.
 2. D-10 evidence recorded.
-3. PR #17 merged by the owner.
-4. Tag on the merge commit, with a name the owner chooses.
+3. PR #17 merged by the owner: **done** (`4d1da13`, 2026-10-14).
+4. Tag on the `phase31/development` commit that carries the D-9 and D-10 evidence, after local Supabase acceptance and CI pass on that exact commit. The owner chooses the name.
