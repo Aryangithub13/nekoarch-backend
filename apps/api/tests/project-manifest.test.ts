@@ -273,7 +273,10 @@ describe('B37 freshness impact (what the manifest freshness asks of each discipl
     const stale = manifest(chain(), NEWER);
     expect(stale.freshnessImpact.targetRevisionId).toBe(NEWER);
     expect(impact(stale, 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
-      revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
+      revalidate: [], awaiting: [], superseded: [], staleArtifacts: 3, blockedArtifacts: 0 });
+    // The source model and its acceptance are superseded by the newer revision, not regenerated; the outputs derived on read from them are regenerated.
+    expect(impact(stale, 'ARCHITECTURE')).toEqual({ discipline: 'ARCHITECTURE', regenerate: ['BIM', 'COMPLEX_VERIFICATION'], revalidate: [], awaiting: [],
+      superseded: ['BUILDING_MODEL', 'ACCEPTANCE_QA'], staleArtifacts: 2, blockedArtifacts: 0 });
     expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], staleArtifacts: 1 });
     expect(impact(stale, 'DOCUMENTATION').regenerate).toEqual(['CONSTRUCTION_DOCUMENTS']);
   });
@@ -282,7 +285,11 @@ describe('B37 freshness impact (what the manifest freshness asks of each discipl
     expect(impact(manifest(records), 'QUANTITIES_AND_COST')).toMatchObject({ regenerate: [], revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
       blockedArtifacts: 3 });
     expect(impact(manifest(base(), REV, { activeJobs: [{ jobId: uuid(40), module: 'SCENE_3D' }] }), 'VISUALIZATION').awaiting).toEqual(['SCENE_3D']);
-    for (const m of [manifest(), manifest(chain(), NEWER), manifest(records)]) for (const d of m.freshnessImpact.disciplines)
-      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
+    for (const m of [manifest(), manifest(chain(), NEWER), manifest(records), manifest(chain(), null)]) for (const d of m.freshnessImpact.disciplines) {
+      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting, ...d.superseded]) expect(mod(m, name).freshness).not.toBeNull();
+      // Never ask to regenerate what only a new revision can replace.
+      expect(d.regenerate).not.toContain('BUILDING_MODEL');
+      expect(d.regenerate).not.toContain('ACCEPTANCE_QA');
+    }
   });
 });

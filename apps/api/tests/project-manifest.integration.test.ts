@@ -118,6 +118,9 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(old.freshnessImpact.targetRevisionId).toBe(edited.id);
     const regenerate = old.freshnessImpact.disciplines.flatMap(d => d.regenerate);
     for (const name of ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D', 'DESIGN_CONCEPTS', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate).toContain(name);
+    // The base's own model and acceptance are superseded by the edit, never listed to regenerate.
+    expect(old.freshnessImpact.disciplines.flatMap(d => d.superseded)).toEqual(['BUILDING_MODEL', 'ACCEPTANCE_QA']);
+    for (const name of ['BUILDING_MODEL', 'ACCEPTANCE_QA']) expect(regenerate).not.toContain(name);
     expect(old.freshnessImpact.disciplines.reduce((n, d) => n + d.staleArtifacts, 0)).toBe(old.modules.reduce((n, x) => n + x.artifacts!.length, 0));
     expect([old.lineage.parentRevisionId, old.diff.bimDiffHref]).toEqual([null, null]);
 
@@ -154,7 +157,7 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(m.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness).toBe('pending');
     // ROADMAP L262: an output an active job will produce is awaited, never regenerated or revalidated.
     expect(m.freshnessImpact.disciplines.find(d => d.discipline === 'VISUALIZATION')).toEqual({ discipline: 'VISUALIZATION', regenerate: [], revalidate: [],
-      awaiting: ['SCENE_3D'], staleArtifacts: 0, blockedArtifacts: 0 });
+      awaiting: ['SCENE_3D'], superseded: [], staleArtifacts: 0, blockedArtifacts: 0 });
     expect(m.freshnessImpact.disciplines.filter(d => d.discipline !== 'VISUALIZATION').every(d => !d.awaiting.length)).toBe(true);
     const second = (await ok('POST', `/api/projects/${p.projectId}/revisions`, { model: p.revision.model, baseRevisionId: p.revision.id })).json().revision as Json;
     const same = await manifest(`/api/projects/${p.projectId}/revisions/${second.id}`);
@@ -184,7 +187,7 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     for (const name of ['CONSTRUCTION_CALCULATION', 'BOQ_COST']) expect(mod(m, name).freshness.state, name).toBe('blocked');
     expect(m.disciplines.find(d => d.discipline === 'QUANTITIES_AND_COST')!.freshness).toBe('blocked');
     expect(m.freshnessImpact.disciplines.find(d => d.discipline === 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: [],
-      revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'], awaiting: [], staleArtifacts: 0, blockedArtifacts: 3 });
+      revalidate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'], awaiting: [], superseded: [], staleArtifacts: 0, blockedArtifacts: 3 });
     // Fail closed, and only where the failure reaches: the other disciplines are untouched and nothing is ever reported verified.
     expect(m.freshnessImpact.disciplines.filter(d => d.discipline !== 'QUANTITIES_AND_COST').every(d => !d.regenerate.length && !d.revalidate.length)).toBe(true);
     expect(m.modules.flatMap(x => [x.freshness?.state, ...x.artifacts!.map(y => y.freshness.state)])).not.toContain('verified');

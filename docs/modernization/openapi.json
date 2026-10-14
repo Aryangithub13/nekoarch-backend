@@ -63344,6 +63344,30 @@
                  ]
                 }
                },
+               "superseded": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
                "staleArtifacts": {
                 "type": "integer",
                 "minimum": 0
@@ -63358,6 +63382,7 @@
                "regenerate",
                "revalidate",
                "awaiting",
+               "superseded",
                "staleArtifacts",
                "blockedArtifacts"
               ],

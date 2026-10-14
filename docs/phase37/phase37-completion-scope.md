@@ -237,7 +237,13 @@ Checked against roadmap Phase 37 (L245–262) on head `4a57aa5`.
 - **After:** `…/revisions/<parent>/bim/diff/<this>`, so both describe the same pair in the same direction.
 - **Test:** the unit test pins the href. The M4 integration test reads the linked BIM diff and checks that its `before`/`after` bindings are the parent and the edited revision, with the model hashes the manifest `diff` reports.
 
-### 7.2 Added acceptance tests on PostgreSQL
+### 7.2 Fix: `freshnessImpact` no longer asks to regenerate the source model (gap report D1)
+
+- **Defect:** for a superseded revision, `regenerate` listed `BUILDING_MODEL` and `ACCEPTANCE_QA`. A revision's model and its acceptance are replaced only by a new revision, never regenerated.
+- **After:** each discipline entry gains `superseded`: the stale modules that only a new revision replaces (the graph's `REVISION` and `ACCEPTANCE_QA` anchors). `regenerate` never contains them. Outputs derived on read from the model (BIM, complex verification, engineering assessment, construction documents) stay in `regenerate`. `staleArtifacts` still counts every stale artifact of the discipline.
+- **Tests:** unit (the `ARCHITECTURE` entry of a superseded revision, and no variant ever lists either module to regenerate) and the M4 integration test.
+
+### 7.3 Added acceptance tests on PostgreSQL
 
 | Behaviour | Before | Added |
 |---|---|---|
@@ -245,11 +251,11 @@ Checked against roadmap Phase 37 (L245–262) on head `4a57aa5`.
 | `freshnessImpact.awaiting` (an active job) | Unit only | A queued `SCENE_COMPILE` job: `VISUALIZATION` awaits `SCENE_3D`; nothing else is awaited |
 | BIM diff linkage | Status 200 only | Pair and direction, as §7.1 |
 
-### 7.3 Traced and left as is
+### 7.4 Traced and left as is
 
 - **`scopedDiff` change cap (50,000).** `scopedDiff` validates its report, so a comparison with more than 50,000 changes would fail the whole manifest read. Reaching that needs two revisions with about 25,000 or more disjoint entities each. The model schema allows up to 42,240 entities, but the save route's default body limit is 1 MiB (`BODY_LIMIT_BYTES`), far below such a model. No code is added for it. It becomes reachable only if that limit is raised by about two orders of magnitude.
 
-### 7.4 Roadmap items still open
+### 7.5 Roadmap items still open
 
 These are why the PR is not marked ready for review:
 
@@ -257,6 +263,7 @@ These are why the PR is not marked ready for review:
 |---|---|
 | L251: `not_applicable` and `verified` | Defined in the vocabulary, never assigned. There is no evidence-backed rule for either (§2) |
 | L252: material and façade variations as explicit, semantically typed changes | Not in this slice. Phase 30 `APPEARANCE_MODIFY` operations are reported in `lineage.operation` and `candidates`; `APPEARANCE_VARIANT` is in `notIncluded` |
+| L262: "no lost linkage between model and visible 3D object", after a Phase 30 appearance edit (gap report D2) | Not met. The visible 3D object of such a revision is its Phase 30 appearance variant, which the manifest does not link (`APPEARANCE_VARIANT` is in `notIncluded`; `SCENE_3D` reads `NOT_GENERATED`). The gap report's proposal: an `APPEARANCE` entry derived from the existing `revision_operation_read('appearance')` |
 | L258: "façade cladding alone differs from changing curtain-wall glazing area" | Not met. Invalidation is by whole-model binding (`changeImpact.basis: MODEL_BINDING`), because every stored output is bound to the whole model hash. Telling those two edits apart needs per-output input scopes that the stored artifacts do not record |
 | L259: drawing/layer, room-navigation and site/plot paged views | Not built (§4) |
 | L260: `confidence/assumptions` (when applicable) | Not surfaced as a manifest field. The other L260 fields are: `diff`, `lineage`, `source`, `units`, the local coordinate system (L260 asks for a CRS *or* a local system), `completeness`, `last_verified` (`integrityCheckedAt`) and `missing_reason` |

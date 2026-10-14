@@ -120,12 +120,14 @@ export const CandidatesSchema = z.object({ modulesResolve: z.literal('ACCEPTED_R
 export const ManifestQuerySchema = z.object({ discipline: z.enum(DISCIPLINES).optional(), artifacts: z.enum(['include', 'omit']).default('include') }).strict();
 export type ManifestQuery = z.infer<typeof ManifestQuerySchema>;
 /**
- * What the manifest's own freshness asks of each discipline, against the project's current revision (ROADMAP L262): modules to regenerate (stale),
- * revalidate (blocked) or await (pending), with artifact counts. Read only from module freshness, so it never reads better than that freshness.
+ * What the manifest's own freshness asks of each discipline, against the project's current revision (ROADMAP L262): outputs to regenerate (stale),
+ * revalidate (blocked) or await (pending), with artifact counts. A stale source model or its acceptance QA is `superseded` by the target revision, never
+ * listed to regenerate: a new model is made only as a new revision. Read only from module freshness, so it never reads better than that freshness.
  */
 export const FreshnessImpactSchema = z.object({ targetRevisionId: id.nullable(),
   disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
-    awaiting: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0), blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
+    awaiting: z.array(z.enum(MODULES)), superseded: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0),
+    blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
 export const ProjectManifestSchema = z.object({
   manifestVersion: z.literal(PROJECT_MANIFEST_VERSION),
   identity: z.object({ projectId: id, revisionId: id, revisionNumber: z.number().int().positive(), parentRevisionId: id.nullable(),

@@ -44,6 +44,8 @@ const DEFS: readonly Def[] = Object.freeze([
   { module: 'CONSTRUCTION_DOCUMENTS', discipline: 'DOCUMENTATION', source: 'DERIVED_ON_READ', editability: 'DERIVED_READ_ONLY', serviceId: 'CONSTRUCTION_DOCUMENTS' },
 ] as const satisfies readonly Def[]);
 if (DEFS.map(d => d.module).join() !== MODULES.join()) throw new Error('Manifest module table and contract disagree');
+/** The revision's own model and acceptance (the graph anchors): superseded by a newer revision, never regenerated. */
+const SOURCE_MODULES: ReadonlySet<ManifestModule> = new Set(DEFS.filter(d => d.family === 'REVISION' || d.family === 'ACCEPTANCE_QA').map(d => d.module));
 
 /** Roadmap L259: the existing paged or filterable listings of a module's resource for this revision. Modules not listed have no such view yet. */
 const page = (path: string, paging: 'AFTER_ID' | 'CURSOR' = 'CURSOR', filters: string[] = []) => ({ route: `${REVISION_ROUTE}/${path}`, paging, filters });
@@ -212,12 +214,14 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     const members = modules.filter(m => m.discipline === discipline);
     return { discipline, freshness: worst(members.flatMap(m => m.freshness ? [m.freshness.state] : [])), modules: members.map(m => m.module) };
   });
-  // Freshness impact (from the parallel M10 design), read straight from the module freshness above: nothing new is inferred.
+  // Freshness impact (from the parallel M10 design), read straight from the module freshness above: nothing new is inferred. A stale source model and its
+  // acceptance QA are superseded by the target revision; they are never regenerated (a new model is a new revision), so they are not listed to regenerate.
   const freshnessImpact = { targetRevisionId: target, disciplines: DISCIPLINES.map(discipline => {
     const members = modules.filter(m => m.discipline === discipline), withState = (s: FreshnessState) => members.filter(m => m.freshness?.state === s).map(m => m.module);
     const count = (s: FreshnessState) => members.reduce((n, m) => n + m.artifacts.filter(x => x.freshness.state === s).length, 0);
-    return { discipline, regenerate: withState('stale'), revalidate: withState('blocked'), awaiting: withState('pending'), staleArtifacts: count('stale'),
-      blockedArtifacts: count('blocked') };
+    const stale = withState('stale');
+    return { discipline, regenerate: stale.filter(m => !SOURCE_MODULES.has(m)), revalidate: withState('blocked'), awaiting: withState('pending'),
+      superseded: stale.filter(m => SOURCE_MODULES.has(m)), staleArtifacts: count('stale'), blockedArtifacts: count('blocked') };
   }) };
   // Candidates on this revision (roadmap L258), oldest first like the artifacts. Listed only: no module, freshness, impact or diff above reads them.
   const candidates = { modulesResolve: 'ACCEPTED_REVISION_ONLY' as const, availability: input.operations ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,

@@ -124,6 +124,12 @@ ROADMAP L259 asks that site/plot, drawing/layer, quantitative/engineering, cost,
 | **D1** | Low (semantic) | `freshnessImpact.regenerate` lists `BUILDING_MODEL` and `ACCEPTANCE_QA` for a superseded revision. A source model and its acceptance are superseded, not regenerated, so a client following the list would try to "regenerate" the model. Introduced in `aa20a0e` | §3 item 1. No test asserts the `ARCHITECTURE` list, so a fix weakens no test | Exclude `NEW_REVISION_ONLY` modules and acceptance QA from `regenerate` (report them as superseded), and add a test |
 | **D2** | Medium (gate) | **M4 is overstated for Phase 30 edits.** After a B30 appearance edit, the new revision's visible 3D object is its Phase 30 appearance variant. The manifest neither links it nor accounts for it beyond `notIncluded: APPEARANCE_VARIANT`, and `SCENE_3D` reads `NOT_GENERATED`. ROADMAP L262: "no lost linkage between model and visible 3D object". The scope doc tested M4 only with a supplied edit | §3 item 1; `pm.int:99` uses a supplied edit | Add an `APPEARANCE` entry derived from the existing `revision_operation_read('appearance')`: status, `appearanceHash`, `modelHash` check, operation id, and hrefs to `…/appearance` and `…/appearance/glb`. Remove it from `notIncluded`. Add a B30-fixture test |
 
+**Status after this report (2026-10-14, completion pass; scope §7):**
+- **D1: fixed.** `regenerate` no longer lists `BUILDING_MODEL` or `ACCEPTANCE_QA`; they are reported in a new per-discipline `superseded` list. T4 added.
+- **D2: open.** Not built in the completion pass; still blocks the L262 gate for Phase 30 edits.
+- **D3 (found in the completion pass): fixed.** `diff.bimDiffHref` put this revision in the BIM diff route's path and the parent as its parameter. That route compares path (before) with parameter (after), so the linked diff ran opposite to the manifest's own `diff`. It now reads parent → revision, and the M4 integration test checks the pair, direction and model hashes.
+- Also added: PostgreSQL tests for `freshnessImpact.revalidate` (a tampered fingerprint) and `awaiting` (a queued job).
+
 No other defect was found against the code's own contracts. Re-checked:
 - coherence ordering;
 - candidate filtering;
