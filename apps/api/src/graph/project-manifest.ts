@@ -145,16 +145,19 @@ export function buildDiff(projectId: string, revision: Revision, hash: string, p
     unavailableReason: lineage.status === 'UNAVAILABLE' ? 'PARENT_UNREADABLE' : 'LINEAGE_INCONSISTENT' };
   const report = scopedDiff(parent.model as BuildingModelV2, revision.model as BuildingModelV2, { projectId,
     baseRevisionId: parent.id, otherRevisionId: revision.id, baseModelHash: lineage.parentHash!, otherModelHash: hash }, { levelIds: [], entityIds: [], allowSiteChange: true });
-  const collections = [...new Set(report.changes.map(c => c.collection))].map(collection => {
-    const of = report.changes.filter(c => c.collection === collection);
+  // Entity changes only: a document-level edit is already reported by modelHashChanged and MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS.
+  const changes = report.changes.filter((c): c is typeof c & { collection: Exclude<typeof c.collection, 'document'> } => c.collection !== 'document');
+  const collections = [...new Set(changes.map(c => c.collection))].map(collection => {
+    const of = changes.filter(c => c.collection === collection);
     return { collection, added: of.filter(c => c.change === 'ADDED').length, removed: of.filter(c => c.change === 'REMOVED').length,
       changed: of.filter(c => c.change === 'CHANGED').length };
   });
   return { status: 'COMPUTED', diffVersion: report.diffVersion, baseRevisionId: parent.id, baseModelHash: lineage.parentHash, modelHash: hash,
-    modelHashChanged: lineage.parentHash !== hash, entitiesIdentical: report.changes.length === 0,
-    counts: { added: report.counts.added, removed: report.counts.removed, changed: report.counts.changed }, collections,
-    changes: report.changes.slice(0, MANIFEST_DIFF_CHANGE_LIMIT).map(({ collection, entityId, change, levelIds }) => ({ collection, entityId, change, levelIds })),
-    changesTruncated: report.changes.length > MANIFEST_DIFF_CHANGE_LIMIT, unavailableReason: null, bimDiffHref };
+    modelHashChanged: lineage.parentHash !== hash, entitiesIdentical: changes.length === 0,
+    counts: { added: changes.filter(c => c.change === 'ADDED').length, removed: changes.filter(c => c.change === 'REMOVED').length,
+      changed: changes.filter(c => c.change === 'CHANGED').length }, collections,
+    changes: changes.slice(0, MANIFEST_DIFF_CHANGE_LIMIT).map(({ collection, entityId, change, levelIds }) => ({ collection, entityId, change, levelIds })),
+    changesTruncated: changes.length > MANIFEST_DIFF_CHANGE_LIMIT, unavailableReason: null, bimDiffHref };
 }
 
 /** Per-discipline impact by model binding only (IMPACT_REASONS); computed only from a COMPUTED diff, never guessed. */

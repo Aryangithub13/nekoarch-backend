@@ -132,4 +132,41 @@ describe('Phase 34 scoped diff', () => {
     expect(diff(authored(), moved, { levelIds: ['ground'] }).violations.map(v => v.collection)).toEqual(['site']);
     expect(diff(authored(), moved, { allowSiteChange: true }).status).toBe('WITHIN_SCOPE');
   });
+  it('B34-1: a document-level edit (name, completeness) is always reported, in scope only for a whole-model scope; provenance alone is not compared', () => {
+    const renamed = authored();
+    renamed.name = 'Renamed model';
+    renamed.completeness = renamed.completeness === 'architectural' ? 'legacy-planar' : 'architectural';
+    for (const scope of [{}, { entityIds: ['foyer'], allowSiteChange: true }]) {
+      const r = diff(authored(), renamed, scope);
+      expect(r.status).toBe('OUT_OF_SCOPE_CHANGES');
+      expect(r.violations).toEqual([{ collection: 'document', entityId: renamed.id, change: 'CHANGED', levelIds: [], inScope: false }]);
+      expect(r.counts).toEqual({ added: 0, removed: 0, changed: 1, outOfScope: 1 });
+    }
+    // A scope covering every level of both models covers a model-wide edit, but the edit is still listed: never IDENTICAL.
+    expect(diff(authored(), renamed, { levelIds: ['ground'] })).toMatchObject({ status: 'WITHIN_SCOPE', counts: { changed: 1, outOfScope: 0 },
+      changes: [{ collection: 'document', entityId: renamed.id, change: 'CHANGED', levelIds: [], inScope: true }] });
+    const reprovenanced = authored();
+    reprovenanced.provenance = { ...reprovenanced.provenance, creationMode: 'provenance-only-change' } as unknown as BuildingModelV2['provenance'];
+    expect(diff(authored(), reprovenanced, {}).status).toBe('IDENTICAL');
+  });
+  it('B34-2: the order of a wall\'s spaceIds is not a change (the model compares them as a set); a different set still is', () => {
+    const reordered = authored(), wall = reordered.walls.find(w => (w.spaceIds?.length ?? 0) > 1)!;
+    wall.spaceIds = [...wall.spaceIds!].reverse();
+    expect(diff(authored(), reordered, {})).toMatchObject({ status: 'IDENTICAL', changes: [], violations: [] });
+    const replaced = authored(), other = replaced.walls.find(w => w.id === wall.id)!;
+    other.spaceIds = [other.spaceIds![0]!];
+    expect(diff(authored(), replaced, {}).violations.map(v => [v.collection, v.entityId, v.change])).toEqual([['walls', wall.id, 'CHANGED']]);
+  });
+  it('B34-3: a change lists every level the entity was or is on, so the level that breaks the scope is shown', () => {
+    const before = authored(), after = authored();
+    const stair = { ...(before.stairs[0] ?? {}), id: 'stair-x', fromLevelId: 'L1', toLevelId: 'L2' } as BuildingModelV2['stairs'][number];
+    before.stairs = [stair];
+    after.stairs = [{ ...stair, fromLevelId: 'L3', toLevelId: 'L4' }];
+    const out = diff(before, after, { levelIds: ['L1', 'L2'] });
+    expect(out.status).toBe('OUT_OF_SCOPE_CHANGES');
+    expect(out.violations).toEqual([{ collection: 'stairs', entityId: 'stair-x', change: 'CHANGED', levelIds: ['L1', 'L2', 'L3', 'L4'], inScope: false }]);
+    // The scope decision itself is unchanged: in scope only when every old and new level is.
+    expect(diff(before, after, { levelIds: ['L1', 'L2', 'L3', 'L4'] }).status).toBe('WITHIN_SCOPE');
+    expect(diff(before, after, { levelIds: ['L1', 'L2', 'L3'] }).status).toBe('OUT_OF_SCOPE_CHANGES');
+  });
 });

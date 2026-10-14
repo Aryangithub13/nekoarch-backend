@@ -79,7 +79,7 @@ export const DiffSchema = z.object({
   counts: z.object({ added: z.number().int().min(0), removed: z.number().int().min(0), changed: z.number().int().min(0) }).strict().nullable(),
   collections: z.array(z.object({ collection: diffCollection, added: z.number().int().min(0), removed: z.number().int().min(0), changed: z.number().int().min(0) }).strict()),
   changes: z.array(z.object({ collection: diffCollection, entityId: z.string().min(1).max(200), change: z.enum(['ADDED', 'REMOVED', 'CHANGED']),
-    levelIds: z.array(z.string()).max(2) }).strict()).max(MANIFEST_DIFF_CHANGE_LIMIT),
+    levelIds: z.array(z.string()).max(4) }).strict()).max(MANIFEST_DIFF_CHANGE_LIMIT),
   changesTruncated: z.boolean(), unavailableReason: z.enum(DIFF_UNAVAILABLE_REASONS).nullable(),
   /**
    * The existing BIM semantic diff for the same pair and direction: `…/revisions/:parentRevisionId/bim/diff/:revisionId` (parent before, this revision after);

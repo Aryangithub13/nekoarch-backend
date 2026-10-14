@@ -63091,7 +63091,7 @@
                 "items": {
                  "type": "string"
                 },
-                "maxItems": 2
+                "maxItems": 4
                }
               },
               "required": [
@@ -67371,7 +67371,8 @@
                "stairs",
                "dimensions",
                "specifications",
-               "site"
+               "site",
+               "document"
               ]
              },
              "entityId": {
@@ -67390,7 +67391,7 @@
               "items": {
                "$ref": "#/components/properties/scope/properties/levelIds/items"
               },
-              "maxItems": 2
+              "maxItems": 4
              },
              "inScope": {
               "type": "boolean"

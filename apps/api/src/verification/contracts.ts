@@ -48,8 +48,9 @@ export const DIFF_COLLECTIONS = ['levels', 'spaces', 'walls', 'openings', 'slabs
 export const DiffScopeSchema = z.object({ levelIds: z.array(entityId).max(VERIFICATION_LIMITS.scopeIds).default([]),
   entityIds: z.array(entityId).max(VERIFICATION_LIMITS.scopeIds).default([]), allowSiteChange: z.boolean().default(false) }).strict();
 export const DiffRequestSchema = z.object({ otherRevisionId: id, scope: DiffScopeSchema }).strict();
-export const DiffChangeSchema = z.object({ collection: z.enum([...DIFF_COLLECTIONS, 'site']), entityId, change: z.enum(['ADDED', 'REMOVED', 'CHANGED']),
-  levelIds: z.array(entityId).max(2), inScope: z.boolean() }).strict();
+/** `document` is a model-wide document-level edit (name, completeness…); `levelIds` lists every level the entity was or is on (a moved stair has up to four). */
+export const DiffChangeSchema = z.object({ collection: z.enum([...DIFF_COLLECTIONS, 'site', 'document']), entityId, change: z.enum(['ADDED', 'REMOVED', 'CHANGED']),
+  levelIds: z.array(entityId).max(4), inScope: z.boolean() }).strict();
 export const DiffReportSchema = z.object({
   diffVersion: z.literal(DIFF_VERSION), projectId: id, baseRevisionId: id, otherRevisionId: id, baseModelHash: hash, otherModelHash: hash,
   status: z.enum(['IDENTICAL', 'WITHIN_SCOPE', 'OUT_OF_SCOPE_CHANGES']), scope: DiffScopeSchema,
