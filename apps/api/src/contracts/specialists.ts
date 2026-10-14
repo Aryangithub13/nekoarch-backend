@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { CostingPolicySchema, CostOptionsSchema, CurrencySchema, RegionSchema } from '@designflow/boq-cost';
-import { SelectedBlueprintRequirementsSchema } from '@designflow/generator';
 import { ConstructionOptionsSchema, ConstructionSpecificationSchema } from '@designflow/construction-calculations';
 import { TakeoffOptionsSchema } from '@designflow/quantity-takeoff';
 import { ChangeImpactSchema, FRESHNESS_STATES, MODULES } from './project-manifest.js';
+import { GenerateRevisionRequestSchema } from './projects.js';
 
 /**
  * B39 slice S1: the shared specialist request envelope (ROADMAP L288; contract semantics after §E L509–585), scoped in
@@ -54,7 +54,8 @@ export const SpecialistRequestSchema = z.object({
     if (new Set(list).size !== list.length) ctx.addIssue({ code: 'custom', path: [name], message: 'Duplicate scope' });
 });
 export type SpecialistRequest = z.infer<typeof SpecialistRequestSchema>;
-export const BlueprintConfigSchema = z.object({ requirements: SelectedBlueprintRequirementsSchema }).strict();
+/** The generation route's own requirements schema (the API reaches the generator only through its allowlisted boundary). */
+export const BlueprintConfigSchema = z.object({ requirements: GenerateRevisionRequestSchema.shape.requirements }).strict();
 /** `substitutions` is accepted only so that it can be refused by type: no substitution provenance exists (scope §4). */
 export const MaterialsConfigSchema = z.object({ specification: ConstructionSpecificationSchema, takeoffOptions: TakeoffOptionsSchema.default({}),
   constructionOptions: ConstructionOptionsSchema.default({}), substitutions: z.array(z.object({ from: text, to: text }).strict()).min(1).max(16).optional() }).strict();

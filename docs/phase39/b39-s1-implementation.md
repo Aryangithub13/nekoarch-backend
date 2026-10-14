@@ -40,7 +40,7 @@ The owner confirmed these explicitly on 2026-10-14:
    - target scope outside the module → `SCOPE_NOT_SUPPORTED`;
    - a preservation lock on anything the module rewrites → `BLOCKED_BY_LOCK` / `PRESERVATION_CONFLICT`;
    - per module:
-     - Blueprint above 2 floors or 24 rooms → `FLOOR_LIMIT_EXCEEDED` / `ROOM_LIMIT_EXCEEDED`;
+     - Blueprint above 2 floors → `FLOOR_LIMIT_EXCEEDED`. Room counts above the generator's limit remain a 400 from the existing requirements schema; S1 does not reinterpret them;
      - Materials substitutions → `SUBSTITUTION_PROVENANCE_UNAVAILABLE`;
      - Budget with a rate book that does not exist → `RATE_BOOK_UNAVAILABLE`;
      - Budget with a region no rate book covers → `REGION_NOT_COVERED`.

@@ -1,6 +1,5 @@
 import type { FastifyBaseLogger } from 'fastify';
 import { costHash, sampleRateBook } from '@designflow/boq-cost';
-import { BLUEPRINT_LIMITS } from '@designflow/generator';
 import { GenerateRevisionRequestSchema, ProjectDetailSchema, ProjectRevisionDetailSchema, RevisionCommitResponseSchema } from '../contracts/projects.js';
 import { TakeoffDetailSchema } from '../contracts/takeoffs.js';
 import { ConstructionDetailSchema } from '../contracts/construction.js';
@@ -20,10 +19,12 @@ import { createTakeoff, TAKEOFF_OPERATION } from './takeoff-service.js';
 import { createConstruction, CONSTRUCTION_OPERATION } from './construction-service.js';
 import { COST_OPERATION, createCost } from './cost-service.js';
 import { verifyRevision } from './verification-service.js';
+import { MODEL_LIMITS } from '../engineering/capability-limits.js';
 import { projectManifest } from './project-manifest-service.js';
 
 const GENERATE_ROUTE = '/api/projects/:projectId/revisions/generate';
 const SAMPLE_RATE_BOOKS = ['sample-inr-v1', 'sample-inr-v2'] as const;
+const MAX_FLOORS = MODEL_LIMITS.find(l => l.limitId === 'GENERATION_MAX_FLOORS')!.value;
 /** Generator refusals that mean "outside what the engine supports", as opposed to "this program does not fit". */
 const GENERATOR_UNSUPPORTED = ['UNSUPPORTED_SITE_GEOMETRY', 'UNSUPPORTED_PARAMETRIC_CAPABILITY', 'UNSUPPORTED_GEOMETRY', 'SITE_TOO_COMPLEX'];
 type Reason = SpecialistResult['reasons'][number];
@@ -93,12 +94,11 @@ export async function runSpecialist(repository: Repository, userId: string, proj
     ...fields });
 
   if (module === 'BLUEPRINT') {
-    // Floors and rooms beyond the generators' limits are unsupported, not invalid (scope §4): checked before the requirements schema refuses them.
-    const raw = request.outputConfig['requirements'] as { floors?: unknown; rooms?: unknown } | undefined;
-    if (typeof raw?.floors === 'number' && raw.floors > BLUEPRINT_LIMITS.maxFloors)
-      return refuse('UNSUPPORTED', 'FLOOR_LIMIT_EXCEEDED', `Blueprint generation supports at most ${BLUEPRINT_LIMITS.maxFloors} floors`);
-    if (Array.isArray(raw?.rooms) && raw.rooms.length > BLUEPRINT_LIMITS.maxRooms)
-      return refuse('UNSUPPORTED', 'ROOM_LIMIT_EXCEEDED', `Blueprint generation supports at most ${BLUEPRINT_LIMITS.maxRooms} rooms`);
+    // Floors beyond the generators' limit are unsupported, not invalid (scope §4): checked before the requirements schema refuses them. The limit is the
+    // API's own mirror of BLUEPRINT_LIMITS.maxFloors, pinned to it by a test.
+    const raw = request.outputConfig['requirements'] as { floors?: unknown } | undefined;
+    if (typeof raw?.floors === 'number' && raw.floors > MAX_FLOORS)
+      return refuse('UNSUPPORTED', 'FLOOR_LIMIT_EXCEEDED', `Blueprint generation supports at most ${MAX_FLOORS} floors`);
     const config = parseRequest(BlueprintConfigSchema, request.outputConfig);
     const input = GenerateRevisionRequestSchema.parse({ requirements: config.requirements, baseRevisionId: base.id });
     const saved = await engine(() => step(GENERATE_ROUTE, 'revision', { projectId, ...input }, ctx => {
