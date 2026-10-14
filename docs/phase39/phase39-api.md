@@ -1,4 +1,31 @@
-# Phase 39 API — design concepts and capability-typed provider routing
+# Design-concept API (PR #16) — advisory concepts and capability-typed provider routing
+
+> **Classification (corrected r2, 2026-10-13).** This API is **not** the roadmap's B39 "Six Specialized Architectural AI Workflows", and **B39 is not complete.**
+> - The routing is **B43 groundwork**.
+> - The concepts are **partial, advisory Interior/Exterior functionality that B39 may reuse**.
+>
+> See [phase39-scope.md §0](phase39-scope.md#0-classification-under-the-authoritative-roadmap-correction-r2) and the [authoritative roadmap](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (L283–297, L355–372).
+
+## Frontend guidance: what discovery does and does not mean
+
+Discovery (`GET /api/capabilities`) at `d0cd38b` returns the following (VERIFIED by evaluating `discovery()` and the workflow registry at that commit):
+
+| Entry | Value |
+|---|---|
+| `services[DESIGN_CONCEPTS]` | `{ version: 'design-concept-set-v1', persistence: 'ADVISORY_ARTIFACT', workflowCapability: null, status: 'AVAILABLE' }` |
+| `aiCapabilities` | `INTERIOR_DESIGN_CONCEPT` and `EXTERIOR_DESIGN_CONCEPT`, each `{ status: 'AVAILABLE', advisory: true }` |
+| Workflow `capabilities` | `INTERIOR_DESIGN` and `EXTERIOR_DESIGN` have `implementationStatus: 'PLANNED'` |
+| `media` | `INTERIOR_RENDER` and `EXTERIOR_RENDER` are `UNSUPPORTED` |
+
+Nothing in a response names a phase or calls these "specialist" operations. A client mapping frontend modules to backend capabilities could still read `INTERIOR_DESIGN_CONCEPT: AVAILABLE` as "F49 Interior Design AI Module is live", because the roadmap crosswalk maps F49/F50 to B39 (ROADMAP L669–670). **It is not.** Until B39 exists:
+- **Do not bind F49 or F50 to these capabilities as the specialist module.** At most, present them as an optional "advisory concept ideas" panel labelled advisory.
+- **Treat the module status as unavailable.** The authoritative signal for the F49–F54 modules is the workflow capability status (`INTERIOR_DESIGN` / `EXTERIOR_DESIGN` are `PLANNED`; Blueprint, Structural, Materials and Budget specialists do not exist).
+- **Expect nothing from concepts beyond advisory text.** A concept never changes a revision, produces no geometry, dimensions, quantities or costs, and is not fed to the B37 manifest or to freshness checks.
+- **Do not treat `proposedOperation` as applied.** In an exterior concept it is `NOT_EXECUTED`. Applying it is a separate B30 revision operation.
+
+A runtime clarification (for example, a field marking these capabilities as advisory precursors of B39) would be an API-contract change. It is **proposed, not implemented**; see decision D-7 in [next-phase-readiness.md §9.5](../roadmap/next-phase-readiness.md#95-decisions).
+
+---
 
 Scope, acceptance criteria and open questions are in [phase39-scope.md](phase39-scope.md). Schemas are in `apps/api/src/contracts/design-concepts.ts` and in the generated `docs/modernization/openapi.json`.
 
@@ -76,7 +103,7 @@ Unknown fields are refused (`400 VALIDATION_ERROR`). A caller can never name a p
 
 **This phase never executes it.** Submitting it runs Phase 30's own preflight, QA, consent and approval.
 
-## Errors specific to Phase 39
+## Errors specific to the design-concept routes
 
 | Status | Code | When |
 |---|---|---|
