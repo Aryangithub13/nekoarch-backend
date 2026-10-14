@@ -1,6 +1,6 @@
 # B39 Slice S1: Specialist Envelope with Blueprint, Materials and Budget — Implementation Record
 
-**Status:** implemented on `phase39/s1-specialists` (PR #21). It builds on the B37 manifest of PR #17, which the owner has merged (`4d1da13`). **Not merged; not a release.** The S1 correctness pass of 2026-10-14 (§5) is committed locally and **not pushed**: pushing needs owner authorization.
+**Status:** implemented on `phase39/s1-specialists` (PR #21), **merged by the owner** into `phase31/development` (`b543268`, 2026-10-14). It builds on the B37 manifest of PR #17 (`4d1da13`). **Not a release.** The S1 follow-ups (references, execution-cost ceiling, failed verification) and slice S2 (Exterior, Structural) are recorded in [`b39-s2-implementation.md`](b39-s2-implementation.md); the rows below marked *(S2 branch)* changed with them.
 
 **Scope of record:** [`b39-specialist-scope.md`](https://github.com/Aryangithub13/nekoarch-backend/blob/phase39/specialist-scope/docs/phase39/b39-specialist-scope.md) on PR #20 (§3, §4 rows 1–3, §7 S1). The roadmap is cited as ROADMAP Lnnn.
 
@@ -14,7 +14,7 @@ The owner confirmed these explicitly on 2026-10-14:
 | D-9 | Operator | Hosted migration check is for an operator. S1 touches nothing hosted |
 | D-10 | Prepare | Staging is prepared, not run |
 | D-11 | Wait | No tag |
-| D-4 | Scope | Module order and the meaning of "interior" as in the scope document. S1 = Blueprint, Materials, Budget |
+| D-4 | **Accepted** (2026-10-14) | The scope and its module order: Blueprint, Materials, Budget, Exterior, Structural, Interior. S1 = Blueprint, Materials, Budget |
 | D-6 | Reuse | The PR #16 design-concept routes stay an advisory sub-output; S1 does not touch them |
 | D-7 | Defer | No discovery clarification |
 
@@ -23,10 +23,8 @@ The owner confirmed these explicitly on 2026-10-14:
   - The B39 scope on PR #20 (`1d8f01e`) records "specialist results are computed on read for S1 and S2" as an owner decision of 2026-10-14.
   - On 2026-10-14 the owner told this session to "choose what's best for the project and finish it". S1 keeps computed on read: it needs no migration, reads freshness from the current manifest instead of storing it where it would go stale, and matches the derived-on-read B37 manifest. The trade-off (no result history, no fetch by id) is the scope's.
 - **Blueprint room limit.** The scope's §4 row 1 was amended on 2026-10-14 (`8c42a35`): more than 24 requested rooms is a typed `UNSUPPORTED` / `ROOM_LIMIT_EXCEEDED`, as S1 implements. Between `1d8f01e` and `8c42a35` the scope had called it a 400. The existing `POST …/revisions/generate` contract is unchanged and still answers 400.
-- **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).**
-  - **Pending** in the same scope revision.
-  - Nothing in the repository implements or approves it, and S2 does not depend on it.
-  - Interior stays a typed `UNSUPPORTED` until D-12 is decided.
+- **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields): deferred** by the owner (2026-10-14; scope `04667c6`). Nothing implements or approves it; S2 does not depend on it; Interior stays a typed `UNSUPPORTED`.
+- **Failed verification** *(S2 branch)*: a failed independent B34 verification after a Blueprint commit is `FAILED`, not `REQUIRES_REVIEW` (owner, 2026-10-14; scope `04667c6`).
 
 **D-8b as built.** S1 takes the option that needs no migration and no authorization:
 - results are **derived**, not stored as envelopes;
@@ -78,7 +76,8 @@ The owner confirmed these explicitly on 2026-10-14:
 
 | Module | Status | Assigned when |
 |---|---|---|
-| Blueprint | `REQUIRES_REVIEW` | Independent B34 verification `FAILED` after QA passed |
+| Blueprint | `FAILED` *(S2 branch)* | Independent B34 verification `FAILED` after QA passed (owner decision, 2026-10-14; `REQUIRES_REVIEW` as merged in PR #21). The reason says the revision was committed and is current, and how to restore the base |
+| Blueprint | `REQUIRES_REVIEW` | Independent verification could not be run (`VERIFICATION_UNAVAILABLE`) |
 | Blueprint | `PARTIAL` | Verification `PARTIAL` |
 | Materials | `PARTIAL` | The takeoff or construction calculation is not fully evaluated |
 | Budget | `REQUIRES_REVIEW` | **Always, while only synthetic rate books exist** (`SYNTHETIC_RATE_BOOK`) |
@@ -141,8 +140,8 @@ The owner confirmed these explicitly on 2026-10-14:
 
 ## 4. Not in S1
 
-- **S2:** Exterior (cladding through Phase 30) and Structural.
-- **S3:** Interior, which needs owner-approved schema work (D-12, formerly D-9b; pending).
+- **S2:** Exterior (cladding through Phase 30) and Structural: see [`b39-s2-implementation.md`](b39-s2-implementation.md).
+- **S3:** Interior, which needs owner-approved schema work (D-12, formerly D-9b; deferred).
 - Durable envelope storage. The scope records D-8b as "computed on read"; durable storage would need a new decision and a migration.
 - Regional or sourced rate books, and substitution provenance.
 - No migration. No hosted, staging, merge or tag action.
@@ -190,6 +189,6 @@ The owner confirmed these explicitly on 2026-10-14:
 1. Correctness pass pushed and green: **done**.
 2. D-8b: computed on read, as recorded in the scope and kept on the owner's instruction: **done**.
 3. Scope and code agree on every S1 refusal, including the room limit (`8c42a35`): **done**.
-4. Owner review and merge: **the owner's**. Hosted gates stay D-9 operator, D-10 prepare, D-11 wait. D-12 (Interior) stays pending and does not affect S1.
+4. Owner review and merge: **the owner's**. Hosted gates stay D-9 operator, D-10 prepare, D-11 wait. D-12 (Interior) is deferred and does not affect S1.
 
 No merge, base change or tag was made by this session.

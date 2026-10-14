@@ -67638,6 +67638,31 @@
           "maxItems": 18,
           "default": []
          },
+         "referenceIds": {
+          "type": "array",
+          "items": {
+           "$ref": "#/components/properties/baseRevisionId"
+          },
+          "maxItems": 8,
+          "default": []
+         },
+         "budget": {
+          "type": "object",
+          "properties": {
+           "ceiling": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+           },
+           "currency": {
+            "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy/properties/currency"
+           }
+          },
+          "required": [
+           "ceiling",
+           "currency"
+          ],
+          "additionalProperties": false
+         },
          "outputConfig": {
           "type": "object",
           "additionalProperties": {},
@@ -67785,8 +67810,10 @@
            "type": "boolean"
           },
           "operationId": {
-           "enum": [
-            "null"
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
            ],
            "nullable": true
           },
@@ -67874,6 +67901,101 @@
             "additionalProperties": false
            },
            "maxItems": 8
+          },
+          "locks": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/locks/items"
+           },
+           "maxItems": 32
+          },
+          "impacts": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/impacts/items"
+           },
+           "maxItems": 24
+          },
+          "references": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "referenceId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "purpose": {
+              "type": "string",
+              "enum": [
+               "SITE_PHOTO",
+               "SITE_PLAN",
+               "SKETCH",
+               "INSPIRATION",
+               "DOCUMENT",
+               "OTHER"
+              ]
+             },
+             "mediaType": {
+              "type": "string",
+              "enum": [
+               "image/png",
+               "image/jpeg",
+               "image/webp",
+               "application/pdf"
+              ]
+             },
+             "storedSha256": {
+              "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+             },
+             "use": {
+              "type": "string",
+              "enum": [
+               "RECORDED_NOT_CONSUMED"
+              ]
+             }
+            },
+            "required": [
+             "referenceId",
+             "purpose",
+             "mediaType",
+             "storedSha256",
+             "use"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "budget": {
+           "type": "object",
+           "properties": {
+            "ceiling": {
+             "type": "string",
+             "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "currency": {
+             "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy/properties/currency"
+            },
+            "quotedExternalCost": {
+             "type": "string",
+             "enum": [
+              "0"
+             ]
+            },
+            "withinCeiling": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            }
+           },
+           "required": [
+            "ceiling",
+            "currency",
+            "quotedExternalCost",
+            "withinCeiling"
+           ],
+           "additionalProperties": false,
+           "nullable": true
           },
           "details": {
            "anyOf": [
@@ -68057,6 +68179,271 @@
               "unpricedLineIds",
               "pricedTotal",
               "completeTotal"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "EXTERIOR"
+               ]
+              },
+              "preflightStatus": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/status"
+              },
+              "operationKind": {
+               "type": "string",
+               "enum": [
+                "APPEARANCE_MODIFY"
+               ]
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+              },
+              "appearanceHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+                }
+               ],
+               "nullable": true
+              },
+              "targetObjects": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "excludedObjects": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "next": {
+               "type": "object",
+               "properties": {
+                "operationHref": {
+                 "type": "string"
+                },
+                "executeHref": {
+                 "type": "string"
+                },
+                "comparisonHref": {
+                 "type": "string"
+                },
+                "approveHref": {
+                 "type": "string"
+                },
+                "rejectHref": {
+                 "type": "string"
+                }
+               },
+               "required": [
+                "operationHref",
+                "executeHref",
+                "comparisonHref",
+                "approveHref",
+                "rejectHref"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "physicalGlazing": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "materialPerformance": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "thermal": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "photorealism": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "physicalGlazing",
+                "materialPerformance",
+                "thermal",
+                "photorealism"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "preflightStatus",
+              "operationKind",
+              "preflightHash",
+              "appearanceHash",
+              "targetObjects",
+              "excludedObjects",
+              "next",
+              "claims"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "STRUCTURAL"
+               ]
+              },
+              "analysisType": {
+               "type": "string",
+               "enum": [
+                "LINEAR_STATIC"
+               ]
+              },
+              "solver": {
+               "type": "object",
+               "properties": {
+                "name": {
+                 "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+                },
+                "version": {
+                 "$ref": "#/components/properties/details/anyOf/1/properties/recipePack/properties/id"
+                }
+               },
+               "required": [
+                "name",
+                "version"
+               ],
+               "additionalProperties": false
+              },
+              "analysisStatus": {
+               "type": "string",
+               "enum": [
+                "ANALYZED"
+               ]
+              },
+              "validationStatus": {
+               "type": "string",
+               "enum": [
+                "VALIDATED"
+               ]
+              },
+              "counts": {
+               "type": "object",
+               "properties": {
+                "nodes": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "members": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "segments": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "loadCases": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "combinations": {
+                 "type": "integer",
+                 "minimum": 0
+                }
+               },
+               "required": [
+                "nodes",
+                "members",
+                "segments",
+                "loadCases",
+                "combinations"
+               ],
+               "additionalProperties": false
+              },
+              "assumptions": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "enum": [
+                 "LINEAR_ELASTIC",
+                 "SMALL_DISPLACEMENT",
+                 "EULER_BERNOULLI_NO_SHEAR_DEFORMATION",
+                 "RIGID_JOINTS",
+                 "NO_RIGID_DIAPHRAGM",
+                 "SLABS_AND_WALL_PANELS_NOT_MODELLED",
+                 "NO_SECOND_ORDER_EFFECTS"
+                ]
+               },
+               "maxItems": 16
+              },
+              "limitations": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "maxLength": 300
+               },
+               "maxItems": 16
+              },
+              "engineClaims": {
+               "type": "object",
+               "properties": {
+                "designVerification": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_EVALUATED"
+                 ]
+                },
+                "codeCompliance": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "certification": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "constructionSuitability": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "designVerification",
+                "codeCompliance",
+                "certification",
+                "constructionSuitability"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "analysisType",
+              "solver",
+              "analysisStatus",
+              "validationStatus",
+              "counts",
+              "assumptions",
+              "limitations",
+              "engineClaims"
              ],
              "additionalProperties": false
             },
@@ -68319,6 +68706,10 @@
           "operationId",
           "jobIds",
           "artifacts",
+          "locks",
+          "impacts",
+          "references",
+          "budget",
           "details",
           "changeImpact",
           "quote",
