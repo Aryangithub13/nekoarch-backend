@@ -242,7 +242,7 @@ This document follows those entries. The owner recorded the decisions below on 2
 | D-7 | Discovery clarification (readiness r3 §9.5) | **Recorded: defer**; the phase39 API guidance stays the interim |
 | D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results | **Recorded: computed on read for S1 and S2** (2026-10-14). No `0029` for result storage. Why: freshness is read from the current manifest rather than stored where it would go stale, and this matches the derived-on-read architecture (B37 manifest) without migration or operational risk. Trade-off: no durable result history and no fetch-by-id (§3.4), unless separately decided later |
 | D-12 | Approve the S3 interior schema work: a new revision-operation kind and V2 space finish fields. **Renamed from D-9b** (2026-10-14) so it cannot be confused with the D-9 hosted migration-history gate | **Pending.** Until approved, Interior answers a typed `UNSUPPORTED`, and the PR #16 advisory concepts do not count as a supported Interior request. The L297 gate cannot be met for Interior without it |
-| — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | PR #18 **merged** (`aac8e89`). PR #17 **pending owner authorization** |
+| — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | PR #18 **merged** (`aac8e89`). PR #17 **merged** on owner authorization (`4d1da13`, 2026-10-14) |
 
 ## 10. Out of scope
 
