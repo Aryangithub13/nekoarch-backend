@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
 import { buildDependencyGraph, type GraphInput, type GraphRecord } from '../src/graph/dependency-graph.js';
 import { readFileSync } from 'node:fs';
-import { buildProjectManifest, manifestView, MANIFEST_VIEW_ROUTES, type ManifestInput } from '../src/graph/project-manifest.js';
-import { DISCIPLINES, FRESHNESS_STATES, GRAPH_STATE_MAPPING, ManifestQuerySchema, MODULES, ProjectManifestSchema } from '../src/contracts/project-manifest.js';
+import { costHash } from '@designflow/boq-cost';
+import { buildProjectManifest, manifestView, MANIFEST_VIEW_ROUTES, type AppearanceEvidence, type ManifestInput } from '../src/graph/project-manifest.js';
+import { DISCIPLINES, FRESHNESS_STATES, GRAPH_STATE_MAPPING, ManifestQuerySchema, MODULES, NOT_INCLUDED, ProjectManifestSchema } from '../src/contracts/project-manifest.js';
+import { SCHEDULE_IDS } from '../src/documents/schedules.js';
 import { NODE_STATES } from '../src/contracts/dependency-graph.js';
 import { modelHash } from '../src/lib/generation-identity.js';
 import { MANIFEST_DIFF_CHANGE_LIMIT } from '../src/contracts/project-manifest.js';
@@ -31,7 +33,7 @@ const concept = (n: number, patch: Record<string, unknown> = {}) => ({ id: uuid(
   source: 'DETERMINISTIC_TEMPLATE' as const, providerId: null, modelId: null, alternativeCount: 1, modelHash: HASH, inputHash: 'b'.repeat(64), contentHash: 'c'.repeat(64),
   createdAt: at(n), ...patch });
 const manifest = (records = chain(), current: string | null = REV, extra: Partial<ManifestInput> = {}) => buildProjectManifest({ projectId: PROJECT, revision: revision(),
-  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, integrityCheckedAt: at(99),
+  graph: graph(records, current), designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, failedJobs: null, appearance: null, integrityCheckedAt: at(99),
   ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } }, ...extra });
 const mod = (m: ReturnType<typeof buildProjectManifest>, name: string) => m.modules.find(x => x.module === name)!;
 
@@ -128,7 +130,7 @@ describe('B37 Unified Project Manifest v2 (pure builder)', () => {
     // Every indexed view is a real GET route of the catalog.
     const catalog = (JSON.parse(readFileSync(new URL('../../../docs/modernization/api-routes.json', import.meta.url), 'utf8')) as { method: string; url: string }[])
       .filter(r => r.method === 'GET').map(r => r.url);
-    expect(MANIFEST_VIEW_ROUTES.length).toBe(11);
+    expect(MANIFEST_VIEW_ROUTES.length).toBe(14);
     for (const route of MANIFEST_VIEW_ROUTES) expect(catalog, route).toContain(route);
     expect(m.modules.every(x => x.artifactCount === x.artifacts!.length)).toBe(true);
     expect(m.view).toEqual({ scope: 'FULL', discipline: null, artifacts: 'INCLUDED' });
@@ -172,7 +174,7 @@ const child = (patch: Record<string, unknown> = {}) => ({ ...(revision() as obje
 const parentOf = (model: Model, patch: Record<string, unknown> = {}) => ({ id: PARENT, revisionNumber: 1, createdAt: at(-1), identity: null, model, ...patch }) as never;
 const withParent = (parentModel: Model | null, opts: { readable?: boolean; parentPatch?: Record<string, unknown>; childPatch?: Record<string, unknown>;
   operation?: ManifestInput['ancestry']['operation'] } = {}) => buildProjectManifest({ projectId: PROJECT, revision: child(opts.childPatch), graph: graph(chain()),
-  designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, integrityCheckedAt: at(99),
+  designConcepts: { items: [], truncated: false }, activeJobs: [], operations: null, failedJobs: null, appearance: null, integrityCheckedAt: at(99),
   ancestry: { parent: parentModel ? parentOf(parentModel, opts.parentPatch) : null, parentReadable: opts.readable ?? true,
     operation: opts.operation === undefined ? { operation: null, modelEquivalentToBase: null } : opts.operation } });
 
@@ -245,7 +247,7 @@ describe('B37 change metadata: lineage, diff and per-discipline impact', () => {
       expect([m.diff.status, m.diff.unavailableReason, m.changeImpact.status], reason).toEqual(['UNAVAILABLE', 'LINEAGE_INCONSISTENT', 'UNAVAILABLE']);
     }
     const badRoot = buildProjectManifest({ projectId: PROJECT, revision: { ...(revision() as object), revisionNumber: 3 } as never, graph: graph(chain()),
-      designConcepts: null, activeJobs: null, operations: null, integrityCheckedAt: at(99), ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } } });
+      designConcepts: null, activeJobs: null, operations: null, failedJobs: null, appearance: null, integrityCheckedAt: at(99), ancestry: { parent: null, parentReadable: true, operation: { operation: null, modelEquivalentToBase: null } } });
     expect(badRoot.lineage).toMatchObject({ status: 'INCONSISTENT', reasons: ['ROOT_PARENT_MISMATCH'] });
   });
 
@@ -272,7 +274,7 @@ describe('B37 freshness impact (what the manifest freshness asks of each discipl
     const stale = manifest(chain(), NEWER);
     expect(stale.freshnessImpact.targetRevisionId).toBe(NEWER);
     expect(impact(stale, 'QUANTITIES_AND_COST')).toEqual({ discipline: 'QUANTITIES_AND_COST', regenerate: ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'],
-      revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
+      superseded: [], revalidate: [], awaiting: [], staleArtifacts: 3, blockedArtifacts: 0 });
     expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], staleArtifacts: 1 });
     expect(impact(stale, 'DOCUMENTATION').regenerate).toEqual(['CONSTRUCTION_DOCUMENTS']);
   });
@@ -282,6 +284,89 @@ describe('B37 freshness impact (what the manifest freshness asks of each discipl
       blockedArtifacts: 3 });
     expect(impact(manifest(base(), REV, { activeJobs: [{ jobId: uuid(40), module: 'SCENE_3D' }] }), 'VISUALIZATION').awaiting).toEqual(['SCENE_3D']);
     for (const m of [manifest(), manifest(chain(), NEWER), manifest(records)]) for (const d of m.freshnessImpact.disciplines)
-      for (const name of [...d.regenerate, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
+      for (const name of [...d.regenerate, ...d.superseded, ...d.revalidate, ...d.awaiting]) expect(mod(m, name).freshness).not.toBeNull();
+  });
+  it('D1: a superseded revision\'s own model, acceptance QA and committed appearance are superseded, never listed for regeneration', () => {
+    const stale = manifest(chain(), NEWER, { appearance: appearanceOf() });
+    expect(impact(stale, 'ARCHITECTURE')).toMatchObject({ regenerate: ['BIM', 'COMPLEX_VERIFICATION'], superseded: ['BUILDING_MODEL', 'ACCEPTANCE_QA'] });
+    expect(impact(stale, 'VISUALIZATION')).toMatchObject({ regenerate: ['SCENE_3D'], superseded: ['APPEARANCE_VARIANT'] });
+    const regenerate = stale.freshnessImpact.disciplines.flatMap(d => d.regenerate);
+    for (const name of ['BUILDING_MODEL', 'ACCEPTANCE_QA', 'APPEARANCE_VARIANT']) expect(regenerate).not.toContain(name);
+    // Every stale module is accounted for exactly once.
+    const stalled = stale.modules.filter(x => x.freshness?.state === 'stale').map(x => x.module).sort();
+    expect(stale.freshnessImpact.disciplines.flatMap(d => [...d.regenerate, ...d.superseded]).sort()).toEqual(stalled);
+    expect(manifest().freshnessImpact.disciplines.every(d => !d.superseded.length)).toBe(true);
+  });
+});
+
+/** A committed Phase 30 appearance of REV, consistent unless patched. */
+const appearanceOf = (patch: Partial<AppearanceEvidence> = {}, artifactPatch: Record<string, unknown> = {}): AppearanceEvidence => {
+  const appearance = { version: 'appearance-v1', assignments: [{ presetId: 'glass-inspired' }] }, appearanceHash = costHash(appearance);
+  return { revisionId: REV, appearance, appearanceHash, modelHash: HASH, operationId: uuid(90),
+    artifact: { id: uuid(91), operationId: uuid(90), modelHash: HASH, appearanceHash, createdAt: at(91), ...artifactPatch }, ...patch } as AppearanceEvidence;
+};
+
+describe('B37 closure: visible 3D linkage, failed generation and document views', () => {
+  it('D2: a committed Phase 30 appearance is the revision\'s linked visible 3D object, with its binding and hashes re-checked', () => {
+    const m = manifest(chain(), REV, { appearance: appearanceOf() }), a = mod(m, 'APPEARANCE_VARIANT');
+    expect(a).toMatchObject({ discipline: 'VISUALIZATION', source: 'STORED_ARTIFACT', editability: 'NEW_REVISION_ONLY', availability: 'AVAILABLE',
+      href: `/api/projects/${PROJECT}/revisions/${REV}/appearance`, artifactCount: 1, freshness: { state: 'current', reasons: [] } });
+    expect(a.artifacts).toEqual([{ artifactId: uuid(91), nodeId: null, revisionId: REV, createdAt: at(91), graphState: null, freshness: a.freshness }]);
+    expect(NOT_INCLUDED.map(n => n.item)).not.toContain('APPEARANCE_VARIANT');
+    expect(m.disciplines.find(d => d.discipline === 'VISUALIZATION')!.modules).toEqual(['SCENE_3D', 'APPEARANCE_VARIANT']);
+    // No appearance, or no operation persistence: said so, never shown as linked.
+    expect(mod(manifest(chain(), REV, { appearance: { ...appearanceOf(), appearance: null, appearanceHash: null, modelHash: null, operationId: null, artifact: null } }),
+      'APPEARANCE_VARIANT')).toMatchObject({ availability: 'NOT_GENERATED', freshness: null, missingReason: 'NOT_GENERATED_FOR_REVISION', artifacts: [] });
+    expect(mod(manifest(), 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'UNAVAILABLE', freshness: null, missingReason: 'PERSISTENCE_UNAVAILABLE' });
+    // Every integrity failure fails closed with its own reason, and the discipline reads blocked.
+    const tampered: [AppearanceEvidence, string][] = [
+      [appearanceOf({ revisionId: NEWER }), 'REVISION_BINDING_MISMATCH'],
+      [appearanceOf({ modelHash: 'd'.repeat(64) }), 'MODEL_HASH_MISMATCH'],
+      [appearanceOf({ appearanceHash: 'e'.repeat(64) }, { appearanceHash: 'e'.repeat(64) }), 'INPUT_HASH_MISMATCH'],
+      [appearanceOf({}, { modelHash: 'f'.repeat(64) }), 'LINK_INCONSISTENT'],
+      [appearanceOf({}, { appearanceHash: 'f'.repeat(64) }), 'LINK_INCONSISTENT'],
+      [appearanceOf({}, { operationId: uuid(99) }), 'LINK_INCONSISTENT'],
+      [appearanceOf({ artifact: null }), 'LINK_INCONSISTENT'],
+    ];
+    for (const [evidence, code] of tampered) {
+      const t = manifest(chain(), REV, { appearance: evidence });
+      expect(mod(t, 'APPEARANCE_VARIANT').freshness, code).toMatchObject({ state: 'blocked', reasons: [{ code, nodeId: null }] });
+      expect(t.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness, code).toBe('blocked');
+      expect(t.freshnessImpact.disciplines.find(d => d.discipline === 'VISUALIZATION')!.revalidate, code).toEqual(['APPEARANCE_VARIANT']);
+    }
+    // Superseded: stale like every output of the revision, and replaced rather than regenerated (D1).
+    expect(mod(manifest(chain(), NEWER, { appearance: appearanceOf() }), 'APPEARANCE_VARIANT').freshness).toMatchObject({ state: 'stale',
+      reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED' }], targetRevisionId: NEWER });
+  });
+
+  it('scenario 17: a failed durable job for a module with nothing stored is reported as GENERATION_FAILED; missing is never passing', () => {
+    const failed = (items: { jobId: string; module: 'SCENE_3D' | 'DESIGN_OPTIMIZATION' }[], truncated = false) => ({ items, truncated, window: 8 });
+    const m = manifest(base(), REV, { failedJobs: failed([{ jobId: uuid(81), module: 'SCENE_3D' }, { jobId: uuid(80), module: 'SCENE_3D' }]) });
+    expect(mod(m, 'SCENE_3D')).toMatchObject({ availability: 'NOT_GENERATED', freshness: null, missingReason: 'GENERATION_FAILED', failedJobIds: [uuid(80), uuid(81)],
+      activeJobIds: [] });
+    expect(mod(m, 'DESIGN_OPTIMIZATION')).toMatchObject({ missingReason: 'NOT_GENERATED_FOR_REVISION', failedJobIds: [] });
+    expect(m.failedGenerations).toEqual({ availability: 'AVAILABLE', completeness: 'COMPLETE', window: 8 });
+    // A failure never reads as a freshness state: nothing exists to judge, so the discipline stays without one.
+    expect(m.disciplines.find(d => d.discipline === 'VISUALIZATION')!.freshness).toBeNull();
+    // An active retry takes precedence (pending); a stored artifact makes old failures history, not a missing output.
+    const retrying = manifest(base(), REV, { activeJobs: [{ jobId: uuid(82), module: 'SCENE_3D' }], failedJobs: failed([{ jobId: uuid(80), module: 'SCENE_3D' }]) });
+    expect(mod(retrying, 'SCENE_3D')).toMatchObject({ missingReason: 'NOT_GENERATED_FOR_REVISION', activeJobIds: [uuid(82)], failedJobIds: [uuid(80)],
+      freshness: { state: 'pending' } });
+    expect(mod(manifest(chain(), REV, { failedJobs: failed([{ jobId: uuid(80), module: 'SCENE_3D' }]) }), 'SCENE_3D'))
+      .toMatchObject({ availability: 'AVAILABLE', missingReason: null, failedJobIds: [] });
+    // How far the evidence reaches is stated, never implied.
+    expect(manifest(base(), REV, { failedJobs: failed([], true) }).failedGenerations).toEqual({ availability: 'AVAILABLE', completeness: 'TRUNCATED', window: 8 });
+    expect(manifest().failedGenerations).toEqual({ availability: 'UNAVAILABLE', completeness: 'COMPLETE', window: 0 });
+  });
+
+  it('roadmap L259: construction documents index the schedules, one CSV per schedule and one plan sheet per storey, as unpaged partial views', () => {
+    const m = manifest(), R = `/api/projects/${PROJECT}/revisions/${REV}`, storeys = authored().levels.filter(l => l.kind === 'storey');
+    expect(storeys.length).toBeGreaterThan(0);
+    expect(mod(m, 'CONSTRUCTION_DOCUMENTS').views).toEqual([{ href: `${R}/documents/schedules`, paging: 'NONE', filters: [] },
+      ...SCHEDULE_IDS.map(s => ({ href: `${R}/documents/schedules/${s}/csv`, paging: 'NONE', filters: [] })),
+      ...storeys.map(l => ({ href: `${R}/documents/plan-sheets/${encodeURIComponent(l.id)}`, paging: 'NONE', filters: [] }))]);
+    // Only storeys get plan sheets: a non-storey level is never indexed.
+    const datum = authored().levels.find(l => l.kind !== 'storey');
+    if (datum) expect(mod(m, 'CONSTRUCTION_DOCUMENTS').views.map(v => v.href)).not.toContain(`${R}/documents/plan-sheets/${encodeURIComponent(datum.id)}`);
   });
 });

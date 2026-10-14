@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { costHash, sampleCostingPolicy } from '@designflow/boq-cost';
 import { asPrincipal, createTestUser, startTestDatabase } from '../../../test-support/postgres.js';
@@ -196,10 +196,64 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     for (const bad of ['discipline=COST', 'artifacts=none', 'discipline=ENGINEERING&discipline=DESIGN'])
       expect((await app.inject({ url: `${a.base}/manifest?${bad}`, headers: owner })).statusCode, bad).toBe(400);
     expect((await app.inject({ url: `${a.base}/manifest?artifacts=omit`, headers: other })).statusCode).toBe(404);
-    const views = full.modules.flatMap(x => x.views.map(v => [x.module, v.href] as const));
-    expect(views.length).toBe(11);
-    for (const [module, href] of views) expect((await app.inject({ url: `${href}?limit=1`, headers: owner })).statusCode, `${module} ${href}`).toBe(200);
+    // Paged views answer one item; unpaged partial views (schedules, one CSV per schedule, one plan sheet per storey) answer as they are.
+    const views = full.modules.flatMap(x => x.views.map(v => [x.module, v.href, v.paging] as const));
+    const storeys = a.revision.model.levels.filter((l: Json) => l.kind === 'storey').length;
+    expect([views.filter(v => v[2] !== 'NONE').length, views.filter(v => v[2] === 'NONE').length]).toEqual([11, 1 + 5 + storeys]);
+    for (const [module, href, paging] of views)
+      expect((await app.inject({ url: paging === 'NONE' ? href : `${href}?limit=1`, headers: owner })).statusCode, `${module} ${href}`).toBe(200);
   }, 180_000);
+
+  it('M4 gate with the B30 exterior-appearance fixture (T1/T5): dependent outputs are identified and the visible 3D object stays linked to its model', async () => {
+    const p = await project('B37 B30 fixture'), ops = `/api/projects/${p.projectId}/revision-operations`;
+    const takeoff = (await ok('POST', `${p.base}/takeoffs`, {})).json();
+    const construction = (await ok('POST', `${p.base}/takeoffs/${takeoff.id}/construction-calculations`, { specification: specification() })).json();
+    await ok('POST', `${p.base}/takeoffs/${takeoff.id}/construction-calculations/${construction.id}/cost-estimates`, { rateBookId: 'sample-inr-v1', costingPolicy: sampleCostingPolicy() });
+    const scene = (await ok('POST', `${p.base}/scene/artifacts`, {})).json();
+    const text = 'Redesign the exterior of my building using a contemporary glass-inspired façade. Keep the exact floor plans, internal rooms, stairs, structure, '
+      + 'building dimensions, and existing interior unchanged.';
+    const pre = (await ok('POST', ops, { baseRevisionId: p.revision.id, request: { text } })).json() as Json;
+    const cand = (await ok('POST', `${ops}/${pre.id}/execute`, { preflightHash: pre.preflightHash, consent: { acceptLocks: true, acceptQuote: true } }, 200)).json() as Json;
+    const b = (await ok('POST', `${ops}/${pre.id}/approve`, { preflightHash: pre.preflightHash, candidateHash: cand.candidateHash })).json().commit.revision as Json;
+    const base = await manifest(p.base), child = await manifest(`/api/projects/${p.projectId}/revisions/${b.id}`);
+    // The base: every stored and derived output is stale with a reason, against the new revision; nothing is silently current.
+    for (const x of base.modules.filter(x => x.freshness !== null)) expect([x.freshness!.state, x.freshness!.targetRevisionId], x.module).toEqual(['stale', b.id]);
+    expect(mod(base, 'SCENE_3D')).toMatchObject({ artifacts: [{ artifactId: scene.id, revisionId: p.revision.id }], freshness: { reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED' }] } });
+    expect(mod(base, 'BOQ_COST').freshness!.reasons[0]!.code).toBe('UPSTREAM_STALE');
+    const regenerate = base.freshnessImpact.disciplines.flatMap(d => d.regenerate), superseded = base.freshnessImpact.disciplines.flatMap(d => d.superseded);
+    for (const name of ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D', 'BIM', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate, name).toContain(name);
+    expect(superseded.sort()).toEqual(['ACCEPTANCE_QA', 'BUILDING_MODEL']);
+    expect(regenerate).not.toContain('BUILDING_MODEL');
+    // The child: its visible 3D object is the committed appearance, linked by revision id and the verified model hash, and its bytes match.
+    const appearance = mod(child, 'APPEARANCE_VARIANT');
+    expect(appearance).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current', reasons: [] }, artifactCount: 1 });
+    const read = (await ok('GET', appearance.href)).json() as Json;
+    expect(read).toMatchObject({ status: 'APPEARANCE_VARIANT', revisionId: b.id, modelHash: child.identity.modelHash, operationId: pre.id,
+      artifact: { id: appearance.artifacts![0]!.artifactId } });
+    const glb = await app.inject({ url: `${appearance.href}/glb`, headers: owner });
+    expect([glb.statusCode, createHash('sha256').update(glb.rawPayload).digest('hex')]).toEqual([200, read.artifact.binarySha256]);
+    expect(mod(child, 'SCENE_3D').availability).toBe('NOT_GENERATED');
+    expect(child.lineage).toMatchObject({ status: 'LINKED', modelEquivalentToParent: true, operation: { status: 'RECORDED', operationId: pre.id } });
+    // The base revision has no committed appearance of its own.
+    expect(mod(base, 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'NOT_GENERATED', missingReason: 'NOT_GENERATED_FOR_REVISION' });
+  }, 300_000);
+
+  it('scenario 17: a durable job that really failed for this revision is reported as GENERATION_FAILED, and a job for another revision is not', async () => {
+    const p = await project('B37 failed generation'), jobs = `/api/projects/${p.projectId}/jobs`;
+    const submitted = await app.inject({ method: 'POST', url: jobs, headers: owner, payload: { kind: 'OPTIMIZATION_STUDY', revisionId: p.revision.id, input: { version: 'nope' } } });
+    expect(submitted.statusCode, submitted.body.slice(0, 300)).toBe(202);
+    const url = `${jobs}/${submitted.json().id}`, deadline = Date.now() + 30_000;
+    let job: Json = {};
+    while (Date.now() < deadline) { job = (await ok('GET', url)).json(); if (['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(job.status)) break; await new Promise(r => setTimeout(r, 100)); }
+    expect(job).toMatchObject({ status: 'FAILED', failure: { retryable: false } });
+    const m = await manifest(p.base);
+    expect(mod(m, 'DESIGN_OPTIMIZATION')).toMatchObject({ availability: 'NOT_GENERATED', freshness: null, missingReason: 'GENERATION_FAILED',
+      failedJobIds: [job.id], activeJobIds: [] });
+    expect(m.failedGenerations).toEqual({ availability: 'AVAILABLE', completeness: 'COMPLETE', window: 8 });
+    const second = (await ok('POST', `/api/projects/${p.projectId}/revisions`, { model: p.revision.model, baseRevisionId: p.revision.id })).json().revision as Json;
+    expect(mod(await manifest(`/api/projects/${p.projectId}/revisions/${second.id}`), 'DESIGN_OPTIMIZATION'))
+      .toMatchObject({ missingReason: 'NOT_GENERATED_FOR_REVISION', failedJobIds: [] });
+  }, 120_000);
 
   it('M3: a revision committed while the manifest is read is a 409, never a manifest that mixes revisions', async () => {
     const repo = backend.repository('owner');
@@ -225,6 +279,21 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     expect(m.candidates).toEqual({ modulesResolve: 'ACCEPTED_REVISION_ONLY', availability: 'UNAVAILABLE', completeness: 'COMPLETE', items: [] });
   }, 120_000);
 
+  it('M6: the whole manifest read, graph and every side read together, never has more than 8 RPCs in flight', async () => {
+    const repo = backend.repository('owner') as unknown as Record<string, unknown>, counted: Record<string, unknown> = { ...repo };
+    let inFlight = 0, peak = 0, calls = 0;
+    for (const [key, value] of Object.entries(repo)) if (key.endsWith('Rpc') && typeof value === 'function')
+      counted[key] = async (...args: unknown[]) => {
+        inFlight++; calls++; peak = Math.max(peak, inFlight);
+        try { await new Promise(r => setTimeout(r, 2)); return await (value as (...a: unknown[]) => Promise<unknown>)(...args); } finally { inFlight--; }
+      };
+    // `a` holds a takeoff, construction, cost, scene and concept set, so every family and side read is exercised.
+    await projectManifest(counted as unknown as Repository, a.projectId, a.revision.id);
+    expect(calls).toBeGreaterThan(8);
+    expect(peak).toBeGreaterThan(1);
+    expect(peak).toBeLessThanOrEqual(8);
+  }, 120_000);
+
   it('M3/M6: the operation listing completes before the pointer-checking concept listing starts, and a full page of live operations is TRUNCATED', async () => {
     const repo = backend.repository('owner'), order: string[] = [];
     const traced: Repository = { ...repo,
@@ -244,5 +313,12 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     const now = Date.now(), at = (hoursAgo: number) => new Date(now - hoursAgo * 3_600_000).toISOString();
     expect((await projectManifest(page(at(1)), a.projectId, a.revision.id)).candidates).toMatchObject({ completeness: 'TRUNCATED', items: [{ status: 'CANDIDATE_READY' }] });
     expect((await projectManifest(page(at(26)), a.projectId, a.revision.id)).candidates.completeness).toBe('COMPLETE');
+    // Scenario 17 evidence: when older FAILED jobs exist beyond the examined page, the manifest says so instead of implying none failed.
+    const olderFailures: Repository = { ...repo, jobRpc: async (name, args) => {
+      const r = await repo.jobRpc!(name, args) as Json;
+      return args.p_action === 'list' && (args.p_filter as Json).status === 'FAILED' ? { ...r, nextCursor: { createdAt: new Date(0).toISOString(), id: randomUUID() } } : r;
+    } };
+    expect((await projectManifest(olderFailures, a.projectId, a.revision.id)).failedGenerations).toEqual({ availability: 'AVAILABLE', completeness: 'TRUNCATED', window: 8 });
+    expect((await projectManifest(repo, a.projectId, a.revision.id)).failedGenerations).toEqual({ availability: 'AVAILABLE', completeness: 'COMPLETE', window: 8 });
   }, 120_000);
 });

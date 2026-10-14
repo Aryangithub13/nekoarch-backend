@@ -11,8 +11,11 @@ import type { ManifestQuery } from '../contracts/project-manifest.js';
 import { buildProjectManifest, manifestView, JOB_MODULES, type ActiveJob, type ManifestInput } from '../graph/project-manifest.js';
 import { dependencyGraph, type GraphOptions } from './dependency-graph-service.js';
 
-/** Bounded side reads. At most JOB_LIMITS.activePerProject (4) jobs are queued or running per project, so one page per status always holds them all. */
-export const MANIFEST_READS = Object.freeze({ conceptPage: 20, jobPage: 8, detailsInFlight: 4, operationPage: 100 });
+/**
+ * Bounded side reads. At most JOB_LIMITS.activePerProject (4) jobs are queued or running per project, so one page per status always holds them all.
+ * Failed jobs accumulate, so only the newest `failedJobPage` are examined, and the manifest says when older ones were not (scenario 17 evidence).
+ */
+export const MANIFEST_READS = Object.freeze({ conceptPage: 20, jobPage: 8, failedJobPage: 8, detailsInFlight: 4, operationPage: 100 });
 const limitExceeded = (): never => {
   throw new ApiError(422, 'PROJECT_MANIFEST_LIMIT_EXCEEDED', 'The manifest exceeds a bounded read; no partial manifest is returned', { limit: ['JOB_PAGE'] });
 };
@@ -30,21 +33,26 @@ async function ancestry(repository: Repository, projectId: string, revision: { i
   return { parent: parent ?? null, parentReadable: parent !== undefined, operation };
 }
 
-/** Queued or running SCENE_COMPILE / OPTIMIZATION_STUDY jobs bound to this revision; null when this backend has no job persistence. */
-async function activeJobs(repository: Repository, projectId: string, revisionId: string): Promise<ActiveJob[] | null> {
+/**
+ * SCENE_COMPILE / OPTIMIZATION_STUDY jobs bound to this revision: every queued or running one, and the failed ones among the newest `failedJobPage`
+ * failures of the project. null when this backend has no job persistence. A job's revision binding is read from its stored request, never inferred.
+ */
+async function generationJobs(repository: Repository, projectId: string, revisionId: string):
+  Promise<{ active: ActiveJob[]; failed: NonNullable<ManifestInput['failedJobs']> } | null> {
   if (!repository.jobRpc) return null;
   const jobs = new JobRepository(repository);
-  const pages = await Promise.all((['QUEUED', 'RUNNING'] as const).map(status => jobs.list(projectId, { limit: MANIFEST_READS.jobPage, status })));
-  if (pages.some(p => p.nextCursor !== null)) limitExceeded();
-  const candidates = pages.flatMap(p => p.items).filter(j => j.kind in JOB_MODULES);
-  const details = await pooled(candidates.map(j => () => jobs.get(projectId, j.id)), MANIFEST_READS.detailsInFlight);
-  const found: ActiveJob[] = [];
-  for (const d of details) {
-    const request = d.request;
-    if ((request.kind === 'SCENE_COMPILE' || request.kind === 'OPTIMIZATION_STUDY') && request.revisionId === revisionId)
-      found.push({ jobId: d.id, module: JOB_MODULES[request.kind] });
-  }
-  return found;
+  const [queued, running, failed] = await Promise.all([jobs.list(projectId, { limit: MANIFEST_READS.jobPage, status: 'QUEUED' }),
+    jobs.list(projectId, { limit: MANIFEST_READS.jobPage, status: 'RUNNING' }), jobs.list(projectId, { limit: MANIFEST_READS.failedJobPage, status: 'FAILED' })]);
+  if (queued.nextCursor !== null || running.nextCursor !== null) limitExceeded();
+  const relevant = (items: typeof queued.items) => items.filter(j => j.kind in JOB_MODULES);
+  const bound = async (items: typeof queued.items) => {
+    const details = await pooled(relevant(items).map(j => () => jobs.get(projectId, j.id)), MANIFEST_READS.detailsInFlight);
+    return details.flatMap(d => (d.request.kind === 'SCENE_COMPILE' || d.request.kind === 'OPTIMIZATION_STUDY') && d.request.revisionId === revisionId
+      ? [{ jobId: d.id, module: JOB_MODULES[d.request.kind] }] : []);
+  };
+  // Sequential, so detail reads stay within detailsInFlight.
+  const active = await bound([...queued.items, ...running.items]), failedHere = await bound(failed.items);
+  return { active, failed: { items: failedHere, truncated: failed.nextCursor !== null, window: MANIFEST_READS.failedJobPage } };
 }
 
 /**
@@ -72,18 +80,21 @@ export async function projectManifest(repository: Repository, projectId: string,
   const clock = options.clock ?? (() => new Date());
   const revision = ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, revisionId));
   const graph = await dependencyGraph(repository, projectId, revisionId, options);
-  // Side reads in parallel: 1 operation list then 1 concept list, 2 job lists then ≤ 4 job details, 1 parent read, 1 lineage read; never more than 8 in
-  // flight. The operation list completes before the concept list starts, so the pointer check below also covers it: a candidate approved after the graph
+  // Side reads in parallel: 1 operation list then 1 concept list; 3 job lists then ≤ 4 job details; 1 parent read and 1 lineage read; 1 appearance read.
+  // Never more than 8 in flight. The operation list completes before the concept list starts, so the pointer check below also covers it: a candidate approved after the graph
   // moves the pointer and is refused rather than listed as still awaiting approval.
-  const [[operations, concepts], jobs, lineage] = await Promise.all([
+  const [[operations, concepts], jobs, lineage, appearance] = await Promise.all([
     (async () => {
       const ops = await recentOperations(repository, projectId, clock().getTime());
       return [ops, repository.designConceptRpc ? await new DesignConceptRepository(repository).list(projectId, revisionId, { limit: MANIFEST_READS.conceptPage }) : null] as const;
     })(),
-    activeJobs(repository, projectId, revisionId), ancestry(repository, projectId, revision)]);
+    generationJobs(repository, projectId, revisionId), ancestry(repository, projectId, revision),
+    // A committed appearance is immutable and bound to this revision, so it needs no coherence check of its own.
+    repository.revisionRpc ? new RevisionRepository(repository).appearance(projectId, revisionId) : null]);
   if (concepts && concepts.projectCurrentRevisionId !== graph.inputIdentity.projectCurrentRevisionId)
     throw new ApiError(409, 'PROJECT_MANIFEST_READ_INCONSISTENT', 'The project changed while the manifest was read; retry');
-  const manifest = buildProjectManifest({ projectId, revision, graph, activeJobs: jobs, ancestry: lineage, operations,
+  const manifest = buildProjectManifest({ projectId, revision, graph, activeJobs: jobs?.active ?? null, failedJobs: jobs?.failed ?? null, ancestry: lineage,
+    operations, appearance,
     designConcepts: concepts ? { items: concepts.items, truncated: concepts.nextCursor !== null } : null,
     integrityCheckedAt: clock().toISOString() });
   return options.view ? manifestView(manifest, options.view) : manifest;

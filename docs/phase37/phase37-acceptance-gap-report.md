@@ -307,3 +307,51 @@ The waiver defers U1 (detail-level paging) and U2 (element-level impact) to a na
 | **D-10** | Staging | Authorize a disposable staging project and deployment, and choose the commit to stage (§8) |
 | **D-11** | Phase tag | Name and timing: after D-8 is accepted and §7–§8 pass |
 | — | Supabase acceptance via CI | Optionally start Backend CI on `phase37/manifest-v2` by `workflow_dispatch` for an independent receipt (§6) |
+
+## 10. Closure slice outcome (owner decision D-8(a), 2026-10-14)
+
+The owner chose D-8(a). The closure slice is recorded in [phase37-completion-scope.md §7](phase37-completion-scope.md#7-b37-closure-slice-and-waiver-owner-decision-d-8a-2026-10-14), including the safeguards and the waiver. Commit hashes and CI runs are in the PR #17 description.
+
+| Gap (§5) | Outcome |
+|---|---|
+| D1 | **Fixed.** `freshnessImpact.superseded`; the model, acceptance QA and committed appearance are never under `regenerate` |
+| D2 | **Fixed.** `APPEARANCE_VARIANT` module with fail-closed binding, model, appearance and artifact-link checks; M4 holds for Phase 30 edits |
+| T1, T5 | **Added:** the B30 exterior-appearance fixture, plus the GLB byte check |
+| T2, T3 | **Added:** the live Supabase case for `0027`, `0028` and the manifest route; local run 122/122 |
+| T4 | **Added:** every stale module is in exactly one of `regenerate` / `superseded` |
+| U3 (scenario 17 "failed") | **Fixed:** `GENERATION_FAILED`, `failedJobIds`, `failedGenerations` evidence window |
+| §4 document views | **Indexed:** schedules, 5 CSVs, one plan sheet per storey |
+| U1, U2 | **Waived and assigned:** U1 → B45 (with retrofit #10 / R05); U2 → B39 exterior specialist (scenario 34), with retrofits #24 and #04 |
+| U4 | Assigned to the B39 specialist envelope |
+| U5, U6 | Open as minor follow-ups; side reads are measured at ≤ 8 in flight |
+| Hosted check, staging proof, phase tag | **Still outstanding:** D-9, D-10, D-11 |
+
+### 10.1 Where Phase 39 resumes (no B39 work done here)
+
+**Existing state, unchanged:**
+- PR #16 (`d0cd38b`) is classified by readiness r3 §9.1 (PR #18) as:
+  - B43 groundwork (capability-typed routing and `PROVIDER_OUTPUT_UNSAFE`);
+  - B41/B43 groundwork (brief and reference consumption);
+  - **advisory Interior/Exterior concepts reusable for B39**;
+  - persistence `0028`.
+- **B39 stays NI (not implemented).**
+
+**Missing:**
+- the shared typed specialist envelope;
+- the Blueprint, Materials, Budget, Exterior, Structural and Interior modules;
+- the typed statuses `unsupported` / `requires_review` / `degraded_provider` / `stale_dependency` / `partial`;
+- the candidate/approval lifecycle.
+
+**Resume point:**
+1. **B39 scope document first, before code, as B37 did:**
+   - the envelope contract against ROADMAP §E (L509–585);
+   - module order per readiness §5.2 (Blueprint, Materials, Budget, Exterior, Structural, Interior);
+   - the migration plan per readiness §5.3. `0029` is a possibility only, for the `0020` operation `kind` check or the `0022`/`0025` job-kind checks, and needs owner approval.
+2. **Gate (L297):** "feed resulting changes to shared B37 manifest". That is this manifest: `changeImpact`, `freshnessImpact`, `candidates`, `failedGenerations` and the appearance link.
+3. **U2 is now part of the Exterior specialist:** scenario 34 says a glazing-geometry change triggers impacted engineering preflight.
+
+**Decisions to settle before B39 code:**
+- **D-4:** module order and the interior meaning.
+- **D-6:** reuse or supersede the PR #16 design-concept routes.
+- **D-7:** the optional discovery clarification.
+- PR #18, which carries readiness r3, is unmerged.

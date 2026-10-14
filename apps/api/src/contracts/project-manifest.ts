@@ -4,8 +4,9 @@ import { DIFF_COLLECTIONS, DIFF_VERSION } from '../verification/contracts.js';
 
 /**
  * B37 completion slice: Unified Project Manifest v2 (roadmap §B Phase 37, L257–260). Derived on read from one revision read, the Phase 37 dependency
- * graph and the revision's advisory design-concept listing. Read-only, owner-only. A freshness state is provenance, never a statement of engineering
- * correctness: nothing here upgrades an engineering status, a blocker or a claim.
+ * graph, the revision's advisory design-concept listing, durable jobs, and the Phase 30 operations, lineage and committed appearance. Read-only,
+ * owner-only. A freshness state is provenance, never a statement of engineering correctness: nothing here upgrades an engineering status, a blocker or a
+ * claim.
  */
 export const PROJECT_MANIFEST_VERSION = 'project-manifest-v2';
 export const PROJECT_MANIFEST_ROUTE = '/api/projects/:projectId/revisions/:revisionId/manifest';
@@ -29,15 +30,16 @@ export const MANIFEST_REASON_CODES = [...CAUSE_CODES, 'JOB_ACTIVE'] as const;
 export const DISCIPLINES = ['ARCHITECTURE', 'QUANTITIES_AND_COST', 'ENGINEERING', 'DESIGN', 'VISUALIZATION', 'DOCUMENTATION'] as const;
 export const MODULES = ['BUILDING_MODEL', 'ACCEPTANCE_QA', 'BIM', 'COMPLEX_VERIFICATION', 'QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST',
   'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'ENGINEERING_ASSESSMENT', 'DESIGN_OPTIMIZATION',
-  'DESIGN_CONCEPTS', 'SCENE_3D', 'CONSTRUCTION_DOCUMENTS'] as const;
+  'DESIGN_CONCEPTS', 'SCENE_3D', 'APPEARANCE_VARIANT', 'CONSTRUCTION_DOCUMENTS'] as const;
 export type ManifestModule = typeof MODULES[number];
 export const AVAILABILITY = ['AVAILABLE', 'NOT_GENERATED', 'DERIVED_ON_READ', 'UNAVAILABLE'] as const;
 export const EDITABILITY = ['NEW_REVISION_ONLY', 'DERIVED_READ_ONLY', 'ADVISORY_READ_ONLY'] as const;
 export const SOURCE_KINDS = ['REVISION', 'STORED_ARTIFACT', 'DERIVED_ON_READ', 'ADVISORY_ARTIFACT'] as const;
-export const MISSING_REASONS = ['NOT_GENERATED_FOR_REVISION', 'PERSISTENCE_UNAVAILABLE'] as const;
+/** GENERATION_FAILED: nothing is stored, no job is active, and a durable job for this revision failed (scenario 17, L747). Missing is never passing. */
+export const MISSING_REASONS = ['NOT_GENERATED_FOR_REVISION', 'GENERATION_FAILED', 'PERSISTENCE_UNAVAILABLE'] as const;
 /** Revision-bound outputs this version does not represent, each with a reason. */
 export const NOT_INCLUDED = Object.freeze([
-  ...['EVIDENCE_PACKAGES', 'ZONE_ASSESSMENT', 'ZONE_PARTITIONS', 'APPEARANCE_VARIANT'].map(item => ({ item, reason: 'NOT_IN_THIS_VERSION' as const })),
+  ...['EVIDENCE_PACKAGES', 'ZONE_ASSESSMENT', 'ZONE_PARTITIONS'].map(item => ({ item, reason: 'NOT_IN_THIS_VERSION' as const })),
   ...['REFERENCE_LIBRARY', 'PROJECT_CONTEXT', 'CONVERSATIONS', 'WORKFLOW_RUNS', 'COMPUTE_DISPATCHES'].map(item => ({ item, reason: 'NOT_A_REVISION_OUTPUT' as const })),
 ]);
 
@@ -93,13 +95,18 @@ const FreshnessSchema = z.object({ state: freshness, reasons: z.array(ReasonSche
 export const ManifestArtifactSchema = z.object({ artifactId: id, nodeId: nodeId.nullable(), revisionId: id, createdAt: z.string(),
   graphState: z.enum(NODE_STATES).nullable(), freshness: FreshnessSchema }).strict();
 const path = z.string().startsWith('/api/projects/');
-/** Roadmap L259: an existing paged or filterable view of the module's resource, so a workspace can read it in parts. */
-export const ManifestViewSchema = z.object({ href: path, paging: z.enum(['AFTER_ID', 'CURSOR']), filters: z.array(z.string().max(40)) }).strict();
+/**
+ * Roadmap L259: an existing paged, filterable or partial view of the module's resource, so a workspace can read it in parts. `NONE` is a partial view
+ * that is not paged (one storey's plan sheet, one schedule).
+ */
+export const ManifestViewSchema = z.object({ href: path, paging: z.enum(['AFTER_ID', 'CURSOR', 'NONE']), filters: z.array(z.string().max(40)) }).strict();
 export const ManifestModuleSchema = z.object({
   module: z.enum(MODULES), discipline: z.enum(DISCIPLINES), version: z.string().max(100), href: path,
   source: z.enum(SOURCE_KINDS), editability: z.enum(EDITABILITY), availability: z.enum(AVAILABILITY),
   completeness: z.enum(['COMPLETE', 'TRUNCATED']), freshness: FreshnessSchema.nullable(), missingReason: z.enum(MISSING_REASONS).nullable(),
-  activeJobIds: z.array(id), artifactCount: z.number().int().min(0),
+  activeJobIds: z.array(id),
+  /** Failed durable jobs for this revision, listed only while nothing is stored; see `failedGenerations` for how far back that evidence reaches. */
+  failedJobIds: z.array(id), artifactCount: z.number().int().min(0),
   /** null only in a view requested with `artifacts=omit`; `artifactCount` is always present. */
   artifacts: z.array(ManifestArtifactSchema).nullable(), views: z.array(ManifestViewSchema),
 }).strict();
@@ -117,11 +124,12 @@ export const CandidatesSchema = z.object({ modulesResolve: z.literal('ACCEPTED_R
 export const ManifestQuerySchema = z.object({ discipline: z.enum(DISCIPLINES).optional(), artifacts: z.enum(['include', 'omit']).default('include') }).strict();
 export type ManifestQuery = z.infer<typeof ManifestQuerySchema>;
 /**
- * What the manifest's own freshness asks of each discipline, against the project's current revision (ROADMAP L262): modules to regenerate (stale),
- * revalidate (blocked) or await (pending), with artifact counts. Read only from module freshness, so it never reads better than that freshness.
+ * What the manifest's own freshness asks of each discipline, against the project's current revision (ROADMAP L262): modules to regenerate (stale and
+ * produced again for the target revision), superseded (stale, but replaced by the target revision's own model, acceptance QA and committed appearance,
+ * never regenerated), revalidate (blocked) or await (pending), with artifact counts. Read only from module freshness, so it never reads better than it.
  */
 export const FreshnessImpactSchema = z.object({ targetRevisionId: id.nullable(),
-  disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
+  disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), regenerate: z.array(z.enum(MODULES)), superseded: z.array(z.enum(MODULES)), revalidate: z.array(z.enum(MODULES)),
     awaiting: z.array(z.enum(MODULES)), staleArtifacts: z.number().int().min(0), blockedArtifacts: z.number().int().min(0) }).strict()) }).strict();
 export const ProjectManifestSchema = z.object({
   manifestVersion: z.literal(PROJECT_MANIFEST_VERSION),
@@ -133,6 +141,11 @@ export const ProjectManifestSchema = z.object({
     site: z.object({ present: z.boolean(), northMilliDegrees: z.number().int().nullable(), referenceDatum: z.string().nullable() }).strict(),
     counts: z.object({ levels: z.number().int(), spaces: z.number().int(), walls: z.number().int(), openings: z.number().int() }).strict() }).strict(),
   lineage: LineageSchema, diff: DiffSchema, changeImpact: ChangeImpactSchema, freshnessImpact: FreshnessImpactSchema, candidates: CandidatesSchema,
+  /**
+   * Scenario 17 (L747) failure evidence: the newest `window` FAILED durable jobs of the project were examined. TRUNCATED when older failures exist that
+   * were not examined, so a module without GENERATION_FAILED is not proof that nothing failed. UNAVAILABLE without job persistence.
+   */
+  failedGenerations: z.object({ availability: z.enum(['AVAILABLE', 'UNAVAILABLE']), completeness: z.enum(['COMPLETE', 'TRUNCATED']), window: z.number().int().min(0) }).strict(),
   configuration: z.object({ sourceMode: z.enum(['generated', 'supplied']), generatorVersion: z.string().nullable(), generationIdentity: z.unknown().nullable() }).strict(),
   modules: z.array(ManifestModuleSchema),
   disciplines: z.array(z.object({ discipline: z.enum(DISCIPLINES), freshness: freshness.nullable(), modules: z.array(z.enum(MODULES)) }).strict()),

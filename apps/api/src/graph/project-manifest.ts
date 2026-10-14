@@ -10,6 +10,7 @@ import { CANDIDATE_STATUSES, DISCIPLINES, FRESHNESS_ASSIGNMENT, GRAPH_STATE_MAPP
   ProjectManifestSchema, type ChangeImpact, type FreshnessState, type Lineage, type ManifestDiff, type ManifestModule, type ManifestModuleEntry, type ManifestQuery,
   type ProjectManifest } from '../contracts/project-manifest.js';
 import { SERVICES } from '../services/overview-service.js';
+import { SCHEDULE_IDS } from '../documents/schedules.js';
 
 /** The revision fields the manifest reads; a full revision detail satisfies it. */
 type Revision = Pick<z.infer<typeof ProjectRevisionDetailSchema>, 'id' | 'revisionNumber' | 'parentRevisionId' | 'createdAt' | 'completeness' | 'sourceMode'
@@ -18,14 +19,17 @@ type Concept = z.infer<typeof DesignConceptSummarySchema>;
 type Freshness = NonNullable<ManifestModuleEntry['freshness']>;
 type Reason = Freshness['reasons'][number];
 type Artifact = NonNullable<ManifestModuleEntry['artifacts']>[number];
+/** `regenerable: false`: part of the revision itself (its model, acceptance QA, committed appearance). When superseded it is replaced, never regenerated. */
 type Def = { module: ManifestModule; discipline: typeof DISCIPLINES[number]; source: ManifestModuleEntry['source']; editability: ManifestModuleEntry['editability'];
-  family?: GraphFamily; serviceId?: string; route?: string };
+  family?: GraphFamily; serviceId?: string; route?: string; regenerable?: false };
 
 const REVISION_ROUTE = '/api/projects/:projectId/revisions/:revisionId';
 /** One row per module, in output order. Stored modules read their state from the Phase 37 graph family of the same name. */
 const DEFS: readonly Def[] = Object.freeze([
-  { module: 'BUILDING_MODEL', discipline: 'ARCHITECTURE', source: 'REVISION', editability: 'NEW_REVISION_ONLY', family: 'REVISION', serviceId: 'BUILDING_MODEL' },
-  { module: 'ACCEPTANCE_QA', discipline: 'ARCHITECTURE', source: 'STORED_ARTIFACT', editability: 'DERIVED_READ_ONLY', family: 'ACCEPTANCE_QA', route: REVISION_ROUTE },
+  { module: 'BUILDING_MODEL', discipline: 'ARCHITECTURE', source: 'REVISION', editability: 'NEW_REVISION_ONLY', family: 'REVISION', serviceId: 'BUILDING_MODEL',
+    regenerable: false },
+  { module: 'ACCEPTANCE_QA', discipline: 'ARCHITECTURE', source: 'STORED_ARTIFACT', editability: 'DERIVED_READ_ONLY', family: 'ACCEPTANCE_QA', route: REVISION_ROUTE,
+    regenerable: false },
   { module: 'BIM', discipline: 'ARCHITECTURE', source: 'DERIVED_ON_READ', editability: 'DERIVED_READ_ONLY', serviceId: 'BIM' },
   { module: 'COMPLEX_VERIFICATION', discipline: 'ARCHITECTURE', source: 'DERIVED_ON_READ', editability: 'DERIVED_READ_ONLY', serviceId: 'COMPLEX_VERIFICATION' },
   { module: 'QUANTITY_TAKEOFF', discipline: 'QUANTITIES_AND_COST', source: 'STORED_ARTIFACT', editability: 'DERIVED_READ_ONLY', family: 'QUANTITY_TAKEOFF', serviceId: 'QUANTITY_TAKEOFF' },
@@ -41,24 +45,37 @@ const DEFS: readonly Def[] = Object.freeze([
   { module: 'DESIGN_OPTIMIZATION', discipline: 'DESIGN', source: 'STORED_ARTIFACT', editability: 'DERIVED_READ_ONLY', family: 'DESIGN_OPTIMIZATION', serviceId: 'DESIGN_OPTIMIZATION' },
   { module: 'DESIGN_CONCEPTS', discipline: 'DESIGN', source: 'ADVISORY_ARTIFACT', editability: 'ADVISORY_READ_ONLY', serviceId: 'DESIGN_CONCEPTS' },
   { module: 'SCENE_3D', discipline: 'VISUALIZATION', source: 'STORED_ARTIFACT', editability: 'DERIVED_READ_ONLY', family: 'SCENE_3D', serviceId: 'SCENE_3D' },
+  // The visible 3D object of a revision committed by a Phase 30 appearance operation (ROADMAP L262). Committed with the revision; changed only by a new one.
+  { module: 'APPEARANCE_VARIANT', discipline: 'VISUALIZATION', source: 'STORED_ARTIFACT', editability: 'NEW_REVISION_ONLY', serviceId: 'SELECTIVE_REVISION',
+    route: `${REVISION_ROUTE}/appearance`, regenerable: false },
   { module: 'CONSTRUCTION_DOCUMENTS', discipline: 'DOCUMENTATION', source: 'DERIVED_ON_READ', editability: 'DERIVED_READ_ONLY', serviceId: 'CONSTRUCTION_DOCUMENTS' },
 ] as const satisfies readonly Def[]);
 if (DEFS.map(d => d.module).join() !== MODULES.join()) throw new Error('Manifest module table and contract disagree');
 
-/** Roadmap L259: the existing paged or filterable listings of a module's resource for this revision. Modules not listed have no such view yet. */
-const page = (path: string, paging: 'AFTER_ID' | 'CURSOR' = 'CURSOR', filters: string[] = []) => ({ route: `${REVISION_ROUTE}/${path}`, paging, filters });
+/**
+ * Roadmap L259: the existing paged, filterable or partial views of a module's resource for this revision. Modules not listed have no such view yet.
+ * `each` expands one route into one view per storey (plan sheets exist for storey levels only) or per schedule.
+ */
+const page = (path: string, paging: ManifestModuleEntry['views'][number]['paging'] = 'CURSOR', filters: string[] = [], each?: 'STOREY' | 'SCHEDULE') =>
+  ({ route: `${REVISION_ROUTE}/${path}`, paging, filters, each });
 const VIEWS: Partial<Record<ManifestModule, readonly ReturnType<typeof page>[]>> = Object.freeze({
   BIM: [page('bim/elements', 'AFTER_ID', ['kind']), page('bim/relationships', 'AFTER_ID', ['kind'])],
   QUANTITY_TAKEOFF: [page('takeoffs')], BOQ_COST: [page('cost-estimates')],
   STRUCTURAL_ANALYSIS: [page('structural/analyses')], ENVIRONMENTAL_ANALYSIS: [page('environmental/analyses')],
   BUILDING_SYSTEMS_ANALYSIS: [page('systems/analyses')], SPECIALIZED_KNOWLEDGE: [page('knowledge/analyses')],
   DESIGN_OPTIMIZATION: [page('optimization/studies')], DESIGN_CONCEPTS: [page('design-concepts')], SCENE_3D: [page('scene/artifacts')],
+  CONSTRUCTION_DOCUMENTS: [page('documents/schedules', 'NONE'), page('documents/schedules/:schedule/csv', 'NONE', [], 'SCHEDULE'),
+    page('documents/plan-sheets/:levelId', 'NONE', [], 'STOREY')],
 });
 export const MANIFEST_VIEW_ROUTES = Object.freeze(Object.values(VIEWS).flatMap(v => v.map(x => x.route)));
+type ViewDef = ReturnType<typeof page>;
 
 /** Durable-job kinds that produce a stored artifact of a manifest module (Phase 32 `SCENE_COMPILE`, `OPTIMIZATION_STUDY`). */
 export const JOB_MODULES = Object.freeze({ SCENE_COMPILE: 'SCENE_3D', OPTIMIZATION_STUDY: 'DESIGN_OPTIMIZATION' } as const);
 export type ActiveJob = { jobId: string; module: typeof JOB_MODULES[keyof typeof JOB_MODULES] };
+/** Phase 30 committed appearance of this revision (`revision_operation_read` 'appearance'); `appearance` is null when the revision has none. */
+export type AppearanceEvidence = { revisionId: string; appearance: unknown; appearanceHash: string | null; modelHash: string | null; operationId: string | null;
+  artifact: { id: string; operationId: string; modelHash: string; appearanceHash: string; createdAt: string } | null };
 
 /** The parent revision fields lineage and diff read. */
 export type ParentRevision = Pick<z.infer<typeof ProjectRevisionDetailSchema>, 'id' | 'revisionNumber' | 'createdAt' | 'identity' | 'model'>;
@@ -74,6 +91,10 @@ export type ManifestInput = {
   designConcepts: { items: Concept[]; truncated: boolean } | null;
   /** null when durable-job persistence is not configured; otherwise the active jobs bound to this revision. */
   activeJobs: ActiveJob[] | null;
+  /** null when durable-job persistence is not configured; otherwise the failed jobs bound to this revision among the newest examined (one bounded page). */
+  failedJobs: { items: ActiveJob[]; truncated: boolean; window: number } | null;
+  /** null when revision-operation persistence is not configured. */
+  appearance: AppearanceEvidence | null;
   /** null when revision-operation persistence is not configured; otherwise the newest Phase 30 operations of the project (one bounded page). */
   operations: { items: Operation[]; truncated: boolean } | null;
   integrityCheckedAt: string;
@@ -167,19 +188,38 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
 
   // Phase 39 concept sets are not graph nodes; repeat the graph's checks that apply to them on their stored columns.
   const revisionKey = `REVISION:${revision.id}`, hash = graph.inputIdentity.modelHash;
-  const conceptFreshness = (c: Concept): Freshness => {
-    if (c.projectRevisionId !== revision.id) return { ...anchorFreshness, state: 'blocked', reasons: [{ code: 'REVISION_BINDING_MISMATCH', nodeId: null }] };
-    if (c.modelHash !== hash) return { ...anchorFreshness, state: 'blocked', reasons: [{ code: 'MODEL_HASH_MISMATCH', nodeId: null }] };
+  // A failed check fails closed (blocked) and is reported, never repaired; otherwise the output is exactly as fresh as its revision.
+  const revisionBound = (failure: Reason['code'] | null): Freshness => {
+    if (failure) return { ...anchorFreshness, state: 'blocked', reasons: [{ code: failure, nodeId: null }] };
     if (anchorFreshness.state === 'blocked') return { ...anchorFreshness, reasons: [{ code: 'UPSTREAM_UNVERIFIED', nodeId: anchorWorst.nodeId }, ...anchorFreshness.reasons] };
     return anchorFreshness.state === 'stale' ? { ...anchorFreshness, reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED', nodeId: revisionKey }] } : anchorFreshness;
   };
+  const conceptFreshness = (c: Concept): Freshness =>
+    revisionBound(c.projectRevisionId !== revision.id ? 'REVISION_BINDING_MISMATCH' : c.modelHash !== hash ? 'MODEL_HASH_MISMATCH' : null);
+  // Phase 30 appearances are not graph nodes either. Their stored binding, the model hash against the recomputed revision hash, the appearance hash
+  // recomputed from the stored appearance, and the compiled artifact's link to both are all re-checked here.
+  const appearanceFreshness = (a: AppearanceEvidence): Freshness => revisionBound(a.revisionId !== revision.id ? 'REVISION_BINDING_MISMATCH'
+    : a.modelHash !== hash ? 'MODEL_HASH_MISMATCH' : a.appearanceHash !== costHash(a.appearance) ? 'INPUT_HASH_MISMATCH'
+    : !a.artifact || a.artifact.modelHash !== a.modelHash || a.artifact.appearanceHash !== a.appearanceHash || a.artifact.operationId !== a.operationId ? 'LINK_INCONSISTENT'
+    : null);
 
+  const view = (v: ViewDef) => (v.each === 'STOREY' ? revision.model.levels.filter(l => l.kind === 'storey').map(l => v.route.replace(':levelId', encodeURIComponent(l.id)))
+    : v.each === 'SCHEDULE' ? SCHEDULE_IDS.map(s => v.route.replace(':schedule', s)) : [v.route])
+    .map(route => ({ href: href(route), paging: v.paging, filters: [...v.filters] }));
   const modules = DEFS.map((d): Omit<ManifestModuleEntry, 'artifactCount' | 'artifacts'> & { artifacts: Artifact[] } => {
     const service = d.serviceId ? SERVICES.find(s => s.serviceId === d.serviceId)! : null;
     const base = { module: d.module, discipline: d.discipline, version: service?.version ?? revision.qa.qaVersion, href: href(d.route ?? service!.route),
-      source: d.source, editability: d.editability, completeness: 'COMPLETE' as const, missingReason: null, activeJobIds: [] as string[], artifacts: [] as Artifact[],
-      views: (VIEWS[d.module] ?? []).map(v => ({ href: href(v.route), paging: v.paging, filters: [...v.filters] })) };
+      source: d.source, editability: d.editability, completeness: 'COMPLETE' as const, missingReason: null, activeJobIds: [] as string[], failedJobIds: [] as string[],
+      artifacts: [] as Artifact[], views: (VIEWS[d.module] ?? []).flatMap(view) };
     if (d.source === 'DERIVED_ON_READ') return { ...base, availability: 'DERIVED_ON_READ', freshness: anchorFreshness };
+    if (d.module === 'APPEARANCE_VARIANT') {
+      const a = input.appearance;
+      if (!a) return { ...base, availability: 'UNAVAILABLE', freshness: null, missingReason: 'PERSISTENCE_UNAVAILABLE' };
+      if (a.appearance === null) return { ...base, availability: 'NOT_GENERATED', freshness: null, missingReason: 'NOT_GENERATED_FOR_REVISION' };
+      const freshness = appearanceFreshness(a);
+      return { ...base, availability: 'AVAILABLE', freshness, artifacts: a.artifact
+        ? [{ artifactId: a.artifact.id, nodeId: null, revisionId: a.revisionId, createdAt: a.artifact.createdAt, graphState: null, freshness }] : [] };
+    }
     if (d.module === 'DESIGN_CONCEPTS') {
       if (!input.designConcepts) return { ...base, availability: 'UNAVAILABLE', freshness: null, missingReason: 'PERSISTENCE_UNAVAILABLE' };
       const ordered = [...input.designConcepts.items].sort((x, y) => Date.parse(x.createdAt) - Date.parse(y.createdAt) || (x.id < y.id ? -1 : x.id > y.id ? 1 : 0));
@@ -194,13 +234,16 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
     const artifacts = nodes.map(n => ({ artifactId: n.artifactId, nodeId: n.nodeId, revisionId: n.revisionId, createdAt: n.createdAt, graphState: n.state,
       freshness: fromNode(n.state, n.causes) }));
     const activeJobIds = (input.activeJobs ?? []).filter(j => j.module === d.module).map(j => j.jobId).sort();
+    const failedJobIds = (input.failedJobs?.items ?? []).filter(j => j.module === d.module && !activeJobIds.includes(j.jobId)).map(j => j.jobId).sort();
     if (artifacts.length) {
       const family = graph.families.find(f => f.family === d.family)!;
       const representative = nodes.find(n => n.state === family.state)!;
       return { ...base, availability: 'AVAILABLE', activeJobIds, artifacts, freshness: fromNode(family.state as NodeState, representative.causes) };
     }
-    // Nothing stored yet: pending only on evidence of an active job for this revision; otherwise there is nothing to judge.
-    return { ...base, availability: 'NOT_GENERATED', missingReason: 'NOT_GENERATED_FOR_REVISION', activeJobIds,
+    // Nothing stored yet: pending only on evidence of an active job for this revision; otherwise there is nothing to judge. A failure is reported, never
+    // hidden: GENERATION_FAILED when a job for this revision failed and none is active (scenario 17).
+    return { ...base, availability: 'NOT_GENERATED', activeJobIds, failedJobIds,
+      missingReason: failedJobIds.length && !activeJobIds.length ? 'GENERATION_FAILED' : 'NOT_GENERATED_FOR_REVISION',
       freshness: activeJobIds.length ? { state: 'pending', reasons: activeJobIds.map(() => ({ code: 'JOB_ACTIVE' as const, nodeId: null })),
         sourceRevisionId: revision.id, targetRevisionId: target } : null };
   });
@@ -215,8 +258,9 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
   const freshnessImpact = { targetRevisionId: target, disciplines: DISCIPLINES.map(discipline => {
     const members = modules.filter(m => m.discipline === discipline), withState = (s: FreshnessState) => members.filter(m => m.freshness?.state === s).map(m => m.module);
     const count = (s: FreshnessState) => members.reduce((n, m) => n + m.artifacts.filter(x => x.freshness.state === s).length, 0);
-    return { discipline, regenerate: withState('stale'), revalidate: withState('blocked'), awaiting: withState('pending'), staleArtifacts: count('stale'),
-      blockedArtifacts: count('blocked') };
+    const stale = withState('stale'), replaced = (m: ManifestModule) => DEFS.find(d => d.module === m)!.regenerable === false;
+    return { discipline, regenerate: stale.filter(m => !replaced(m)), superseded: stale.filter(replaced), revalidate: withState('blocked'), awaiting: withState('pending'),
+      staleArtifacts: count('stale'), blockedArtifacts: count('blocked') };
   }) };
   // Candidates on this revision (roadmap L258), oldest first like the artifacts. Listed only: no module, freshness, impact or diff above reads them.
   const candidates = { modulesResolve: 'ACCEPTED_REVISION_ONLY' as const, availability: input.operations ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,
@@ -233,6 +277,8 @@ export function buildProjectManifest(input: ManifestInput): ProjectManifest {
       projectCurrentRevisionId: current, revisionCurrency: current === null ? 'NO_CURRENT_REVISION' as const : current === revision.id ? 'CURRENT' as const : 'HISTORICAL' as const,
       modelHash: hash, acceptanceQaId: revision.qa.id, createdAt: revision.createdAt },
     lineage, diff, changeImpact: buildChangeImpact(diff), freshnessImpact, candidates,
+    failedGenerations: { availability: input.failedJobs ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,
+      completeness: input.failedJobs?.truncated ? 'TRUNCATED' as const : 'COMPLETE' as const, window: input.failedJobs?.window ?? 0 },
     canonicalModel: { schemaVersion: revision.model.schemaVersion, completeness: revision.completeness, units: revision.model.units, coordinateSystem: revision.model.coordinateSystem,
       site: { present: site !== null, northMilliDegrees: site?.northMilliDegrees ?? null, referenceDatum: site?.referenceOrigin?.datum ?? null },
       counts: { levels: revision.model.levels.length, spaces: revision.model.spaces.length, walls: revision.model.walls.length, openings: revision.model.openings.length } },

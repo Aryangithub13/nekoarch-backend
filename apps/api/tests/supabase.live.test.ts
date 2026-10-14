@@ -34,6 +34,7 @@ import {
 } from '@designflow/shared';
 import { generatePlan, parseRequirements } from '@designflow/generator';
 import { buildApp } from '../src/app.js';
+import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
 import { parseEnv, type Env } from '../src/config/env.js';
 import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
 import { fixtureEstimate, fixturePlan } from '../../../test-support/fixtures.js';
@@ -167,6 +168,12 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       const computeRows = await admin.from('project_compute_dispatches').select('project_id').in('project_id', ownedIds);
       if (computeRows.error) failures.push('read protected compute-dispatch projects');
       for (const row of computeRows.data ?? []) protectedIds.add(row.project_id);
+      // B38 evidence packages (0027) and B39 design concepts (0028) are immutable history likewise.
+      for (const table of ['project_revision_evidence_packages', 'project_revision_design_concepts'] as const) {
+        const rows = await admin.from(table).select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
+        if (rows.error) failures.push(`read protected ${table} projects`);
+        for (const row of rows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      }
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
         const projectsCleanup = await admin.from('projects').delete().in('id',deletable);
@@ -541,6 +548,55 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect((await other.client.rpc('compute_read', { p_action: 'job', p_project_id: id, p_job_id: jobId })).error?.code).toBe('P1201');
     expect((await publicClient.rpc('compute_read', { p_action: 'job', p_project_id: id, p_job_id: jobId })).error).not.toBeNull();
     expect((await owner.client.from('project_compute_dispatches').select('job_id').eq('project_id', id)).data).toHaveLength(1);
+  }, 90_000);
+
+  it('0027/0028 and the B37 manifest through actual JWT and PostgREST: evidence packages and design concepts are owner-only, immutable and unforgeable', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'B37 manifest, 0027 and 0028' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id;
+    const generated = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions/generate`, headers: owner.headers, payload: { requirements: requirements() } });
+    expect(generated.statusCode, generated.body).toBe(201);
+    const revisionId = generated.json().revision.id as string, base = `/api/projects/${id}/revisions/${revisionId}`;
+    const evidence = await app.inject({ method: 'POST', url: `${base}/evidence-packages`, headers: owner.headers, payload: {} });
+    expect(evidence.statusCode, evidence.body.slice(0, 500)).toBe(201); const packageId = evidence.json().id as string;
+    const concept = await app.inject({ method: 'POST', url: `${base}/design-concepts`, headers: owner.headers, payload: { scope: 'EXTERIOR', generator: 'TEMPLATE', alternatives: 1 } });
+    expect(concept.statusCode, concept.body.slice(0, 500)).toBe(201); const conceptId = concept.json().id as string;
+    // The B37 manifest: owner-only through real JWTs; every RPC family it reads answers through PostgREST.
+    const read = await app.inject({ url: `${base}/manifest`, headers: owner.headers });
+    expect(read.statusCode, read.body.slice(0, 500)).toBe(200);
+    const m = ProjectManifestSchema.parse(read.json()), mod = (name: string) => m.modules.find(x => x.module === name)!;
+    expect(m.identity).toMatchObject({ projectId: id, revisionId, revisionCurrency: 'CURRENT' });
+    expect(mod('DESIGN_CONCEPTS')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current' }, artifacts: [{ artifactId: conceptId }] });
+    expect([m.candidates.availability, m.lineage.status, m.lineage.operation.status, m.failedGenerations.availability, mod('APPEARANCE_VARIANT').availability])
+      .toEqual(['AVAILABLE', 'ROOT', 'NONE', 'AVAILABLE', 'NOT_GENERATED']);
+    expect(m.verification.nodeStates.UNVERIFIED).toBe(0);
+    expect((await app.inject({ url: `${base}/manifest`, headers: other.headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: `${base}/manifest` })).statusCode).toBe(401);
+    // Direct SDK on both tables: the owner reads its row, another user sees none, anonymous is refused, and no client writes.
+    for (const [table, rowId] of [['project_revision_evidence_packages', packageId], ['project_revision_design_concepts', conceptId]] as const) {
+      const own = await owner.client.from(table).select('id').eq('project_revision_id', revisionId);
+      expect(own.error, table).toBeNull(); expect(own.data, table).toEqual([{ id: rowId }]);
+      const foreign = await other.client.from(table).select('id').eq('project_revision_id', revisionId);
+      expect(foreign.error, table).toBeNull(); expect(foreign.data, table).toEqual([]);
+      expect((await publicClient.from(table).select('id').eq('project_revision_id', revisionId)).error?.code, table).toBe('42501');
+      expect((await owner.client.from(table).update({ content_hash: 'a'.repeat(64) }).eq('id', rowId)).error?.code, table).toBe('42501');
+      expect((await owner.client.from(table).delete().eq('id', rowId)).error?.code, table).toBe('42501');
+      expect((await owner.client.from(table).insert({ project_revision_id: revisionId })).error?.code, table).toBe('42501');
+    }
+    // Unsigned or forged writes are refused before anything is read; foreign reads are refused as not found.
+    for (const fn of ['evidence_write', 'design_concept_write'] as const) {
+      expect((await owner.client.rpc(fn, { p_input: { projectId: id, revisionId }, p_envelope: '{}', p_signature: 'f'.repeat(64) })).error?.code, fn).toBe('42501');
+      expect((await owner.client.rpc(fn, { p_input: { projectId: id, revisionId } })).error?.code, fn).toBe('42501');
+      expect((await publicClient.rpc(fn, { p_input: {}, p_envelope: '{}', p_signature: 'f'.repeat(64) })).error, fn).not.toBeNull();
+    }
+    expect((await other.client.rpc('evidence_read', { p_action: 'get', p_project_id: id, p_revision_id: revisionId, p_package_id: packageId })).error?.code).toBe('P1201');
+    expect((await other.client.rpc('design_concept_read', { p_action: 'get', p_project_id: id, p_revision_id: revisionId, p_concept_id: conceptId })).error?.code).toBe('P1201');
+    expect((await publicClient.rpc('evidence_read', { p_action: 'list', p_project_id: id, p_revision_id: revisionId })).error).not.toBeNull();
+    // Nothing above wrote: still exactly one row each, unchanged.
+    for (const [table, row] of [['project_revision_evidence_packages', evidence.json()], ['project_revision_design_concepts', concept.json()]] as const) {
+      const after = await owner.client.from(table).select('id,content_hash').eq('project_revision_id', revisionId);
+      expect(after.data, table).toEqual([{ id: row.id, content_hash: row.contentHash }]);
+    }
   }, 90_000);
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {

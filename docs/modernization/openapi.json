@@ -63215,6 +63215,7 @@
                   "DESIGN_OPTIMIZATION",
                   "DESIGN_CONCEPTS",
                   "SCENE_3D",
+                  "APPEARANCE_VARIANT",
                   "CONSTRUCTION_DOCUMENTS"
                  ]
                 }
@@ -63292,6 +63293,32 @@
                   "DESIGN_OPTIMIZATION",
                   "DESIGN_CONCEPTS",
                   "SCENE_3D",
+                  "APPEARANCE_VARIANT",
+                  "CONSTRUCTION_DOCUMENTS"
+                 ]
+                }
+               },
+               "superseded": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "BUILDING_MODEL",
+                  "ACCEPTANCE_QA",
+                  "BIM",
+                  "COMPLEX_VERIFICATION",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "ENVIRONMENTAL_ANALYSIS",
+                  "BUILDING_SYSTEMS_ANALYSIS",
+                  "SPECIALIZED_KNOWLEDGE",
+                  "ENGINEERING_ASSESSMENT",
+                  "DESIGN_OPTIMIZATION",
+                  "DESIGN_CONCEPTS",
+                  "SCENE_3D",
+                  "APPEARANCE_VARIANT",
                   "CONSTRUCTION_DOCUMENTS"
                  ]
                 }
@@ -63316,6 +63343,7 @@
                   "DESIGN_OPTIMIZATION",
                   "DESIGN_CONCEPTS",
                   "SCENE_3D",
+                  "APPEARANCE_VARIANT",
                   "CONSTRUCTION_DOCUMENTS"
                  ]
                 }
@@ -63340,6 +63368,7 @@
                   "DESIGN_OPTIMIZATION",
                   "DESIGN_CONCEPTS",
                   "SCENE_3D",
+                  "APPEARANCE_VARIANT",
                   "CONSTRUCTION_DOCUMENTS"
                  ]
                 }
@@ -63356,6 +63385,7 @@
               "required": [
                "discipline",
                "regenerate",
+               "superseded",
                "revalidate",
                "awaiting",
                "staleArtifacts",
@@ -63468,6 +63498,35 @@
            ],
            "additionalProperties": false
           },
+          "failedGenerations": {
+           "type": "object",
+           "properties": {
+            "availability": {
+             "type": "string",
+             "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE"
+             ]
+            },
+            "completeness": {
+             "type": "string",
+             "enum": [
+              "COMPLETE",
+              "TRUNCATED"
+             ]
+            },
+            "window": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "required": [
+            "availability",
+            "completeness",
+            "window"
+           ],
+           "additionalProperties": false
+          },
           "configuration": {
            "type": "object",
            "properties": {
@@ -63515,6 +63574,7 @@
                "DESIGN_OPTIMIZATION",
                "DESIGN_CONCEPTS",
                "SCENE_3D",
+               "APPEARANCE_VARIANT",
                "CONSTRUCTION_DOCUMENTS"
               ]
              },
@@ -63647,11 +63707,18 @@
               "type": "string",
               "enum": [
                "NOT_GENERATED_FOR_REVISION",
+               "GENERATION_FAILED",
                "PERSISTENCE_UNAVAILABLE"
               ],
               "nullable": true
              },
              "activeJobIds": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/identity/properties/projectId"
+              }
+             },
+             "failedJobIds": {
               "type": "array",
               "items": {
                "$ref": "#/components/properties/identity/properties/projectId"
@@ -63721,7 +63788,8 @@
                  "type": "string",
                  "enum": [
                   "AFTER_ID",
-                  "CURSOR"
+                  "CURSOR",
+                  "NONE"
                  ]
                 },
                 "filters": {
@@ -63753,6 +63821,7 @@
              "freshness",
              "missingReason",
              "activeJobIds",
+             "failedJobIds",
              "artifactCount",
              "artifacts",
              "views"
@@ -63804,6 +63873,7 @@
                 "DESIGN_OPTIMIZATION",
                 "DESIGN_CONCEPTS",
                 "SCENE_3D",
+                "APPEARANCE_VARIANT",
                 "CONSTRUCTION_DOCUMENTS"
                ]
               }
@@ -64054,6 +64124,7 @@
           "changeImpact",
           "freshnessImpact",
           "candidates",
+          "failedGenerations",
           "configuration",
           "modules",
           "disciplines",
