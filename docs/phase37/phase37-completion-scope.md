@@ -265,6 +265,20 @@ The owner chose D-8(a) from [phase37-acceptance-gap-report.md](phase37-acceptanc
 | `project-manifest.integration.test.ts` (11 tests) | **T1/T5:** the B30 exterior-appearance fixture with takeoff, construction, cost and scene on A, then preflight, execute and approve to B. Every base output is `stale` against B. `regenerate` includes takeoff, construction, cost, scene, BIM and documents; `superseded` is exactly the model and QA. B's `APPEARANCE_VARIANT` is `current`; its href returns `APPEARANCE_VARIANT` with B's model hash and the same artifact id, and the GLB's SHA-256 equals the artifact's. **Scenario 17:** a real `OPTIMIZATION_STUDY` job failed by the runner is `GENERATION_FAILED` for its revision only. **M6:** every RPC wrapped with an in-flight counter over the whole manifest read; peak > 1 and ≤ 8. The views test now fetches all 19 views for the fixture (11 paged with `limit=1`, 8 unpaged as is) |
 | `supabase.live.test.ts` (T2/T3; local Supabase, real JWTs) | **`0027`/`0028`:** the owner reads its evidence package and concept set through PostgREST; another user sees none; anonymous gets `42501`. Owner update, delete and insert get `42501`. Forged and unsigned `evidence_write` / `design_concept_write` get `42501`. Foreign `evidence_read` / `design_concept_read` get `P1201`; anonymous reads are refused. Rows are unchanged afterwards. **Manifest:** owner 200 with the concept linked and current; other user 404; no token 401. The suite's cleanup now treats `0027`/`0028` rows as immutable history, like the other immutable families |
 
+**Mutation checks (closure slice): 10 of 10 caught.** Each mutant was applied alone, the relevant suite run, and the source restored:
+1. `regenerate` keeps superseded modules.
+2. No revision-binding check on the appearance.
+3. No appearance-hash recomputation.
+4. No artifact-link check.
+5. Appearance not linked (no artifact).
+6. Failure hidden as `NOT_GENERATED_FOR_REVISION`.
+7. Failure truncation never reported.
+8. A failed job not bound to its revision.
+9. Non-storey levels indexed. This first survived because the fixture has only storeys; the test now adds roof and datum levels.
+10. Side reads started concurrently with the graph (the whole-read in-flight bound).
+
+The new live Supabase case was not mutation-tested; it needs the local stack.
+
 ### 7.4 Waiver of U1 and U2, and where the work goes
 
 **Waived for B37 (owner decision D-8(a)):**

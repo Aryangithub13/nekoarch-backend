@@ -365,8 +365,11 @@ describe('B37 closure: visible 3D linkage, failed generation and document views'
     expect(mod(m, 'CONSTRUCTION_DOCUMENTS').views).toEqual([{ href: `${R}/documents/schedules`, paging: 'NONE', filters: [] },
       ...SCHEDULE_IDS.map(s => ({ href: `${R}/documents/schedules/${s}/csv`, paging: 'NONE', filters: [] })),
       ...storeys.map(l => ({ href: `${R}/documents/plan-sheets/${encodeURIComponent(l.id)}`, paging: 'NONE', filters: [] }))]);
-    // Only storeys get plan sheets: a non-storey level is never indexed.
-    const datum = authored().levels.find(l => l.kind !== 'storey');
-    if (datum) expect(mod(m, 'CONSTRUCTION_DOCUMENTS').views.map(v => v.href)).not.toContain(`${R}/documents/plan-sheets/${encodeURIComponent(datum.id)}`);
+    // Only storeys get plan sheets: roof and datum levels are never indexed.
+    const model = authored(), extra = (['roof', 'datum'] as const).map(kind => ({ ...model.levels[0]!, id: `level-${kind}`, kind }));
+    const withOthers = manifest(chain(), REV, { revision: { ...revision(), model: { ...model, levels: [...model.levels, ...extra] } } as unknown as ManifestInput['revision'] });
+    const hrefs = mod(withOthers, 'CONSTRUCTION_DOCUMENTS').views.map(v => v.href);
+    for (const level of extra) expect(hrefs).not.toContain(`${R}/documents/plan-sheets/${level.id}`);
+    expect(hrefs.filter(h => h.includes('/plan-sheets/')).length).toBe(storeys.length);
   });
 });
