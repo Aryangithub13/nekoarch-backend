@@ -219,14 +219,22 @@ B39 is complete only after S3. Interior is not waived by this document.
 
 ## 9. Decisions for the owner
 
-| ID | Decision |
-|---|---|
-| D-4 | Confirm the module order (§4) and the interior meaning: finish and furnishing data on V2 spaces (L289) |
-| D-6 | Reuse the PR #16 design-concept routes as an advisory sub-output of Interior/Exterior (proposed), or supersede them |
-| D-7 | The optional discovery clarification (readiness r3 §9.5) |
-| D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results for S1 |
-| D-9b | Approve the S3 interior schema work (operation kind and V2 space finish fields) |
-| — | Merge PR #18 (the roadmap on the development branch) and accept B37 (PR #17, D-8) before S1 code starts |
+The B37 acceptance record (PR #17, `phase37-acceptance-gap-report.md` §11, recorded 2026-10-14 at `20a7620`) lists:
+- D-8 **Accept** (B37 development-complete; not a release);
+- D-4 **settle in this document**;
+- D-6 **Reuse**;
+- D-7 **Defer**.
+
+This document follows those entries. The table shows what is still open.
+
+| ID | Decision | State |
+|---|---|---|
+| D-4 | Module order (§4) and interior meaning: finish and furnishing data on V2 spaces (L289) | **Proposed here**; the owner confirms by accepting this document |
+| D-6 | PR #16 design-concept routes | **Recorded: reuse** as an advisory sub-output of Interior/Exterior, not as the specialists (§4) |
+| D-7 | Discovery clarification (readiness r3 §9.5) | **Recorded: defer**; the phase39 API guidance stays the interim |
+| D-8b | Derived (no migration) or durable (`0029_specialist_requests`) envelope results for S1 | Open |
+| D-9b | Approve the S3 interior schema work (operation kind and V2 space finish fields) | Open |
+| — | Merge PR #18 (the roadmap on the development branch) and PR #17 before S1 code starts | Open |
 
 ## 10. Out of scope
 
