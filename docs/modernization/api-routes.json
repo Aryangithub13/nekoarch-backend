@@ -710,6 +710,11 @@
   "anonymous": 401
  },
  {
+  "method": "POST",
+  "url": "/api/projects/:projectId/specialists/:module/requests",
+  "anonymous": 401
+ },
+ {
   "method": "GET",
   "url": "/api/projects/:projectId/workflows",
   "anonymous": 401

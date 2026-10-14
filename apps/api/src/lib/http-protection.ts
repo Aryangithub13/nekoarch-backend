@@ -25,7 +25,9 @@ export async function installLimits(app: FastifyInstance, env: Env) {
     // Phase 38: an evidence package builds the Phase 37 graph, the Phase 35 assessment and every construction document of the revision.
     '/api/projects/:projectId/revisions/:revisionId/evidence-packages',
     // Phase 39: a design-concept request may call a configured AI provider.
-    '/api/projects/:projectId/revisions/:revisionId/design-concepts'].includes(request.routeOptions.url ?? '') ? 'generate'
+    '/api/projects/:projectId/revisions/:revisionId/design-concepts',
+    // B39 S1: a specialist request may generate a revision (Blueprint) or run the takeoff, construction and cost engines.
+    '/api/projects/:projectId/specialists/:module/requests'].includes(request.routeOptions.url ?? '') ? 'generate'
     : ['POST', 'PATCH', 'DELETE'].includes(request.method) ? 'write' : 'read';
   const perimeter = app.createRateLimit({ max: env.RATE_LIMIT_IP, keyGenerator: req => digest(`ip:${req.ip}`) });
   const operation = app.createRateLimit({
