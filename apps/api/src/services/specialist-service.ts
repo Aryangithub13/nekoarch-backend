@@ -4,7 +4,7 @@ import { GenerateRevisionRequestSchema, ProjectDetailSchema, ProjectRevisionDeta
 import { TakeoffDetailSchema } from '../contracts/takeoffs.js';
 import { ConstructionDetailSchema } from '../contracts/construction.js';
 import { CostDetailSchema } from '../contracts/costs.js';
-import { BlueprintConfigSchema, BudgetConfigSchema, EXTERIOR_GEOMETRY_SCOPES, ExteriorConfigSchema, MaterialsConfigSchema, MAX_REQUESTED_ROOMS, MODULE_SCOPES,
+import { BlueprintConfigSchema, BudgetConfigSchema, EXTERIOR_GEOMETRY_SCOPES, ExteriorConfigSchema, INTERIOR_PLANNING_SCOPES, InteriorConfigSchema, MaterialsConfigSchema, MAX_REQUESTED_ROOMS, MODULE_SCOPES,
   PRESERVATION_MAP, SPECIALIST_VERSION, SpecialistResultSchema, STATUS_PRECEDENCE, StructuralConfigSchema, SUPPORTED_MODULES, type ComponentScope,
   type SpecialistModule, type SpecialistRequest, type SpecialistResult, type SpecialistStatus, type SupportedModule } from '../contracts/specialists.js';
 import type { ManifestModule, ProjectManifest } from '../contracts/project-manifest.js';
@@ -97,14 +97,15 @@ export async function runSpecialist(repository: Repository, userId: string, proj
   };
 
   // Typed refusals (scenario 46): a module or an action that is not implemented is a result, not an error.
-  if (module === 'INTERIOR')
-    return refuse('UNSUPPORTED', 'MODULE_NOT_AVAILABLE', 'The INTERIOR specialist is not available: no interior operation or finish data on spaces exists, and the '
-      + 'schema work for it is owner decision D-12, deferred. The advisory design-concept routes are not an Interior implementation; nothing was run');
   if (!(SUPPORTED_MODULES as readonly string[]).includes(module))
     return refuse('UNSUPPORTED', 'MODULE_NOT_AVAILABLE', `The ${module} specialist is not implemented; nothing was run`);
   // Massing or glazing geometry is not changed by any engine (ENVELOPE_GEOMETRY_REGENERATION, scope §4 row 4): refused with the outputs it would invalidate.
   const geometry = request.targetScopes.filter(s => (EXTERIOR_GEOMETRY_SCOPES as readonly string[]).includes(s));
   if (module === 'EXTERIOR' && geometry.length) return refuseGeometry(geometry);
+  // Space planning is not a finish change (scenario 33): a typed request to expand the scope, with nothing run.
+  const planning = request.targetScopes.filter(s => (INTERIOR_PLANNING_SCOPES as readonly string[]).includes(s));
+  if (module === 'INTERIOR' && planning.length) return refuse('UNSUPPORTED', 'SCOPE_EXPANSION_REQUIRED', `Interior changes space finishes only; ${planning.join(', ')} `
+    + 'is space planning. Expand the scope: regenerate the layout through the BLUEPRINT specialist, then apply finishes to the new revision. Nothing was run');
   const rules = MODULE_SCOPES[module as SupportedModule];
   if (!(rules.operations as readonly string[]).includes(request.operation))
     return refuse('UNSUPPORTED', 'OPERATION_NOT_SUPPORTED', `${module} supports ${rules.operations.join(', ')}; '${request.operation}' is not available`);
@@ -272,6 +273,37 @@ export async function runSpecialist(repository: Repository, userId: string, proj
     details: { kind: 'EXTERIOR', preflightStatus: op.preflight.status, operationKind: 'APPEARANCE_MODIFY', preflightHash: op.preflightHash, appearanceHash: op.preflight.appearanceHash,
       targetObjects: op.preflight.targets.length, excludedObjects: op.preflight.excluded.length,
       next: { operationHref: at, executeHref: `${at}/execute`, comparisonHref: `${at}/comparison`, approveHref: `${at}/approve`, rejectHref: `${at}/reject` }, claims: { ...REVISION_CLAIMS } },
+    provenance: { engine: 'phase30-revision-planner', engineVersion: op.operationVersion, providerId: null, inputHash: op.preflightHash } });
+  }
+
+  if (module === 'INTERIOR') {
+    // Scope §4 row 6 (scenario 33; owner decision D-12, migration 0029): finish data on named spaces through the Phase 30 INTERIOR_FINISH_MODIFY operation.
+    // The envelope only stores the preflight; the existing execute, comparison and approve routes complete it, and SQL holds every other model field.
+    const config = parseRequest(InteriorConfigSchema, request.outputConfig);
+    if (config.furnishings) return refuse('UNSUPPORTED', 'FURNISHINGS_NOT_SUPPORTED', 'Furnishings are not supported: the model has no furnishing data or furniture '
+      + 'layout; only space finishes (floor, walls, ceiling) change. Nothing was run');
+    const preserve = request.preserveScopes.flatMap(s => s in PRESERVATION_MAP ? [{ scope: PRESERVATION_MAP[s as keyof typeof PRESERVATION_MAP], levelId: null }] : []);
+    const body = parseRequest(PreflightRequestSchema, { baseRevisionId: base.id, request: { operation: { kind: 'INTERIOR_FINISH_MODIFY', assignments: config.finishes, preserve } } });
+    const plan = await planPreflight(repository, projectId, base.id, body.request);
+    if (plan.status !== 'AWAITING_CONSENT') return planned(plan);
+    const stored = await engine(() => step(REVISION_OPS.preflight, 'preflight', { projectId, ...body }, ctx => {
+      requireCurrent();
+      return createPreflight(repository, userId, projectId, body, deps.secret, ctx);
+    }));
+    if (isResult(stored)) return stored;
+    const op = OperationDetailSchema.parse(stored.result), at = `/api/projects/${projectId}/revision-operations/${op.id}`, plan2 = op.preflight.interior;
+    if (op.status !== 'AWAITING_CONSENT' || !plan2) return { ...planned(op.preflight), written: true, replayed: stored.replayed, operationId: op.id };
+    return SpecialistResultSchema.parse({ ...shell('AWAITING_CONSENT', [
+      { code: 'CONSENT_REQUIRED', message: 'Review the locks, impacts and finishes, then execute with the preflight hash and consent, compare the candidate, and approve or '
+        + 'reject it. Nothing changes the model until approval' },
+      { code: 'DOWNSTREAM_REGENERATION', message: 'Once approved, the finish data changes the model (its geometry does not), so the base\'s model-bound outputs '
+        + '(quantities, cost, analyses, scene) become stale and are recomputed on the new revision' }]),
+    written: true, replayed: stored.replayed, operationId: op.id, locks: op.preflight.locks, impacts: op.preflight.impacts,
+    quote: { execution: op.preflight.quote.execution, externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE' },
+    details: { kind: 'INTERIOR', preflightStatus: op.preflight.status, operationKind: 'INTERIOR_FINISH_MODIFY', preflightHash: op.preflightHash,
+      candidateModelHash: plan2.candidateModelHash, geometryModelHash: plan2.geometryModelHash, spaces: plan2.spaces,
+      next: { operationHref: at, executeHref: `${at}/execute`, comparisonHref: `${at}/comparison`, approveHref: `${at}/approve`, rejectHref: `${at}/reject` },
+      claims: { productSpecification: 'NOT_CLAIMED', fireRating: 'NOT_CLAIMED', acousticPerformance: 'NOT_CLAIMED', slipResistance: 'NOT_CLAIMED' } },
     provenance: { engine: 'phase30-revision-planner', engineVersion: op.operationVersion, providerId: null, inputHash: op.preflightHash } });
   }
 

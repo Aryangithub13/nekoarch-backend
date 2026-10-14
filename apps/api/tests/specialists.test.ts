@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BLUEPRINT_LIMITS } from '@designflow/generator';
 import { GENERATION_LIMITS } from '../../../packages/generator/src/input.js';
-import { COMPONENT_SCOPES, EXTERIOR_GEOMETRY_SCOPES, MAX_REFERENCES, MAX_REQUESTED_ROOMS, MODULE_SCOPES, PRESERVATION_MAP, S1_MODULES, S2_MODULES, SPECIALIST_MODULES,
+import { COMPONENT_SCOPES, INTERIOR_PLANNING_SCOPES, S3_MODULES, EXTERIOR_GEOMETRY_SCOPES, MAX_REFERENCES, MAX_REQUESTED_ROOMS, MODULE_SCOPES, PRESERVATION_MAP, S1_MODULES, S2_MODULES, SPECIALIST_MODULES,
   SPECIALIST_OPERATIONS, SPECIALIST_STATUSES, SPECIALIST_VERSION, SpecialistRequestSchema, SpecialistResultSchema, STATUS_PRECEDENCE, SUPPORTED_MODULES } from '../src/contracts/specialists.js';
 import { PRESERVATION_SCOPES } from '../src/revision/contracts.js';
 import { overallStatus } from '../src/services/specialist-service.js';
@@ -27,10 +27,13 @@ describe('B39 S1 specialist envelope contract', () => {
     for (const s of ['UNSUPPORTED', 'REQUIRES_REVIEW', 'DEGRADED_PROVIDER', 'STALE_DEPENDENCY', 'PARTIAL']) expect(SPECIALIST_STATUSES).toContain(s);
   });
 
-  it('S1 runs Blueprint, Materials and Budget, S2 Exterior and Structural; Interior is not supported (D-12); each targets only what it rewrites', () => {
-    expect([[...S1_MODULES], [...S2_MODULES], [...SUPPORTED_MODULES]]).toEqual([['BLUEPRINT', 'MATERIALS', 'BUDGET'], ['EXTERIOR', 'STRUCTURAL'],
-      ['BLUEPRINT', 'MATERIALS', 'BUDGET', 'EXTERIOR', 'STRUCTURAL']]);
-    expect(SUPPORTED_MODULES as readonly string[]).not.toContain('INTERIOR');
+  it('S1 runs Blueprint, Materials and Budget, S2 Exterior and Structural, S3 Interior (D-12); each targets only what it rewrites', () => {
+    expect([[...S1_MODULES], [...S2_MODULES], [...S3_MODULES], [...SUPPORTED_MODULES]]).toEqual([['BLUEPRINT', 'MATERIALS', 'BUDGET'], ['EXTERIOR', 'STRUCTURAL'],
+      ['INTERIOR'], ['BLUEPRINT', 'MATERIALS', 'BUDGET', 'EXTERIOR', 'STRUCTURAL', 'INTERIOR']]);
+    expect([...SUPPORTED_MODULES].sort()).toEqual([...SPECIALIST_MODULES].sort());
+    // Interior changes finishes only: it never targets or rewrites space planning or geometry, which are refused as a scope expansion.
+    expect([MODULE_SCOPES.INTERIOR.operations, MODULE_SCOPES.INTERIOR.targets]).toEqual([['modify'], ['interior.materials']]);
+    for (const g of INTERIOR_PLANNING_SCOPES) expect(MODULE_SCOPES.INTERIOR.rewrites as readonly string[]).not.toContain(g);
     for (const m of SUPPORTED_MODULES) for (const t of MODULE_SCOPES[m].targets) expect(MODULE_SCOPES[m].rewrites as readonly string[], `${m} ${t}`).toContain(t);
     // Exterior changes the finish only; geometry targets are refused, and every preservation it maps is a real Phase 30 scope.
     for (const g of EXTERIOR_GEOMETRY_SCOPES) expect(MODULE_SCOPES.EXTERIOR.rewrites as readonly string[]).not.toContain(g);

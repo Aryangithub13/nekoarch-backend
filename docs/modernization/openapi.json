@@ -315,6 +315,43 @@
         },
         "specificationId": {
          "$ref": "#/components/schemas/BuildingModelV2/properties/id"
+        },
+        "finishes": {
+         "type": "object",
+         "properties": {
+          "floor": {
+           "type": "string",
+           "enum": [
+            "polished-concrete",
+            "ceramic-tile",
+            "stone-tile",
+            "engineered-timber",
+            "vinyl",
+            "carpet"
+           ]
+          },
+          "walls": {
+           "type": "string",
+           "enum": [
+            "paint-white",
+            "paint-warm-neutral",
+            "paint-cool-grey",
+            "ceramic-tile",
+            "timber-panel",
+            "exposed-plaster"
+           ]
+          },
+          "ceiling": {
+           "type": "string",
+           "enum": [
+            "paint-white",
+            "acoustic-tile",
+            "exposed-concrete",
+            "timber-slat"
+           ]
+          }
+         },
+         "additionalProperties": false
         }
        },
        "required": [
@@ -6527,6 +6564,51 @@
                "required": [
                 "kind",
                 "sourceRevisionId"
+               ],
+               "additionalProperties": false
+              },
+              {
+               "type": "object",
+               "properties": {
+                "kind": {
+                 "type": "string",
+                 "enum": [
+                  "INTERIOR_FINISH_MODIFY"
+                 ]
+                },
+                "assignments": {
+                 "type": "array",
+                 "items": {
+                  "type": "object",
+                  "properties": {
+                   "spaceId": {
+                    "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/target/properties/levelIds/items"
+                   },
+                   "finishes": {
+                    "$ref": "#/components/schemas/BuildingModelV2/properties/spaces/items/properties/finishes"
+                   }
+                  },
+                  "required": [
+                   "spaceId",
+                   "finishes"
+                  ],
+                  "additionalProperties": false
+                 },
+                 "minItems": 1,
+                 "maxItems": 24
+                },
+                "preserve": {
+                 "type": "array",
+                 "items": {
+                  "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/preserve/items"
+                 },
+                 "maxItems": 16,
+                 "default": []
+                }
+               },
+               "required": [
+                "kind",
+                "assignments"
                ],
                "additionalProperties": false
               }
@@ -24221,7 +24303,8 @@
       "type": "string",
       "enum": [
        "APPEARANCE_MODIFY",
-       "RESTORE"
+       "RESTORE",
+       "INTERIOR_FINISH_MODIFY"
       ],
       "nullable": true
      },
@@ -24316,7 +24399,8 @@
         "type": "string",
         "enum": [
          "APPEARANCE_MODIFY",
-         "RESTORE"
+         "RESTORE",
+         "INTERIOR_FINISH_MODIFY"
         ],
         "nullable": true
        },
@@ -24378,10 +24462,10 @@
           "nullable": true
          },
          "operation": {
-          "type": "string",
-          "enum": [
-           "APPEARANCE_MODIFY",
-           "RESTORE"
+          "allOf": [
+           {
+            "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/kind"
+           }
           ],
           "nullable": true
          },
@@ -24510,6 +24594,18 @@
            "additionalProperties": false
           },
           "maxItems": 8
+         },
+         "interior": {
+          "type": "object",
+          "properties": {
+           "assignments": {
+            "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/2/properties/assignments"
+           }
+          },
+          "required": [
+           "assignments"
+          ],
+          "additionalProperties": false
          }
         },
         "required": [
@@ -24899,6 +24995,65 @@
          "materialPerformance",
          "thermal",
          "photorealism"
+        ],
+        "additionalProperties": false
+       },
+       "interior": {
+        "type": "object",
+        "properties": {
+         "assignments": {
+          "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/2/properties/assignments"
+         },
+         "spaces": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "spaceId": {
+             "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/target/properties/levelIds/items"
+            },
+            "levelId": {
+             "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/0/properties/target/properties/levelIds/items"
+            },
+            "name": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "before": {
+             "allOf": [
+              {
+               "$ref": "#/components/schemas/BuildingModelV2/properties/spaces/items/properties/finishes"
+              }
+             ],
+             "nullable": true
+            },
+            "after": {
+             "$ref": "#/components/schemas/BuildingModelV2/properties/spaces/items/properties/finishes"
+            }
+           },
+           "required": [
+            "spaceId",
+            "levelId",
+            "name",
+            "before",
+            "after"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 24
+         },
+         "geometryModelHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         },
+         "candidateModelHash": {
+          "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+         }
+        },
+        "required": [
+         "assignments",
+         "spaces",
+         "geometryModelHash",
+         "candidateModelHash"
         ],
         "additionalProperties": false
        }
@@ -40687,10 +40842,10 @@
              "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/1/properties/sourceRevisionId"
             },
             "kind": {
-             "type": "string",
-             "enum": [
-              "APPEARANCE_MODIFY",
-              "RESTORE"
+             "allOf": [
+              {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/kind"
+              }
              ],
              "nullable": true
             },
@@ -41179,6 +41334,115 @@
               "modelIdentical",
               "appearanceChanged",
               "bimDiffHref"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "comparisonVersion",
+            "operationId",
+            "kind",
+            "status",
+            "committedRevisionId",
+            "base",
+            "engineering",
+            "quantitiesAndCost",
+            "validation",
+            "approvalBlockers",
+            "claims",
+            "warnings",
+            "candidate",
+            "changes"
+           ],
+           "additionalProperties": false
+          },
+          {
+           "type": "object",
+           "properties": {
+            "comparisonVersion": {
+             "$ref": "#/components/anyOf/0/properties/comparisonVersion"
+            },
+            "operationId": {
+             "$ref": "#/components/schemas/Conversation/properties/state/properties/actions/items/properties/revisionOperation/properties/request/anyOf/1/properties/sourceRevisionId"
+            },
+            "kind": {
+             "$ref": "#/components/anyOf/0/properties/kind"
+            },
+            "status": {
+             "$ref": "#/components/anyOf/0/properties/status"
+            },
+            "committedRevisionId": {
+             "$ref": "#/components/anyOf/0/properties/committedRevisionId"
+            },
+            "base": {
+             "$ref": "#/components/anyOf/0/properties/base"
+            },
+            "engineering": {
+             "$ref": "#/components/anyOf/0/properties/engineering"
+            },
+            "quantitiesAndCost": {
+             "$ref": "#/components/anyOf/0/properties/quantitiesAndCost"
+            },
+            "validation": {
+             "$ref": "#/components/anyOf/0/properties/validation"
+            },
+            "approvalBlockers": {
+             "$ref": "#/components/anyOf/0/properties/approvalBlockers"
+            },
+            "claims": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/claims"
+            },
+            "warnings": {
+             "$ref": "#/components/anyOf/0/properties/warnings"
+            },
+            "candidate": {
+             "type": "object",
+             "properties": {
+              "candidateHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+                }
+               ],
+               "nullable": true
+              },
+              "modelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              },
+              "geometryModelHash": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/base/properties/modelHash"
+              }
+             },
+             "required": [
+              "candidateHash",
+              "modelHash",
+              "geometryModelHash"
+             ],
+             "additionalProperties": false
+            },
+            "changes": {
+             "type": "object",
+             "properties": {
+              "spaces": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/interior/properties/spaces"
+              },
+              "geometryIdentical": {
+               "type": "boolean",
+               "enum": [
+                true
+               ]
+              },
+              "exteriorUnchanged": {
+               "type": "boolean",
+               "enum": [
+                true
+               ]
+              }
+             },
+             "required": [
+              "spaces",
+              "geometryIdentical",
+              "exteriorUnchanged"
              ],
              "additionalProperties": false
             }
@@ -62931,7 +63195,8 @@
                "type": "string",
                "enum": [
                 "APPEARANCE_MODIFY",
-                "RESTORE"
+                "RESTORE",
+                "INTERIOR_FINISH_MODIFY"
                ],
                "nullable": true
               },
@@ -63474,7 +63739,8 @@
                 "type": "string",
                 "enum": [
                  "APPEARANCE_MODIFY",
-                 "RESTORE"
+                 "RESTORE",
+                 "INTERIOR_FINISH_MODIFY"
                 ],
                 "nullable": true
                },
@@ -68483,6 +68749,114 @@
               "assumptions",
               "limitations",
               "engineClaims"
+             ],
+             "additionalProperties": false
+            },
+            {
+             "type": "object",
+             "properties": {
+              "kind": {
+               "type": "string",
+               "enum": [
+                "INTERIOR"
+               ]
+              },
+              "preflightStatus": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/status"
+              },
+              "operationKind": {
+               "type": "string",
+               "enum": [
+                "INTERIOR_FINISH_MODIFY"
+               ]
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+              },
+              "candidateModelHash": {
+               "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+              },
+              "geometryModelHash": {
+               "$ref": "#/components/properties/artifacts/items/properties/contentHash"
+              },
+              "spaces": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/interior/properties/spaces"
+              },
+              "next": {
+               "type": "object",
+               "properties": {
+                "operationHref": {
+                 "type": "string"
+                },
+                "executeHref": {
+                 "type": "string"
+                },
+                "comparisonHref": {
+                 "type": "string"
+                },
+                "approveHref": {
+                 "type": "string"
+                },
+                "rejectHref": {
+                 "type": "string"
+                }
+               },
+               "required": [
+                "operationHref",
+                "executeHref",
+                "comparisonHref",
+                "approveHref",
+                "rejectHref"
+               ],
+               "additionalProperties": false
+              },
+              "claims": {
+               "type": "object",
+               "properties": {
+                "productSpecification": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "fireRating": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "acousticPerformance": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                },
+                "slipResistance": {
+                 "type": "string",
+                 "enum": [
+                  "NOT_CLAIMED"
+                 ]
+                }
+               },
+               "required": [
+                "productSpecification",
+                "fireRating",
+                "acousticPerformance",
+                "slipResistance"
+               ],
+               "additionalProperties": false
+              }
+             },
+             "required": [
+              "kind",
+              "preflightStatus",
+              "operationKind",
+              "preflightHash",
+              "candidateModelHash",
+              "geometryModelHash",
+              "spaces",
+              "next",
+              "claims"
              ],
              "additionalProperties": false
             },

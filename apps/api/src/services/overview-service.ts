@@ -103,9 +103,9 @@ export const SERVICES = Object.freeze([
   { serviceId: 'DESIGN_CONCEPTS', version: DESIGN_CONCEPT_VERSION, persistence: 'ADVISORY_ARTIFACT', route: DESIGN_ROOT, workflowCapability: null },
   // B37 completion: Unified Project Manifest v2 (identity, canonical frame, modules, per-discipline freshness in the roadmap vocabulary). Provenance, never correctness.
   { serviceId: 'PROJECT_MANIFEST', version: PROJECT_MANIFEST_VERSION, persistence: 'DERIVED_ON_READ', route: PROJECT_MANIFEST_ROUTE, workflowCapability: null },
-  // B39 S1/S2: the specialist request envelope. Blueprint, Materials, Budget and Structural run the existing engines and store through their own routes'
-  // tables; Exterior stores a Phase 30 preflight, completed through the existing revision-operation routes. Interior is a typed UNSUPPORTED result until
-  // owner decision D-12. Nothing is stored by the envelope itself (D-8b).
+  // B39: the specialist request envelope. Blueprint, Materials, Budget and Structural run the existing engines and store through their own routes'
+  // tables; Exterior and Interior store a Phase 30 preflight (APPEARANCE_MODIFY; INTERIOR_FINISH_MODIFY, owner decision D-12 and migration 0029),
+  // completed through the existing revision-operation routes. Nothing is stored by the envelope itself (D-8b).
   { serviceId: 'SPECIALISTS', version: SPECIALIST_VERSION, persistence: 'EXISTING_ENGINE_ARTIFACTS', route: SPECIALIST_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 

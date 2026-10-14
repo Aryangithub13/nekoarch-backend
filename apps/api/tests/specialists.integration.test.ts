@@ -19,7 +19,7 @@ import { randomUUID } from 'node:crypto';
 type Json = Record<string, any>;
 const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
 
-describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Budget, Exterior, Structural; Interior refused until D-12)', () => {
+describe('B39 specialist envelope on PostgreSQL (Blueprint, Materials, Budget, Exterior, Structural; Interior in interior.integration.test.ts)', () => {
   let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>, backend: ReturnType<typeof createPgBackend>, ownerId: string, secret: string;
   beforeAll(async () => {
     db = await startTestDatabase();
@@ -102,7 +102,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'SEISMIC', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'MEMBER_DESIGN', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.environmental'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
-      ['INTERIOR', envelope(base, 'modify', ['interior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+      ['INTERIOR', envelope(base, 'modify', ['interior.layout']), 'UNSUPPORTED', 'SCOPE_EXPANSION_REQUIRED'],
     ];
     for (const [module, body, status, code] of cases) {
       const r = await run(p.url(module), body, 200);
@@ -112,10 +112,9 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
     expect((await ok('GET', `/api/projects/${p.projectId}/revision-operations`)).items).toEqual([]);
     expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/structural/analyses`)).items).toEqual([]);
-    // The Interior refusal names the deferred decision and does not pass the advisory concepts off as an implementation.
-    const interior = await run(p.url('INTERIOR'), envelope(base, 'modify', ['interior.materials'], {}), 200);
-    expect(interior.reasons[0]!.message).toMatch(/D-12/);
-    expect(interior.reasons[0]!.message).toMatch(/not an Interior implementation/);
+    // Space planning is not a finish change: the Interior refusal says which specialist expands the scope.
+    const interior = await run(p.url('INTERIOR'), envelope(base, 'modify', ['interior.layout']), 200);
+    expect(interior.reasons[0]!.message).toMatch(/BLUEPRINT/);
     // Validation, ownership and authentication stay HTTP errors.
     expect((await call('POST', p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], {}))).statusCode).toBe(400);
     expect((await call('POST', p.url('STRUCTURAL'), envelope(base, 'recompute', ['engineering.structural'], { input: { version: 'x' } }))).statusCode).toBe(400);
@@ -354,7 +353,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect([r.references, r.budget]).toEqual([[{ referenceId: ref.id, purpose: 'SITE_PHOTO', mediaType: 'image/png', storedSha256: ref.storedSha256, use: 'RECORDED_NOT_CONSUMED' }],
       { ceiling: '0', currency: 'INR', quotedExternalCost: '0', withinCeiling: true }]);
     // Refusals echo them too, and store nothing.
-    const refused = await run(p.url('INTERIOR'), { ...envelope(base, 'modify', ['interior.materials'], {}), referenceIds: [ref.id] }, 200);
+    const refused = await run(p.url('INTERIOR'), { ...envelope(base, 'modify', ['interior.layout']), referenceIds: [ref.id] }, 200);
     expect([refused.status, refused.references.map(x => x.referenceId), refused.budget]).toEqual(['UNSUPPORTED', [ref.id], null]);
     // An unknown, foreign or archived reference is refused before anything runs.
     for (const referenceId of [randomUUID()]) {
@@ -377,7 +376,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     try {
       const post = (module: string, body: Json) => limited.inject({ method: 'POST', url: p.url(module), headers: owner, payload: body });
       // A typed refusal still runs the envelope (ownership, references, manifest reads), so it is charged like any other specialist request.
-      const refused = await post('INTERIOR', envelope(base, 'modify', ['interior.materials']));
+      const refused = await post('INTERIOR', envelope(base, 'modify', ['interior.layout']));
       expect([refused.statusCode, refused.json().status]).toEqual([200, 'UNSUPPORTED']);
       const throttled = await post('MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification() }));
       expect([throttled.statusCode, throttled.json().error.code]).toEqual([429, 'RATE_LIMITED']);

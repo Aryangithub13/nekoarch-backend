@@ -80,7 +80,7 @@ export type AppearanceEvidence = { revisionId: string; appearance: unknown; appe
 /** The parent revision fields lineage and diff read. */
 export type ParentRevision = Pick<z.infer<typeof ProjectRevisionDetailSchema>, 'id' | 'revisionNumber' | 'createdAt' | 'identity' | 'model'>;
 /** Phase 30 lineage read (`revision_operation_read` 'lineage'): the operation that committed this revision, if any. */
-export type OperationLineage = { operation: { id: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | null; baseRevisionId: string; restoreSourceRevisionId: string | null;
+export type OperationLineage = { operation: { id: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | 'INTERIOR_FINISH_MODIFY' | null; baseRevisionId: string; restoreSourceRevisionId: string | null;
   committedRevisionId: string | null } | null; modelEquivalentToBase: boolean | null };
 
 export type ManifestInput = {
@@ -99,7 +99,7 @@ export type ManifestInput = {
   operations: { items: Operation[]; truncated: boolean } | null;
   integrityCheckedAt: string;
 };
-type Operation = { id: string; baseRevisionId: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | null; status: string; candidateHash: string | null; createdAt: string;
+type Operation = { id: string; baseRevisionId: string; kind: 'APPEARANCE_MODIFY' | 'RESTORE' | 'INTERIOR_FINISH_MODIFY' | null; status: string; candidateHash: string | null; createdAt: string;
   expiresAt: string };
 
 // blocked outranks stale outranks pending outranks current: an aggregate never reads better than its worst member.

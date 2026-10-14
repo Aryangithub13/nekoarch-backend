@@ -5,23 +5,25 @@ import { TakeoffOptionsSchema } from '@designflow/quantity-takeoff';
 import { ChangeImpactSchema, FRESHNESS_STATES, MODULES } from './project-manifest.js';
 import { GenerateRevisionRequestSchema } from './projects.js';
 import { ReferenceMediaTypeSchema, ReferencePurposeSchema } from '../references/contracts.js';
-import { ExteriorWallsTargetSchema, FinishSchema, ImpactSchema, LockSchema, PreflightStatusSchema } from '../revision/contracts.js';
+import { ExteriorWallsTargetSchema, FinishSchema, ImpactSchema, InteriorAssignmentsSchema, InteriorPlanSchema, LockSchema, PreflightStatusSchema } from '../revision/contracts.js';
 import { CLAIMS as STRUCTURAL_CLAIMS, MODEL_ASSUMPTIONS } from '../structural/contracts.js';
 
 /**
  * B39 slices S1 and S2: the shared specialist request envelope (ROADMAP L288; contract semantics after §E L509–585), scoped in
  * `docs/phase39/b39-specialist-scope.md`. One envelope over the existing engines, the Phase 30 lifecycle and their stored artifacts: nothing here is a new
  * store (D-8b: results are computed on read), and every status is derived from what the engine, the Phase 30 planner or the B37 manifest reports.
- * S1 runs Blueprint, Materials and Budget; S2 runs Exterior (cladding through Phase 30) and Structural. Interior is a typed refusal until D-12.
+ * S1 runs Blueprint, Materials and Budget; S2 runs Exterior (cladding through Phase 30) and Structural; S3 runs Interior (finish data on V2 spaces through
+ * the Phase 30 INTERIOR_FINISH_MODIFY operation, owner decision D-12 and migration 0029).
  */
 export const SPECIALIST_VERSION = 'specialist-request-v1';
 export const SPECIALIST_ROUTE = '/api/projects/:projectId/specialists/:module/requests';
 export const SPECIALIST_MODULES = ['INTERIOR', 'EXTERIOR', 'BLUEPRINT', 'STRUCTURAL', 'MATERIALS', 'BUDGET'] as const;
 export type SpecialistModule = typeof SPECIALIST_MODULES[number];
-/** Modules each slice executes. Interior answers UNSUPPORTED (scenario 46, L779): its schema work is owner decision D-12, deferred. */
+/** Modules each slice executes. */
 export const S1_MODULES = ['BLUEPRINT', 'MATERIALS', 'BUDGET'] as const satisfies readonly SpecialistModule[];
 export const S2_MODULES = ['EXTERIOR', 'STRUCTURAL'] as const satisfies readonly SpecialistModule[];
-export const SUPPORTED_MODULES = [...S1_MODULES, ...S2_MODULES] as const;
+export const S3_MODULES = ['INTERIOR'] as const satisfies readonly SpecialistModule[];
+export const SUPPORTED_MODULES = [...S1_MODULES, ...S2_MODULES, ...S3_MODULES] as const;
 export type SupportedModule = typeof SUPPORTED_MODULES[number];
 /** §E L515–517, verbatim. */
 export const SPECIALIST_OPERATIONS = ['modify', 'regenerate', 'generate_alternative', 'recompute', 'compare', 'restore'] as const;
@@ -57,12 +59,16 @@ export const MODULE_SCOPES = Object.freeze({
   // A Phase 30 appearance edit changes the visible finish only: model, geometry and every other scope are held by its byte-exact geometry lock.
   EXTERIOR: { operations: ['modify'], targets: ['exterior.facade', 'exterior.materials'], rewrites: ['exterior.facade', 'exterior.materials', 'exterior.render', 'scene3d'] },
   STRUCTURAL: { operations: ['recompute'], targets: ['engineering.structural'], rewrites: ['engineering.structural'] },
+  // Finish data on spaces only; layout and geometry are held by the finish-only lock (0029).
+  INTERIOR: { operations: ['modify'], targets: ['interior.materials'], rewrites: ['interior.materials', 'interior.render'] },
 } as const satisfies Record<SupportedModule, { operations: readonly string[]; targets: readonly ComponentScope[]; rewrites: readonly ComponentScope[] }>);
 /** Exterior targets that would change geometry (massing, glazing area): refused as ENVELOPE_GEOMETRY_REGENERATION with the impacted outputs listed. */
 export const EXTERIOR_GEOMETRY_SCOPES = ['building.geometry', 'building.structure', 'building.floor_plans'] as const satisfies readonly ComponentScope[];
 /** Envelope scopes with a Phase 30 preservation counterpart. The others are held by the appearance edit's model-equivalence and geometry locks. */
 export const PRESERVATION_MAP = Object.freeze({ 'building.geometry': 'BUILDING_GEOMETRY', 'building.floor_plans': 'FLOOR_PLANS', 'building.structure': 'STRUCTURE',
   'interior.layout': 'ROOMS', 'interior.materials': 'INTERIOR' } as const satisfies Partial<Record<ComponentScope, string>>);
+/** Interior targets that are space planning, not finishes (scenario 33): refused as SCOPE_EXPANSION_REQUIRED, pointing to a Blueprint regeneration. */
+export const INTERIOR_PLANNING_SCOPES = ['interior.layout', 'building.floor_plans', 'building.geometry', 'building.structure'] as const satisfies readonly ComponentScope[];
 /** Linear static frame analysis is the only solver (B24). Any other analysis is a validated-solver request and is unsupported (UNSUPPORTED_OPERATIONS). */
 export const STRUCTURAL_ANALYSIS_TYPES = ['LINEAR_STATIC', 'NONLINEAR_STATIC', 'MODAL', 'DYNAMIC', 'SEISMIC', 'WIND', 'MEMBER_DESIGN', 'FOUNDATION'] as const;
 /** Phase 31 references a request may cite (as PR #16): metadata only, never content. */
@@ -104,6 +110,11 @@ export const BudgetConfigSchema = z.object({ takeoffId: id, constructionCalculat
  */
 export const ExteriorConfigSchema = z.object({ appearance: z.object({ target: ExteriorWallsTargetSchema, finish: FinishSchema }).strict().optional() }).strict();
 /**
+ * Interior: finishes for named spaces (the Phase 30 INTERIOR_FINISH_MODIFY shape). `furnishings` is accepted only so that it can be refused by type: no
+ * furnishing data exists on the model.
+ */
+export const InteriorConfigSchema = z.object({ finishes: InteriorAssignmentsSchema, furnishings: z.array(z.unknown()).min(1).max(16).optional() }).strict();
+/**
  * Structural: the analysis asked for, plus the B24 structural input, unchanged. Only LINEAR_STATIC runs; the input is validated against the structural
  * route's own schema only once the analysis is known to be supported, so a validated-solver request is a typed refusal, not a validation error.
  */
@@ -129,6 +140,12 @@ const ExteriorDetails = z.object({ kind: z.literal('EXTERIOR'), preflightStatus:
   next: z.object({ operationHref: z.string(), executeHref: z.string(), comparisonHref: z.string(), approveHref: z.string(), rejectHref: z.string() }).strict(),
   claims: z.object({ physicalGlazing: z.literal('NOT_CLAIMED'), materialPerformance: z.literal('NOT_CLAIMED'), thermal: z.literal('NOT_CLAIMED'),
     photorealism: z.literal('NOT_CLAIMED') }).strict() }).strict();
+const InteriorDetails = z.object({ kind: z.literal('INTERIOR'), preflightStatus: PreflightStatusSchema, operationKind: z.literal('INTERIOR_FINISH_MODIFY'),
+  preflightHash: hash, candidateModelHash: hash, geometryModelHash: hash, spaces: InteriorPlanSchema.shape.spaces,
+  /** The existing Phase 30 routes that complete the lifecycle: consent and execute, compare, then approve or reject. */
+  next: z.object({ operationHref: z.string(), executeHref: z.string(), comparisonHref: z.string(), approveHref: z.string(), rejectHref: z.string() }).strict(),
+  claims: z.object({ productSpecification: z.literal('NOT_CLAIMED'), fireRating: z.literal('NOT_CLAIMED'), acousticPerformance: z.literal('NOT_CLAIMED'),
+    slipResistance: z.literal('NOT_CLAIMED') }).strict() }).strict();
 const StructuralDetails = z.object({ kind: z.literal('STRUCTURAL'), analysisType: z.literal('LINEAR_STATIC'), solver: z.object({ name: text, version: text }).strict(),
   analysisStatus: z.literal('ANALYZED'), validationStatus: z.literal('VALIDATED'),
   counts: z.object({ nodes: z.number().int().nonnegative(), members: z.number().int().nonnegative(), segments: z.number().int().nonnegative(),
@@ -148,7 +165,7 @@ export const SpecialistResultSchema = z.object({
   targetScopes: z.array(scope), preserveScopes: z.array(scope),
   /** true when this request stored something (a revision or an artifact); false for every refusal. */
   written: z.boolean(), replayed: z.boolean(),
-  /** The Phase 30 operation an Exterior request stored (completed through the existing routes); null for every other module. No module runs as a job. */
+  /** The Phase 30 operation an Exterior or Interior request stored (completed through the existing routes); null for every other module. No module runs as a job. */
   operationId: id.nullable(), jobIds: z.array(id).max(0),
   artifacts: z.array(ArtifactReferenceSchema).max(8),
   /** Phase 30 locks and impacts of an Exterior preflight, or the outputs a refused geometry change would invalidate; empty otherwise. */
@@ -156,7 +173,7 @@ export const SpecialistResultSchema = z.object({
   references: z.array(ReferenceUseSchema).max(MAX_REFERENCES),
   /** The execution-cost ceiling, when one was given, against the quote. */
   budget: z.object({ ceiling: amount, currency: CurrencySchema, quotedExternalCost: z.literal('0'), withinCeiling: z.literal(true) }).strict().nullable(),
-  details: z.discriminatedUnion('kind', [BlueprintDetails, MaterialsDetails, BudgetDetails, ExteriorDetails, StructuralDetails, NoDetails]),
+  details: z.discriminatedUnion('kind', [BlueprintDetails, MaterialsDetails, BudgetDetails, ExteriorDetails, StructuralDetails, InteriorDetails, NoDetails]),
   /** Blueprint only: the B37 change since the parent revision, as the manifest reports it. */
   changeImpact: ChangeImpactSchema.nullable(),
   quote: z.object({ execution: z.enum(['LOCAL_DETERMINISTIC', 'NONE']), externalProviders: z.array(z.string()).max(0), externalCostUsd: z.literal(0),

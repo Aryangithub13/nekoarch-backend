@@ -10,6 +10,7 @@ import { MATERIALS } from '../scene3d/contracts.js';
 import { buildIntent, planRevision, type PlanContext } from '../revision/plan.js';
 import { CLAIMS, RevisionComparisonSchema, finishFactors, type Appearance, type PreflightRequest, type RevisionComparison } from '../revision/contracts.js';
 import { AppearancePoolError, AppearanceRefusal, type AppearancePool } from '../revision/pool.js';
+import { applyInteriorFinishes, interiorValidation } from '../revision/interior.js';
 import { assertAccepted } from '../workflows/sources.js';
 import { projectOverview } from './overview-service.js';
 import { signProjectCommit, storedRevisionQaReport } from './project-service.js';
@@ -69,6 +70,14 @@ export async function executeOperation(repository: Repository, pool: () => Appea
     const validation = { status: 'VALID', validatorVersion: 'revision-restore-validator-v1', checks: 2, sourceRevisionId: r.sourceRevisionId, sourceModelHash: r.modelHash, sourceAppearanceHash: r.appearanceHash };
     return transition('candidate', { candidateHash: costHash(validation) });
   }
+  if (op.kind === 'INTERIOR_FINISH_MODIFY') {
+    // B39 Interior (0029): nothing is compiled. The candidate is the base model with the planned finishes; SQL re-derives the validation from stored rows,
+    // checks the model is finish-only and equals the previewed candidate, and refuses anything else.
+    const base = await revision(repository, projectId, op.baseRevisionId);
+    assertAccepted(base);
+    const model = applyInteriorFinishes(base.model, pre.interior!.assignments);
+    return transition('candidate', { model, candidateHash: costHash(interiorValidation(pre.base.modelHash, pre.interior!)) });
+  }
   const base = await revision(repository, projectId, op.baseRevisionId);
   assertAccepted(base);
   const hash = modelHash(base.model);
@@ -99,6 +108,7 @@ export async function approveOperation(repository: Repository, userId: string, p
   if (op.status === 'COMMITTED') throw new ApiError(409, 'REVISION_OPERATION_ALREADY_COMMITTED', 'The operation has already been committed');
   if (op.status !== 'CANDIDATE_READY') throw new ApiError(409, op.status === 'EXPIRED' ? 'REVISION_OPERATION_EXPIRED' : 'REVISION_OPERATION_INVALID_STATE', `The operation is ${op.status}`);
   const src = await revision(repository, projectId, op.kind === 'RESTORE' ? op.restoreSourceRevisionId! : op.baseRevisionId);
+  if (op.kind === 'INTERIOR_FINISH_MODIFY') return approveInterior(repository, key, userId, projectId, op, src, body, context);
   const version = src.generatorVersion, normalized = src.normalizedRequirements ?? null;
   const report = storedRevisionQaReport(src.model, version, normalized);
   if (report.status === 'FAIL') throw new ApiError(422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision');
@@ -112,6 +122,24 @@ export async function approveOperation(repository: Repository, userId: string, p
   const commitSig = signProjectCommit(key, userId, sourceMode === 'generated' ? '/api/projects/:projectId/revisions/generate' : '/api/projects/:projectId/revisions', commit);
   const input = { projectId, operationId, preflightHash: body.preflightHash, candidateHash: body.candidateHash, commit, commitEnvelope: commitSig.envelope, commitSignature: commitSig.signature };
   return revisions.approve(input, signProjectCommit(key, userId, REVISION_OPS.approve, input, context), context);
+}
+
+/**
+ * B39 Interior (0029): commits the previewed finish-only model. QA is re-run on that exact model, and SQL refuses the commit unless it hashes as the
+ * candidate and, without space finishes, as the base. The model is edited, not generated, so it commits as a supplied revision: its generation
+ * identity (requirements hash, seed) no longer describes it.
+ */
+async function approveInterior(repository: Repository, key: string, userId: string, projectId: string, op: OperationDetail, base: Revision,
+  body: { preflightHash: string; candidateHash: string }, context?: IdempotencyContext) {
+  const plan = op.preflight.interior!, model = applyInteriorFinishes(base.model, plan.assignments);
+  if (modelHash(model) !== plan.candidateModelHash) throw new ApiError(409, 'REVISION_CANDIDATE_MISMATCH', 'The base no longer produces the previewed candidate');
+  const report = storedRevisionQaReport(model, base.generatorVersion, base.normalizedRequirements ?? null);
+  if (report.status === 'FAIL') throw new ApiError(422, 'BLUEPRINT_QA_FAILED', 'Independent blueprint QA rejected the revision');
+  const identity = base.identity ? { identityVersion: GENERATION_IDENTITY_VERSION, generationId: null, requirementsHash: null, modelHash: modelHash(model), seed: null } : null;
+  const commit = { projectId, baseRevisionId: op.baseRevisionId, model, report, sourceMode: 'supplied', identity, normalizedRequirements: null, generatorVersion: null };
+  const commitSig = signProjectCommit(key, userId, '/api/projects/:projectId/revisions', commit);
+  const input = { projectId, operationId: op.id, preflightHash: body.preflightHash, candidateHash: body.candidateHash, commit, commitEnvelope: commitSig.envelope, commitSignature: commitSig.signature };
+  return new RevisionRepository(repository).approve(input, signProjectCommit(key, userId, REVISION_OPS.approve, input, context), context);
 }
 
 export async function closeOperation(repository: Repository, userId: string, projectId: string, operationId: string, action: 'reject' | 'cancel', secret?: string, context?: IdempotencyContext) {
@@ -143,6 +171,13 @@ async function comparison(repository: Repository, projectId: string, operationId
       changes: { modelIdentical: r.modelEquivalent, appearanceChanged: r.appearanceHash !== pre.base.appearanceHash,
         bimDiffHref: r.modelEquivalent ? null : `/api/projects/${projectId}/revisions/${op.baseRevisionId}/bim/diff/${r.sourceRevisionId}` },
       warnings: r.modelEquivalent ? [] : ['Restoring replaces the model; geometry-dependent results of the current revision do not apply to the restored revision.'] };
+  }
+  if (op.kind === 'INTERIOR_FINISH_MODIFY') {
+    // A candidate hash exists only after SQL accepted the finish-only candidate (0029), so geometry identity is established, not assumed.
+    if (!op.candidateHash || !pre.interior) return { ...common, candidate: null, changes: null, warnings: [] };
+    return { ...common, candidate: { candidateHash: op.candidateHash, modelHash: pre.interior.candidateModelHash, geometryModelHash: pre.interior.geometryModelHash },
+      changes: { spaces: pre.interior.spaces, geometryIdentical: true, exteriorUnchanged: true },
+      warnings: ['Finish codes record design intent only: no product, supplier, rate, thickness, fire, acoustic, slip or thermal property is asserted.'] };
   }
   if (!op.candidate) return { ...common, candidate: null, changes: null, warnings: [] };
   const { manifest } = await revisions.candidate(projectId, operationId), val = op.validation as { geometryLock?: { baseBinSha256: string; candidateBinSha256: string | null; identical: boolean } } | null;

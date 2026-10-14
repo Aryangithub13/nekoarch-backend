@@ -569,7 +569,8 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       expect(r.statusCode, r.body.slice(0, 400)).toBe(status); return SpecialistResultSchema.parse(r.json());
     };
     // Typed refusals and other principals store nothing.
-    expect(parse(await call(url('INTERIOR'), envelope('modify', ['interior.materials'], {}), owner.headers), 200)).toMatchObject({ status: 'UNSUPPORTED', written: false });
+    expect(parse(await call(url('INTERIOR'), envelope('modify', ['interior.layout'], {}), owner.headers), 200))
+      .toMatchObject({ status: 'UNSUPPORTED', written: false, reasons: [{ code: 'SCOPE_EXPANSION_REQUIRED' }] });
     const matBody = envelope('recompute', ['quantities'], { specification: specification() });
     expect((await call(url('MATERIALS'), matBody, other.headers)).statusCode).toBe(404);
     expect((await call(url('MATERIALS'), matBody, {})).statusCode).toBe(401);
@@ -633,9 +634,39 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect([s.status, s.artifacts.map(a => [a.logicalComponentId, a.freshness])]).toEqual(['REQUIRES_REVIEW', [['STRUCTURAL_ANALYSIS', 'current']]]);
     expect((await owner.client.from('project_revision_structural_analyses').select('id').eq('project_revision_id', revision.id)).data).toEqual([{ id: s.artifacts[0]!.artifactId }]);
     expect((await other.client.from('project_revision_structural_analyses').select('id').eq('project_revision_id', revision.id)).data).toEqual([]);
-    // A validated-solver request and Interior are typed refusals that store nothing.
+    // A validated-solver request is a typed refusal that stores nothing.
     expect(parse(await call(`/api/projects/${st}/specialists/STRUCTURAL/requests`, { ...stBody, outputConfig: { analysisType: 'SEISMIC', input: {} } }, owner.headers), 200))
       .toMatchObject({ status: 'UNSUPPORTED', written: false, reasons: [{ code: 'NO_VALIDATED_SOLVER' }] });
+  }, 180_000);
+
+  it('B39 S3 Interior (0029) through actual JWT and PostgREST: a finish-only operation commits, owner-only, and the committed model differs only in finishes', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'B39 S3 live interior' } });
+    expect(p.statusCode, p.body).toBe(201);
+    const id = p.json().id as string, url = `/api/projects/${id}/specialists/INTERIOR/requests`;
+    const rev = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions`, headers: owner.headers, payload: { model: authored() } });
+    expect(rev.statusCode, rev.body.slice(0, 300)).toBe(201);
+    const base = rev.json().revision;
+    const body = { envelopeVersion: SPECIALIST_VERSION, baseRevisionId: base.id, operation: 'modify', targetScopes: ['interior.materials'], preserveScopes: ['building.structure'],
+      outputConfig: { finishes: [{ spaceId: 'foyer', finishes: { floor: 'stone-tile' } }] } };
+    expect((await app.inject({ method: 'POST', url, headers: other.headers, payload: body })).statusCode).toBe(404);
+    const key = { ...owner.headers, 'idempotency-key': 'b39-live-interior' };
+    const first = await app.inject({ method: 'POST', url, headers: key, payload: body });
+    expect(first.statusCode, first.body.slice(0, 400)).toBe(201);
+    const r = SpecialistResultSchema.parse(first.json());
+    if (r.details.kind !== 'INTERIOR') throw new Error('unreachable');
+    expect((await app.inject({ method: 'POST', url, headers: key, payload: body })).json()).toMatchObject({ replayed: true, operationId: r.operationId });
+    const exec = await app.inject({ method: 'POST', url: r.details.next.executeHref, headers: owner.headers,
+      payload: { preflightHash: r.details.preflightHash, consent: { acceptLocks: true, acceptQuote: true } } });
+    expect(exec.statusCode, exec.body.slice(0, 300)).toBe(200);
+    const approve = await app.inject({ method: 'POST', url: r.details.next.approveHref, headers: owner.headers,
+      payload: { preflightHash: r.details.preflightHash, candidateHash: exec.json().candidateHash } });
+    expect(approve.statusCode, approve.body.slice(0, 300)).toBe(201);
+    const child = approve.json().commit.revision;
+    expect(child.model.spaces.find((s: { id: string }) => s.id === 'foyer').finishes).toEqual({ floor: 'stone-tile' });
+    expect((await owner.client.from('project_revision_operations').select('id,kind,status').eq('project_id', id)).data)
+      .toEqual([{ id: r.operationId, kind: 'INTERIOR_FINISH_MODIFY', status: 'COMMITTED' }]);
+    expect((await other.client.from('project_revision_operations').select('id').eq('project_id', id)).data).toEqual([]);
   }, 180_000);
 
   it('0027/0028 and the B37 manifest through actual JWT and PostgREST: evidence packages and design concepts are owner-only, immutable and unforgeable', async () => {
