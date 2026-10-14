@@ -4,6 +4,9 @@ import { createTestUser, startTestDatabase } from '../../../test-support/postgre
 import { createPgBackend } from '../../../test-support/pg-backend.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
+import { authored } from '../../../packages/blueprint-qa/tests/fixtures.js';
+import { frameInput } from '../../../test-support/structural-fixtures.js';
+import { png } from '../../../test-support/reference-fixtures.js';
 import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
@@ -16,7 +19,7 @@ import { randomUUID } from 'node:crypto';
 type Json = Record<string, any>;
 const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
 
-describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget; typed refusals for the rest)', () => {
+describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Budget, Exterior, Structural; Interior refused until D-12)', () => {
   let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>, backend: ReturnType<typeof createPgBackend>, ownerId: string, secret: string;
   beforeAll(async () => {
     db = await startTestDatabase();
@@ -30,7 +33,7 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
   }, 120_000);
   afterAll(async () => { await app?.close(); await db?.stop(); });
 
-  const call = (method: 'GET' | 'POST', url: string, payload?: unknown, headers: Record<string, string> = owner) =>
+  const call = (method: 'GET' | 'POST' | 'PATCH', url: string, payload?: unknown, headers: Record<string, string> = owner) =>
     app.inject({ method, url, headers, ...(payload === undefined ? {} : { payload: payload as Json }) });
   const ok = async (method: 'GET' | 'POST', url: string, payload?: unknown, status = method === 'POST' ? 201 : 200) => {
     const r = await call(method, url, payload);
@@ -81,7 +84,7 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
     expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);
   }, 300_000);
 
-  it('scenario 46 and locks: limits, foreign scopes, preservation conflicts and unimplemented modules are typed refusals that store nothing', async () => {
+  it('scenario 46 and locks: limits, foreign scopes, preservation conflicts, geometry, validated solvers and Interior are typed refusals that store nothing', async () => {
     const p = await project('B39 refusals'), base = p.revision.id;
     const cases: [string, Json, string, string][] = [
       ['BLUEPRINT', envelope(base, 'regenerate', ['building.floor_plans'], { requirements: { ...parametricInput(true), floors: 3 } }), 'UNSUPPORTED', 'FLOOR_LIMIT_EXCEEDED'],
@@ -92,8 +95,13 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
       ['MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification(), substitutions: [{ from: 'CEMENT', to: 'FLY_ASH' }] }), 'UNSUPPORTED',
         'SUBSTITUTION_PROVENANCE_UNAVAILABLE'],
       ['BUDGET', envelope(base, 'recompute', ['quantities'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
-      ['EXTERIOR', envelope(base, 'modify', ['exterior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
-      ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+      ['EXTERIOR', envelope(base, 'modify', ['exterior.facade', 'building.geometry'], {}), 'UNSUPPORTED', 'ENVELOPE_GEOMETRY_REGENERATION'],
+      ['EXTERIOR', envelope(base, 'restore', ['exterior.facade'], {}), 'UNSUPPORTED', 'OPERATION_NOT_SUPPORTED'],
+      ['EXTERIOR', envelope(base, 'modify', ['exterior.materials'], {}, ['exterior.materials']), 'BLOCKED_BY_LOCK', 'PRESERVATION_CONFLICT'],
+      ['EXTERIOR', envelope(base, 'modify', ['exterior.materials'], {}, ['scene3d']), 'BLOCKED_BY_LOCK', 'PRESERVATION_CONFLICT'],
+      ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'SEISMIC', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
+      ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'MEMBER_DESIGN', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
+      ['STRUCTURAL', envelope(base, 'recompute', ['engineering.environmental'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
       ['INTERIOR', envelope(base, 'modify', ['interior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
     ];
     for (const [module, body, status, code] of cases) {
@@ -102,7 +110,15 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
     }
     expect(await revisionCount(p.projectId)).toBe(1);
     expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revision-operations`)).items).toEqual([]);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/structural/analyses`)).items).toEqual([]);
+    // The Interior refusal names the deferred decision and does not pass the advisory concepts off as an implementation.
+    const interior = await run(p.url('INTERIOR'), envelope(base, 'modify', ['interior.materials'], {}), 200);
+    expect(interior.reasons[0]!.message).toMatch(/D-12/);
+    expect(interior.reasons[0]!.message).toMatch(/not an Interior implementation/);
     // Validation, ownership and authentication stay HTTP errors.
+    expect((await call('POST', p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], {}))).statusCode).toBe(400);
+    expect((await call('POST', p.url('STRUCTURAL'), envelope(base, 'recompute', ['engineering.structural'], { input: { version: 'x' } }))).statusCode).toBe(400);
     for (const bad of [{ ...envelope(base, 'recompute', ['quantities']), envelopeVersion: 'v0' }, { ...envelope(base, 'recompute', ['quantities']), extra: 1 },
       envelope(base, 'recompute', ['quantities', 'quantities']), envelope(base, 'recompute', [])])
       expect((await call('POST', p.url('MATERIALS'), bad)).statusCode, JSON.stringify(bad).slice(0, 120)).toBe(400);
@@ -238,5 +254,114 @@ describe('B39 S1 specialist envelope on PostgreSQL (Blueprint, Materials, Budget
     const again = await run(p.url('MATERIALS'), envelope(p.revision.id, 'recompute', ['quantities'], { specification: specification() }), 201);
     expect([again.artifacts.map(a => a.artifactId), again.artifacts.map(a => a.freshness)]).toEqual([r.artifacts.map(a => a.artifactId), ['current', 'current']]);
   }, 180_000);
+
+  it('scenario 34 and 42: an Exterior cladding change is a Phase 30 preflight with the plan and structure locks; the existing routes complete it, geometry untouched', async () => {
+    const p = await project('B39 exterior'), base = p.revision.id, key = { ...owner, 'idempotency-key': 'ext-1' };
+    const appearance = { target: { kind: 'EXTERIOR_WALLS', facades: ['NORTH', 'EAST', 'SOUTH', 'WEST'] }, finish: { presetId: 'warm-render' } };
+    const body = envelope(base, 'modify', ['exterior.facade', 'exterior.materials'], { appearance }, ['building.structure', 'building.floor_plans', 'quantities']);
+    const r = await run(p.url('EXTERIOR'), body, 201, key);
+    if (r.details.kind !== 'EXTERIOR') throw new Error('unreachable');
+    expect(r).toMatchObject({ module: 'EXTERIOR', status: 'AWAITING_CONSENT', written: true, replayed: false, resultRevisionId: null, jobIds: [], artifacts: [],
+      quote: { externalCostUsd: 0, externalProviders: [] }, details: { preflightStatus: 'AWAITING_CONSENT', operationKind: 'APPEARANCE_MODIFY',
+        claims: { physicalGlazing: 'NOT_CLAIMED', materialPerformance: 'NOT_CLAIMED', thermal: 'NOT_CLAIMED', photorealism: 'NOT_CLAIMED' } } });
+    expect(r.reasons.map(x => x.code)).toEqual(['CONSENT_REQUIRED', 'DOWNSTREAM_REGENERATION']);
+    // The envelope's locks are the Phase 30 user locks; quantities have no Phase 30 counterpart and are held by the geometry lock.
+    const userLocks = r.locks.filter(l => l.origin === 'USER').map(l => l.scope).sort();
+    expect(userLocks).toEqual(['FLOOR_PLANS', 'STRUCTURE']);
+    expect(r.locks.some(l => l.origin === 'SYSTEM' && l.granularity === 'EXACT_BYTES')).toBe(true);
+    const op = await ok('GET', r.details.next.operationHref);
+    expect([op.id, op.status, op.kind, op.preflightHash]).toEqual([r.operationId, 'AWAITING_CONSENT', 'APPEARANCE_MODIFY', r.details.preflightHash]);
+    // A keyed retry replays the same preflight; nothing else is stored.
+    const again = await run(p.url('EXTERIOR'), body, 200, key);
+    expect([again.replayed, again.operationId]).toEqual([true, r.operationId]);
+    expect((await ok('GET', `/api/projects/${p.projectId}/revision-operations`)).items).toHaveLength(1);
+    // The existing Phase 30 routes complete it: consent and execute, compare (geometry and model identical), approve.
+    const cand = await ok('POST', r.details.next.executeHref, { preflightHash: r.details.preflightHash, consent: { acceptLocks: true, acceptQuote: true } }, 200);
+    const cmp = await ok('GET', r.details.next.comparisonHref);
+    expect(cmp.hashes).toMatchObject({ modelIdentical: true, geometryIdentical: true });
+    const child = (await ok('POST', r.details.next.approveHref, { preflightHash: r.details.preflightHash, candidateHash: cand.candidateHash })).commit.revision as Json;
+    const m = await manifest(p.projectId, child.id);
+    expect(m.identity.modelHash).toBe((await manifest(p.projectId, base)).identity.modelHash);
+    expect(m.modules.find(x => x.module === 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current' } });
+    expect(m.lineage.operation).toMatchObject({ status: 'RECORDED', operationId: r.operationId, kind: 'APPEARANCE_MODIFY' });
+    // The superseded base is now a stale dependency for the next Exterior request.
+    const stale = await run(p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], { appearance }), 200);
+    expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);
+  }, 300_000);
+
+  it('Exterior natural language goes through the Phase 30 planner: a supported finish is a preflight; glazing geometry and interior finishes are typed refusals', async () => {
+    const p = await project('B39 exterior text'), base = p.revision.id;
+    const text = 'Redesign the exterior of my building using a contemporary glass-inspired façade. Keep the exact floor plans, internal rooms, stairs, structure, '
+      + 'building dimensions, and existing interior unchanged.';
+    const glazing = await run(p.url('EXTERIOR'), { ...envelope(base, 'modify', ['exterior.facade'], {}),
+      instruction: 'Make the windows larger and increase the glazing area on the south facade.' }, 200);
+    expect([glazing.status, glazing.written, glazing.operationId]).toEqual(['UNSUPPORTED', false, null]);
+    expect(glazing.reasons.map(x => x.code)).toContain('GEOMETRY_MODIFICATION_NOT_SUPPORTED');
+    expect(glazing.impacts.length).toBeGreaterThan(0);
+    const interior = await run(p.url('EXTERIOR'), { ...envelope(base, 'modify', ['exterior.facade'], {}), instruction: 'Paint the interior walls white.' }, 200);
+    expect([interior.status, interior.reasons[0]!.code, interior.written]).toEqual(['UNSUPPORTED', 'INTERIOR_FINISH_NOT_SUPPORTED', false]);
+    const restore = await run(p.url('EXTERIOR'), { ...envelope(base, 'modify', ['exterior.facade'], {}), instruction: 'Restore revision 1' }, 200);
+    expect([restore.status, restore.reasons[0]!.code, restore.written]).toEqual(['UNSUPPORTED', 'OPERATION_NOT_SUPPORTED', false]);
+    // A structured change the planner cannot place (an unknown level) is a clarification, planned read only.
+    const unknownLevel = await run(p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], { appearance: {
+      target: { kind: 'EXTERIOR_WALLS', facades: ['NORTH'], levelIds: ['no-such-level'] }, finish: { presetId: 'light-stone' } } }), 200);
+    expect([unknownLevel.status, unknownLevel.reasons[0]!.code, unknownLevel.written, unknownLevel.operationId]).toEqual(['NEEDS_CLARIFICATION', 'UNKNOWN_LEVEL', false, null]);
+    // No refusal or clarification stored an operation.
+    expect((await ok('GET', `/api/projects/${p.projectId}/revision-operations`)).items).toEqual([]);
+    const r = await run(p.url('EXTERIOR'), { ...envelope(base, 'modify', ['exterior.facade'], {}, ['interior.layout']), instruction: text }, 201);
+    expect([r.status, r.written, r.details.kind]).toEqual(['AWAITING_CONSENT', true, 'EXTERIOR']);
+    // The planner's preservation phrases and the envelope's lock both reach the stored operation.
+    expect(r.locks.filter(l => l.origin === 'USER').map(l => l.scope)).toEqual(expect.arrayContaining(['FLOOR_PLANS', 'STRUCTURE', 'ROOMS']));
+  }, 300_000);
+
+  it('scenario 36: Structural runs the bounded linear static frame analysis, always REQUIRES_REVIEW, never certified; the analysis is in the manifest', async () => {
+    const projectId = (await ok('POST', '/api/projects', { title: 'B39 structural' })).id as string;
+    const revision = (await ok('POST', `/api/projects/${projectId}/revisions`, { model: authored() })).revision as Json;
+    const url = `/api/projects/${projectId}/specialists/STRUCTURAL/requests`, key = { ...owner, 'idempotency-key': 'st-1' };
+    const body = envelope(revision.id, 'recompute', ['engineering.structural'], { input: frameInput(revision.model) }, ['building.geometry', 'quantities']);
+    const r = await run(url, body, 201, key);
+    if (r.details.kind !== 'STRUCTURAL') throw new Error('unreachable');
+    expect(r).toMatchObject({ module: 'STRUCTURAL', status: 'REQUIRES_REVIEW', written: true, operationId: null, jobIds: [],
+      details: { analysisType: 'LINEAR_STATIC', analysisStatus: 'ANALYZED', validationStatus: 'VALIDATED',
+        engineClaims: { designVerification: 'NOT_EVALUATED', codeCompliance: 'NOT_CLAIMED', certification: 'NOT_CLAIMED', constructionSuitability: 'NOT_CLAIMED' } },
+      claims: { engineeringCorrectness: 'NOT_CLAIMED', solverValidation: 'NOT_CLAIMED', professionalReview: 'NOT_CLAIMED' } });
+    expect(r.reasons.map(x => x.code)).toEqual(['PROFESSIONAL_REVIEW_REQUIRED']);
+    expect(r.details.assumptions.length).toBeGreaterThan(0);
+    expect(r.artifacts).toEqual([expect.objectContaining({ logicalComponentId: 'STRUCTURAL_ANALYSIS', sourceRevisionId: revision.id, freshness: 'current' })]);
+    // The artifact is the stored analysis, with the hashes its own route reports, and it is in the same revision's manifest (gate L297).
+    const stored = await ok('GET', `/api/projects/${projectId}/revisions/${revision.id}/structural/analyses/${r.artifacts[0]!.artifactId}`);
+    expect([stored.inputHash, stored.analysisVersion]).toEqual([r.artifacts[0]!.inputHash, r.artifacts[0]!.producerVersion]);
+    const m = await manifest(projectId, revision.id);
+    expect(m.modules.find(x => x.module === 'STRUCTURAL_ANALYSIS')!.artifacts!.map(a => a.artifactId)).toContain(r.artifacts[0]!.artifactId);
+    const again = await run(url, body, 200, key);
+    expect([again.replayed, again.artifacts[0]!.artifactId]).toEqual([true, r.artifacts[0]!.artifactId]);
+    expect((await ok('GET', `/api/projects/${projectId}/revisions/${revision.id}/structural/analyses`)).items).toHaveLength(1);
+  }, 300_000);
+
+  it('references and an execution-cost ceiling (ROADMAP L288): active references are recorded, not consumed; anything else is refused before running', async () => {
+    const p = await project('B39 references'), base = p.revision.id, root = `/api/projects/${p.projectId}/references`;
+    const up = await app.inject({ method: 'POST', url: `${root}?purpose=SITE_PHOTO`, headers: { ...owner, 'content-type': 'image/png' }, payload: png({ text: true }) });
+    expect(up.statusCode, up.body.slice(0, 300)).toBe(201);
+    const ref = up.json() as Json;
+    const body = { ...envelope(base, 'recompute', ['quantities'], { specification: specification() }), referenceIds: [ref.id], budget: { ceiling: '0', currency: 'INR' } };
+    const r = await run(p.url('MATERIALS'), body, 201);
+    expect([r.references, r.budget]).toEqual([[{ referenceId: ref.id, purpose: 'SITE_PHOTO', mediaType: 'image/png', storedSha256: ref.storedSha256, use: 'RECORDED_NOT_CONSUMED' }],
+      { ceiling: '0', currency: 'INR', quotedExternalCost: '0', withinCeiling: true }]);
+    // Refusals echo them too, and store nothing.
+    const refused = await run(p.url('INTERIOR'), { ...envelope(base, 'modify', ['interior.materials'], {}), referenceIds: [ref.id] }, 200);
+    expect([refused.status, refused.references.map(x => x.referenceId), refused.budget]).toEqual(['UNSUPPORTED', [ref.id], null]);
+    // An unknown, foreign or archived reference is refused before anything runs.
+    for (const referenceId of [randomUUID()]) {
+      const bad = await call('POST', p.url('MATERIALS'), { ...body, referenceIds: [referenceId] });
+      expect([bad.statusCode, bad.json().error.code]).toEqual([422, 'SPECIALIST_REFERENCE_INVALID']);
+    }
+    const q = await project('B39 foreign reference');
+    const foreign = await call('POST', q.url('MATERIALS'), { ...envelope(q.revision.id, 'recompute', ['quantities'], { specification: specification() }), referenceIds: [ref.id] });
+    expect([foreign.statusCode, foreign.json().error.code]).toEqual([422, 'SPECIALIST_REFERENCE_INVALID']);
+    expect((await call('PATCH', `${root}/${ref.id}`, { status: 'ARCHIVED' })).statusCode).toBe(200);
+    const archived = await call('POST', p.url('MATERIALS'), body);
+    expect([archived.statusCode, archived.json().error.code]).toEqual([422, 'SPECIALIST_REFERENCE_INVALID']);
+    expect((await ok('GET', `/api/projects/${q.projectId}/revisions/${q.revision.id}/takeoffs`)).items).toEqual([]);
+  }, 300_000);
 });
 

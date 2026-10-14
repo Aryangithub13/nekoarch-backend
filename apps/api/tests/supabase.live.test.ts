@@ -17,7 +17,8 @@ import { costAcceptance,costSetup } from '../../../test-support/cost-acceptance.
 import { constructionAcceptance } from '../../../test-support/construction-acceptance.js';
 import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
 import { projectAcceptance } from '../../../test-support/project-acceptance.js';
-import { requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
+import { authored, requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
+import { frameInput } from '../../../test-support/structural-fixtures.js';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
@@ -568,7 +569,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       expect(r.statusCode, r.body.slice(0, 400)).toBe(status); return SpecialistResultSchema.parse(r.json());
     };
     // Typed refusals and other principals store nothing.
-    expect(parse(await call(url('EXTERIOR'), envelope('modify', ['exterior.materials'], {}), owner.headers), 200)).toMatchObject({ status: 'UNSUPPORTED', written: false });
+    expect(parse(await call(url('INTERIOR'), envelope('modify', ['interior.materials'], {}), owner.headers), 200)).toMatchObject({ status: 'UNSUPPORTED', written: false });
     const matBody = envelope('recompute', ['quantities'], { specification: specification() });
     expect((await call(url('MATERIALS'), matBody, other.headers)).statusCode).toBe(404);
     expect((await call(url('MATERIALS'), matBody, {})).statusCode).toBe(401);
@@ -598,6 +599,44 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect(parse(await call(url('MATERIALS'), matBody, owner.headers), 200)).toMatchObject({ status: 'STALE_DEPENDENCY', written: false,
       reasons: [{ code: 'BASE_REVISION_SUPERSEDED' }] });
   }, 120_000);
+
+  it('B39 S2 specialist envelope through actual JWT and PostgREST: an Exterior preflight and a Structural analysis are owner-only rows of their own engines', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const call = (url: string, payload: Record<string, unknown>, headers: Record<string, string>) => app!.inject({ method: 'POST', url, headers, payload });
+    const parse = (r: { statusCode: number; body: string; json(): unknown }, status: number) => {
+      expect(r.statusCode, r.body.slice(0, 400)).toBe(status); return SpecialistResultSchema.parse(r.json());
+    };
+    const project = async (title: string) => {
+      const p = await app!.inject({ method: 'POST', url: '/api/projects', headers: owner!.headers, payload: { title } });
+      expect(p.statusCode, p.body).toBe(201); return p.json().id as string;
+    };
+    // Exterior: a Phase 30 preflight with the envelope's structure lock; the row is the Phase 30 operation, owner-only through RLS.
+    const ext = await project('B39 S2 live exterior');
+    const gen = await app.inject({ method: 'POST', url: `/api/projects/${ext}/revisions/generate`, headers: owner.headers, payload: { requirements: parametricInput(true) } });
+    expect(gen.statusCode, gen.body.slice(0, 300)).toBe(201);
+    const extBody = { envelopeVersion: SPECIALIST_VERSION, baseRevisionId: gen.json().revision.id, operation: 'modify', targetScopes: ['exterior.facade'],
+      preserveScopes: ['building.structure'], outputConfig: { appearance: { target: { kind: 'EXTERIOR_WALLS', facades: ['SOUTH'] }, finish: { presetId: 'light-stone' } } } };
+    expect((await call(`/api/projects/${ext}/specialists/EXTERIOR/requests`, extBody, other.headers)).statusCode).toBe(404);
+    const key = { ...owner.headers, 'idempotency-key': 'b39-live-exterior' };
+    const r = parse(await call(`/api/projects/${ext}/specialists/EXTERIOR/requests`, extBody, key), 201);
+    expect([r.status, r.written, r.locks.filter(l => l.origin === 'USER').map(l => l.scope)]).toEqual(['AWAITING_CONSENT', true, ['STRUCTURE']]);
+    expect(parse(await call(`/api/projects/${ext}/specialists/EXTERIOR/requests`, extBody, key), 200)).toMatchObject({ replayed: true, operationId: r.operationId });
+    expect((await owner.client.from('project_revision_operations').select('id,status').eq('project_id', ext)).data).toEqual([{ id: r.operationId, status: 'AWAITING_CONSENT' }]);
+    expect((await other.client.from('project_revision_operations').select('id').eq('project_id', ext)).data).toEqual([]);
+    // Structural: the bounded linear static analysis, always REQUIRES_REVIEW; the row is the structural engine's, owner-only through RLS.
+    const st = await project('B39 S2 live structural');
+    const rev = await app.inject({ method: 'POST', url: `/api/projects/${st}/revisions`, headers: owner.headers, payload: { model: authored() } });
+    expect(rev.statusCode, rev.body.slice(0, 300)).toBe(201); const revision = rev.json().revision;
+    const stBody = { envelopeVersion: SPECIALIST_VERSION, baseRevisionId: revision.id, operation: 'recompute', targetScopes: ['engineering.structural'],
+      outputConfig: { input: frameInput(revision.model) } };
+    const s = parse(await call(`/api/projects/${st}/specialists/STRUCTURAL/requests`, stBody, owner.headers), 201);
+    expect([s.status, s.artifacts.map(a => [a.logicalComponentId, a.freshness])]).toEqual(['REQUIRES_REVIEW', [['STRUCTURAL_ANALYSIS', 'current']]]);
+    expect((await owner.client.from('project_revision_structural_analyses').select('id').eq('project_revision_id', revision.id)).data).toEqual([{ id: s.artifacts[0]!.artifactId }]);
+    expect((await other.client.from('project_revision_structural_analyses').select('id').eq('project_revision_id', revision.id)).data).toEqual([]);
+    // A validated-solver request and Interior are typed refusals that store nothing.
+    expect(parse(await call(`/api/projects/${st}/specialists/STRUCTURAL/requests`, { ...stBody, outputConfig: { analysisType: 'SEISMIC', input: {} } }, owner.headers), 200))
+      .toMatchObject({ status: 'UNSUPPORTED', written: false, reasons: [{ code: 'NO_VALIDATED_SOLVER' }] });
+  }, 180_000);
 
   it('0027/0028 and the B37 manifest through actual JWT and PostgREST: evidence packages and design concepts are owner-only, immutable and unforgeable', async () => {
     if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
