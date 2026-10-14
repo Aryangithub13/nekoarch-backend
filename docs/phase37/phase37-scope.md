@@ -189,7 +189,8 @@ Further rules:
 | Nodes, revision and QA included | 128 | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (field `limit: NODES`) |
 | Per-family page | 20; a non-null `nextCursor` means the family could not be listed completely | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: FAMILY_PAGE`) |
 | Dependency depth (longest chain) | 8 (the real maximum is 5) | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: DEPTH`) |
-| Wall time | 5,000 ms, checked after each read phase and after evaluation. A single slow read is not interrupted; the overrun is reported when it returns. | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: TIME`) |
+| Wall time | 5,000 ms, checked after each read phase, before each per-artifact read starts, and after evaluation. A single slow read is not interrupted; the overrun is reported when it returns. | 422 `DEPENDENCY_GRAPH_LIMIT_EXCEEDED` (`limit: TIME`) |
+| Per-artifact reads in flight | At most 8 (`READ_CONCURRENCY`, `apps/api/src/lib/bounded-reads.ts`): construction listings and every takeoff, construction, cost and analysis detail read share one pool per phase. Ported from `0bf1c89` (`phase37/read-cap`) in the B37 completion slice | Not a refusal: the reads queue. Without the pool one request could start about 150 reads at once |
 | Cycles | Detected before evaluation (cannot occur under the stored foreign keys; checked anyway) | 422 `DEPENDENCY_GRAPH_CYCLE` |
 | Read consistency | Within each listing round, the `projectCurrentRevisionId` values of the six analysis listings must agree. After the detail reads, everything is listed a second time, and the second round's artifact ids and current revision must equal the first round's. | 409 `DEPENDENCY_GRAPH_READ_INCONSISTENT` (retryable) |
 

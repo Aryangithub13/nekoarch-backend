@@ -536,6 +536,11 @@
  },
  {
   "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/manifest",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/optimization/status",
   "anonymous": 401
  },

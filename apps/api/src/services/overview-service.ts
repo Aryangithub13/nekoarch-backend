@@ -51,6 +51,7 @@ import { DOCUMENTS_ROOT } from './documents-service.js';
 import { EVIDENCE_ROOT } from './evidence-service.js';
 import { DESIGN_CONCEPT_VERSION } from '../contracts/design-concepts.js';
 import { DESIGN_ROOT } from './design-concept-service.js';
+import { PROJECT_MANIFEST_ROUTE, PROJECT_MANIFEST_VERSION } from '../contracts/project-manifest.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -99,6 +100,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'EVIDENCE_PACKAGES', version: EVIDENCE_PACKAGE_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: EVIDENCE_ROOT, workflowCapability: null },
   // Phase 39: advisory interior/exterior concepts (1-3 alternatives) from a configured provider or deterministic templates; never geometry, a render or an engineering result.
   { serviceId: 'DESIGN_CONCEPTS', version: DESIGN_CONCEPT_VERSION, persistence: 'ADVISORY_ARTIFACT', route: DESIGN_ROOT, workflowCapability: null },
+  // B37 completion: Unified Project Manifest v2 (identity, canonical frame, modules, per-discipline freshness in the roadmap vocabulary). Provenance, never correctness.
+  { serviceId: 'PROJECT_MANIFEST', version: PROJECT_MANIFEST_VERSION, persistence: 'DERIVED_ON_READ', route: PROJECT_MANIFEST_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

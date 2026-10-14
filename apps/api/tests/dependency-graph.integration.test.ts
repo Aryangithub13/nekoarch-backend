@@ -192,6 +192,43 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     expect(tampered[`ENVIRONMENTAL_ANALYSIS:${E.id}`]!.state).toBe('CURRENT');
   }, 300_000);
 
+  it('bounded reads: every per-artifact read path shares one pool of at most 8 (1 when narrowed), with the same graph and error contract', async () => {
+    const repo = backend.repository('owner');
+    // Count every list and detail RPC of the nine artifact families; a listing carries p_limit, a detail read does not.
+    const families = ['takeoffRpc', 'constructionRpc', 'costRpc', 'structuralRpc', 'environmentalRpc', 'systemsRpc', 'knowledgeRpc', 'optimizationRpc', 'sceneRpc'] as const;
+    const watch = (fail?: { rpc: typeof families[number] }) => {
+      const stats = { details: 0, detailPeak: 0, inFlight: 0, peak: 0, detailInFlight: 0 };
+      const wrapped: Repository = { ...repo };
+      for (const key of families) {
+        const call = repo[key]! as (name: never, args: Record<string, unknown>) => Promise<unknown>;
+        (wrapped as unknown as Record<string, unknown>)[key] = async (name: never, args: Record<string, unknown>) => {
+          const isDetail = !('p_limit' in args);
+          stats.inFlight++; stats.peak = Math.max(stats.peak, stats.inFlight);
+          if (isDetail) { stats.details++; stats.detailInFlight++; stats.detailPeak = Math.max(stats.detailPeak, stats.detailInFlight); }
+          try {
+            await new Promise(r => setTimeout(r, 5)); // hold each call open so concurrent calls overlap
+            if (isDetail && fail?.rpc === key) throw new ApiError(404, 'COST_ESTIMATE_NOT_FOUND', 'Resource not found');
+            return await call(name, args);
+          } finally { stats.inFlight--; if (isDetail) stats.detailInFlight--; }
+        };
+      }
+      return { wrapped, stats };
+    };
+    // The base suite's chain: one takeoff, one construction, two costs and one structural analysis = 5 detail reads.
+    const reference = await dependencyGraph(repo, a.projectId, a.revision.id);
+    const narrow = watch();
+    expect(await dependencyGraph(narrow.wrapped, a.projectId, a.revision.id, { readConcurrency: 1 })).toEqual(reference);
+    // One shared pool: with width 1 no two detail reads overlap, across all nine families (separate pools would overlap).
+    expect([narrow.stats.details, narrow.stats.detailPeak]).toEqual([5, 1]);
+    const wide = watch();
+    expect(await dependencyGraph(wide.wrapped, a.projectId, a.revision.id)).toEqual(reference);
+    expect(wide.stats.details).toBe(5);
+    expect(wide.stats.detailPeak).toBe(5); // fewer reads than the ceiling all run together
+    expect(wide.stats.peak).toBeLessThanOrEqual(8); // the eight family lists, then construction lists and details, never above 8
+    // A failed detail read keeps the existing contract: its ApiError is the result, no partial graph.
+    expect(await refusal(dependencyGraph(watch({ rpc: 'costRpc' }).wrapped, a.projectId, a.revision.id))).toEqual([404, 'COST_ESTIMATE_NOT_FOUND', null]);
+  }, 120_000);
+
   it('an artifact or revision committed between the first and second listing round is a 409, never a graph that mixes two states', async () => {
     const repo = backend.repository('owner');
     // Hide the newest cost on the first listing only: the second round sees it, as if it had been committed during the read.
@@ -215,5 +252,27 @@ describe('Phase 37 dependency graph on PostgreSQL', () => {
     expect(await refusal(dependencyGraph(moved, a.projectId, a.revision.id))).toEqual([409, 'DEPENDENCY_GRAPH_READ_INCONSISTENT', null]);
     // Unchanged state reads cleanly through the same two rounds.
     expect((await dependencyGraph(repo, a.projectId, a.revision.id)).complete).toBe(true);
+  }, 120_000);
+
+  it('M6: per-artifact detail reads run with a bounded number in flight, and the graph is identical to an unbounded read', async () => {
+    const repo = backend.repository('owner');
+    const reference = await dependencyGraph(repo, a.projectId, a.revision.id, { readConcurrency: 1000 });
+    for (const width of [1, 3]) {
+      let inFlight = 0, peak = 0, reads = 0;
+      // Detail reads carry no page limit; listings (bounded and fixed per round) do.
+      const watch = (rpc: (name: never, args: Record<string, unknown>) => Promise<unknown>) => (async (name: never, args: Record<string, unknown>) => {
+        if ('p_limit' in args) return rpc(name, args);
+        inFlight++; reads++; peak = Math.max(peak, inFlight);
+        try { return await rpc(name, args); } finally { inFlight--; }
+      }) as never;
+      const watched: Repository = { ...repo, takeoffRpc: watch(repo.takeoffRpc!), constructionRpc: watch(repo.constructionRpc!), costRpc: watch(repo.costRpc!),
+        structuralRpc: watch(repo.structuralRpc!), environmentalRpc: watch(repo.environmentalRpc!), systemsRpc: watch(repo.systemsRpc!),
+        knowledgeRpc: watch(repo.knowledgeRpc!), optimizationRpc: watch(repo.optimizationRpc!), sceneRpc: watch(repo.sceneRpc!) };
+      expect(await dependencyGraph(watched, a.projectId, a.revision.id, { readConcurrency: width })).toEqual(reference);
+      // One detail read per non-revision node, never more than `width` at once.
+      expect(reads).toBe(reference.nodes.filter(n => !['REVISION', 'ACCEPTANCE_QA'].includes(n.family)).length);
+      expect(reads).toBeGreaterThan(width);
+      expect(peak).toBe(width);
+    }
   }, 120_000);
 });
