@@ -18,9 +18,15 @@ The owner confirmed these explicitly on 2026-10-14:
 | D-6 | Reuse | The PR #16 design-concept routes stay an advisory sub-output; S1 does not touch them |
 | D-7 | Defer | No discovery clarification |
 
-**Still open (no decision on record):**
-- **D-8b (derived vs durable results).** S1 keeps the option that needs no migration and no authorization, described below. Storage semantics will not change without a decision.
-- **D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).** It is only *proposed* in the B39 scope (§4 row 6, §6). Nothing in the repository implements or approves it, and S2 does not depend on it. Interior stays a typed `UNSUPPORTED` until D-9b is decided.
+**Recorded elsewhere; not confirmed in this session:**
+- **D-8b (derived vs durable results).**
+  - The B39 scope on PR #20 (`1d8f01e`, committed by another session on 2026-10-14) records "specialist results are computed on read for S1 and S2" as an owner decision.
+  - This session has not received that decision from the owner, so it is listed here as recorded in the scope, pending the owner's confirmation.
+  - S1 already implements exactly that option, described below. It needs no migration, and storage semantics will not change without a decision.
+- **D-12, formerly D-9b (the interior schema work: a new revision-operation kind and V2 space finish fields).**
+  - **Pending** in the same scope revision.
+  - Nothing in the repository implements or approves it, and S2 does not depend on it.
+  - Interior stays a typed `UNSUPPORTED` until D-12 is decided.
 
 **D-8b as built.** S1 takes the option that needs no migration and no authorization:
 - results are **derived**, not stored as envelopes;
@@ -136,8 +142,8 @@ The owner confirmed these explicitly on 2026-10-14:
 ## 4. Not in S1
 
 - **S2:** Exterior (cladding through Phase 30) and Structural.
-- **S3:** Interior, which needs owner-approved schema work (D-9b).
-- Durable envelope storage, if the owner chooses it (D-8b).
+- **S3:** Interior, which needs owner-approved schema work (D-12, formerly D-9b; pending).
+- Durable envelope storage. The scope records D-8b as "computed on read"; durable storage would need a new decision and a migration.
 - Regional or sourced rate books, and substitution provenance.
 - No migration. No hosted, staging, merge or tag action.
 

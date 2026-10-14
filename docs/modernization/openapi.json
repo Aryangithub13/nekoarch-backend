@@ -67901,7 +67901,8 @@
                 "VERIFIED_WITH_WARNINGS",
                 "PARTIAL",
                 "FAILED"
-               ]
+               ],
+               "nullable": true
               },
               "renderJobs": {
                "type": "number",
