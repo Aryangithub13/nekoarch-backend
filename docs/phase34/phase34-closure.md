@@ -3,7 +3,7 @@
 **Date:** 2026-10-15.
 **Pull request:** #27 (`phase34/diff-integrity` → `phase31/development`).
 **Acceptance matrix:** [`phase34-acceptance.md`](phase34-acceptance.md).
-**State:** repair complete. **Closure pending the owner's decisions in §3.** Nothing here merges, tags, migrates or touches a hosted system.
+**State:** repair complete. **B34 is not accepted or closed.** Closure is pending the steps in §4 (the owner's decisions are recorded in §6) and the gates in §5. Nothing here merges, tags, migrates or touches a hosted system.
 
 ## 1. Completed repair work
 
@@ -36,13 +36,34 @@
 
 Not verified in this pass: a live real-JWT Supabase run of the B34 routes. They are covered by embedded-PostgreSQL tests only.
 
-## 3. Steps to close B34
+## 3. Remaining limitations and demo impact
+
+| Limitation | Demo impact |
+|---|---|
+| The diff is a canonical-hash comparison: it reports *which* entities changed, not measured deltas | Show the changed and violating entities; do not present geometric deltas |
+| No unified change report; quantity and cost impacts are freshness labels | Show the B34 diff, the Phase 30 comparison and the B37 `changeImpact` side by side; cost reads "stale, regenerate", never a delta |
+| Appearance changes live outside the model, so the B34 diff does not see them | Prove the façade gate with the Phase 30 comparison and locks (inherited), not the B34 diff |
+| Drawings are not dimension-validated (no dimensions, scale bar or orientation) | Do not present plan sheets as to-scale or dimension-checked |
+| No hotspot or layer cross-checks | Selecting a 3D object resolves to its BIM and source ids; do not demo hotspot or layer cross-selection |
+| Engineering results are marked stale after a change, not re-run | Show the stale or blocked state honestly; re-run explicitly if needed |
+| Very large models exceed the operation budget | They report `PARTIAL` with `UNVERIFIED` checks named, never `VERIFIED` |
+| Live Supabase run not verified; no staging proof or tag | Demo on the local or development stack only |
+
+**Inherited, not B34's own:** protected hash sets and locks (Phase 30, 35), the five-type regression coverage (Phase 30, 35, B39 S3), stale marking (Phase 30, B37) and the façade gate (Phase 30, B37). See the matrix labels.
+
+## 4. Steps to close B34
 
 1. The owner reviews and merges PR #27 once CI is green on its final head.
-2. For each deferred capability in §2, the owner records "deferred to <phase>" or "build in B34". The decision is recorded in this file (§4).
+2. For each deferred capability in §2, the owner records "deferred to <phase>" or "build in B34". The decision is recorded in this file (§6).
 3. Optional: run the local disposable Supabase acceptance (`scripts/test-local-supabase.mjs`, localhost only) to turn row 14 from NOT VERIFIED into PASS.
 4. Staging and the phase tag follow D-10 and D-11 when the owner authorises them.
 
-## 4. Owner decisions
+## 5. Outstanding gates
+
+- **D-10:** staging proof of a live workflow (prepared, not run).
+- **D-11:** phase tag (none).
+- **Optional:** local disposable Supabase run of the B34 routes (matrix row 14).
+
+## 6. Owner decisions
 
 *None recorded yet.*
