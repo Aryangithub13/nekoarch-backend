@@ -77,3 +77,12 @@ Three scoped-diff defects were each reproduced, fixed with a minimal change, and
 **Evidence:**
 - Each new test failed before the fix and passes after it. Reverting each fix on its own fails exactly its test; forcing a document change out of scope, or removing the manifest filter, is also caught.
 - Relevant suites: verification, manifest, regeneration, zones, revision, specialists, modernization and foundation.
+
+## H. Closure pass (2026-10-15)
+
+- **Quota:** the two whole-model compute routes (`POST …/verification`, `POST …/verification/diff`) are now charged to the `generate` rate-limit group.
+- **Tests added:**
+  - diff coverage for openings, slabs, columns and specifications;
+  - a model beyond the operation budget degrades to `PARTIAL`;
+  - a site plan or photo upload never changes the canonical model.
+- **Acceptance:** every Phase 34 criterion, with its evidence and the items that need an owner decision, is in [`phase34-acceptance.md`](phase34-acceptance.md).

@@ -112,6 +112,23 @@ describe('Phase 34 verification report', () => {
   });
 });
 
+describe('Phase 34 large models', () => {
+  it('a model beyond the operation budget degrades to PARTIAL with labelled fallbacks, never an error or a false VERIFIED', () => {
+    const m = authored();
+    // 120 separate floor slabs give ~4·120² compressed cells per shape: far beyond the 2,000,000-operation budget.
+    m.slabs = Array.from({ length: 120 }, (_, i) => ({ ...m.slabs[0]!, id: `slab-${i}`,
+      footprint: { outer: rect(i * 50, (i * 37) % 4000, i * 50 + 40 + (i % 7), (i * 37) % 4000 + 30 + (i % 5)), voids: [] } }));
+    const started = Date.now(), r = verify(m);
+    expect(r.budget).toMatchObject({ exhausted: true, limit: 2_000_000 });
+    expect(r.status).toBe('PARTIAL');
+    // What could not be computed within the budget is labelled NOT_EVALUATED, never passed; what was computed is exact (the budget is charged up front).
+    const skipped = r.checks.filter(c => c.status === 'NOT_EVALUATED' && c.detail.includes('budget exhausted'));
+    expect(skipped.length).toBeGreaterThan(0);
+    expect(r.checks.some(c => c.status === 'PASS' && skipped.some(k => k.checkId === c.checkId && k.entityIds.join() === c.entityIds.join()))).toBe(false);
+    expect(Date.now() - started).toBeLessThan(20_000);
+  });
+});
+
 describe('Phase 34 scoped diff', () => {
   const diff = (a: BuildingModelV2, b: BuildingModelV2, scope: { levelIds?: string[]; entityIds?: string[]; allowSiteChange?: boolean }) =>
     scopedDiff(a, b, { projectId: ids.projectId, baseRevisionId: ids.revisionId, otherRevisionId: ids.projectId, baseModelHash: 'a'.repeat(64), otherModelHash: 'b'.repeat(64) },
@@ -131,6 +148,24 @@ describe('Phase 34 scoped diff', () => {
     moved.site = { ...moved.site!, northMilliDegrees: 90_000 };
     expect(diff(authored(), moved, { levelIds: ['ground'] }).violations.map(v => v.collection)).toEqual(['site']);
     expect(diff(authored(), moved, { allowSiteChange: true }).status).toBe('WITHIN_SCOPE');
+  });
+  it('compares every collection: openings, slabs, columns and specifications are diffed and scoped like walls and spaces', () => {
+    const changed = authored();
+    changed.openings[0]!.widthMm += 100;
+    changed.slabs[0]!.thicknessMm += 10;
+    changed.columns.push({ id: 'col-new', levelId: 'ground', ...{ profile: { kind: 'rectangle', widthMm: 300, depthMm: 300 }, position: { x: 4000, z: 3000 },
+      baseOffsetMm: 0, heightMm: 3000 } } as unknown as BuildingModelV2['columns'][number]);
+    changed.specifications.push({ id: 'spec-new', name: 'Fired clay brick' } as BuildingModelV2['specifications'][number]);
+    const all = diff(authored(), changed, {});
+    expect(all.changes.map(c => [c.collection, c.entityId, c.change, c.levelIds])).toEqual([
+      ['openings', authored().openings[0]!.id, 'CHANGED', ['ground']], ['slabs', 'floor', 'CHANGED', ['ground']], ['columns', 'col-new', 'ADDED', ['ground']],
+      ['specifications', 'spec-new', 'ADDED', []]]);
+    // A level scope covers the levelled entities; a specification has no level, so only naming it puts it in scope.
+    expect(diff(authored(), changed, { levelIds: ['ground'] }).violations.map(v => v.entityId)).toEqual(['spec-new']);
+    expect(diff(authored(), changed, { levelIds: ['ground'], entityIds: ['spec-new'] }).status).toBe('WITHIN_SCOPE');
+    const removed = authored();
+    removed.openings = removed.openings.slice(1);
+    expect(diff(authored(), removed, {}).changes.map(c => [c.collection, c.change])).toEqual([['openings', 'REMOVED']]);
   });
   it('B34-1: a document-level edit (name, completeness) is always reported, in scope only for a whole-model scope; provenance alone is not compared', () => {
     const renamed = authored();
