@@ -106,7 +106,7 @@ Each item needs owner authorization unless it is marked otherwise.
 | Layer | Gate | State | To close it |
 |---|---|---|---|
 | Local | Full suite, build, typecheck, lint, audit, container smoke | **Passed** (§6; the full suite is re-run on the final commit, see the session report) | — |
-| CI | Backend CI on the pushed head (both Node lines, container smoke) | **Not run** (not pushed) | Authorize a push of `phase39/b39-acceptance-audit` and a draft PR into `phase31/development`; record the run id |
+| CI | Backend CI on the pushed head (both Node lines, container smoke) | **Passed.** PR #26 head `16f266a`: run 38668352395. After the merge into `phase31/development` (`4713218`): run 38670478737. Both Node lines and container smoke green; `supabase-acceptance` skipped (runs only on `workflow_dispatch`) | — |
 | Disposable database | Supabase acceptance including the new S3 live case | **Passed locally, 125/125, on `c343855`**, with the PostgREST-helper deviation (§6 row 8). No CI `workflow_dispatch` receipt | If not passed here: `workflow_dispatch` of Backend CI on the PR branch (`supabase-acceptance` job), or locally `npx supabase start && npx supabase db reset --local && node scripts/ensure-local-postgrest.mjs && node scripts/test-local-supabase.mjs`. Record the commit SHA and the pass count |
 | External | B34 repair | Pending (separate session) | Re-run the Blueprint verification tests after it merges |
 | Hosted (D-9) | Read-only ledger check, now `0001`–`0029` | **Not run** | Operator, per [runbook §1](../release/b37-release-gates-runbook.md): `HOSTED_DB_URL=… node scripts/verify-hosted-migrations.mjs > ledger.json`. `0029` is expected to be pending. Applying it is a separate deployment decision |
@@ -122,9 +122,10 @@ Each item needs owner authorization unless it is marked otherwise.
 - Both required decisions, D-12 and U2, are resolved by the owner and implemented.
 - The local gates pass.
 
+- CI on the candidate passed (PR #26, run 38668352395), and again after the merge as `4713218` (run 38670478737); see §7.
+
 **What blocks acceptance:**
-1. **CI on the candidate**, which the scope §7 gate requires, has not run. The branch is not pushed: pushing needs the owner's authorization of a destination.
-2. **The B34 repair** (external) qualifies Blueprint's verification signal.
+1. **The B34 repair** (external) qualifies Blueprint's verification signal.
 
 **Separate release gates, not run and not required for development acceptance:**
 - the hosted D-9 ledger (now including `0029`);
