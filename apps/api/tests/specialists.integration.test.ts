@@ -19,7 +19,7 @@ import { randomUUID } from 'node:crypto';
 type Json = Record<string, any>;
 const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
 
-describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Budget, Exterior, Structural; Interior refused until D-12)', () => {
+describe('B39 specialist envelope on PostgreSQL (Blueprint, Materials, Budget, Exterior, Structural; Interior in interior.integration.test.ts)', () => {
   let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>, backend: ReturnType<typeof createPgBackend>, ownerId: string, secret: string;
   beforeAll(async () => {
     db = await startTestDatabase();
@@ -102,7 +102,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'SEISMIC', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.structural'], { analysisType: 'MEMBER_DESIGN', input: {} }), 'UNSUPPORTED', 'NO_VALIDATED_SOLVER'],
       ['STRUCTURAL', envelope(base, 'recompute', ['engineering.environmental'], {}), 'UNSUPPORTED', 'SCOPE_NOT_SUPPORTED'],
-      ['INTERIOR', envelope(base, 'modify', ['interior.materials'], {}), 'UNSUPPORTED', 'MODULE_NOT_AVAILABLE'],
+      ['INTERIOR', envelope(base, 'modify', ['interior.layout']), 'UNSUPPORTED', 'SCOPE_EXPANSION_REQUIRED'],
     ];
     for (const [module, body, status, code] of cases) {
       const r = await run(p.url(module), body, 200);
@@ -112,10 +112,9 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
     expect((await ok('GET', `/api/projects/${p.projectId}/revision-operations`)).items).toEqual([]);
     expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/structural/analyses`)).items).toEqual([]);
-    // The Interior refusal names the deferred decision and does not pass the advisory concepts off as an implementation.
-    const interior = await run(p.url('INTERIOR'), envelope(base, 'modify', ['interior.materials'], {}), 200);
-    expect(interior.reasons[0]!.message).toMatch(/D-12/);
-    expect(interior.reasons[0]!.message).toMatch(/not an Interior implementation/);
+    // Space planning is not a finish change: the Interior refusal says which specialist expands the scope.
+    const interior = await run(p.url('INTERIOR'), envelope(base, 'modify', ['interior.layout']), 200);
+    expect(interior.reasons[0]!.message).toMatch(/BLUEPRINT/);
     // Validation, ownership and authentication stay HTTP errors.
     expect((await call('POST', p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], {}))).statusCode).toBe(400);
     expect((await call('POST', p.url('STRUCTURAL'), envelope(base, 'recompute', ['engineering.structural'], { input: { version: 'x' } }))).statusCode).toBe(400);
@@ -257,6 +256,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
 
   it('scenario 34 and 42: an Exterior cladding change is a Phase 30 preflight with the plan and structure locks; the existing routes complete it, geometry untouched', async () => {
     const p = await project('B39 exterior'), base = p.revision.id, key = { ...owner, 'idempotency-key': 'ext-1' };
+    const mat = await run(p.url('MATERIALS'), envelope(base, 'recompute', ['quantities'], { specification: specification() }), 201);
     const appearance = { target: { kind: 'EXTERIOR_WALLS', facades: ['NORTH', 'EAST', 'SOUTH', 'WEST'] }, finish: { presetId: 'warm-render' } };
     const body = envelope(base, 'modify', ['exterior.facade', 'exterior.materials'], { appearance }, ['building.structure', 'building.floor_plans', 'quantities']);
     const r = await run(p.url('EXTERIOR'), body, 201, key);
@@ -284,6 +284,11 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect(m.identity.modelHash).toBe((await manifest(p.projectId, base)).identity.modelHash);
     expect(m.modules.find(x => x.module === 'APPEARANCE_VARIANT')).toMatchObject({ availability: 'AVAILABLE', freshness: { state: 'current' } });
     expect(m.lineage.operation).toMatchObject({ status: 'RECORDED', operationId: r.operationId, kind: 'APPEARANCE_MODIFY' });
+    // U2 (whole model): the cladding change left the model identical, so the base's quantities stay current against the new revision and say why.
+    // (Scenario 39 below is the counterpart: a model change makes them stale.)
+    const baseManifest = await manifest(p.projectId, base);
+    for (const a of mat.artifacts) expect(baseManifest.modules.find(x => x.module === a.logicalComponentId)!.artifacts!.find(x => x.artifactId === a.artifactId)!.freshness,
+      a.logicalComponentId).toMatchObject({ state: 'current', reasons: [{ code: 'SOURCE_MODEL_EQUIVALENT' }], targetRevisionId: child.id });
     // The superseded base is now a stale dependency for the next Exterior request.
     const stale = await run(p.url('EXTERIOR'), envelope(base, 'modify', ['exterior.facade'], { appearance }), 200);
     expect([stale.status, stale.reasons[0]!.code, stale.written]).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);
@@ -348,7 +353,7 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     expect([r.references, r.budget]).toEqual([[{ referenceId: ref.id, purpose: 'SITE_PHOTO', mediaType: 'image/png', storedSha256: ref.storedSha256, use: 'RECORDED_NOT_CONSUMED' }],
       { ceiling: '0', currency: 'INR', quotedExternalCost: '0', withinCeiling: true }]);
     // Refusals echo them too, and store nothing.
-    const refused = await run(p.url('INTERIOR'), { ...envelope(base, 'modify', ['interior.materials'], {}), referenceIds: [ref.id] }, 200);
+    const refused = await run(p.url('INTERIOR'), { ...envelope(base, 'modify', ['interior.layout']), referenceIds: [ref.id] }, 200);
     expect([refused.status, refused.references.map(x => x.referenceId), refused.budget]).toEqual(['UNSUPPORTED', [ref.id], null]);
     // An unknown, foreign or archived reference is refused before anything runs.
     for (const referenceId of [randomUUID()]) {
@@ -362,6 +367,73 @@ describe('B39 S1/S2 specialist envelope on PostgreSQL (Blueprint, Materials, Bud
     const archived = await call('POST', p.url('MATERIALS'), body);
     expect([archived.statusCode, archived.json().error.code]).toEqual([422, 'SPECIALIST_REFERENCE_INVALID']);
     expect((await ok('GET', `/api/projects/${q.projectId}/revisions/${q.revision.id}/takeoffs`)).items).toEqual([]);
+  }, 300_000);
+
+  it('a specialist request is charged to the generation quota, refusals included; a throttled request stores nothing and reads stay on the read quota', async () => {
+    const p = await project('B39 quotas'), base = p.revision.id;
+    const limited = buildApp({ env: parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent',
+      RATE_LIMIT_ENABLED: 'true', RATE_LIMIT_GENERATE: '1', RATE_LIMIT_WRITE: '50', RATE_LIMIT_READ: '50', PROJECT_COMMIT_SECRET: secret }), backend, captureError: () => undefined });
+    try {
+      const post = (module: string, body: Json) => limited.inject({ method: 'POST', url: p.url(module), headers: owner, payload: body });
+      // A typed refusal still runs the envelope (ownership, references, manifest reads), so it is charged like any other specialist request.
+      const refused = await post('INTERIOR', envelope(base, 'modify', ['interior.layout']));
+      expect([refused.statusCode, refused.json().status]).toEqual([200, 'UNSUPPORTED']);
+      const throttled = await post('MATERIALS', envelope(base, 'recompute', ['quantities'], { specification: specification() }));
+      expect([throttled.statusCode, throttled.json().error.code]).toEqual([429, 'RATE_LIMITED']);
+      expect((await ok('GET', `/api/projects/${p.projectId}/revisions/${base}/takeoffs`)).items).toEqual([]);
+      for (const read of [`/api/projects/${p.projectId}/revisions/${base}/manifest`, `/api/projects/${p.projectId}/revisions/${base}/takeoffs`])
+        expect((await limited.inject({ url: read, headers: owner })).statusCode, read).toBe(200);
+    } finally { await limited.close(); }
+  }, 120_000);
+
+  it('scenario 39 and gate L297: once one specialist commits a new revision, every other specialist output and candidate of the old base is surfaced as stale and blocked', async () => {
+    // One authored base (the structural source profile), with Materials, Budget, Structural and an executed Exterior candidate all on it.
+    const projectId = (await ok('POST', '/api/projects', { title: 'B39 cross-module propagation' })).id as string;
+    const base = (await ok('POST', `/api/projects/${projectId}/revisions`, { model: authored() })).revision as Json;
+    const url = (module: string) => `/api/projects/${projectId}/specialists/${module}/requests`;
+    const materialsBody = envelope(base.id, 'recompute', ['quantities'], { specification: specification() });
+    const mat = await run(url('MATERIALS'), materialsBody, 201);
+    const [takeoff, construction] = mat.artifacts;
+    const budgetBody = envelope(base.id, 'recompute', ['cost'], { takeoffId: takeoff!.artifactId, constructionCalculationId: construction!.artifactId,
+      costingPolicy: sampleCostingPolicy(), rateBookId: 'sample-inr-v1' });
+    const budget = await run(url('BUDGET'), budgetBody, 201);
+    const structuralBody = envelope(base.id, 'recompute', ['engineering.structural'], { input: frameInput(base.model) });
+    const structural = await run(url('STRUCTURAL'), structuralBody, 201);
+    const exteriorBody = envelope(base.id, 'modify', ['exterior.facade'],
+      { appearance: { target: { kind: 'EXTERIOR_WALLS', facades: ['NORTH', 'EAST', 'SOUTH', 'WEST'] }, finish: { presetId: 'warm-render' } } }, ['building.structure']);
+    const exterior = await run(url('EXTERIOR'), exteriorBody, 201);
+    if (exterior.details.kind !== 'EXTERIOR') throw new Error('unreachable');
+    const candidate = await ok('POST', exterior.details.next.executeHref,
+      { preflightHash: exterior.details.preflightHash, consent: { acceptLocks: true, acceptQuote: true } }, 200);
+    // One source revision: every derived output names the base and is current in the base's manifest.
+    const outputs = [...mat.artifacts, ...budget.artifacts, ...structural.artifacts];
+    expect(outputs.map(a => [a.sourceRevisionId, a.freshness])).toEqual(outputs.map(() => [base.id, 'current']));
+
+    // The Blueprint specialist commits a new revision from the same base.
+    const blueprint = await run(url('BLUEPRINT'), envelope(base.id, 'regenerate', ['building.floor_plans'], { requirements: parametricInput(false) }), 201);
+    const next = blueprint.resultRevisionId!;
+    expect((await ok('GET', `/api/projects/${projectId}`)).currentRevisionId).toBe(next);
+
+    // Surfaced: the base's manifest reports every one of those outputs as stale, read from the B37 manifest, never recomputed by the envelope.
+    const m = await manifest(projectId, base.id);
+    expect(m.identity.revisionCurrency).not.toBe('CURRENT');
+    for (const a of outputs)
+      expect(m.modules.find(x => x.module === a.logicalComponentId)!.artifacts!.find(x => x.artifactId === a.artifactId)!.freshness.state, a.logicalComponentId).toBe('stale');
+
+    // Blocked when consequential: the pending Exterior candidate cannot be approved over the new revision (Phase 30 stale-base guard)...
+    const approve = await call('POST', exterior.details.next.approveHref, { preflightHash: exterior.details.preflightHash, candidateHash: candidate.candidateHash });
+    expect([approve.statusCode, approve.json().error.code]).toEqual([409, 'REVISION_BASE_STALE']);
+    expect((await ok('GET', exterior.details.next.operationHref)).status).toBe('STALE_BASE');
+    expect([(await ok('GET', `/api/projects/${projectId}`)).currentRevisionId, await revisionCount(projectId)]).toEqual([next, 2]);
+    // ...and no specialist builds on the superseded base: each answers STALE_DEPENDENCY and stores nothing.
+    for (const [module, body] of [['MATERIALS', materialsBody], ['BUDGET', { ...budgetBody, outputConfig: { ...budgetBody.outputConfig, rateBookId: 'sample-inr-v2' } }],
+      ['STRUCTURAL', structuralBody], ['EXTERIOR', exteriorBody]] as const) {
+      const refused = await run(url(module), body, 200);
+      expect([refused.status, refused.reasons[0]!.code, refused.written], module).toEqual(['STALE_DEPENDENCY', 'BASE_REVISION_SUPERSEDED', false]);
+    }
+    expect((await ok('GET', `/api/projects/${projectId}/revisions/${base.id}/cost-estimates`)).items).toHaveLength(1);
+    expect((await ok('GET', `/api/projects/${projectId}/revisions/${base.id}/structural/analyses`)).items).toHaveLength(1);
+    expect((await ok('GET', `/api/projects/${projectId}/revision-operations`)).items).toHaveLength(1);
   }, 300_000);
 });
 

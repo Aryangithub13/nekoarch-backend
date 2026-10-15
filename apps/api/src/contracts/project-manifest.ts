@@ -67,7 +67,7 @@ export const LineageSchema = z.object({
   parent: z.object({ revisionId: id, revisionNumber: z.number().int().positive(), modelHash: hash, createdAt: z.string() }).strict().nullable(),
   modelEquivalentToParent: z.boolean().nullable(),
   /** Phase 30 operation that committed this revision: NONE (an ordinary save or generation), RECORDED, or UNAVAILABLE on a backend without operations. */
-  operation: z.object({ status: z.enum(['NONE', 'RECORDED', 'UNAVAILABLE']), operationId: id.nullable(), kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(),
+  operation: z.object({ status: z.enum(['NONE', 'RECORDED', 'UNAVAILABLE']), operationId: id.nullable(), kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE', 'INTERIOR_FINISH_MODIFY']).nullable(),
     baseRevisionId: id.nullable(), restoreSourceRevisionId: id.nullable(),
     /** As reported by the Phase 30 lineage read (its own comparison of this revision's model with the operation's base); null when not recorded. */
     modelEquivalentToBase: z.boolean().nullable() }).strict(),
@@ -121,7 +121,7 @@ export const CANDIDATE_STATUSES = ['AWAITING_CONSENT', 'CANDIDATE_READY'] as con
  */
 export const CandidatesSchema = z.object({ modulesResolve: z.literal('ACCEPTED_REVISION_ONLY'), availability: z.enum(['AVAILABLE', 'UNAVAILABLE']),
   completeness: z.enum(['COMPLETE', 'TRUNCATED']),
-  items: z.array(z.object({ operationId: id, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(), status: z.enum(CANDIDATE_STATUSES), candidateHash: hash.nullable(),
+  items: z.array(z.object({ operationId: id, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE', 'INTERIOR_FINISH_MODIFY']).nullable(), status: z.enum(CANDIDATE_STATUSES), candidateHash: hash.nullable(),
     createdAt: z.string(), expiresAt: z.string(), acceptance: z.literal('NOT_ACCEPTED'), href: path, comparisonHref: path }).strict()) }).strict();
 /** Roadmap L259 partial-data view of the manifest. Without a query the view is the full manifest. */
 export const ManifestQuerySchema = z.object({ discipline: z.enum(DISCIPLINES).optional(), artifacts: z.enum(['include', 'omit']).default('include') }).strict();

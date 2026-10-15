@@ -172,7 +172,8 @@ describe('Phase 38 engineering evidence packages on PostgreSQL', () => {
   }, 180_000);
 
   it('E3: a superseded revision refuses CURRENT_REVISION, accepts a labelled HISTORICAL_SNAPSHOT, and old packages read as historical', async () => {
-    const b = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: authored(), baseRevisionId: a.revision.id })).json().revision as Json;
+    // A real model change (U2: an identical model would leave model-only outputs source-equivalent; see the U2 case).
+    const b = (await ok('POST', `/api/projects/${a.projectId}/revisions`, { model: { ...authored(), name: 'Authored fixture, edited' }, baseRevisionId: a.revision.id })).json().revision as Json;
     expect(await fail('POST', `${a.base}/evidence-packages`, {})).toEqual([409, 'EVIDENCE_SOURCE_STALE']);
     const snapshot = EvidenceDetailSchema.parse((await ok('POST', `${a.base}/evidence-packages`, { mode: 'HISTORICAL_SNAPSHOT' })).json());
     expect(snapshot).toMatchObject({ createdAs: 'HISTORICAL_SNAPSHOT', currency: { status: 'HISTORICAL', projectCurrentRevisionId: b.id } });

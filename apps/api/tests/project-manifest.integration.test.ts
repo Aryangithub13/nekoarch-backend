@@ -251,12 +251,17 @@ describe('B37 Unified Project Manifest v2 on PostgreSQL', () => {
     const cand = (await ok('POST', `${ops}/${pre.id}/execute`, { preflightHash: pre.preflightHash, consent: { acceptLocks: true, acceptQuote: true } }, 200)).json() as Json;
     const b = (await ok('POST', `${ops}/${pre.id}/approve`, { preflightHash: pre.preflightHash, candidateHash: cand.candidateHash })).json().commit.revision as Json;
     const base = await manifest(p.base), child = await manifest(`/api/projects/${p.projectId}/revisions/${b.id}`);
-    // The base: every stored and derived output is stale with a reason, against the new revision; nothing is silently current.
-    for (const x of base.modules.filter(x => x.freshness !== null)) expect([x.freshness!.state, x.freshness!.targetRevisionId], x.module).toEqual(['stale', b.id]);
+    // The base, against the new revision. U2 (closed at whole-model granularity in B39, owner decision 2026-10-14): the cladding edit left the canonical
+    // model identical, so the model-only outputs stay current and say why; every other output is stale with a reason. Nothing is silently current.
+    const equivalent = ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'];
+    for (const x of base.modules.filter(x => x.freshness !== null))
+      expect([x.freshness!.state, x.freshness!.targetRevisionId], x.module).toEqual([equivalent.includes(x.module) ? 'current' : 'stale', b.id]);
+    for (const name of equivalent) expect(mod(base, name).freshness!.reasons, name).toEqual([{ code: 'SOURCE_MODEL_EQUIVALENT', nodeId: `REVISION:${p.revision.id}` }]);
     expect(mod(base, 'SCENE_3D')).toMatchObject({ artifacts: [{ artifactId: scene.id, revisionId: p.revision.id }], freshness: { reasons: [{ code: 'SOURCE_REVISION_SUPERSEDED' }] } });
-    expect(mod(base, 'BOQ_COST').freshness!.reasons[0]!.code).toBe('UPSTREAM_STALE');
     const regenerate = base.freshnessImpact.disciplines.flatMap(d => d.regenerate), superseded = base.freshnessImpact.disciplines.flatMap(d => d.superseded);
-    for (const name of ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D', 'BIM', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate, name).toContain(name);
+    // ROADMAP L258: façade cladding alone does not ask for quantities or cost to be regenerated; the scene (it renders the old finish), BIM and documents do.
+    for (const name of ['SCENE_3D', 'BIM', 'CONSTRUCTION_DOCUMENTS']) expect(regenerate, name).toContain(name);
+    for (const name of equivalent) expect(regenerate, name).not.toContain(name);
     expect(superseded.sort()).toEqual(['ACCEPTANCE_QA', 'BUILDING_MODEL']);
     expect(regenerate).not.toContain('BUILDING_MODEL');
     // The child: its visible 3D object is the committed appearance, linked by revision id and the verified model hash, and its bytes match.

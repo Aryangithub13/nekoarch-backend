@@ -190,7 +190,13 @@ export async function dependencyGraph(repository: Repository, projectId: string,
     ...sd.map(d => analysisRecord(c, 'STRUCTURAL_ANALYSIS', d)), ...ed.map(d => analysisRecord(c, 'ENVIRONMENTAL_ANALYSIS', d)),
     ...yd.map(d => analysisRecord(c, 'BUILDING_SYSTEMS_ANALYSIS', d)), ...kd.map(d => analysisRecord(c, 'SPECIALIZED_KNOWLEDGE', d)),
     ...od.map(d => analysisRecord(c, 'DESIGN_OPTIMIZATION', d)), ...cd.map(d => analysisRecord(c, 'SCENE_3D', d))];
-  const graph = buildDependencyGraph({ projectId, revisionId, modelHash: c.hash, projectCurrentRevisionId: before.ids.current, records }, limits);
+  // U2: when this revision is superseded, the current revision's canonical model hash decides whether model-only outputs are still source-equivalent.
+  // Revision rows are immutable and the pointer was re-checked above, so this one extra owner-scoped read cannot see a different current revision.
+  const superseding = before.ids.current !== null && before.ids.current !== revisionId
+    ? ProjectRevisionDetailSchema.parse(await new ProjectRepository(repository).read('revision', projectId, before.ids.current)) : null;
+  tick();
+  const graph = buildDependencyGraph({ projectId, revisionId, modelHash: c.hash, projectCurrentRevisionId: before.ids.current,
+    currentRevisionModelHash: superseding ? modelHash(superseding.model) : null, records }, limits);
   tick();
   return graph;
 }

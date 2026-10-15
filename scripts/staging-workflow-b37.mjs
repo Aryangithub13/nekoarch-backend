@@ -92,10 +92,14 @@ export async function runWorkflow({ baseUrl, ownerToken, otherToken, fetchImpl =
     const B = `/api/projects/${p}/revisions/${revB.id}`;
     const m3 = await call('manifest A after the edit', 'GET', `${A}/manifest`);
     evidence.manifestHashes.aAfter = m3.manifestHash;
-    check('every A output is stale against B', m3.modules.filter(x => x.freshness).every(x => x.freshness.state === 'stale' && x.freshness.targetRevisionId === revB.id));
+    // U2 (B39, whole model): the appearance edit leaves the model identical, so A's model-only outputs stay current against B (SOURCE_MODEL_EQUIVALENT);
+    // every other A output is stale against B.
+    const equivalent = ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST'];
+    check('every A output is stale against B, except model-only outputs of the identical model', m3.modules.filter(x => x.freshness).every(x => x.freshness.targetRevisionId === revB.id
+      && (equivalent.includes(x.module) ? x.freshness.state === 'current' && x.freshness.reasons.every(r => r.code === 'SOURCE_MODEL_EQUIVALENT') : x.freshness.state === 'stale')));
     const superseded = m3.freshnessImpact.disciplines.flatMap(d => d.superseded), regenerate = m3.freshnessImpact.disciplines.flatMap(d => d.regenerate);
     check('model and QA superseded, never regenerated', superseded.includes('BUILDING_MODEL') && !regenerate.includes('BUILDING_MODEL'));
-    check('dependent outputs listed to regenerate', ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'SCENE_3D'].every(n => regenerate.includes(n)));
+    check('the scene is listed to regenerate; quantities and cost are not (U2)', regenerate.includes('SCENE_3D') && equivalent.every(n => !regenerate.includes(n)));
     const mB = await call('manifest B', 'GET', `${B}/manifest`);
     evidence.manifestHashes.b = mB.manifestHash;
     const appearance = mB.modules.find(x => x.module === 'APPEARANCE_VARIANT');

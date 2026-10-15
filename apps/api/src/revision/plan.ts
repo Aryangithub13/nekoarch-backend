@@ -6,6 +6,7 @@ import { BimError } from '../bim/contracts.js';
 import { SCENE_LIMITS } from '../scene3d/contracts.js';
 import { selectWalls } from './appearance.js';
 import { interpretRevision } from './interpret.js';
+import { applyInteriorFinishes, geometryModelHash } from './interior.js';
 import { APPEARANCE_VERSION, CLAIMS, FACADES, PreflightSchema, REVISION_INTENT_VERSION, REVISION_LIMITS, REVISION_OPERATION_VERSION, finishFactors,
   type Appearance, type ChangeClass, type Preflight, type PreflightRequest, type RevisionIntent } from './contracts.js';
 
@@ -20,6 +21,9 @@ export interface PlanContext {
 export function buildIntent(request: PreflightRequest['request'], base: PlanRevision, history: { id: string; revisionNumber: number }[]): RevisionIntent {
   if ('operation' in request) {
     const op = request.operation;
+    if (op.kind === 'INTERIOR_FINISH_MODIFY') return { intentVersion: REVISION_INTENT_VERSION, source: 'STRUCTURED', text: null, operation: 'INTERIOR_FINISH_MODIFY',
+      appearance: null, restore: null, requestedChanges: [{ changeClass: 'INTERIOR_APPEARANCE', phrase: 'structured interior finish' }],
+      preservation: op.preserve.map(p => ({ ...p, phrase: 'structured preserve' })), ambiguities: [], unsupported: [], interior: { assignments: op.assignments } };
     return op.kind === 'RESTORE'
       ? { intentVersion: REVISION_INTENT_VERSION, source: 'STRUCTURED', text: null, operation: 'RESTORE', appearance: null, restore: { sourceRevisionId: op.sourceRevisionId, reference: `id:${op.sourceRevisionId}` },
         requestedChanges: [{ changeClass: 'RESTORE', phrase: 'structured restore' }], preservation: [], ambiguities: [], unsupported: [] }
@@ -53,6 +57,7 @@ export function planRevision(ctx: PlanContext, intent: RevisionIntent): Prefligh
     approvalRequired: true, claims: { ...CLAIMS }, ...extra });
   const changes = intent.requestedChanges.map(c => c.changeClass), locked = new Set<string>(intent.preservation.map(p => p.scope));
   const geometric = changes.filter(c => GEOMETRY.includes(c));
+  if (intent.operation === 'INTERIOR_FINISH_MODIFY') return planInterior(ctx, intent, preflight, locked);
   const dependents = (reason: string) => [{ artifact: 'BUILDING_MODEL', action: 'BLOCKED' as const, baseArtifactIds: [], reason },
     ...['BIM', 'SCENE_3D', ...ENGINES].map(artifact => ({ artifact, action: 'INVALIDATED' as const, baseArtifactIds: ids(ctx.baseOutputs, artifact), reason: 'Would depend on the changed geometry and require recomputation; not executed.' }))];
 
@@ -149,4 +154,44 @@ export function planRevision(ctx: PlanContext, intent: RevisionIntent): Prefligh
       'Changed materials only on independently derived targets (walls and their corner fills)', 'Variant material factors equal the finish', 'Model canonical hash equality at commit (SQL)', 'Base still current at commit (SQL)'],
     quote: { execution: 'LOCAL_DETERMINISTIC', externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE', workers: 1, deadlineMs: SCENE_LIMITS.compileDeadlineMs,
       maxArtifactBytes: SCENE_LIMITS.glbBytes, estimatedSceneObjects: objects } });
+}
+
+/**
+ * B39 Interior (owner decision D-12, migration 0029): finish data on named spaces, nothing else. Structured only; natural-language interior wording is
+ * still refused above. The candidate model and both hashes are fixed here, and SQL re-checks them on the candidate and again at commit.
+ */
+function planInterior(ctx: PlanContext, intent: RevisionIntent, preflight: (status: Preflight['status'], extra?: Partial<Preflight>) => Preflight, locked: Set<string>): Preflight {
+  const model = ctx.base.model, assignments = intent.interior!.assignments, blockers = (code: string, message: string) => ({ blockers: [{ code, message: message.slice(0, 300) }] });
+  // An appearance variant's compiled scene is bound to the base's exact model hash (0020; B37 manifest), and a finish edit changes that hash.
+  if (ctx.baseAppearance) return preflight('UNSUPPORTED', blockers('APPEARANCE_VARIANT_PRESENT', 'The base revision carries an exterior appearance variant bound to its '
+    + 'exact model; interior finish data would change the model, and the variant cannot be carried forward without recompiling it. Apply interior finishes first.'));
+  if (locked.has('INTERIOR')) return preflight('BLOCKED_BY_LOCK', blockers('LOCK_CONFLICT', 'An interior finish change conflicts with the requested preservation of the interior.'));
+  const spaces = new Map(model.spaces.map(s => [s.id, s]));
+  const unknown = assignments.filter(a => !spaces.has(a.spaceId)).map(a => a.spaceId);
+  if (unknown.length) return preflight('NEEDS_CLARIFICATION', blockers('UNKNOWN_SPACE', `Spaces not in the base revision: ${unknown.join(', ')}`));
+  const lockedLevels = new Set(intent.preservation.filter(p => p.scope === 'LEVEL' && p.levelId).map(p => p.levelId!));
+  const onLocked = assignments.filter(a => lockedLevels.has(spaces.get(a.spaceId)!.levelId)).map(a => a.spaceId);
+  if (onLocked.length) return preflight('BLOCKED_BY_LOCK', blockers('LOCK_CONFLICT', `Spaces on a storey the request preserves: ${onLocked.join(', ')}`));
+  const candidate = applyInteriorFinishes(model, assignments), after = new Map(candidate.spaces.map(s => [s.id, s.finishes!]));
+  const rows = assignments.map(a => { const s = spaces.get(a.spaceId)!; return { spaceId: s.id, levelId: s.levelId, name: s.name, before: s.finishes ?? null, after: after.get(s.id)! }; });
+  if (rows.every(r => r.before !== null && costHash(r.before) === costHash(r.after)))
+    return preflight('NEEDS_CLARIFICATION', { questions: ['The selected spaces already have these finishes; nothing would change.'] });
+  const interior = { assignments, spaces: rows, geometryModelHash: geometryModelHash(model), candidateModelHash: modelHash(candidate as never) };
+  const userLocks = intent.preservation.map(p => ({ scope: p.levelId ? `LEVEL:${p.levelId}` : p.scope, granularity: 'SEMANTIC_MODEL' as const, origin: 'USER' as const,
+    enforcement: 'Covered by the system finish-only lock: no model field other than the named spaces\' finishes can change.' }));
+  return preflight('AWAITING_CONSENT', { interior,
+    locks: [{ scope: 'BUILDING_GEOMETRY', granularity: 'SEMANTIC_MODEL' as const, origin: 'SYSTEM' as const, enforcement: 'SQL refuses the candidate and the commit unless the model with every space\'s '
+        + 'finishes removed hashes exactly as the base: site, levels, walls, openings, stairs, slabs, columns and room boundaries are unchanged.' },
+      { scope: 'EXTERIOR', granularity: 'SEMANTIC_MODEL' as const, origin: 'SYSTEM' as const, enforcement: 'Held by the same lock (exterior walls, openings and site are not space finishes); the base has no appearance variant to carry.' },
+      { scope: 'STRUCTURE', granularity: 'SEMANTIC_MODEL' as const, origin: 'SYSTEM' as const, enforcement: 'Held by the same lock: no structural element is a space finish.' },
+      { scope: 'INTERIOR_FINISHES', granularity: 'SEMANTIC_MODEL' as const, origin: 'SYSTEM' as const, enforcement: 'SQL refuses the commit unless its canonical model hash equals the previewed candidate.' },
+      ...userLocks].slice(0, 32),
+    impacts: [{ artifact: 'BUILDING_MODEL', action: 'REGENERATE', baseArtifactIds: [], reason: 'Finish data on the listed spaces changes the model; its geometry is unchanged.' },
+      { artifact: 'BLUEPRINT_QA', action: 'REGENERATE', baseArtifactIds: [], reason: 'Independent blueprint QA is re-run on the candidate model at commit.' },
+      { artifact: 'BIM', action: 'REGENERATE', baseArtifactIds: [], reason: 'Derived on read from the new model.' },
+      ...['SCENE_3D', ...ENGINES].map(artifact => ({ artifact, action: 'INVALIDATED' as const, baseArtifactIds: ids(ctx.baseOutputs, artifact),
+        reason: 'Bound to the base model hash, which changes; recompute on the new revision. Nothing is reused across a model change.' }))],
+    verifications: ['Every named space exists in the base revision', 'Model without space finishes identical to the base (SQL, on the candidate and at commit)',
+      'Committed model hash equals the previewed candidate (SQL)', 'Base still current at execute and at commit (SQL)', 'Independent blueprint QA on the candidate model at commit'],
+    quote: { execution: 'LOCAL_DETERMINISTIC', externalProviders: [], externalCostUsd: 0, dataTransfer: 'NONE', workers: 0, deadlineMs: 0, maxArtifactBytes: 0, estimatedSceneObjects: 0 } });
 }

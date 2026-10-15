@@ -65,7 +65,7 @@ Tested on PostgreSQL by `apps/api/tests/hosted-migration-ledger.test.ts`: the le
 | 6 | `GET …/manifest` for A | Everything `current`; nothing `verified` or `not_applicable` |
 | 7 | Phase 30 appearance preflight | The candidate is listed as `NOT_ACCEPTED`; modules unchanged |
 | 8 | Execute, then approve | Revision B |
-| 9 | Manifest of A | Every output `stale` against B; model and QA `superseded`; takeoff, construction, cost and scene under `regenerate` |
+| 9 | Manifest of A | Against B, takeoff, construction and cost are `current` (`SOURCE_MODEL_EQUIVALENT`): U2 at whole-model granularity, B39, owner decision 2026-10-14. Every other output is `stale`. Model and QA `superseded`; scene under `regenerate`, quantities and cost not |
 | 10 | Manifest of B | `APPEARANCE_VARIANT` `current` and linked; lineage `RECORDED`; the appearance is bound to B's model |
 | 11 | Partial view | Same `manifestHash` |
 | 12 | Second user reads A's manifest | 404 |
