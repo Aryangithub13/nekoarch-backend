@@ -85,4 +85,5 @@ Three scoped-diff defects were each reproduced, fixed with a minimal change, and
   - diff coverage for openings, slabs, columns and specifications;
   - a model beyond the operation budget degrades to `PARTIAL`;
   - a site plan or photo upload never changes the canonical model.
-- **Acceptance:** every Phase 34 criterion, with its evidence and the items that need an owner decision, is in [`phase34-acceptance.md`](phase34-acceptance.md).
+- **Evidence objects:** every check now carries a `severity` (derived from its status) and the documented `assumptions` it rests on.
+- **Acceptance:** every Phase 34 criterion, with its evidence and the items that need an owner decision, is in [`phase34-acceptance.md`](phase34-acceptance.md). Completed versus deferred work is in [`phase34-closure.md`](phase34-closure.md).

@@ -96,6 +96,22 @@ describe('Phase 34 verification report', () => {
     expect(r.bases.levels.map(l => [l.levelId, l.grossPlateAreaMm2, l.method])).toEqual([['ground', '48000000', 'RECTILINEAR_SLAB_UNION'],
       ['upper', '54000000', 'LEVEL_BOUNDARY_NO_FLOOR_SLABS']]);
   });
+  it('every check is an evidence object: severity from its own status, and the documented assumptions it rests on', () => {
+    const m = authored();
+    m.site = { ...m.site!, boundary: rect(0, 0, 10000, 6000) };
+    m.levels.push({ ...m.levels[0]!, id: 'upper', name: 'Upper', index: 1, elevationMm: 3000, boundary: rect(0, 0, 9000, 6000) });
+    const r = verifyModel(m, ids, { maxFar: 0.0001 });
+    const expected = { FAIL: 'BLOCKING', WARNING: 'REVIEW', NOT_EVALUATED: 'UNVERIFIED', PASS: 'NONE', NOT_APPLICABLE: 'NONE' } as const;
+    for (const c of r.checks) {
+      expect(c.severity, `${c.checkId} ${c.status}`).toBe(expected[c.status]);
+      expect(c.assumptions.length, c.checkId).toBeGreaterThan(0);
+    }
+    expect(r.checks.find(c => c.checkId === 'UPPER_PLATE_SUPPORT')).toMatchObject({ status: 'WARNING', severity: 'REVIEW',
+      assumptions: expect.arrayContaining([expect.stringContaining('structural adequacy is not claimed')]) });
+    expect(r.checks.find(c => c.checkId === 'DECLARED_LIMIT')).toMatchObject({ status: 'FAIL', severity: 'BLOCKING',
+      assumptions: [expect.stringContaining('not a statutory determination')] });
+    expect(r.status).toBe('FAILED');
+  });
   it('compares declared (never statutory) limits as exact fractions', () => {
     const m = authored();
     m.site = { ...m.site!, boundary: rect(0, 0, 10000, 8000) }; // coverage 48/80 = 0.6 exactly
@@ -119,6 +135,7 @@ describe('Phase 34 large models', () => {
     m.slabs = Array.from({ length: 120 }, (_, i) => ({ ...m.slabs[0]!, id: `slab-${i}`,
       footprint: { outer: rect(i * 50, (i * 37) % 4000, i * 50 + 40 + (i % 7), (i * 37) % 4000 + 30 + (i % 5)), voids: [] } }));
     const started = Date.now(), r = verify(m);
+    expect(r.checks.filter(c => c.status === 'NOT_EVALUATED').every(c => c.severity === 'UNVERIFIED')).toBe(true);
     expect(r.budget).toMatchObject({ exhausted: true, limit: 2_000_000 });
     expect(r.status).toBe('PARTIAL');
     // What could not be computed within the budget is labelled NOT_EVALUATED, never passed; what was computed is exact (the budget is charged up front).

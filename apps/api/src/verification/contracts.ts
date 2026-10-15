@@ -24,8 +24,27 @@ export const BasesSchema = z.object({
 export const CheckIdSchema = z.enum(['SITE_POLYGON', 'BUILDABLE_WITHIN_SITE', 'LEVEL_WITHIN_PERMITTED', 'SETBACK_DISTANCE', 'SPACE_ON_PLATES', 'UPPER_PLATE_SUPPORT',
   'OPENING_WITHIN_HOST', 'DECLARED_LIMIT']);
 export const CheckStatusSchema = z.enum(['PASS', 'FAIL', 'WARNING', 'NOT_EVALUATED', 'NOT_APPLICABLE']);
-export const CheckSchema = z.object({ checkId: CheckIdSchema, status: CheckStatusSchema, entityIds: z.array(entityId).max(16),
-  measured: z.string().max(60).nullable(), required: z.string().max(60).nullable(), detail: z.string().max(300) }).strict();
+/**
+ * Roadmap Phase 34 evidence objects: each check carries a severity and the assumptions it rests on. The severity is derived from the check's own status
+ * only (no engineering judgement): a FAIL blocks verification, a WARNING needs review, NOT_EVALUATED is unverified.
+ */
+export const CHECK_SEVERITIES = ['BLOCKING', 'REVIEW', 'UNVERIFIED', 'NONE'] as const;
+export const SEVERITY_BY_STATUS = Object.freeze({ FAIL: 'BLOCKING', WARNING: 'REVIEW', NOT_EVALUATED: 'UNVERIFIED', PASS: 'NONE', NOT_APPLICABLE: 'NONE' } as const);
+const RECTILINEAR = 'Exact only for rectilinear geometry; anything else is reported NOT_EVALUATED.';
+const STORED = 'Uses the stored integer-millimetre geometry as given; survey accuracy is not claimed.';
+/** The documented assumptions of each check (phase34-design.md §4, phase34-report.md §E). */
+export const CHECK_ASSUMPTIONS = Object.freeze({
+  SITE_POLYGON: [STORED],
+  BUILDABLE_WITHIN_SITE: [STORED],
+  LEVEL_WITHIN_PERMITTED: [STORED, 'Each level boundary is checked against the buildable boundary when declared, otherwise the site.'],
+  SETBACK_DISTANCE: ['Measured to storey envelopes (level boundaries), not to projections, eaves or balconies, which the model does not carry.'],
+  SPACE_ON_PLATES: [RECTILINEAR, 'Stair footprints serving the level count as support for a stairwell over a slab void.'],
+  UPPER_PLATE_SUPPORT: [RECTILINEAR, 'Reports the overhang area only; structural adequacy is not claimed.'],
+  OPENING_WITHIN_HOST: ['Checks offset plus width along the host path; sill and height against the wall height are enforced by the model schema.'],
+  DECLARED_LIMIT: ['The limit is caller-declared; no jurisdiction rule table is applied, so this is not a statutory determination.'],
+} as const satisfies Record<z.infer<typeof CheckIdSchema>, readonly string[]>);
+export const CheckSchema = z.object({ checkId: CheckIdSchema, status: CheckStatusSchema, severity: z.enum(CHECK_SEVERITIES), entityIds: z.array(entityId).max(16),
+  measured: z.string().max(60).nullable(), required: z.string().max(60).nullable(), detail: z.string().max(300), assumptions: z.array(z.string().max(200)).max(4) }).strict();
 export type Check = z.infer<typeof CheckSchema>;
 export const DeclaredLimitsSchema = z.object({
   maxCoverageRatio: z.number().gt(0).max(1).multipleOf(0.0001).optional(),

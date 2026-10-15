@@ -2,7 +2,7 @@ import { costHash } from '@designflow/boq-cost';
 import type { BuildingModelV2 } from '@designflow/shared';
 import { Budget, area2, areaString, atLeast, absB, contains, coverage, floorDistance, gcd, isSimple, minRational, segmentDistance2, segmentsOf, shapeIsRectilinear,
   unionArea2, type Shape } from './geometry.js';
-import { NOT_CLAIMED_VERIFICATION, VERIFICATION_LIMITS, VERIFIER_VERSION, VerificationReportSchema, type Check, type VerificationReport } from './contracts.js';
+import { CHECK_ASSUMPTIONS, NOT_CLAIMED_VERIFICATION, SEVERITY_BY_STATUS, VERIFICATION_LIMITS, VERIFIER_VERSION, VerificationReportSchema, type Check, type VerificationReport } from './contracts.js';
 
 type Level = BuildingModelV2['levels'][number];
 type Limits = { maxCoverageRatio?: number | undefined; maxFar?: number | undefined };
@@ -20,7 +20,8 @@ const limitFraction = (value: number) => BigInt(Math.round(value * 10_000));
 export function verifyModel(model: BuildingModelV2, ids: { projectId: string; revisionId: string; modelHash: string }, declaredLimits: Limits | null): VerificationReport {
   const budget = new Budget(VERIFICATION_LIMITS.cellOperations), checks: Check[] = [];
   const add = (checkId: Check['checkId'], status: Check['status'], entityIds: string[], detail: string, measured: string | null = null, required: string | null = null) =>
-    checks.push({ checkId, status, entityIds: entityIds.slice(0, 16), measured, required, detail });
+    checks.push({ checkId, status, severity: SEVERITY_BY_STATUS[status], entityIds: entityIds.slice(0, 16), measured, required, detail,
+      assumptions: [...CHECK_ASSUMPTIONS[checkId]] });
   const storeys = model.levels.filter(l => l.kind === 'storey').sort((a, b) => a.elevationMm - b.elevationMm || a.index - b.index);
   const plateLevels = storeys.length ? storeys : [...model.levels].sort((a, b) => a.elevationMm - b.elevationMm);
   const floorSlabs = (level: Level): Shape[] => model.slabs.filter(s => s.levelId === level.id && s.kind === 'floor').map(s => ({ outer: s.footprint.outer, voids: s.footprint.voids }));
