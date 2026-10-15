@@ -41,6 +41,29 @@ const chain = () => [...base(),
   artifact('SCENE_3D', 30)];
 
 describe('Phase 37 dependency graph builder', () => {
+  it('U2 (whole model): a superseding revision with the same canonical model leaves only model-only outputs CURRENT, with the reason; a changed model leaves nothing current', () => {
+    const states = (g: ReturnType<typeof buildDependencyGraph>) => Object.fromEntries(g.nodes.map(n => [n.family, [n.state, n.causes[0]?.code ?? null]]));
+    const same = buildDependencyGraph({ ...input(chain(), NEWER), currentRevisionModelHash: HASH });
+    expect(same.inputIdentity.currentRevisionModelHash).toBe(HASH);
+    expect(states(same)).toEqual({
+      REVISION: ['STALE_SOURCE_CHANGED', 'SOURCE_REVISION_SUPERSEDED'], ACCEPTANCE_QA: ['STALE_SOURCE_CHANGED', 'SOURCE_REVISION_SUPERSEDED'],
+      QUANTITY_TAKEOFF: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'], CONSTRUCTION_CALCULATION: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'], BOQ_COST: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'],
+      STRUCTURAL_ANALYSIS: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'], ENVIRONMENTAL_ANALYSIS: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'],
+      BUILDING_SYSTEMS_ANALYSIS: ['CURRENT', 'SOURCE_MODEL_EQUIVALENT'],
+      // Bound to more than the model: never carried by model equivalence.
+      SPECIALIZED_KNOWLEDGE: ['STALE_SOURCE_CHANGED', 'SOURCE_REVISION_SUPERSEDED'], SCENE_3D: ['STALE_SOURCE_CHANGED', 'SOURCE_REVISION_SUPERSEDED'] });
+    for (const n of same.nodes.filter(n => n.state === 'CURRENT')) expect(n.causes, n.nodeId).toEqual([{ code: 'SOURCE_MODEL_EQUIVALENT', nodeId: `REVISION:${REV}` }]);
+    // A different model, an unread current model, or no current revision: the previous rule, unchanged.
+    for (const g of [buildDependencyGraph({ ...input(chain(), NEWER), currentRevisionModelHash: 'b'.repeat(64) }), buildDependencyGraph(input(chain(), NEWER))])
+      expect(g.nodes.every(n => n.state.startsWith('STALE_')), JSON.stringify(states(g))).toBe(true);
+    expect(buildDependencyGraph({ ...input(chain(), null), currentRevisionModelHash: HASH }).nodes.every(n => n.state === 'UNVERIFIED')).toBe(true);
+    // Equivalence never hides a failed check or a stale input.
+    const tampered = buildDependencyGraph({ ...input(fail(chain(), 'QUANTITY_TAKEOFF', 10, 'MODEL_HASH'), NEWER), currentRevisionModelHash: HASH });
+    expect([node(tampered, 'QUANTITY_TAKEOFF', uuid(10)).state, node(tampered, 'BOQ_COST', uuid(12)).state]).toEqual(['UNVERIFIED', 'UNVERIFIED']);
+    // On the current revision itself nothing changes, whatever is passed.
+    expect(buildDependencyGraph({ ...input(chain()), currentRevisionModelHash: HASH }).nodes.every(n => n.state === 'CURRENT' && !n.causes.length)).toBe(true);
+  });
+
   it('reports every node CURRENT only when the whole chain is verified and bound to the current revision', () => {
     const g = buildDependencyGraph(input(chain()));
     expect(DependencyGraphSchema.parse(g)).toEqual(g);

@@ -18,7 +18,16 @@ export const CHECKS = ['REVISION_IDENTITY', 'QA_ACCEPTANCE', 'REVISION_BINDING',
   'INPUT_FINGERPRINT', 'INPUT_HASH', 'REPORT_HASH'] as const satisfies readonly (keyof typeof CHECK_FAILURES)[];
 export const CAUSE_CODES = ['REVISION_IDENTITY_INCONSISTENT', 'QA_NOT_ACCEPTED', 'REVISION_BINDING_MISMATCH', 'QA_BINDING_MISMATCH', 'UPSTREAM_MISSING',
   'LINK_INCONSISTENT', 'MODEL_HASH_MISMATCH', 'FINGERPRINT_MISMATCH', 'INPUT_HASH_MISMATCH', 'REPORT_HASH_MISMATCH', 'NO_CURRENT_REVISION', 'UPSTREAM_UNVERIFIED', 'UPSTREAM_STALE',
-  'SOURCE_REVISION_SUPERSEDED'] as const satisfies readonly string[];
+  'SOURCE_REVISION_SUPERSEDED', 'SOURCE_MODEL_EQUIVALENT'] as const satisfies readonly string[];
+/**
+ * B37 waiver U2, closed at whole-model granularity in B39 (owner decision, 2026-10-14). Families whose stored content is computed from the canonical
+ * model and their own request input only. When their revision is superseded by a revision with the same canonical model hash (a Phase 30 appearance
+ * edit, or a restore to an identical model), they stay CURRENT with the cause SOURCE_MODEL_EQUIVALENT instead of SOURCE_REVISION_SUPERSEDED (ROADMAP
+ * L258: façade cladding alone differs from changing glazing area). The revision and its QA, the scene (it renders the appearance the new revision
+ * replaces), and the optimization and knowledge families (bound to context beyond the model) stay revision-bound.
+ */
+export const SOURCE_EQUIVALENT_FAMILIES = ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', 'BOQ_COST', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS',
+  'BUILDING_SYSTEMS_ANALYSIS'] as const satisfies readonly (typeof GRAPH_FAMILIES)[number][];
 export const GRAPH_LIMIT_KINDS = ['NODES', 'FAMILY_PAGE', 'DEPTH', 'TIME'] as const;
 
 const id = z.string().uuid(), hash = z.string().regex(/^[a-f0-9]{64}$/), nodeId = z.string().min(1).max(200);
@@ -30,7 +39,8 @@ export const GraphNodeSchema = z.object({
 }).strict();
 export const DependencyGraphSchema = z.object({
   graphVersion: z.literal(DEPENDENCY_GRAPH_VERSION), complete: z.literal(true),
-  inputIdentity: z.object({ projectId: id, revisionId: id, modelHash: hash, projectCurrentRevisionId: id.nullable() }).strict(),
+  /** `currentRevisionModelHash`: the canonical model hash of the project's current revision when it differs from `revisionId` and was read; null otherwise. */
+  inputIdentity: z.object({ projectId: id, revisionId: id, modelHash: hash, projectCurrentRevisionId: id.nullable(), currentRevisionModelHash: hash.nullable() }).strict(),
   families: z.array(z.object({ family: z.enum(GRAPH_FAMILIES), state: z.enum(FAMILY_STATES), nodeIds: z.array(nodeId) }).strict()),
   nodes: z.array(GraphNodeSchema),
   edges: z.array(z.object({ from: nodeId, to: nodeId, kind: z.enum(EDGE_KINDS) }).strict()),

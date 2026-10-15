@@ -21,7 +21,7 @@ export function revisionDatabaseError(error: { code?: string }): never {
   projectDatabaseError(error);
 }
 const uuid = z.string().uuid(), hash = z.string().regex(/^[a-f0-9]{64}$/), ts = z.string();
-export const OperationSummarySchema = z.object({ id: uuid, projectId: uuid, baseRevisionId: uuid, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(), status: z.enum(OPERATION_STATUSES),
+export const OperationSummarySchema = z.object({ id: uuid, projectId: uuid, baseRevisionId: uuid, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE', 'INTERIOR_FINISH_MODIFY']).nullable(), status: z.enum(OPERATION_STATUSES),
   operationVersion: z.literal('revision-operation-v1'), preflightHash: hash, appearanceHash: hash.nullable(), restoreSourceRevisionId: uuid.nullable(), candidateHash: hash.nullable(),
   committedRevisionId: uuid.nullable(), createdAt: ts, updatedAt: ts, expiresAt: ts }).strict();
 export const CandidateSummarySchema = z.object({ id: uuid, operationId: uuid, manifestVersion: z.literal('appearance-scene-manifest-v1'), compilerVersion: z.literal('appearance-compiler-v1'),

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SpaceFinishesSchema } from '@designflow/shared';
 import { SceneBindingSchema, SceneManifestSchema } from '../scene3d/contracts.js';
 
 export const REVISION_OPERATION_VERSION = 'revision-operation-v1';
@@ -7,7 +8,8 @@ export const APPEARANCE_VERSION = 'appearance-v1';
 export const APPEARANCE_COMPILER_VERSION = 'appearance-compiler-v1';
 export const APPEARANCE_MANIFEST_VERSION = 'appearance-scene-manifest-v1';
 export const APPEARANCE_VALIDATOR_VERSION = 'revision-appearance-validator-v1';
-export const REVISION_LIMITS = Object.freeze({ textChars: 2000, assignments: 8, activeOperationsPerProject: 5, operationsPerProjectPerHour: 60, expiryHours: 24 });
+export const REVISION_LIMITS = Object.freeze({ textChars: 2000, assignments: 8, activeOperationsPerProject: 5, operationsPerProjectPerHour: 60, expiryHours: 24, interiorSpaces: 24 });
+export const INTERIOR_VALIDATOR_VERSION = 'revision-interior-validator-v1';
 
 export type RevisionErrorCode = 'REVISION_INPUT_INVALID' | 'REVISION_SCOPE_INVALID' | 'REVISION_VALIDATION_FAILED';
 export class RevisionError extends Error {
@@ -54,22 +56,34 @@ export const ChangeClassSchema = z.enum(['EXTERIOR_APPEARANCE', 'INTERIOR_APPEAR
 export type ChangeClass = z.infer<typeof ChangeClassSchema>;
 export const PreservationSchema = z.object({ scope: z.enum(PRESERVATION_SCOPES), levelId: id.nullable().default(null) }).strict();
 
+/**
+ * B39 Interior (owner decision D-12, migration 0029): the finishes to set on named spaces. Data on V2 spaces only; nothing else in the model may change,
+ * which SQL enforces on the candidate and again at commit (the model with every space's finishes removed must hash exactly as the base's).
+ */
+export const InteriorAssignmentSchema = z.object({ spaceId: id, finishes: SpaceFinishesSchema }).strict();
+export const InteriorAssignmentsSchema = z.array(InteriorAssignmentSchema).min(1).max(REVISION_LIMITS.interiorSpaces)
+  .refine(a => new Set(a.map(x => x.spaceId)).size === a.length, { message: 'Each space may appear once' });
 /** Structured operation (frontend composer, F26) — the same validation path as natural language. */
 export const StructuredOperationSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('APPEARANCE_MODIFY'), target: ExteriorWallsTargetSchema, finish: FinishSchema, preserve: z.array(PreservationSchema).max(16).default([]) }).strict(),
   z.object({ kind: z.literal('RESTORE'), sourceRevisionId: uuid }).strict(),
+  z.object({ kind: z.literal('INTERIOR_FINISH_MODIFY'), assignments: InteriorAssignmentsSchema, preserve: z.array(PreservationSchema).max(16).default([]) }).strict(),
 ]);
+export const OPERATION_KINDS = ['APPEARANCE_MODIFY', 'RESTORE', 'INTERIOR_FINISH_MODIFY'] as const;
+export const OperationKindSchema = z.enum(OPERATION_KINDS);
 export const PreflightRequestSchema = z.object({ baseRevisionId: uuid,
   request: z.union([z.object({ text: z.string().trim().min(1).max(REVISION_LIMITS.textChars) }).strict(), z.object({ operation: StructuredOperationSchema }).strict()]) }).strict();
 export type PreflightRequest = z.infer<typeof PreflightRequestSchema>;
 
 export const RevisionIntentSchema = z.object({ intentVersion: z.literal(REVISION_INTENT_VERSION), source: z.enum(['TEXT', 'STRUCTURED']), text: z.string().max(REVISION_LIMITS.textChars).nullable(),
-  operation: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(),
+  operation: OperationKindSchema.nullable(),
   appearance: z.object({ target: ExteriorWallsTargetSchema, finish: FinishSchema }).strict().nullable(),
   restore: z.object({ sourceRevisionId: uuid.nullable(), reference: z.string().max(100) }).strict().nullable(),
   requestedChanges: z.array(z.object({ changeClass: ChangeClassSchema, phrase: z.string().max(200) }).strict()).max(16),
   preservation: z.array(PreservationSchema.extend({ phrase: z.string().max(200) })).max(16),
-  ambiguities: z.array(z.string().max(300)).max(8), unsupported: z.array(z.object({ code: z.string().max(80), message: z.string().max(300) }).strict()).max(8) }).strict();
+  ambiguities: z.array(z.string().max(300)).max(8), unsupported: z.array(z.object({ code: z.string().max(80), message: z.string().max(300) }).strict()).max(8),
+  /** Present only for INTERIOR_FINISH_MODIFY, so every earlier intent and its hash are unchanged. */
+  interior: z.object({ assignments: InteriorAssignmentsSchema }).strict().optional() }).strict();
 export type RevisionIntent = z.infer<typeof RevisionIntentSchema>;
 
 export const LockSchema = z.object({ scope: z.string().max(80), granularity: z.enum(['SEMANTIC_MODEL', 'GEOMETRY', 'DERIVED_ARTIFACT', 'EXACT_BYTES']),
@@ -85,14 +99,21 @@ export const QuoteSchema = z.object({ execution: z.enum(['LOCAL_DETERMINISTIC', 
   estimatedSceneObjects: z.number().int().nonnegative() }).strict();
 export const CLAIMS = Object.freeze({ physicalGlazing: 'NOT_CLAIMED', materialPerformance: 'NOT_CLAIMED', thermal: 'NOT_CLAIMED', photorealism: 'NOT_CLAIMED' } as const);
 const ClaimsSchema = z.object({ physicalGlazing: z.literal('NOT_CLAIMED'), materialPerformance: z.literal('NOT_CLAIMED'), thermal: z.literal('NOT_CLAIMED'), photorealism: z.literal('NOT_CLAIMED') }).strict();
-export const PreflightSchema = z.object({ operationVersion: z.literal(REVISION_OPERATION_VERSION), status: PreflightStatusSchema, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(),
+/** The interior plan: each space's finishes before and after, and the two model hashes SQL re-checks on the candidate and at commit. */
+export const InteriorPlanSchema = z.object({ assignments: InteriorAssignmentsSchema,
+  spaces: z.array(z.object({ spaceId: id, levelId: id, name: z.string().max(200), before: SpaceFinishesSchema.nullable(), after: SpaceFinishesSchema }).strict()).max(REVISION_LIMITS.interiorSpaces),
+  geometryModelHash: hash, candidateModelHash: hash }).strict();
+export type InteriorPlan = z.infer<typeof InteriorPlanSchema>;
+export const PreflightSchema = z.object({ operationVersion: z.literal(REVISION_OPERATION_VERSION), status: PreflightStatusSchema, kind: OperationKindSchema.nullable(),
   base: z.object({ projectId: uuid, revisionId: uuid, revisionNumber: z.number().int().positive(), modelHash: hash, appearanceHash: hash.nullable() }).strict(),
   intent: RevisionIntentSchema, appearance: AppearanceSchema.nullable(), appearanceHash: hash.nullable(),
   restore: z.object({ sourceRevisionId: uuid, sourceRevisionNumber: z.number().int().positive(), modelHash: hash, modelEquivalent: z.boolean(), appearanceHash: hash.nullable() }).strict().nullable(),
   targets: z.array(TargetElementSchema).max(512), excluded: z.array(z.object({ elementId: id, reason: z.string().max(200) }).strict()).max(512),
   locks: z.array(LockSchema).max(32), impacts: z.array(ImpactSchema).max(24), verifications: z.array(z.string().max(200)).max(24),
   blockers: z.array(z.object({ code: z.string().max(80), message: z.string().max(300) }).strict()).max(16), questions: z.array(z.string().max(300)).max(8),
-  quote: QuoteSchema, approvalRequired: z.literal(true), claims: ClaimsSchema }).strict();
+  quote: QuoteSchema, approvalRequired: z.literal(true), claims: ClaimsSchema,
+  /** Present only for an INTERIOR_FINISH_MODIFY preflight that reached the plan (every earlier preflight and its hash are unchanged). */
+  interior: InteriorPlanSchema.optional() }).strict();
 export type Preflight = z.infer<typeof PreflightSchema>;
 
 export const AppearanceMaterialSchema = z.object({ id: z.string().max(40), assignment: z.number().int().min(0).max(REVISION_LIMITS.assignments - 1), rgbaThousandths: z.array(milli).length(4),
@@ -120,7 +141,7 @@ export const EmptySchema = z.object({}).strict();
 const factors = z.object({ rgbaThousandths: z.array(milli).length(4), roughnessThousandths: milli, metallicThousandths: milli, provenance: z.enum(['VISUAL_PLACEHOLDER', 'APPEARANCE_VARIANT']) }).strict();
 const engineeringEntry = z.object({ artifact: z.string().max(60), freshness: z.enum(['SOURCE_EQUIVALENT', 'NOT_EVALUATED_NO_ARTIFACT', 'REGENERATE', 'INVALIDATED', 'BLOCKED']),
   artifactIds: z.array(uuid).max(20), recomputed: z.literal(false), newlyVerified: z.literal(false), reason: z.string().max(300) }).strict();
-const comparisonCommon = { comparisonVersion: z.literal('revision-comparison-v1'), operationId: uuid, kind: z.enum(['APPEARANCE_MODIFY', 'RESTORE']).nullable(), status: z.enum(OPERATION_STATUSES),
+const comparisonCommon = { comparisonVersion: z.literal('revision-comparison-v1'), operationId: uuid, kind: OperationKindSchema.nullable(), status: z.enum(OPERATION_STATUSES),
   committedRevisionId: uuid.nullable(), base: z.object({ revisionId: uuid, revisionNumber: z.number().int().positive(), modelHash: hash, appearanceHash: hash.nullable() }).strict(),
   engineering: z.array(engineeringEntry).max(16), quantitiesAndCost: z.array(engineeringEntry).max(3), validation: z.record(z.unknown()).nullable(),
   approvalBlockers: z.array(z.object({ code: z.string().max(80), message: z.string().max(300) }).strict()).max(4), claims: ClaimsSchema, warnings: z.array(z.string().max(300)).max(4) };
@@ -136,6 +157,9 @@ export const RevisionComparisonSchema = z.union([
     visual: z.object({ candidateGlbHref: z.string().max(300), candidateManifestHref: z.string().max(300), baseSceneHref: z.string().max(300) }).strict() }).strict(),
   z.object({ ...comparisonCommon, candidate: z.object({ candidateHash: hash.nullable(), sourceRevisionId: uuid, modelHash: hash, appearanceHash: hash.nullable() }).strict(),
     changes: z.object({ modelIdentical: z.boolean(), appearanceChanged: z.boolean(), bimDiffHref: z.string().max(300).nullable() }).strict() }).strict(),
+  // Interior: the derived candidate (no artifact) and every space whose finishes change; geometry is identical by construction and re-checked in SQL.
+  z.object({ ...comparisonCommon, candidate: z.object({ candidateHash: hash.nullable(), modelHash: hash, geometryModelHash: hash }).strict(),
+    changes: z.object({ spaces: InteriorPlanSchema.shape.spaces, geometryIdentical: z.literal(true), exteriorUnchanged: z.literal(true) }).strict() }).strict(),
   z.object({ ...comparisonCommon, candidate: z.null(), changes: z.null() }).strict(),
 ]);
 export type RevisionComparison = z.infer<typeof RevisionComparisonSchema>;
