@@ -40,6 +40,7 @@ import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequest
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
 import { SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
+import { ChangeSetSchema, ExecuteRequestSchema as IntegrationExecuteSchema, IntegrationExecutionSchema, IntegrationPlanSchema } from '../apps/api/src/contracts/integration.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
 import { DesignConceptDetailSchema, DesignConceptListSchema, DesignConceptPageQuerySchema, DesignConceptReadQuerySchema, DesignConceptRequestSchema } from '../apps/api/src/contracts/design-concepts.js';
@@ -128,6 +129,9 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
   // B39 S1: 201 when the request stored a revision or artifact; a typed refusal or a replay is 200 with the same schema.
   [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201 },
+  // B40 S1: a plan preview stores nothing (200); an execution that wrote anything is 201, a refusal 200 with the same schema.
+  [`POST ${P}/integration/plans`]: { body: ChangeSetSchema, response: IntegrationPlanSchema, status: 200 },
+  [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201 },
   // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
   [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
   [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },

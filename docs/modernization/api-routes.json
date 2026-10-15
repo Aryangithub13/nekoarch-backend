@@ -165,6 +165,16 @@
   "anonymous": 401
  },
  {
+  "method": "POST",
+  "url": "/api/projects/:projectId/integration/plans",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/integration/plans/execute",
+  "anonymous": 401
+ },
+ {
   "method": "GET",
   "url": "/api/projects/:projectId/jobs",
   "anonymous": 401

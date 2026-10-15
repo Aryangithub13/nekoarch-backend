@@ -38,6 +38,8 @@ const safeRoutes = new Set([
   `${revision}/evidence-packages`, `${revision}/evidence-packages/:packageId`,
   // Phase 39
   `${revision}/design-concepts`, `${revision}/design-concepts/:conceptSetId`, `${project}/specialists/:module/requests`,
+  // B40
+  `${project}/integration/plans`, `${project}/integration/plans/execute`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
