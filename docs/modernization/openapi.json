@@ -63394,7 +63394,7 @@
                 "items": {
                  "type": "string"
                 },
-                "maxItems": 2
+                "maxItems": 4
                }
               },
               "required": [
@@ -66912,6 +66912,15 @@
                "NOT_APPLICABLE"
               ]
              },
+             "severity": {
+              "type": "string",
+              "enum": [
+               "BLOCKING",
+               "REVIEW",
+               "UNVERIFIED",
+               "NONE"
+              ]
+             },
              "entityIds": {
               "type": "array",
               "items": {
@@ -66932,15 +66941,25 @@
              "detail": {
               "type": "string",
               "maxLength": 300
+             },
+             "assumptions": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 4
              }
             },
             "required": [
              "checkId",
              "status",
+             "severity",
              "entityIds",
              "measured",
              "required",
-             "detail"
+             "detail",
+             "assumptions"
             ],
             "additionalProperties": false
            },
@@ -67342,6 +67361,15 @@
                "NOT_APPLICABLE"
               ]
              },
+             "severity": {
+              "type": "string",
+              "enum": [
+               "BLOCKING",
+               "REVIEW",
+               "UNVERIFIED",
+               "NONE"
+              ]
+             },
              "entityIds": {
               "type": "array",
               "items": {
@@ -67362,15 +67390,25 @@
              "detail": {
               "type": "string",
               "maxLength": 300
+             },
+             "assumptions": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 4
              }
             },
             "required": [
              "checkId",
              "status",
+             "severity",
              "entityIds",
              "measured",
              "required",
-             "detail"
+             "detail",
+             "assumptions"
             ],
             "additionalProperties": false
            },
@@ -67676,7 +67714,8 @@
                "stairs",
                "dimensions",
                "specifications",
-               "site"
+               "site",
+               "document"
               ]
              },
              "entityId": {
@@ -67695,7 +67734,7 @@
               "items": {
                "$ref": "#/components/properties/scope/properties/levelIds/items"
               },
-              "maxItems": 2
+              "maxItems": 4
              },
              "inScope": {
               "type": "boolean"

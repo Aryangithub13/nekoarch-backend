@@ -49,3 +49,41 @@ It also adds upper-storey overhang detection, and separate, exact plot, buildabl
 ## F. Not covered
 
 The Supabase live stack and the frontend were not exercised. No database change was needed for this phase.
+
+## G. Scoped-diff repair (2026-10-14)
+
+Three scoped-diff defects were each reproduced, fixed with a minimal change, and regression-tested (`verification.test.ts`, "B34-1" to "B34-3").
+
+**B34-1: a document-level edit was hidden.**
+- Before: renaming the model and changing `completeness` returned `IDENTICAL`, because only the nine entity collections and the site were compared.
+- After: the document-level fields are compared too. Provenance stays outside model identity, as in Phase 35. A difference is reported as a `document` change. It is in scope only when the declared levels cover every level of both models, so a whole-model scope stays `WITHIN_SCOPE`, as before.
+
+**B34-2: a false `OUT_OF_SCOPE_CHANGES`.**
+- Before: reordering a wall's `spaceIds` reported a change.
+- After: they are compared sorted. The model invariant treats them as a set, and Phase 35 preservation uses the same rule. A different set is still a change.
+
+**B34-3: the violating level was dropped.**
+- Before: `levelIds` was cut to two. A stair moved from `L1→L2` to `L3→L4` listed only `L1, L2`.
+- After: every old and new level is listed. The schema maximum is now 4: a stair has `fromLevelId` and `toLevelId`, and no entity has more. The `inScope` rule is unchanged.
+
+**Effect on the B37 manifest:**
+- The manifest `diff` excludes the `document` entry. It already reports such edits as `modelHashChanged` with `MODEL_CHANGED_OUTSIDE_DIFF_COLLECTIONS`, so its output is unchanged for them.
+- Its `levelIds` maximum is now 4.
+
+**Changes:**
+- OpenAPI: additive only (the `document` value; `maxItems` 4).
+- No route, migration or B39 change.
+
+**Evidence:**
+- Each new test failed before the fix and passes after it. Reverting each fix on its own fails exactly its test; forcing a document change out of scope, or removing the manifest filter, is also caught.
+- Relevant suites: verification, manifest, regeneration, zones, revision, specialists, modernization and foundation.
+
+## H. Closure pass (2026-10-15)
+
+- **Quota:** the two whole-model compute routes (`POST …/verification`, `POST …/verification/diff`) are now charged to the `generate` rate-limit group.
+- **Tests added:**
+  - diff coverage for openings, slabs, columns and specifications;
+  - a model beyond the operation budget degrades to `PARTIAL`;
+  - a site plan or photo upload never changes the canonical model.
+- **Evidence objects:** every check now carries a `severity` (derived from its status) and the documented `assumptions` it rests on.
+- **Acceptance:** every Phase 34 criterion, with its evidence and the items that need an owner decision, is in [`phase34-acceptance.md`](phase34-acceptance.md). Completed versus deferred work is in [`phase34-closure.md`](phase34-closure.md).

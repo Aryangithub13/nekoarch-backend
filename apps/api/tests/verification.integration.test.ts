@@ -5,17 +5,19 @@ import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { modelHash } from '../src/lib/generation-identity.js';
+import { png } from '../../../test-support/reference-fixtures.js';
 
-const env = (secret: string) => parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test', LOG_LEVEL: 'silent',
-  RATE_LIMIT_ENABLED: 'false', PROJECT_COMMIT_SECRET: secret });
+const env = (secret: string, extra: Record<string, string> = {}) => parseEnv({ SUPABASE_URL: 'http://localhost:54321', SUPABASE_ANON_KEY: 'test', NODE_ENV: 'test',
+  LOG_LEVEL: 'silent', RATE_LIMIT_ENABLED: 'false', PROJECT_COMMIT_SECRET: secret, ...extra });
 const owner = { authorization: 'Bearer owner' }, other = { authorization: 'Bearer other' };
 
 describe('Phase 34 verification over HTTP on stored revisions', () => {
-  let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>;
+  let db: Awaited<ReturnType<typeof startTestDatabase>>, app: ReturnType<typeof buildApp>, ownerId: string, secret: string;
   beforeAll(async () => {
     db = await startTestDatabase();
-    const ownerId = await createTestUser(db.pool), otherId = await createTestUser(db.pool);
-    const secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
+    ownerId = await createTestUser(db.pool);
+    const otherId = await createTestUser(db.pool);
+    secret = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
     app = buildApp({ env: env(secret), backend: createPgBackend(db.pool, { owner: ownerId, other: otherId }), captureError: () => undefined });
     await app.ready();
   });
@@ -52,6 +54,36 @@ describe('Phase 34 verification over HTTP on stored revisions', () => {
     expect(narrow.status).toBe('OUT_OF_SCOPE_CHANGES');
     expect(narrow.violations.some((v: { levelIds: string[] }) => v.levelIds.includes('level-1'))).toBe(true);
     expect((await diff({}, a.id, a.id)).json().status).toBe('IDENTICAL');
+  });
+
+  it('charges whole-model verification and the scoped diff to the generation quota; the plain read stays a read', async () => {
+    const { a, b, root } = await project('Quotas');
+    const limited = buildApp({ env: env(secret, { RATE_LIMIT_ENABLED: 'true', RATE_LIMIT_GENERATE: '1', RATE_LIMIT_READ: '50' }),
+      backend: createPgBackend(db.pool, { owner: ownerId }), captureError: () => undefined });
+    try {
+      expect((await limited.inject({ method: 'POST', url: root(a.id), headers: owner, payload: {} })).statusCode).toBe(200);
+      const throttled = await limited.inject({ method: 'POST', url: `${root(a.id)}/diff`, headers: owner, payload: { otherRevisionId: b.id, scope: {} } });
+      expect([throttled.statusCode, throttled.json().error.code]).toEqual([429, 'RATE_LIMITED']);
+      expect((await limited.inject({ method: 'POST', url: root(a.id), headers: owner, payload: {} })).statusCode).toBe(429);
+      expect((await limited.inject({ url: root(a.id), headers: owner })).statusCode).toBe(200);
+    } finally { await limited.close(); }
+  });
+
+  it('an uploaded site plan or photo never changes the canonical site or floor geometry: same current revision, model hash and verification', async () => {
+    const { id, b, root } = await project('References are untrusted');
+    const before = (await app.inject({ url: root(b.id), headers: owner })).json();
+    const revisions = async () => (await app.inject({ url: `/api/projects/${id}/revisions`, headers: owner })).json().items.length as number;
+    const count = await revisions();
+    for (const [purpose, width] of [['SITE_PLAN', 9], ['SITE_PHOTO', 10]] as const) {
+      const upload = await app.inject({ method: 'POST', url: `/api/projects/${id}/references?purpose=${purpose}&revisionId=${b.id}`,
+        headers: { ...owner, 'content-type': 'image/png' }, payload: png({ width }) });
+      expect(upload.statusCode, upload.body.slice(0, 300)).toBe(201);
+    }
+    const detail = (await app.inject({ url: `/api/projects/${id}`, headers: owner })).json();
+    expect([detail.currentRevision.id, await revisions()]).toEqual([b.id, count]);
+    const after = (await app.inject({ url: root(b.id), headers: owner })).json();
+    expect([after.modelHash, after.inputHash, after.bases]).toEqual([before.modelHash, before.inputHash, before.bases]);
+    expect(after.modelHash).toBe(modelHash(b.model));
   });
 
   it('is owner-only and refuses revisions of another project', async () => {
