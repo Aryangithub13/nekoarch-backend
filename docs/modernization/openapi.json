@@ -34229,6 +34229,49 @@
              "costingPolicy"
             ],
             "additionalProperties": false
+           },
+           "structural": {
+            "$ref": "#/components/schemas/StructuralInput"
+           },
+           "verification": {
+            "type": "object",
+            "properties": {
+             "declaredLimits": {
+              "type": "object",
+              "properties": {
+               "maxCoverageRatio": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.0001
+               },
+               "maxFar": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 100,
+                "multipleOf": 0.0001
+               }
+              },
+              "additionalProperties": false,
+              "nullable": true,
+              "default": null
+             }
+            },
+            "additionalProperties": false
+           }
+          },
+          "additionalProperties": false,
+          "default": {}
+         },
+         "limits": {
+          "type": "object",
+          "properties": {
+           "maxTasks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16
            }
           },
           "additionalProperties": false,
@@ -34290,6 +34333,7 @@
             "BLOCKED_BY_LOCK",
             "UNSUPPORTED",
             "NEEDS_CLARIFICATION",
+            "OVER_BUDGET",
             "STALE_BASE",
             "READY_FOR_APPROVAL"
            ]
@@ -34698,7 +34742,9 @@
                "MODEL_COMMIT",
                "QUANTITY_TAKEOFF",
                "CONSTRUCTION_CALCULATION",
-               "BOQ_COST"
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
               ],
               "nullable": true
              },
@@ -34731,7 +34777,9 @@
                "MODEL_COMMIT",
                "QUANTITY_TAKEOFF",
                "CONSTRUCTION_CALCULATION",
-               "BOQ_COST"
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
               ]
              },
              "module": {
@@ -34739,7 +34787,18 @@
               "enum": [
                "INTERIOR",
                "MATERIALS",
-               "BUDGET"
+               "BUDGET",
+               "STRUCTURAL",
+               "BLUEPRINT"
+              ]
+             },
+             "branch": {
+              "type": "string",
+              "enum": [
+               "MODEL",
+               "MATERIALS_BUDGET",
+               "STRUCTURAL",
+               "VERIFICATION"
               ]
              },
              "dependsOn": {
@@ -34752,7 +34811,9 @@
                 "MODEL_COMMIT",
                 "QUANTITY_TAKEOFF",
                 "CONSTRUCTION_CALCULATION",
-                "BOQ_COST"
+                "BOQ_COST",
+                "STRUCTURAL_ANALYSIS",
+                "COMPLEX_VERIFICATION"
                ]
               },
               "maxItems": 4
@@ -34762,7 +34823,8 @@
               "enum": [
                "REVISION_OPERATION",
                "REVISION",
-               "ARTIFACT"
+               "ARTIFACT",
+               "NONE"
               ]
              },
              "checkpoint": {
@@ -34779,6 +34841,7 @@
             "required": [
              "taskId",
              "module",
+             "branch",
              "dependsOn",
              "writes",
              "checkpoint",
@@ -34786,7 +34849,7 @@
             ],
             "additionalProperties": false
            },
-           "maxItems": 6
+           "maxItems": 8
           },
           "invalidation": {
            "type": "object",
@@ -34836,12 +34899,23 @@
              "enum": [
               0
              ]
+            },
+            "taskCount": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "maxTasks": {
+             "type": "integer",
+             "minimum": 1,
+             "nullable": true
             }
            },
            "required": [
             "execution",
             "externalProviders",
-            "externalCostUsd"
+            "externalCostUsd",
+            "taskCount",
+            "maxTasks"
            ],
            "additionalProperties": false
           },
@@ -35086,6 +35160,49 @@
                "costingPolicy"
               ],
               "additionalProperties": false
+             },
+             "structural": {
+              "$ref": "#/components/schemas/StructuralInput"
+             },
+             "verification": {
+              "type": "object",
+              "properties": {
+               "declaredLimits": {
+                "type": "object",
+                "properties": {
+                 "maxCoverageRatio": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "minimum": 0,
+                  "maximum": 1,
+                  "multipleOf": 0.0001
+                 },
+                 "maxFar": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "minimum": 0,
+                  "maximum": 100,
+                  "multipleOf": 0.0001
+                 }
+                },
+                "additionalProperties": false,
+                "nullable": true,
+                "default": null
+               }
+              },
+              "additionalProperties": false
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           },
+           "limits": {
+            "type": "object",
+            "properties": {
+             "maxTasks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
              }
             },
             "additionalProperties": false,
@@ -35232,6 +35349,7 @@
               "BLOCKED_BY_LOCK",
               "UNSUPPORTED",
               "NEEDS_CLARIFICATION",
+              "OVER_BUDGET",
               "STALE_BASE",
               "READY_FOR_APPROVAL"
              ]
@@ -35623,7 +35741,9 @@
                  "MODEL_COMMIT",
                  "QUANTITY_TAKEOFF",
                  "CONSTRUCTION_CALCULATION",
-                 "BOQ_COST"
+                 "BOQ_COST",
+                 "STRUCTURAL_ANALYSIS",
+                 "COMPLEX_VERIFICATION"
                 ],
                 "nullable": true
                },
@@ -35656,7 +35776,9 @@
                  "MODEL_COMMIT",
                  "QUANTITY_TAKEOFF",
                  "CONSTRUCTION_CALCULATION",
-                 "BOQ_COST"
+                 "BOQ_COST",
+                 "STRUCTURAL_ANALYSIS",
+                 "COMPLEX_VERIFICATION"
                 ]
                },
                "module": {
@@ -35664,7 +35786,18 @@
                 "enum": [
                  "INTERIOR",
                  "MATERIALS",
-                 "BUDGET"
+                 "BUDGET",
+                 "STRUCTURAL",
+                 "BLUEPRINT"
+                ]
+               },
+               "branch": {
+                "type": "string",
+                "enum": [
+                 "MODEL",
+                 "MATERIALS_BUDGET",
+                 "STRUCTURAL",
+                 "VERIFICATION"
                 ]
                },
                "dependsOn": {
@@ -35677,7 +35810,9 @@
                   "MODEL_COMMIT",
                   "QUANTITY_TAKEOFF",
                   "CONSTRUCTION_CALCULATION",
-                  "BOQ_COST"
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "COMPLEX_VERIFICATION"
                  ]
                 },
                 "maxItems": 4
@@ -35687,7 +35822,8 @@
                 "enum": [
                  "REVISION_OPERATION",
                  "REVISION",
-                 "ARTIFACT"
+                 "ARTIFACT",
+                 "NONE"
                 ]
                },
                "checkpoint": {
@@ -35704,6 +35840,7 @@
               "required": [
                "taskId",
                "module",
+               "branch",
                "dependsOn",
                "writes",
                "checkpoint",
@@ -35711,7 +35848,7 @@
               ],
               "additionalProperties": false
              },
-             "maxItems": 6
+             "maxItems": 8
             },
             "invalidation": {
              "type": "object",
@@ -35761,12 +35898,23 @@
                "enum": [
                 0
                ]
+              },
+              "taskCount": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "maxTasks": {
+               "type": "integer",
+               "minimum": 1,
+               "nullable": true
               }
              },
              "required": [
               "execution",
               "externalProviders",
-              "externalCostUsd"
+              "externalCostUsd",
+              "taskCount",
+              "maxTasks"
              ],
              "additionalProperties": false
             },
@@ -35854,7 +36002,9 @@
                "MODEL_COMMIT",
                "QUANTITY_TAKEOFF",
                "CONSTRUCTION_CALCULATION",
-               "BOQ_COST"
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
               ]
              },
              "status": {
@@ -35890,6 +36040,25 @@
                }
               ],
               "nullable": true
+             },
+             "report": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "type": "string",
+                "maxLength": 40
+               },
+               "inputHash": {
+                "$ref": "#/components/properties/planHash"
+               }
+              },
+              "required": [
+               "status",
+               "inputHash"
+              ],
+              "additionalProperties": false,
+              "nullable": true,
+              "default": null
              }
             },
             "required": [
@@ -35901,7 +36070,7 @@
             ],
             "additionalProperties": false
            },
-           "maxItems": 6
+           "maxItems": 8
           },
           "checks": {
            "type": "array",

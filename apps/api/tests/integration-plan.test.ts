@@ -120,3 +120,21 @@ describe('B40 element-level evidence for the whole-model invalidation gap', () =
     expect(costHash(calculateQuantityTakeoff(next, {}))).toBe(costHash(calculateQuantityTakeoff(base, {})));
   });
 });
+
+describe('B40 S2 failure isolation and budget precedence', () => {
+  it('skips only the transitive dependants of a failed task', async () => {
+    const { dependantsOf } = await import('../src/services/integration-service.js');
+    const tasks = [{ taskId: 'MODEL_COMMIT', dependsOn: [] }, { taskId: 'QUANTITY_TAKEOFF', dependsOn: ['MODEL_COMMIT'] },
+      { taskId: 'CONSTRUCTION_CALCULATION', dependsOn: ['QUANTITY_TAKEOFF'] }, { taskId: 'BOQ_COST', dependsOn: ['CONSTRUCTION_CALCULATION'] },
+      { taskId: 'STRUCTURAL_ANALYSIS', dependsOn: ['MODEL_COMMIT'] }, { taskId: 'COMPLEX_VERIFICATION', dependsOn: ['MODEL_COMMIT'] }] as const;
+    const of = (id: Parameters<typeof dependantsOf>[1]) => [...dependantsOf(tasks.map(t => ({ taskId: t.taskId, dependsOn: [...t.dependsOn] })), id)].sort();
+    expect(of('QUANTITY_TAKEOFF')).toEqual(['BOQ_COST', 'CONSTRUCTION_CALCULATION']);
+    expect(of('STRUCTURAL_ANALYSIS')).toEqual([]);
+    expect(of('MODEL_COMMIT')).toEqual(['BOQ_COST', 'COMPLEX_VERIFICATION', 'CONSTRUCTION_CALCULATION', 'QUANTITY_TAKEOFF', 'STRUCTURAL_ANALYSIS']);
+  });
+  it('ranks OVER_BUDGET below every validity status and above a stale base', () => {
+    expect(planStatus(['OVER_BUDGET', 'STALE_BASE'])).toBe('OVER_BUDGET');
+    expect(planStatus(['OVER_BUDGET', 'NEEDS_CLARIFICATION'])).toBe('NEEDS_CLARIFICATION');
+    expect(PLAN_STATUSES.indexOf('OVER_BUDGET')).toBeLessThan(PLAN_STATUSES.indexOf('READY_FOR_APPROVAL'));
+  });
+});
