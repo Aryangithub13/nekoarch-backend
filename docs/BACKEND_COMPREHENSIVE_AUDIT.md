@@ -23,7 +23,7 @@
 
 | ID | Sev | Finding | State |
 |---|---|---|---|
-| **DB-001** | Low | The B33 owner-wide quotas (200 projects, 8 active jobs, 1 GiB of references) could be exceeded by concurrent writes. Through the API, 20 concurrent creates at 195 projects stored **205**. Same class as SEC-004, in another phase | **FIXED_UNVERIFIED in CI** (PR #34): regression tests fail without the fix and pass with it locally; PR CI pending |
+| **DB-001** | Low | The B33 owner-wide quotas (200 projects, 8 active jobs, 1 GiB of references) could be exceeded by concurrent writes. Through the API, 20 concurrent creates at 195 projects stored **205**. Same class as SEC-004, in another phase | **VERIFIED_FIXED on PR #34**: the regression tests fail without the fix and pass with it, locally and in CI run 39156993823. Not yet on the integrated line |
 | **DB-002** | Medium | A job **retry** bypassed both active-job limits (B32: 4 per project; B33: 8 per owner). This contradicts the schema's own claim, "no RPC path can bypass them" (`0023:45`) | same |
 | **TEST-004** | Low | The SEC-004 regression test did not cover the third cap behind the same lock, 100 reviews per revision. Without the lock, 102 and 103 were stored | Coverage added (PR #34) |
 | **TEST-005** | High (gap) | No live Supabase scenario existed for B34, B40 or `0030` (SUPA-002/SUPA-006) | Scenario **written** (PR #34) and dry-run on embedded PostgreSQL; **not run live**: dispatching the workflow returned **403** to this session |
@@ -179,8 +179,8 @@ Merge order (PRs):
 
 | ID | Sev | Conf | Status | Phase / location | Finding |
 |---|---|---|---|---|---|
-| **DB-001** | Low | Confirmed (RAN) | **FIXED_UNVERIFIED** (local VERIFIED; PR #34 CI pending) | B33; `0023_account_library_context.sql:46-70` (`account_project_quota`, `account_reference_quota`, `account_job_quota`) | Owner-wide quotas counted without an owner-wide lock (§9.1) |
-| **DB-002** | Medium | Confirmed (RAN) | **FIXED_UNVERIFIED** (as above) | B32/B33; `0022_durable_jobs.sql:194-199` (retry), `0023:64-70` | A retry (`FAILED → QUEUED`) bypassed the 4-per-project and 8-per-owner active-job limits (§9.2) |
+| **DB-001** | Low | Confirmed (RAN) | **VERIFIED_FIXED on PR #34** (local and CI 39156993823); unmerged | B33; `0023_account_library_context.sql:46-70` (`account_project_quota`, `account_reference_quota`, `account_job_quota`) | Owner-wide quotas counted without an owner-wide lock (§9.1) |
+| **DB-002** | Medium | Confirmed (RAN) | **VERIFIED_FIXED on PR #34** (as above) | B32/B33; `0022_durable_jobs.sql:194-199` (retry), `0023:64-70` | A retry (`FAILED → QUEUED`) bypassed the 4-per-project and 8-per-owner active-job limits (§9.2) |
 | **TEST-004** | Low | Confirmed (RAN) | **VERIFIED_FIXED** (coverage; local) | B44; `collaboration.integration.test.ts` | Review cap (100) had no concurrency test; without the lock 102 and 103 were stored |
 | **TEST-005** | High (gap) | Confirmed | **BLOCKED** (written, not run) | B34/B40/B44; `supabase.live.test.ts` | No live scenario existed for B34, B40 or `0030`. Now written; needs a `workflow_dispatch` run (§14) |
 | **API-001** | Info | Confirmed | Documented | B32; `POST …/jobs/:jobId/retry` | Contract change from DB-002: retry may now return 429 `JOB_LIMIT_EXCEEDED` / `ACCOUNT_QUOTA_EXCEEDED` (§11) |
@@ -377,7 +377,7 @@ SUPABASE_URL=http://127.0.0.1:9 SUPABASE_ANON_KEY=placeholder PORT=39xx node app
 | Build / typecheck / lint | **PASS** (RAN) |
 | PR #33 CI | **PASS** (run 39140096759) |
 | PR #31 CI on `479b2bc` | **PASS** backend ×2, container (run 39143637924) |
-| PR #34 CI | **pending** at the time of writing (run 39156993823 on `91118ac`) |
+| PR #34 CI | **PASS** (run 39156993823 on `91118ac`): backend Node 22.22.0 (126 files, 3,163/3,163 tests on the merge ref with #31) and 22.23.3; container smoke. `supabase-acceptance` skipped, as on every non-dispatch run |
 | Live local Supabase (13 scenarios incl. the new one) | **NOT RUN** (TEST-005) |
 | Hosted ledger (D-9), staging (D-10), tags (D-11) | **BLOCKED** (owner/operator) |
 
@@ -428,6 +428,6 @@ The same steps on any Docker host: follow-up §5.3, with the branch above.
 | **Showcase testing** | **NOT READY** | Live acceptance, hosted ledger, staging, setup guide and reviews are missing (§16 steps 1–6) |
 | **Release / production** | **NOT READY** | No tag after B30; B31/B32/B34/B36 gates unmet; D-9/D-10/D-11 open |
 
-**Findings opened this session (15), by severity:** High 1 (TEST-005, test gap) · Medium 1 (DB-002) · Low 3 (DB-001, TEST-004, PHASE-009) · Informational 10. **By status:** FIXED_UNVERIFIED 2, VERIFIED_FIXED 1, BLOCKED 2, OPEN 2, ACCEPTED_DEFERRED 4, CLOSED 3, Documented 1.
+**Findings opened this session (15), by severity:** High 1 (TEST-005, test gap) · Medium 1 (DB-002) · Low 3 (DB-001, TEST-004, PHASE-009) · Informational 10. **By status:** VERIFIED_FIXED 3 (DB-001 and DB-002 on PR #34, unmerged; TEST-004), BLOCKED 2, OPEN 2, ACCEPTED_DEFERRED 4, CLOSED 3, Documented 1.
 
 **Boundaries of this audit:** no live Supabase, container, hosted or frontend execution; risk-directed rather than exhaustive code review; B05–B28 not re-audited. Line numbers refer to the integration tree unless stated otherwise.
