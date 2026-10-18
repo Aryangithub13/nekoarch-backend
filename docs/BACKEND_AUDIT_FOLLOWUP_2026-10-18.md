@@ -107,7 +107,7 @@ Classes: **DEF** confirmed defect requiring repair · **SEC** confirmed security
 | SEC-001 | Medium | SEC (roadmap gate) | Yes | CODE `references/contracts.ts:59` unchanged | Open. Showcase mitigation: trusted demo files only |
 | SEC-002 | Medium | SEC (deployment-conditional) | Yes | CODE `http-protection.ts:14` unchanged | Open. Not exploitable on a single instance; blocks horizontal scaling |
 | SEC-003 | Medium | SUSP (depends on hosted Auth settings) | Local config unchanged (`config.toml:29,33`) | Hosted settings still unreadable | Open; needs the owner to read the hosted Auth settings |
-| SEC-004 | Low (Confirmed) | **DEF** (confirmed data-integrity defect; PR #31 only) | PR #31 only | RAN on the PR #31 merge tree (embedded PostgreSQL, real `collaboration_write` path through the API): with 195 comments stored, 40 concurrent `POST …/comments` stored **203**, then **201** and **200** in three runs (cap 200). With a per-project `pg_advisory_xact_lock` added to `collaboration_write` (scratch copy only): **200** in 3 of 3 runs, and the `collaboration`, `database` (migration replay), `e2e-pipeline` and `hosted-migration-ledger` suites still pass (4 files, 26 tests). The member-existence half of the audit item is inherent to inviting by UUID (the test already returns one `MEMBER_INVALID` for both a missing user and the owner); downgraded to a note | **Confirmed, open in PR #31.** Not on the integrated code line. Fix belongs in `0030` before PR #31 merges (§6.3) |
+| SEC-004 | Low (Confirmed) | **DEF** (confirmed data-integrity defect; PR #31 only) | PR #31 only | RAN on the PR #31 merge tree (embedded PostgreSQL, real `collaboration_write` path through the API): with 195 comments stored, 40 concurrent `POST …/comments` stored **203**, then **201** and **200** in three runs (cap 200). With a per-project `pg_advisory_xact_lock` added to `collaboration_write` (scratch copy only): **200** in 3 of 3 runs, and the `collaboration`, `database` (migration replay), `e2e-pipeline` and `hosted-migration-ledger` suites still pass (4 files, 26 tests). The member-existence half of the audit item is inherent to inviting by UUID (the test already returns one `MEMBER_INVALID` for both a missing user and the owner); downgraded to a note | **Fixed on the PR #31 branch** in `479b2bc` (lock in `0030` plus a regression test that failed 5/5 without the lock and passes 5/5 with it; full branch suite 125 files, 3,157 tests). Not on the integrated code line until PR #31 merges |
 | SEC-005 | Low | REC | Yes | `backend-ci.yml:28-29` unchanged | Open, post-showcase |
 | SEC-006 | Info | REC | Yes | unchanged | Open, post-showcase |
 | SEC-007 | Medium | BLOCK (process) | Yes: PR #31 and PR #29 still have **0 reviews** | GH | Open; branch protection still unverifiable with available tools |
@@ -227,7 +227,7 @@ The CI `supabase-acceptance` job (`workflow_dispatch`) can run the same steps on
 | | Phase records say which roadmap gates remain | ✅ each `docs/phaseNN/*-implementation.md` has "Outstanding" |
 | **Migration safety** | `0030` additive, contiguous, no edit to earlier migrations | ✅ §5.2 |
 | | RLS plus revokes on new tables; definer functions pin `search_path` | ✅ static |
-| | Count caps safe under concurrency (SEC-004) | ❌ **confirmed race** (cap exceeded: 203/200); a tested fix is in §6.3 |
+| | Count caps safe under concurrency (SEC-004) | ✅ fixed in `479b2bc` (§6.3); was a confirmed race (203/200) |
 | | Erasure path with the new immutable tables (SUPA-004) | ⚠️ latent; owner decision |
 | | Deployment order (migration before API) written down | ❌ not in the PR; add it to the PR description and runbook |
 | **API contract** | Additive routes only (151 → 165); OpenAPI and route catalog regenerated; conformance test green | ✅ CI (`modernization.test.ts`) |
@@ -252,7 +252,7 @@ The CI `supabase-acceptance` job (`workflow_dispatch`) can run the same steps on
 - **Merge order:** BUG-001 PR first (small, independent), then PR #31, then refresh PR #29.
 
 
-### 6.3 SEC-004: proposed fix for PR #31 (tested in a scratch copy, not pushed)
+### 6.3 SEC-004: fix for PR #31 (applied on request as `479b2bc`)
 
 `0030` is not applied anywhere yet, so the fix belongs in `0030` itself before merge (otherwise a new `0031`):
 
