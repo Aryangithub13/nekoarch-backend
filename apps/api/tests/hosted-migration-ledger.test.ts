@@ -22,7 +22,7 @@ describe('D-9 read-only hosted migration-history check (operator script)', () =>
   it('lists the repository migrations in order', () => {
     const all = localMigrations() as Row[];
     expect(all[0]).toEqual({ version: '0001', name: expect.any(String) });
-    expect(all.at(-1)!.version).toBe('0030');
+    expect(all.at(-1)!.version).toBe('0031');
     expect(new Set(all.map(m => m.version)).size).toBe(all.length);
   });
 
