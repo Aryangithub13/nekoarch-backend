@@ -55,6 +55,7 @@ import { PROJECT_MANIFEST_ROUTE, PROJECT_MANIFEST_VERSION } from '../contracts/p
 import { SPECIALIST_ROUTE, SPECIALIST_VERSION } from '../contracts/specialists.js';
 import { INSTRUCTION_ROUTE, RESOLUTION_VERSION } from '../instructions/contracts.js';
 import { FEASIBILITY_ROUTE, FEASIBILITY_VERSION } from '../feasibility/contracts.js';
+import { ROUTING_DECISIONS_ROUTE, ROUTING_VERSION } from '../routing/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -113,6 +114,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'INSTRUCTION_RESOLUTION', version: RESOLUTION_VERSION, persistence: 'DERIVED_ON_READ', route: INSTRUCTION_ROUTE, workflowCapability: null },
   // B42 S1: feasibility of a declared ambition against enforced engine limits; concept-only features kept apart; alternatives for consent. Never buildability.
   { serviceId: 'FEASIBILITY_ASSESSMENT', version: FEASIBILITY_VERSION, persistence: 'DERIVED_ON_READ', route: FEASIBILITY_ROUTE, workflowCapability: null },
+  // B43 S1: vendor-neutral capability registry and bounded, inspectable routing dry run. No provider is called; user-supplied credentials are UNSUPPORTED.
+  { serviceId: 'CAPABILITY_ROUTING', version: ROUTING_VERSION, persistence: 'DERIVED_ON_READ', route: ROUTING_DECISIONS_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

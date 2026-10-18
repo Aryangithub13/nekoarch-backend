@@ -71257,6 +71257,374 @@
     }
    }
   },
+  "/api/projects/{projectId}/routing/decisions": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/routing/decisions",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "targetScopes": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "enum": [
+            "FACADE_APPEARANCE",
+            "INTERIOR_FINISHES",
+            "FLOOR_PLAN",
+            "STRUCTURE",
+            "QUANTITIES",
+            "COST",
+            "ENVIRONMENT",
+            "SCENE_3D",
+            "IFC_EXPORT",
+            "EVIDENCE_REPORT",
+            "INTENT_TEXT",
+            "EXTERIOR_RENDER",
+            "INTERIOR_RENDER",
+            "REFERENCE_IMAGE"
+           ]
+          },
+          "minItems": 1,
+          "maxItems": 14
+         },
+         "privacyClass": {
+          "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass",
+          "default": "LOCAL_ONLY"
+         },
+         "allowMetered": {
+          "type": "boolean",
+          "default": false
+         }
+        },
+        "required": [
+         "targetScopes"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "routingVersion": {
+           "type": "string",
+           "enum": [
+            "capability-routing-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "decisionHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "targetScopes": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "FACADE_APPEARANCE",
+             "INTERIOR_FINISHES",
+             "FLOOR_PLAN",
+             "STRUCTURE",
+             "QUANTITIES",
+             "COST",
+             "ENVIRONMENT",
+             "SCENE_3D",
+             "IFC_EXPORT",
+             "EVIDENCE_REPORT",
+             "INTENT_TEXT",
+             "EXTERIOR_RENDER",
+             "INTERIOR_RENDER",
+             "REFERENCE_IMAGE"
+            ]
+           }
+          },
+          "effectivePrivacyClass": {
+           "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass"
+          },
+          "effectiveAllowMetered": {
+           "type": "boolean"
+          },
+          "invoke": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "forScopes": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "FACADE_APPEARANCE",
+                "INTERIOR_FINISHES",
+                "FLOOR_PLAN",
+                "STRUCTURE",
+                "QUANTITIES",
+                "COST",
+                "ENVIRONMENT",
+                "SCENE_3D",
+                "IFC_EXPORT",
+                "EVIDENCE_REPORT",
+                "INTENT_TEXT",
+                "EXTERIOR_RENDER",
+                "INTERIOR_RENDER",
+                "REFERENCE_IMAGE"
+               ]
+              },
+              "maxItems": 14
+             },
+             "execution": {
+              "type": "string",
+              "enum": [
+               "LOCAL_DETERMINISTIC",
+               "PROVIDER_THEN_DETERMINISTIC_FALLBACK",
+               "PROVIDER_ONLY"
+              ]
+             },
+             "providerIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 64
+              },
+              "maxItems": 8
+             },
+             "route": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "reason": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capabilityId",
+             "forScopes",
+             "execution",
+             "providerIds",
+             "route",
+             "reason"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 12
+          },
+          "notInvoked": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "reason": {
+              "type": "string",
+              "enum": [
+               "NOT_TARGETED",
+               "UNSUPPORTED",
+               "NO_ELIGIBLE_PROVIDER"
+              ]
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capabilityId",
+             "reason",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 12
+          },
+          "refused": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "scope": {
+              "type": "string",
+              "enum": [
+               "FACADE_APPEARANCE",
+               "INTERIOR_FINISHES",
+               "FLOOR_PLAN",
+               "STRUCTURE",
+               "QUANTITIES",
+               "COST",
+               "ENVIRONMENT",
+               "SCENE_3D",
+               "IFC_EXPORT",
+               "EVIDENCE_REPORT",
+               "INTENT_TEXT",
+               "EXTERIOR_RENDER",
+               "INTERIOR_RENDER",
+               "REFERENCE_IMAGE"
+              ]
+             },
+             "code": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "scope",
+             "code",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 14
+          },
+          "staleIfChanged": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "maxLength": 80
+           },
+           "maxItems": 24
+          },
+          "quote": {
+           "type": "object",
+           "properties": {
+            "externalCostUsd": {
+             "anyOf": [
+              {
+               "type": "number",
+               "enum": [
+                0
+               ]
+              },
+              {
+               "enum": [
+                "null"
+               ],
+               "nullable": true
+              }
+             ]
+            },
+            "meteredProvidersEligible": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "externalCostUsd",
+            "meteredProvidersEligible",
+            "basis"
+           ],
+           "additionalProperties": false
+          },
+          "executed": {
+           "type": "boolean",
+           "enum": [
+            false
+           ]
+          }
+         },
+         "required": [
+          "routingVersion",
+          "projectId",
+          "decisionHash",
+          "targetScopes",
+          "effectivePrivacyClass",
+          "effectiveAllowMetered",
+          "invoke",
+          "notInvoked",
+          "refused",
+          "staleIfChanged",
+          "quote",
+          "executed"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/specialists/{module}/requests": {
    "post": {
     "operationId": "post /api/projects/:projectId/specialists/:module/requests",
@@ -72896,6 +73264,267 @@
          "required": [
           "regions",
           "lastUpdated"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/routing/capabilities": {
+   "get": {
+    "operationId": "get /api/routing/capabilities",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "routingVersion": {
+           "type": "string",
+           "enum": [
+            "capability-routing-v1"
+           ]
+          },
+          "defaultPrivacyClass": {
+           "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass"
+          },
+          "allowMetered": {
+           "type": "boolean"
+          },
+          "capabilities": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "ADVISORY",
+               "UNSUPPORTED"
+              ]
+             },
+             "title": {
+              "type": "string",
+              "maxLength": 120
+             },
+             "implementation": {
+              "type": "object",
+              "properties": {
+               "kind": {
+                "type": "string",
+                "enum": [
+                 "LOCAL_DETERMINISTIC",
+                 "CONFIGURED_PROVIDER",
+                 "LOCAL_WITH_OPTIONAL_PROVIDER",
+                 "NONE"
+                ]
+               },
+               "serviceId": {
+                "type": "string",
+                "maxLength": 64,
+                "nullable": true
+               },
+               "route": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+               },
+               "aiCapability": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/capability"
+                 }
+                ],
+                "nullable": true
+               }
+              },
+              "required": [
+               "kind",
+               "serviceId",
+               "route",
+               "aiCapability"
+              ],
+              "additionalProperties": false
+             },
+             "providers": {
+              "type": "array",
+              "items": {
+               "type": "object",
+               "properties": {
+                "providerId": {
+                 "type": "string",
+                 "maxLength": 64
+                },
+                "placement": {
+                 "type": "string",
+                 "enum": [
+                  "LOCAL",
+                  "REMOTE"
+                 ]
+                },
+                "enabled": {
+                 "type": "boolean"
+                },
+                "costClasses": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "enum": [
+                   "FREE",
+                   "METERED"
+                  ]
+                 },
+                 "maxItems": 2
+                },
+                "eligible": {
+                 "type": "boolean"
+                },
+                "ineligibleReason": {
+                 "type": "string",
+                 "maxLength": 80,
+                 "nullable": true
+                }
+               },
+               "required": [
+                "providerId",
+                "placement",
+                "enabled",
+                "costClasses",
+                "eligible",
+                "ineligibleReason"
+               ],
+               "additionalProperties": false
+              },
+              "maxItems": 8
+             },
+             "dataEgress": {
+              "type": "string",
+              "enum": [
+               "NONE",
+               "TASK_TEXT_TO_CONFIGURED_PROVIDER"
+              ]
+             },
+             "region": {
+              "type": "string",
+              "enum": [
+               "SERVER_LOCAL",
+               "PROVIDER_REGION_NOT_DECLARED"
+              ]
+             },
+             "costBasis": {
+              "type": "string",
+              "enum": [
+               "LOCAL_NO_EXTERNAL_COST",
+               "METERED_PROVIDER_IF_ALLOWED",
+               "NOT_AVAILABLE"
+              ]
+             },
+             "outputCheck": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "fallback": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "limitations": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "userSuppliedCredentials": {
+              "type": "string",
+              "enum": [
+               "UNSUPPORTED"
+              ]
+             }
+            },
+            "required": [
+             "capabilityId",
+             "status",
+             "title",
+             "implementation",
+             "providers",
+             "dataEgress",
+             "region",
+             "costBasis",
+             "outputCheck",
+             "fallback",
+             "limitations",
+             "userSuppliedCredentials"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 12,
+           "maxItems": 12
+          },
+          "credentials": {
+           "type": "object",
+           "properties": {
+            "userSupplied": {
+             "type": "string",
+             "enum": [
+              "UNSUPPORTED"
+             ]
+            },
+            "reason": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "userSupplied",
+            "reason"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "routingVersion",
+          "defaultPrivacyClass",
+          "allowMetered",
+          "capabilities",
+          "credentials"
          ],
          "additionalProperties": false
         }

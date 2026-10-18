@@ -731,6 +731,11 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/routing/decisions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/specialists/:module/requests",
   "anonymous": 401
  },
@@ -763,6 +768,11 @@
   "method": "GET",
   "url": "/api/regions",
   "anonymous": 404
+ },
+ {
+  "method": "GET",
+  "url": "/api/routing/capabilities",
+  "anonymous": 401
  },
  {
   "method": "GET",

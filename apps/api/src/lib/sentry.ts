@@ -44,6 +44,8 @@ const safeRoutes = new Set([
   `${revision}/instructions/resolve`,
   // B42
   `${project}/feasibility/assessments`,
+  // B43
+  '/api/routing/capabilities', `${project}/routing/decisions`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
