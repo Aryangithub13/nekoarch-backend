@@ -90,6 +90,36 @@
   "anonymous": 401
  },
  {
+  "method": "GET",
+  "url": "/api/projects/:projectId/collaboration",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/members",
+  "anonymous": 401
+ },
+ {
+  "method": "DELETE",
+  "url": "/api/projects/:projectId/collaboration/members/:userId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId/comments",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId/reviews",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/projects/:projectId/compute/jobs",
   "anonymous": 401

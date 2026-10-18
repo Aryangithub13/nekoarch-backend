@@ -29167,6 +29167,1264 @@
     }
    }
   },
+  "/api/projects/{projectId}/collaboration": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/collaboration",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "project": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "title": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "status": {
+             "type": "string",
+             "enum": [
+              "ACTIVE",
+              "ARCHIVED"
+             ]
+            },
+            "currentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/project/properties/id"
+              }
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "id",
+            "title",
+            "status",
+            "currentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "members": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "userId": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "role": {
+              "type": "string",
+              "enum": [
+               "editor",
+               "reviewer",
+               "viewer"
+              ]
+             },
+             "addedBy": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "createdAt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+             },
+             "updatedAt": {
+              "$ref": "#/components/properties/members/items/properties/createdAt"
+             }
+            },
+            "required": [
+             "userId",
+             "role",
+             "addedBy",
+             "createdAt",
+             "updatedAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 20
+          },
+          "revisions": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "revisionNumber": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "parentRevisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/project/properties/id"
+               }
+              ],
+              "nullable": true
+             },
+             "sourceMode": {
+              "type": "string",
+              "enum": [
+               "generated",
+               "supplied"
+              ]
+             },
+             "createdBy": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/members/items/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "revisionNumber",
+             "parentRevisionId",
+             "sourceMode",
+             "createdBy",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "collaborationVersion": {
+           "type": "string",
+           "enum": [
+            "collaboration-v1"
+           ]
+          },
+          "permissions": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "READ",
+             "COMMENT",
+             "REVIEW",
+             "MANAGE_MEMBERS"
+            ]
+           },
+           "maxItems": 4
+          }
+         },
+         "required": [
+          "project",
+          "role",
+          "members",
+          "revisions",
+          "collaborationVersion",
+          "permissions"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/members": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/members",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "userId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "role": {
+          "type": "string",
+          "enum": [
+           "editor",
+           "reviewer",
+           "viewer"
+          ]
+         }
+        },
+        "required": [
+         "userId",
+         "role"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "userId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "addedBy": {
+           "$ref": "#/components/properties/userId"
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          },
+          "updatedAt": {
+           "$ref": "#/components/properties/createdAt"
+          }
+         },
+         "required": [
+          "userId",
+          "role",
+          "addedBy",
+          "createdAt",
+          "updatedAt"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/members/{userId}": {
+   "delete": {
+    "operationId": "delete /api/projects/:projectId/collaboration/members/:userId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "userId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "userId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "removed": {
+           "type": "boolean",
+           "enum": [
+            true
+           ]
+          }
+         },
+         "required": [
+          "userId",
+          "removed"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/collaboration/revisions/:revisionId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "collaborationVersion": {
+           "type": "string",
+           "enum": [
+            "collaboration-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "revision": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "sourceMode": {
+             "type": "string",
+             "enum": [
+              "generated",
+              "supplied"
+             ]
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "type": "string",
+             "minLength": 1,
+             "maxLength": 40
+            },
+            "generatorVersion": {
+             "type": "string",
+             "maxLength": 100,
+             "nullable": true
+            },
+            "modelHash": {
+             "type": "string",
+             "pattern": "^[a-f0-9]{64}$"
+            },
+            "model": {
+             "type": "object",
+             "additionalProperties": {}
+            }
+           },
+           "required": [
+            "id",
+            "revisionNumber",
+            "parentRevisionId",
+            "sourceMode",
+            "createdBy",
+            "createdAt",
+            "generatorVersion",
+            "modelHash",
+            "model"
+           ],
+           "additionalProperties": false
+          },
+          "comments": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "authorId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "authorRole": {
+              "type": "string",
+              "enum": [
+               "owner",
+               "editor",
+               "reviewer"
+              ]
+             },
+             "kind": {
+              "type": "string",
+              "enum": [
+               "COMMENT",
+               "CHANGE_REQUEST"
+              ]
+             },
+             "body": {
+              "type": "string",
+              "maxLength": 2000
+             },
+             "elementIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "maxItems": 16
+             },
+             "parentId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/revision/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "authorId",
+             "authorRole",
+             "kind",
+             "body",
+             "elementIds",
+             "parentId",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 200
+          },
+          "reviews": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "reviewerId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "reviewerRole": {
+              "type": "string",
+              "enum": [
+               "owner",
+               "reviewer"
+              ]
+             },
+             "decision": {
+              "type": "string",
+              "enum": [
+               "APPROVED",
+               "CHANGES_REQUESTED"
+              ]
+             },
+             "note": {
+              "type": "string",
+              "maxLength": 2000
+             },
+             "modelHash": {
+              "$ref": "#/components/properties/revision/properties/modelHash"
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/revision/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "reviewerId",
+             "reviewerRole",
+             "decision",
+             "note",
+             "modelHash",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "reviewState": {
+           "type": "object",
+           "properties": {
+            "approvals": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "changesRequested": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "latest": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/reviews/items"
+             },
+             "maxItems": 21
+            }
+           },
+           "required": [
+            "approvals",
+            "changesRequested",
+            "latest"
+           ],
+           "additionalProperties": false
+          },
+          "audit": {
+           "type": "object",
+           "properties": {
+            "revisionId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "modelHash": {
+             "$ref": "#/components/properties/revision/properties/modelHash"
+            },
+            "sourceMode": {
+             "type": "string",
+             "enum": [
+              "generated",
+              "supplied"
+             ]
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "$ref": "#/components/properties/revision/properties/createdAt"
+            },
+            "operation": {
+             "type": "object",
+             "properties": {
+              "operationId": {
+               "$ref": "#/components/properties/projectId"
+              },
+              "kind": {
+               "type": "string",
+               "maxLength": 40,
+               "nullable": true
+              },
+              "requestedBy": {
+               "$ref": "#/components/properties/projectId"
+              },
+              "approvedBy": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "instruction": {
+               "type": "string",
+               "maxLength": 2000,
+               "nullable": true
+              },
+              "events": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "eventType": {
+                  "type": "string",
+                  "maxLength": 40
+                 },
+                 "actor": {
+                  "allOf": [
+                   {
+                    "$ref": "#/components/properties/projectId"
+                   }
+                  ],
+                  "nullable": true
+                 },
+                 "createdAt": {
+                  "$ref": "#/components/properties/revision/properties/createdAt"
+                 }
+                },
+                "required": [
+                 "eventType",
+                 "actor",
+                 "createdAt"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              }
+             },
+             "required": [
+              "operationId",
+              "kind",
+              "requestedBy",
+              "approvedBy",
+              "instruction",
+              "events"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "changes": {
+             "type": "object",
+             "properties": {
+              "diffVersion": {
+               "type": "string",
+               "enum": [
+                "element-diff-v1"
+               ]
+              },
+              "baseModelHash": {
+               "type": "string",
+               "pattern": "^[a-f0-9]{64}$"
+              },
+              "candidateModelHash": {
+               "$ref": "#/components/properties/audit/properties/changes/properties/baseModelHash"
+              },
+              "modelIdentical": {
+               "type": "boolean"
+              },
+              "elementsIdentical": {
+               "type": "boolean"
+              },
+              "documentFields": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "maxItems": 32
+              },
+              "collections": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "base": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "candidate": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "added": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "removed": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "modified": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "preserved": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "reordered": {
+                  "type": "boolean"
+                 }
+                },
+                "required": [
+                 "collection",
+                 "base",
+                 "candidate",
+                 "added",
+                 "removed",
+                 "modified",
+                 "preserved",
+                 "reordered"
+                ],
+                "additionalProperties": false
+               }
+              },
+              "changes": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "elementId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                 },
+                 "change": {
+                  "type": "string",
+                  "enum": [
+                   "ADDED",
+                   "REMOVED",
+                   "MODIFIED"
+                  ]
+                 },
+                 "fields": {
+                  "type": "array",
+                  "items": {
+                   "type": "string",
+                   "maxLength": 80
+                  },
+                  "maxItems": 32
+                 }
+                },
+                "required": [
+                 "collection",
+                 "elementId",
+                 "change",
+                 "fields"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 256
+              },
+              "changesTruncated": {
+               "type": "boolean"
+              }
+             },
+             "required": [
+              "diffVersion",
+              "baseModelHash",
+              "candidateModelHash",
+              "modelIdentical",
+              "elementsIdentical",
+              "documentFields",
+              "collections",
+              "changes",
+              "changesTruncated"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "invalidation": {
+             "type": "string",
+             "enum": [
+              "WHOLE_MODEL"
+             ]
+            }
+           },
+           "required": [
+            "revisionId",
+            "revisionNumber",
+            "parentRevisionId",
+            "modelHash",
+            "sourceMode",
+            "createdBy",
+            "createdAt",
+            "operation",
+            "changes",
+            "invalidation"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "professionalCertification": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "regulatoryApproval": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "professionalCertification",
+            "regulatoryApproval"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "collaborationVersion",
+          "projectId",
+          "role",
+          "revision",
+          "comments",
+          "reviews",
+          "reviewState",
+          "audit",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}/comments": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/revisions/:revisionId/comments",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "kind": {
+          "type": "string",
+          "enum": [
+           "COMMENT",
+           "CHANGE_REQUEST"
+          ],
+          "default": "COMMENT"
+         },
+         "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+         },
+         "elementIds": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 200
+          },
+          "maxItems": 16,
+          "default": []
+         },
+         "parentId": {
+          "type": "string",
+          "format": "uuid",
+          "nullable": true,
+          "default": null
+         }
+        },
+        "required": [
+         "body"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "authorId": {
+           "$ref": "#/components/properties/id"
+          },
+          "authorRole": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer"
+           ]
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "COMMENT",
+            "CHANGE_REQUEST"
+           ]
+          },
+          "body": {
+           "type": "string",
+           "maxLength": 2000
+          },
+          "elementIds": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+           },
+           "maxItems": 16
+          },
+          "parentId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/id"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          }
+         },
+         "required": [
+          "id",
+          "authorId",
+          "authorRole",
+          "kind",
+          "body",
+          "elementIds",
+          "parentId",
+          "createdAt"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}/reviews": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/revisions/:revisionId/reviews",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "decision": {
+          "type": "string",
+          "enum": [
+           "APPROVED",
+           "CHANGES_REQUESTED"
+          ]
+         },
+         "note": {
+          "type": "string",
+          "maxLength": 2000,
+          "default": ""
+         },
+         "expectedModelHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+         }
+        },
+        "required": [
+         "decision",
+         "expectedModelHash"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "reviewerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "reviewerRole": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "reviewer"
+           ]
+          },
+          "decision": {
+           "type": "string",
+           "enum": [
+            "APPROVED",
+            "CHANGES_REQUESTED"
+           ]
+          },
+          "note": {
+           "type": "string",
+           "maxLength": 2000
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          }
+         },
+         "required": [
+          "id",
+          "reviewerId",
+          "reviewerRole",
+          "decision",
+          "note",
+          "modelHash",
+          "createdAt"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/compute/jobs": {
    "post": {
     "operationId": "post /api/projects/:projectId/compute/jobs",

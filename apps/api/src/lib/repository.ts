@@ -42,6 +42,7 @@ export interface Repository {
   designConceptRpc?(name: 'design_concept_read' | 'design_concept_write', args: Record<string, unknown>): Promise<unknown>;
   accountRpc?(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>): Promise<unknown>;
   projectRpc?(name: 'project_read' | 'project_write', args: Record<string, unknown>): Promise<unknown>;
+  collaborationRpc?(name: 'collaboration_read' | 'collaboration_write', args: Record<string, unknown>): Promise<unknown>;
   lookupIdempotency?(context: IdempotencyContext): Promise<IdempotencyRecord | null>;
   commitIdempotency?(context: IdempotencyContext, write: DurableWrite, response: unknown): Promise<unknown>;
   insertPlan(row: PlanInsert): Promise<PlanRecord>;

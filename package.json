@@ -69,6 +69,7 @@
     "test:instructions": "npm run build && vitest run apps/api/tests/instructions.test.ts apps/api/tests/instructions.integration.test.ts",
     "test:feasibility": "npm run build && vitest run apps/api/tests/feasibility.test.ts apps/api/tests/feasibility.integration.test.ts",
     "test:routing": "npm run build && vitest run apps/api/tests/routing.test.ts apps/api/tests/routing.integration.test.ts",
+    "test:collaboration": "npm run build && vitest run apps/api/tests/collaboration.integration.test.ts",
     "test:integration-plan": "npm run build && vitest run apps/api/tests/integration-plan.test.ts apps/api/tests/integration-plan.integration.test.ts apps/api/tests/integration-branches.integration.test.ts",
     "test:engineering": "npm run build && vitest run apps/api/tests/engineering.test.ts apps/api/tests/engineering.integration.test.ts apps/api/tests/engineering-zones.test.ts apps/api/tests/engineering-zones.integration.test.ts",
     "benchmark:revision": "npm run build && node --import tsx scripts/benchmark-revision.ts",

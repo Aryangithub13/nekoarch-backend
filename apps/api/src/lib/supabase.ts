@@ -16,6 +16,7 @@ import { computeDatabaseError } from './compute-repository.js';
 import { evidenceDatabaseError } from './evidence-repository.js';
 import { designConceptDatabaseError } from './design-concept-repository.js';
 import { accountDatabaseError } from './account-repository.js';
+import { collaborationDatabaseError } from './collaboration-repository.js';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { projectDatabaseError } from './project-repository.js';
@@ -113,6 +114,11 @@ export class SupabaseRepository implements Repository {
   async accountRpc(name: 'account_read' | 'account_write' | 'library_search' | 'library_write' | 'brief_read' | 'brief_write' | 'context_read', args: Record<string, unknown>) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) accountDatabaseError(error);
+    return data as unknown;
+  }
+  async collaborationRpc(name: 'collaboration_read' | 'collaboration_write', args: Record<string, unknown>) {
+    const { data, error } = await this.client.rpc(name, args);
+    if (error) collaborationDatabaseError(error);
     return data as unknown;
   }
   async projectRpc(name: 'project_read' | 'project_write', args: Record<string, unknown>) {
