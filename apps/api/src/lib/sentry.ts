@@ -42,6 +42,8 @@ const safeRoutes = new Set([
   `${project}/integration/plans`, `${project}/integration/plans/execute`,
   // B41
   `${revision}/instructions/resolve`,
+  // B42
+  `${project}/feasibility/assessments`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.

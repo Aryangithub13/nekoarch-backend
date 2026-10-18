@@ -166,6 +166,11 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/feasibility/assessments",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/integration/plans",
   "anonymous": 401
  },

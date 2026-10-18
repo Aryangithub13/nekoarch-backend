@@ -49,6 +49,7 @@ import { designConceptRoutes } from './routes/design-concepts.js';
 import { specialistRoutes } from './routes/specialists.js';
 import { integrationRoutes } from './routes/integration.js';
 import { instructionRoutes } from './routes/instructions.js';
+import { feasibilityRoutes } from './routes/feasibility.js';
 import type { AiAdapter } from './ai/orchestration/registry.js';
 
 export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool; scenePool?: ScenePool; appearancePool?: AppearancePool; inspectionPool?: InspectionPool; designConceptAdapters?: ReadonlyMap<string, AiAdapter> }) {
@@ -137,6 +138,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     specialistRoutes(scope, backend, options.env);
     integrationRoutes(scope, backend, options.env);
     instructionRoutes(scope, backend);
+    feasibilityRoutes(scope, backend);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

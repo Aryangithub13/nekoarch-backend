@@ -41,6 +41,7 @@ import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-grap
 import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
 import { SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
 import { InstructionRequestSchema, InstructionResolutionSchema } from '../apps/api/src/instructions/contracts.js';
+import { FeasibilityAssessmentSchema, FeasibilityRequestSchema } from '../apps/api/src/feasibility/contracts.js';
 import { ChangeSetSchema, ExecuteRequestSchema as IntegrationExecuteSchema, IntegrationExecutionSchema, IntegrationPlanSchema } from '../apps/api/src/contracts/integration.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
@@ -135,6 +136,8 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201 },
   // B41 S1: deterministic instruction resolution (read only).
   [`POST ${R}/instructions/resolve`]: { body: InstructionRequestSchema, response: InstructionResolutionSchema },
+  // B42 S1: feasibility assessment of a declared ambition (read only).
+  [`POST ${P}/feasibility/assessments`]: { body: FeasibilityRequestSchema, response: FeasibilityAssessmentSchema },
   // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
   [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
   [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },

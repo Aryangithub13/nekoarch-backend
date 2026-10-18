@@ -34062,6 +34062,577 @@
     }
    }
   },
+  "/api/projects/{projectId}/feasibility/assessments": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/feasibility/assessments",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "text": {
+          "type": "string",
+          "maxLength": 1000,
+          "default": ""
+         },
+         "declared": {
+          "type": "object",
+          "properties": {
+           "storeys": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+           },
+           "rooms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+           },
+           "heightMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000000
+           },
+           "maxSpanMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+           },
+           "cantileverMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+           },
+           "features": {
+            "type": "array",
+            "items": {
+             "type": "string",
+             "enum": [
+              "CURVED_OR_ORGANIC_FORM",
+              "TWISTING_OR_ROTATING_FORM",
+              "FLOATING_OR_LEVITATING_VOLUME",
+              "UNDERWATER_OR_SUBMERGED",
+              "INVERTED_OR_GRAVITY_DEFYING",
+              "FULL_GLASS_ENVELOPE",
+              "TRANSPARENT_FLOORS",
+              "SCULPTURAL_FACADE"
+             ]
+            },
+            "maxItems": 8
+           }
+          },
+          "additionalProperties": false,
+          "default": {}
+         },
+         "baseRevisionId": {
+          "type": "string",
+          "format": "uuid",
+          "nullable": true,
+          "default": null
+         },
+         "preserve": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "enum": [
+            "BUILDING_GEOMETRY",
+            "FLOOR_PLANS",
+            "STRUCTURE",
+            "STAIRS",
+            "OPENINGS",
+            "WALLS",
+            "ROOMS",
+            "INTERIOR",
+            "BUILDING_DIMENSIONS",
+            "EXTERIOR_APPEARANCE",
+            "LEVEL"
+           ]
+          },
+          "maxItems": 11,
+          "default": []
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "assessmentVersion": {
+           "type": "string",
+           "enum": [
+            "feasibility-assessment-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "WITHIN_ENGINE_SCOPE",
+            "ALTERNATIVES_PROPOSED"
+           ]
+          },
+          "constraints": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "constraintId": {
+              "type": "string",
+              "enum": [
+               "STOREYS",
+               "ROOMS",
+               "HEIGHT",
+               "SPAN",
+               "CANTILEVER",
+               "CURVED_OR_ORGANIC_FORM",
+               "TWISTING_OR_ROTATING_FORM",
+               "FLOATING_OR_LEVITATING_VOLUME",
+               "UNDERWATER_OR_SUBMERGED",
+               "INVERTED_OR_GRAVITY_DEFYING",
+               "FULL_GLASS_ENVELOPE",
+               "TRANSPARENT_FLOORS",
+               "SCULPTURAL_FACADE"
+              ]
+             },
+             "source": {
+              "type": "string",
+              "enum": [
+               "TEXT",
+               "DECLARED"
+              ]
+             },
+             "phrase": {
+              "type": "string",
+              "maxLength": 120,
+              "nullable": true
+             },
+             "value": {
+              "type": "integer",
+              "nullable": true
+             },
+             "unit": {
+              "type": "string",
+              "enum": [
+               "storeys",
+               "rooms",
+               "mm"
+              ],
+              "nullable": true
+             },
+             "classification": {
+              "type": "string",
+              "enum": [
+               "WITHIN_ENGINE_SCOPE",
+               "EXCEEDS_ENGINE_LIMIT",
+               "CONCEPT_ONLY",
+               "REQUIRES_PROFESSIONAL_REVIEW"
+              ]
+             },
+             "limit": {
+              "type": "object",
+              "properties": {
+               "limitId": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "value": {
+                "type": "integer"
+               },
+               "requested": {
+                "type": "integer"
+               }
+              },
+              "required": [
+               "limitId",
+               "value",
+               "requested"
+              ],
+              "additionalProperties": false,
+              "nullable": true
+             },
+             "unverifiedDomains": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "HEIGHT_AND_STOREYS",
+                "AREAS_AND_VOLUME",
+                "SITE_AND_GEOMETRY",
+                "BASE_SLENDERNESS",
+                "PRELIMINARY_COST",
+                "GRAVITY_LOADS",
+                "WIND_LOADS",
+                "SEISMIC_LOADS",
+                "GEOTECHNICAL_AND_FOUNDATIONS",
+                "LATERAL_DRIFT_AND_STABILITY",
+                "DYNAMIC_RESPONSE",
+                "MEMBER_DESIGN",
+                "PROGRESSIVE_COLLAPSE",
+                "FIRE_AND_LIFE_SAFETY",
+                "VERTICAL_TRANSPORT",
+                "CODE_COMPLIANCE",
+                "CERTIFICATION_AND_APPROVAL"
+               ]
+              },
+              "maxItems": 17
+             },
+             "reason": {
+              "type": "string",
+              "maxLength": 400
+             }
+            },
+            "required": [
+             "constraintId",
+             "source",
+             "phrase",
+             "value",
+             "unit",
+             "classification",
+             "limit",
+             "unverifiedDomains",
+             "reason"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "alternatives": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "alternativeId": {
+              "type": "string",
+              "enum": [
+               "AS_REQUESTED",
+               "BOUNDED_GENERATION",
+               "SUPPLIED_MODEL_ASSESSMENT",
+               "CONCEPT_ONLY"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "PROPOSED_FOR_CONSENT",
+               "BLOCKED_BY_LOCK"
+              ]
+             },
+             "title": {
+              "type": "string",
+              "maxLength": 120
+             },
+             "reachesStage": {
+              "type": "string",
+              "enum": [
+               "CONCEPT",
+               "BOUNDED_GEOMETRY",
+               "ENGINEERING_EVIDENCE",
+               "PROFESSIONAL_REVIEW"
+              ]
+             },
+             "keeps": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 160
+              },
+              "maxItems": 16
+             },
+             "givesUp": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 16
+             },
+             "lockConflicts": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "BUILDING_GEOMETRY",
+                "FLOOR_PLANS",
+                "STRUCTURE",
+                "STAIRS",
+                "OPENINGS",
+                "WALLS",
+                "ROOMS",
+                "INTERIOR",
+                "BUILDING_DIMENSIONS",
+                "EXTERIOR_APPEARANCE",
+                "LEVEL"
+               ]
+              },
+              "maxItems": 11
+             },
+             "handoff": {
+              "type": "object",
+              "properties": {
+               "method": {
+                "type": "string",
+                "enum": [
+                 "POST"
+                ]
+               },
+               "route": {
+                "type": "string",
+                "maxLength": 200
+               },
+               "purpose": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "method",
+               "route",
+               "purpose"
+              ],
+              "additionalProperties": false
+             },
+             "requiresConsent": {
+              "type": "boolean",
+              "enum": [
+               true
+              ]
+             },
+             "applied": {
+              "type": "boolean",
+              "enum": [
+               false
+              ]
+             }
+            },
+            "required": [
+             "alternativeId",
+             "status",
+             "title",
+             "reachesStage",
+             "keeps",
+             "givesUp",
+             "lockConflicts",
+             "handoff",
+             "requiresConsent",
+             "applied"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 4
+          },
+          "ladder": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "stage": {
+              "type": "string",
+              "enum": [
+               "CONCEPT",
+               "BOUNDED_GEOMETRY",
+               "ENGINEERING_EVIDENCE",
+               "PROFESSIONAL_REVIEW"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "BLOCKED",
+               "NOT_PERFORMED"
+              ]
+             },
+             "artifacts": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 8
+             },
+             "gaps": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "maxItems": 16
+             },
+             "acceptance": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "stage",
+             "status",
+             "artifacts",
+             "gaps",
+             "acceptance"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 4,
+           "maxItems": 4
+          },
+          "separation": {
+           "type": "object",
+           "properties": {
+            "conceptOnly": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "maxItems": 16
+            },
+            "feasibilityAssessed": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "maxItems": 16
+            }
+           },
+           "required": [
+            "conceptOnly",
+            "feasibilityAssessed"
+           ],
+           "additionalProperties": false
+          },
+          "interpretation": {
+           "type": "object",
+           "properties": {
+            "mode": {
+             "type": "string",
+             "enum": [
+              "DETERMINISTIC"
+             ]
+            },
+            "languageModel": {
+             "type": "string",
+             "enum": [
+              "NONE"
+             ]
+            }
+           },
+           "required": [
+            "mode",
+            "languageModel"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "buildability": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "engineeringFeasibility": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "codeCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "professionalReview": {
+             "type": "string",
+             "enum": [
+              "NOT_PERFORMED"
+             ]
+            }
+           },
+           "required": [
+            "buildability",
+            "engineeringFeasibility",
+            "codeCompliance",
+            "professionalReview"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "assessmentVersion",
+          "projectId",
+          "baseRevisionId",
+          "inputHash",
+          "status",
+          "constraints",
+          "alternatives",
+          "ladder",
+          "separation",
+          "interpretation",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/integration/plans": {
    "post": {
     "operationId": "post /api/projects/:projectId/integration/plans",
