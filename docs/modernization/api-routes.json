@@ -515,6 +515,11 @@
   "anonymous": 401
  },
  {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/instructions/resolve",
+  "anonymous": 401
+ },
+ {
   "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/analyses",
   "anonymous": 401

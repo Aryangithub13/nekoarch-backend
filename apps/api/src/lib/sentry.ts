@@ -40,6 +40,8 @@ const safeRoutes = new Set([
   `${revision}/design-concepts`, `${revision}/design-concepts/:conceptSetId`, `${project}/specialists/:module/requests`,
   // B40
   `${project}/integration/plans`, `${project}/integration/plans/execute`,
+  // B41
+  `${revision}/instructions/resolve`,
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
