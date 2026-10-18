@@ -90,7 +90,7 @@ export const flushSentry = (timeoutMs = 5_000) => Sentry.getClient() ? Sentry.fl
 | `npm audit --omit=dev --audit-level=high` | exit 0 |
 | Full suite `npx vitest run` (non-root user, Node 22.22.0, `en_US.UTF-8`) | **113/113 files, 3,108/3,108 tests passed** (the base 3,106 plus the 2 new), exit 0, 809 s |
 | Built-server SIGTERM checks (§3.2) | as tabulated |
-| CI on the fix PR | In progress when this report was committed (run 39140096759): container smoke **passed**; the Node 22.22.0 and 22.23.3 test jobs were still running. The final result is added to this table when the run completes |
+| CI on the fix PR | **Green** (run 39140096759 on `b3f0837`): backend Node 22.22.0 **113 files, 3,108 tests passed**; backend Node 22.23.3 success; container smoke success; `supabase-acceptance` skipped (dispatch-only, as on every run) |
 
 **BUG-001 status:** fixed on a branch, with regression coverage. **Not resolved on the code line until the PR is reviewed and merged.**
 
