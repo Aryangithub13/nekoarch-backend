@@ -53,6 +53,11 @@ import { DESIGN_CONCEPT_VERSION } from '../contracts/design-concepts.js';
 import { DESIGN_ROOT } from './design-concept-service.js';
 import { PROJECT_MANIFEST_ROUTE, PROJECT_MANIFEST_VERSION } from '../contracts/project-manifest.js';
 import { SPECIALIST_ROUTE, SPECIALIST_VERSION } from '../contracts/specialists.js';
+import { INSTRUCTION_ROUTE, RESOLUTION_VERSION } from '../instructions/contracts.js';
+import { FEASIBILITY_ROUTE, FEASIBILITY_VERSION } from '../feasibility/contracts.js';
+import { ROUTING_DECISIONS_ROUTE, ROUTING_VERSION } from '../routing/contracts.js';
+import { COLLABORATION_ROOT, COLLABORATION_VERSION } from '../collaboration/contracts.js';
+import { DELIVERY_ROUTE, DELIVERY_VERSION } from '../delivery/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -107,6 +112,16 @@ export const SERVICES = Object.freeze([
   // tables; Exterior and Interior store a Phase 30 preflight (APPEARANCE_MODIFY; INTERIOR_FINISH_MODIFY, owner decision D-12 and migration 0029),
   // completed through the existing revision-operation routes. Nothing is stored by the envelope itself (D-8b).
   { serviceId: 'SPECIALISTS', version: SPECIALIST_VERSION, persistence: 'EXISTING_ENGINE_ARTIFACTS', route: SPECIALIST_ROUTE, workflowCapability: null },
+  // B41 S1: deterministic instruction resolution into typed intent, targets grounded in stable ids, locks and a B40 change-set draft. Never executes.
+  { serviceId: 'INSTRUCTION_RESOLUTION', version: RESOLUTION_VERSION, persistence: 'DERIVED_ON_READ', route: INSTRUCTION_ROUTE, workflowCapability: null },
+  // B42 S1: feasibility of a declared ambition against enforced engine limits; concept-only features kept apart; alternatives for consent. Never buildability.
+  { serviceId: 'FEASIBILITY_ASSESSMENT', version: FEASIBILITY_VERSION, persistence: 'DERIVED_ON_READ', route: FEASIBILITY_ROUTE, workflowCapability: null },
+  // B43 S1: vendor-neutral capability registry and bounded, inspectable routing dry run. No provider is called; user-supplied credentials are UNSUPPORTED.
+  { serviceId: 'CAPABILITY_ROUTING', version: ROUTING_VERSION, persistence: 'DERIVED_ON_READ', route: ROUTING_DECISIONS_ROUTE, workflowCapability: null },
+  // B44 S1: owner-managed members, element-anchored comments, reviews bound to the model hash and the change audit (0030). Never a certification.
+  { serviceId: 'COLLABORATION', version: COLLABORATION_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: COLLABORATION_ROOT, workflowCapability: null },
+  // B45 S1: desktop delivery manifest of a stored scene artifact (per-level chunks, pick anchors, measured budgets, checksums, ETag). Frame rate is a frontend measurement.
+  { serviceId: 'SCENE_DELIVERY', version: DELIVERY_VERSION, persistence: 'DERIVED_ON_READ', route: DELIVERY_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

@@ -40,6 +40,12 @@ import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequest
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
 import { SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
+import { InstructionRequestSchema, InstructionResolutionSchema } from '../apps/api/src/instructions/contracts.js';
+import { FeasibilityAssessmentSchema, FeasibilityRequestSchema } from '../apps/api/src/feasibility/contracts.js';
+import { CapabilityRegistrySchema, RoutingDecisionSchema, RoutingRequestSchema } from '../apps/api/src/routing/contracts.js';
+import { CompatibilitySchema, DeliveryManifestSchema, DeliveryQuerySchema } from '../apps/api/src/delivery/contracts.js';
+import { CommentRequestSchema, CommentSchema, MemberRequestSchema, MemberSchema, ReviewRequestSchema, ReviewSchema, RevisionCollaborationSchema, WorkspaceResponseSchema }
+  from '../apps/api/src/collaboration/contracts.js';
 import { ChangeSetSchema, ExecuteRequestSchema as IntegrationExecuteSchema, IntegrationExecutionSchema, IntegrationPlanSchema } from '../apps/api/src/contracts/integration.js';
 import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
@@ -132,6 +138,23 @@ export const CONTRACTS: Record<string, Op> = {
   // B40 S1: a plan preview stores nothing (200); an execution that wrote anything is 201, a refusal 200 with the same schema.
   [`POST ${P}/integration/plans`]: { body: ChangeSetSchema, response: IntegrationPlanSchema, status: 200 },
   [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201 },
+  // B41 S1: deterministic instruction resolution (read only).
+  [`POST ${R}/instructions/resolve`]: { body: InstructionRequestSchema, response: InstructionResolutionSchema },
+  // B42 S1: feasibility assessment of a declared ambition (read only).
+  [`POST ${P}/feasibility/assessments`]: { body: FeasibilityRequestSchema, response: FeasibilityAssessmentSchema },
+  // B43 S1: capability registry and routing dry run (no provider call).
+  ['GET /api/routing/capabilities']: { query: empty, response: CapabilityRegistrySchema },
+  [`POST ${P}/routing/decisions`]: { body: RoutingRequestSchema, response: RoutingDecisionSchema },
+  // B44 S1: collaboration (members, comments, reviews, audit).
+  [`GET ${P}/collaboration`]: { query: empty, response: WorkspaceResponseSchema },
+  [`POST ${P}/collaboration/members`]: { body: MemberRequestSchema, response: MemberSchema, status: 201 },
+  [`DELETE ${P}/collaboration/members/:userId`]: { response: z.object({ userId: z.string().uuid(), removed: z.literal(true) }).strict() },
+  [`GET ${P}/collaboration/revisions/:revisionId`]: { query: empty, response: RevisionCollaborationSchema },
+  [`POST ${P}/collaboration/revisions/:revisionId/comments`]: { body: CommentRequestSchema, response: CommentSchema, status: 201 },
+  [`POST ${P}/collaboration/revisions/:revisionId/reviews`]: { body: ReviewRequestSchema, response: ReviewSchema, status: 201 },
+  // B45 S1: scene delivery manifest (ETag; 304 on If-None-Match) and the compatibility package.
+  [`GET ${R}/scene/delivery`]: { query: DeliveryQuerySchema, response: DeliveryManifestSchema },
+  ['GET /api/compatibility']: { query: empty, response: CompatibilitySchema },
   // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
   [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
   [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },

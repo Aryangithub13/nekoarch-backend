@@ -23,12 +23,45 @@ import { projectManifest } from './project-manifest-service.js';
 import { createTakeoff, TAKEOFF_OPERATION } from './takeoff-service.js';
 import { createConstruction, CONSTRUCTION_OPERATION } from './construction-service.js';
 import { COST_OPERATION, createCost } from './cost-service.js';
+import { createStructuralAnalysis, STRUCTURAL_ANALYSIS_OPERATION } from './structural-service.js';
+import { verifyRevision } from './verification-service.js';
+import { StructuralDetailSchema } from '../structural/contracts.js';
 
 const MAX_FLOORS = MODEL_LIMITS.find(l => l.limitId === 'GENERATION_MAX_FLOORS')!.value;
 const SAMPLE_RATE_BOOKS: readonly string[] = ['sample-inr-v1', 'sample-inr-v2'];
 /** Manifest modules that are the revision itself (replaced by the new revision, never regenerated), as in the B39 specialist service. */
 const REVISION_ITSELF: readonly string[] = ['BUILDING_MODEL', 'ACCEPTANCE_QA', 'APPEARANCE_VARIANT'];
-const REGENERATED: Partial<Record<ManifestModule, TaskKind>> = { QUANTITY_TAKEOFF: 'QUANTITY_TAKEOFF', CONSTRUCTION_CALCULATION: 'CONSTRUCTION_CALCULATION', BOQ_COST: 'BOQ_COST' };
+const REGENERATED: Partial<Record<ManifestModule, TaskKind>> = { QUANTITY_TAKEOFF: 'QUANTITY_TAKEOFF', CONSTRUCTION_CALCULATION: 'CONSTRUCTION_CALCULATION', BOQ_COST: 'BOQ_COST',
+  STRUCTURAL_ANALYSIS: 'STRUCTURAL_ANALYSIS', COMPLEX_VERIFICATION: 'COMPLEX_VERIFICATION' };
+type PlannedTask = IntegrationPlan['tasks'][number];
+const MODEL_TASKS: readonly PlannedTask[] = [
+  { taskId: 'MODEL_PREFLIGHT', module: 'INTERIOR', branch: 'MODEL', dependsOn: [], writes: 'REVISION_OPERATION', checkpoint: true,
+    description: 'Store the Phase 30 preflight (locks, impacts, candidate hash)' },
+  { taskId: 'MODEL_CANDIDATE', module: 'INTERIOR', branch: 'MODEL', dependsOn: ['MODEL_PREFLIGHT'], writes: 'REVISION_OPERATION', checkpoint: true,
+    description: 'Derive the finish-only candidate; SQL checks it against the base geometry (0029)' },
+  { taskId: 'MODEL_COMMIT', module: 'INTERIOR', branch: 'MODEL', dependsOn: ['MODEL_CANDIDATE'], writes: 'REVISION', checkpoint: true,
+    description: 'Commit the new accepted revision: QA re-run, SQL compare-and-swap on the base, candidate hash re-checked' }];
+const BRANCH_TASKS: Readonly<Record<Exclude<TaskKind, 'MODEL_PREFLIGHT' | 'MODEL_CANDIDATE' | 'MODEL_COMMIT'>, PlannedTask>> = {
+  QUANTITY_TAKEOFF: { taskId: 'QUANTITY_TAKEOFF', module: 'MATERIALS', branch: 'MATERIALS_BUDGET', dependsOn: ['MODEL_COMMIT'], writes: 'ARTIFACT', checkpoint: true,
+    description: 'Quantity takeoff on the committed revision' },
+  CONSTRUCTION_CALCULATION: { taskId: 'CONSTRUCTION_CALCULATION', module: 'MATERIALS', branch: 'MATERIALS_BUDGET', dependsOn: ['QUANTITY_TAKEOFF'], writes: 'ARTIFACT',
+    checkpoint: true, description: 'Construction calculation on the new takeoff' },
+  BOQ_COST: { taskId: 'BOQ_COST', module: 'BUDGET', branch: 'MATERIALS_BUDGET', dependsOn: ['CONSTRUCTION_CALCULATION'], writes: 'ARTIFACT', checkpoint: true,
+    description: 'Cost estimate on the new construction calculation (synthetic sample rates)' },
+  STRUCTURAL_ANALYSIS: { taskId: 'STRUCTURAL_ANALYSIS', module: 'STRUCTURAL', branch: 'STRUCTURAL', dependsOn: ['MODEL_COMMIT'], writes: 'ARTIFACT', checkpoint: true,
+    description: 'B24 linear-static analysis of the supplied frame on the committed revision (REQUIRES_REVIEW; never a design check)' },
+  COMPLEX_VERIFICATION: { taskId: 'COMPLEX_VERIFICATION', module: 'BLUEPRINT', branch: 'VERIFICATION', dependsOn: ['MODEL_COMMIT'], writes: 'NONE', checkpoint: true,
+    description: 'B34 independent verification of the committed revision (derived on read; status and input hash checkpointed)' },
+};
+/** Every task that transitively depends on `id` (failure isolation: only these are skipped when `id` fails). */
+export function dependantsOf(tasks: readonly Pick<PlannedTask, 'taskId' | 'dependsOn'>[], id: TaskKind): Set<TaskKind> {
+  const out = new Set<TaskKind>();
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const t of tasks) if (!out.has(t.taskId) && t.dependsOn.some(d => d === id || out.has(d))) { out.add(t.taskId); grew = true; }
+  }
+  return out;
+}
 const CLAIMS = Object.freeze({ engineeringCorrectness: 'NOT_CLAIMED', solverValidation: 'NOT_CLAIMED', professionalReview: 'NOT_CLAIMED' } as const);
 type Revision = ReturnType<typeof ProjectRevisionDetailSchema.parse>;
 export type IntegrationDeps = { secret?: string | undefined; log?: FastifyBaseLogger | undefined; idempotencyKey?: string | undefined;
@@ -51,7 +84,7 @@ async function buildPlan(repository: Repository, projectId: string, changeSet: C
   const current = ProjectDetailSchema.parse(await projects.read('get', projectId)).currentRevision?.id ?? null;
   const { changes, assignments } = planChanges(base.model, changeSet, MAX_FLOORS);
   const statuses: PlanStatus[] = changes.map(c => dispositionStatus(c.disposition)), reasons: IntegrationReason[] = [];
-  const { materials, budget } = changeSet.regenerate;
+  const { materials, budget, structural, verification } = changeSet.regenerate;
   if (budget && !materials) { statuses.push('INVALID'); reasons.push({ code: 'BUDGET_REQUIRES_MATERIALS', message: 'A budget is priced on the takeoff and construction '
     + 'calculation this plan recomputes; request regenerate.materials as well' }); }
   if (budget && !SAMPLE_RATE_BOOKS.includes(budget.rateBookId)) { statuses.push('UNSUPPORTED'); reasons.push({ code: 'RATE_BOOK_UNAVAILABLE',
@@ -73,41 +106,38 @@ async function buildPlan(repository: Repository, projectId: string, changeSet: C
   }
   if (current !== base.id) { statuses.push('STALE_BASE'); reasons.push({ code: current === null ? 'NO_CURRENT_REVISION' : 'BASE_REVISION_SUPERSEDED',
     message: 'The expected base revision is not the project\'s current revision; plan against the current one' }); }
-  const status = planStatus(statuses);
 
   // Outputs: every stored, model-bound output of the base is superseded when the model changes (B37, whole model); only the requested ones are recomputed.
   const manifest = await projectManifest(repository, projectId, base.id);
   const modelChanges = diff ? !diff.modelIdentical : changes.some(c => c.disposition !== 'INVALID');
-  const regenerate = new Set<TaskKind>(executable && materials ? ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION', ...(budget ? ['BOQ_COST' as const] : [])] : []);
+  const requested: TaskKind[] = [...(materials ? ['QUANTITY_TAKEOFF', 'CONSTRUCTION_CALCULATION'] as const : []), ...(materials && budget ? ['BOQ_COST' as const] : []),
+    ...(structural ? ['STRUCTURAL_ANALYSIS' as const] : []), ...(verification ? ['COMPLEX_VERIFICATION' as const] : [])];
+  const regenerate = new Set<TaskKind>(executable ? requested : []);
+  const tasks: IntegrationPlan['tasks'] = !executable ? [] : [...MODEL_TASKS,
+    ...(Object.keys(BRANCH_TASKS) as (keyof typeof BRANCH_TASKS)[]).filter(t => regenerate.has(t)).map(t => BRANCH_TASKS[t])];
+  // Cost safeguard: a plan larger than the caller's task ceiling never executes (no partial subset is chosen on the caller's behalf).
+  const { maxTasks } = changeSet.limits;
+  if (maxTasks !== undefined && tasks.length > maxTasks) { statuses.push('OVER_BUDGET'); reasons.push({ code: 'TASK_BUDGET_EXCEEDED',
+    message: `The plan runs ${tasks.length} tasks; the requested ceiling is ${maxTasks}. Request fewer outputs or raise limits.maxTasks` }); }
+  const status = planStatus(statuses);
   const stored = manifest.modules.filter(m => m.source === 'STORED_ARTIFACT' && !REVISION_ITSELF.includes(m.module) && (m.artifacts?.length ?? 0) > 0);
   const outputs: IntegrationPlan['outputs'] = [...new Set([...stored.map(m => m.module), ...(Object.keys(REGENERATED) as ManifestModule[]).filter(m => regenerate.has(REGENERATED[m]!))])]
     .map(module => {
       const ids = (stored.find(m => m.module === module)?.artifacts ?? []).slice(0, 20).map(a => a.artifactId), task = REGENERATED[module] ?? null;
       if (!modelChanges) return { module, baseArtifactIds: ids, action: 'NOT_AFFECTED' as const, taskId: null, reason: 'No model change is planned' };
       if (task && regenerate.has(task)) return { module, baseArtifactIds: ids, action: 'REGENERATE' as const, taskId: task,
-        reason: 'Requested: recomputed by its existing engine on the committed revision; the base\'s result stays stored and is marked stale' };
+        reason: module === 'COMPLEX_VERIFICATION' ? 'Requested: derived on read for the committed revision; its status and input hash are checkpointed, nothing is stored'
+          : 'Requested: recomputed by its existing engine on the committed revision; the base\'s result stays stored and is marked stale' };
       return { module, baseArtifactIds: ids, action: 'MARK_STALE' as const, taskId: null, reason: executable
         ? 'Bound to the base model hash, which the change alters (B37 whole-model invalidation). Not requested: it stays stale until recomputed'
         : 'Would be superseded by this change (B37 whole-model invalidation). The plan is not executable, so nothing changes now' };
     });
-  const tasks: IntegrationPlan['tasks'] = !executable ? [] : [
-    { taskId: 'MODEL_PREFLIGHT', module: 'INTERIOR', dependsOn: [], writes: 'REVISION_OPERATION', checkpoint: true, description: 'Store the Phase 30 preflight (locks, impacts, candidate hash)' },
-    { taskId: 'MODEL_CANDIDATE', module: 'INTERIOR', dependsOn: ['MODEL_PREFLIGHT'], writes: 'REVISION_OPERATION', checkpoint: true,
-      description: 'Derive the finish-only candidate; SQL checks it against the base geometry (0029)' },
-    { taskId: 'MODEL_COMMIT', module: 'INTERIOR', dependsOn: ['MODEL_CANDIDATE'], writes: 'REVISION', checkpoint: true,
-      description: 'Commit the new accepted revision: QA re-run, SQL compare-and-swap on the base, candidate hash re-checked' },
-    ...(regenerate.has('QUANTITY_TAKEOFF') ? [{ taskId: 'QUANTITY_TAKEOFF' as const, module: 'MATERIALS' as const, dependsOn: ['MODEL_COMMIT' as const], writes: 'ARTIFACT' as const,
-      checkpoint: true as const, description: 'Quantity takeoff on the committed revision' },
-    { taskId: 'CONSTRUCTION_CALCULATION' as const, module: 'MATERIALS' as const, dependsOn: ['QUANTITY_TAKEOFF' as const], writes: 'ARTIFACT' as const, checkpoint: true as const,
-      description: 'Construction calculation on the new takeoff' }] : []),
-    ...(regenerate.has('BOQ_COST') ? [{ taskId: 'BOQ_COST' as const, module: 'BUDGET' as const, dependsOn: ['CONSTRUCTION_CALCULATION' as const], writes: 'ARTIFACT' as const,
-      checkpoint: true as const, description: 'Cost estimate on the new construction calculation (synthetic sample rates)' }] : []),
-  ];
   const body = { planVersion: INTEGRATION_PLAN_VERSION, projectId, baseRevisionId: base.id, baseRevisionNumber: base.revisionNumber, baseModelHash: modelHash(base.model),
     changes, modelChange, diff, outputs, tasks,
     invalidation: { granularity: 'WHOLE_MODEL' as const, basis: 'B37 dependency graph: an output is bound to its revision\'s canonical model hash; any model change '
       + 'supersedes every model-bound output. Element-level input scopes are not implemented. Outputs derived on read (BIM, engineering assessment) follow the model' },
-    approvalRequired: true as const, quote: { execution: executable ? 'LOCAL_DETERMINISTIC' as const : 'NONE' as const, externalProviders: [], externalCostUsd: 0 as const },
+    approvalRequired: true as const, quote: { execution: executable ? 'LOCAL_DETERMINISTIC' as const : 'NONE' as const, externalProviders: [], externalCostUsd: 0 as const,
+      taskCount: tasks.length, maxTasks: maxTasks ?? null },
     claims: { ...CLAIMS } };
   const plan = IntegrationPlanSchema.parse({ ...body, projectCurrentRevisionId: current, status, reasons: reasons.slice(0, 16),
     // The hash binds the whole change set too (locks and regeneration configuration), so nothing can change between approval and execution.
@@ -125,7 +155,7 @@ export async function executeIntegrationPlan(repository: Repository, userId: str
   body: { changeSet: ChangeSet; planHash: string }, deps: IntegrationDeps): Promise<IntegrationExecution> {
   const { plan, base, preflightBody } = await buildPlan(repository, projectId, body.changeSet);
   if (plan.planHash !== body.planHash) throw new ApiError(409, 'INTEGRATION_PLAN_CHANGED', 'The plan differs from the one approved; preview it again');
-  const tasks: IntegrationExecution['tasks'] = plan.tasks.map(t => ({ taskId: t.taskId, status: 'NOT_RUN', revisionId: null, artifactId: null, error: null }));
+  const tasks: IntegrationExecution['tasks'] = plan.tasks.map(t => ({ taskId: t.taskId, status: 'NOT_RUN', revisionId: null, artifactId: null, error: null, report: null }));
   const checks: IntegrationExecution['checks'] = (['PREFLIGHT_MATCHES_PLAN', 'CANDIDATE_MATCHES_PLAN', 'COMMITTED_DIFF_MATCHES_PLAN', 'UNTARGETED_ELEMENTS_PRESERVED'] as const)
     .map(check => ({ check, result: 'NOT_RUN' }));
   const result = (status: IntegrationExecution['status'], reasons: IntegrationReason[], fields: Partial<IntegrationExecution> = {}) => IntegrationExecutionSchema.parse({
@@ -147,8 +177,9 @@ export async function executeIntegrationPlan(repository: Repository, userId: str
     if (!(error instanceof ApiError)) deps.log?.error({ projectId, task: id, err: error }, 'integration task failed unexpectedly');
     task(id).status = 'FAILED';
     task(id).error = error instanceof ApiError ? { code: error.code.slice(0, 80), message: error.message.slice(0, 500) } : { code: 'TASK_FAILED', message: 'The task failed unexpectedly' };
-    const after = tasks.slice(tasks.indexOf(task(id)) + 1);
-    for (const t of after) t.status = 'SKIPPED';
+    // B40 S2: only the failed task's own dependants are skipped; independent branches keep running.
+    const dependants = dependantsOf(plan.tasks, id);
+    for (const t of tasks) if (dependants.has(t.taskId)) t.status = 'SKIPPED';
   };
   const preflightHash = plan.modelChange.preflightHash, noPool = () => { throw new ApiError(503, 'REVISION_WORKER_UNAVAILABLE', 'Not used by an interior operation'); };
 
@@ -192,34 +223,52 @@ export async function executeIntegrationPlan(repository: Repository, userId: str
   pass('UNTARGETED_ELEMENTS_PRESERVED', diff.changes.every(c => c.change === 'MODIFIED' && targeted.has(`${c.collection}:${c.elementId}`) && c.fields.join() === 'finishes')
     && diff.documentFields.length === 0 && !diff.changesTruncated);
 
-  // 4–6. Selective regeneration on the committed revision: only the requested outputs, in dependency order; a failure skips its dependants.
-  const { materials, budget } = body.changeSet.regenerate;
-  const downstream = async () => {
-    if (!materials) return;
-    current = 'QUANTITY_TAKEOFF';
+  // 4–8. Selective regeneration on the committed revision: only the requested outputs, as independent branches (B40 S2). Within a branch tasks run in
+  // dependency order and a failure skips that branch's dependants; the other branches still run. Branch order is fixed, so execution is deterministic.
+  const { materials, budget, structural, verification } = body.changeSet.regenerate;
+  const reasons: IntegrationReason[] = [];
+  const branch = async (run: (at: (id: TaskKind) => void) => Promise<void>) => {
+    let at: TaskKind | null = null;
+    try { await run(id => { at = id; }); }
+    catch (error) {
+      if (error instanceof ApiError && error.statusCode === 404) throw error;
+      fail(at!, error);
+      reasons.push({ code: 'DOWNSTREAM_TASK_FAILED', message: `${at} failed after the revision was committed. The committed revision is valid and current; `
+        + 'the outputs of the failed task and its dependants are not regenerated; independent branches still ran (retry with the same Idempotency-Key to resume)' });
+    }
+  };
+  if (materials) await branch(async at => {
+    at('QUANTITY_TAKEOFF');
     const t = TakeoffDetailSchema.parse(await step('QUANTITY_TAKEOFF', TAKEOFF_OPERATION, { projectId, revisionId: committed!.id, options: materials.takeoffOptions }, ctx =>
       createTakeoff(repository, userId, projectId, committed!.id, materials.takeoffOptions, deps.secret, ctx)));
     Object.assign(task('QUANTITY_TAKEOFF'), { revisionId: committed!.id, artifactId: t.id });
-    current = 'CONSTRUCTION_CALCULATION';
+    at('CONSTRUCTION_CALCULATION');
     const k = ConstructionDetailSchema.parse(await step('CONSTRUCTION_CALCULATION', CONSTRUCTION_OPERATION, { projectId, revisionId: committed!.id, takeoffId: t.id,
       specification: materials.specification, options: materials.constructionOptions }, ctx =>
       createConstruction(repository, userId, projectId, committed!.id, t.id, materials.specification, materials.constructionOptions, deps.secret, ctx)));
     Object.assign(task('CONSTRUCTION_CALCULATION'), { revisionId: committed!.id, artifactId: k.id });
     if (!budget) return;
-    current = 'BOQ_COST';
+    at('BOQ_COST');
     const c = CostDetailSchema.parse(await step('BOQ_COST', COST_OPERATION, { projectId, revisionId: committed!.id, takeoffId: t.id, calculationId: k.id,
       rateBookId: budget.rateBookId, costingPolicy: budget.costingPolicy, options: budget.options }, ctx =>
       createCost(repository, userId, projectId, committed!.id, t.id, k.id, budget.rateBookId, budget.costingPolicy, budget.options, deps.secret, ctx)));
     Object.assign(task('BOQ_COST'), { revisionId: committed!.id, artifactId: c.id });
-  };
-  const reasons: IntegrationReason[] = [];
-  try { await downstream(); }
-  catch (error) {
-    if (error instanceof ApiError && error.statusCode === 404) throw error;
-    fail(current, error);
-    reasons.push({ code: 'DOWNSTREAM_TASK_FAILED', message: `${current} failed after the revision was committed. The committed revision is valid and current; `
-      + 'the outputs of the failed and skipped tasks are not regenerated (retry with the same Idempotency-Key to resume)' });
-  }
+  });
+  if (structural) await branch(async at => {
+    at('STRUCTURAL_ANALYSIS');
+    const s = StructuralDetailSchema.parse(await step('STRUCTURAL_ANALYSIS', STRUCTURAL_ANALYSIS_OPERATION, { projectId, revisionId: committed!.id, input: structural }, ctx =>
+      createStructuralAnalysis(repository, userId, projectId, committed!.id, structural, deps.secret, ctx)));
+    Object.assign(task('STRUCTURAL_ANALYSIS'), { revisionId: committed!.id, artifactId: s.id });
+  });
+  if (verification) await branch(async at => {
+    at('COMPLEX_VERIFICATION');
+    await deps.beforeTask?.('COMPLEX_VERIFICATION');
+    // Derived on read and deterministic for (model, declared limits): a retry recomputes the same report, so no receipt is stored.
+    const report = await verifyRevision(repository, projectId, committed!.id, verification.declaredLimits);
+    Object.assign(task('COMPLEX_VERIFICATION'), { status: 'COMPLETED', revisionId: committed!.id, report: { status: report.status, inputHash: report.inputHash } });
+    if (report.status !== 'VERIFIED') reasons.push({ code: 'VERIFICATION_NOT_CLEAN', message: `The B34 verification of the committed revision is ${report.status}; `
+      + 'read its checks before relying on the revision (nothing was changed because of it)' });
+  });
 
   // Freshness is read back from the B37 manifest, never computed here. If it cannot be read, nothing is reported as current.
   const outputs: IntegrationExecution['outputs'] = [];

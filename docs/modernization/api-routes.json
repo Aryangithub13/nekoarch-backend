@@ -5,6 +5,11 @@
   "anonymous": 200
  },
  {
+  "method": "GET",
+  "url": "/api/compatibility",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/estimates",
   "anonymous": 400
@@ -90,6 +95,36 @@
   "anonymous": 401
  },
  {
+  "method": "GET",
+  "url": "/api/projects/:projectId/collaboration",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/members",
+  "anonymous": 401
+ },
+ {
+  "method": "DELETE",
+  "url": "/api/projects/:projectId/collaboration/members/:userId",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId/comments",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/collaboration/revisions/:revisionId/reviews",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/projects/:projectId/compute/jobs",
   "anonymous": 401
@@ -162,6 +197,11 @@
  {
   "method": "POST",
   "url": "/api/projects/:projectId/conversations/:conversationId/turns",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
+  "url": "/api/projects/:projectId/feasibility/assessments",
   "anonymous": 401
  },
  {
@@ -515,6 +555,11 @@
   "anonymous": 401
  },
  {
+  "method": "POST",
+  "url": "/api/projects/:projectId/revisions/:revisionId/instructions/resolve",
+  "anonymous": 401
+ },
+ {
   "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/knowledge/analyses",
   "anonymous": 401
@@ -602,6 +647,11 @@
  {
   "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts/:artifactId/manifest",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/delivery",
   "anonymous": 401
  },
  {
@@ -721,6 +771,11 @@
  },
  {
   "method": "POST",
+  "url": "/api/projects/:projectId/routing/decisions",
+  "anonymous": 401
+ },
+ {
+  "method": "POST",
   "url": "/api/projects/:projectId/specialists/:module/requests",
   "anonymous": 401
  },
@@ -753,6 +808,11 @@
   "method": "GET",
   "url": "/api/regions",
   "anonymous": 404
+ },
+ {
+  "method": "GET",
+  "url": "/api/routing/capabilities",
+  "anonymous": 401
  },
  {
   "method": "GET",

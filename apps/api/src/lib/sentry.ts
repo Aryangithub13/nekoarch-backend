@@ -40,6 +40,17 @@ const safeRoutes = new Set([
   `${revision}/design-concepts`, `${revision}/design-concepts/:conceptSetId`, `${project}/specialists/:module/requests`,
   // B40
   `${project}/integration/plans`, `${project}/integration/plans/execute`,
+  // B41
+  `${revision}/instructions/resolve`,
+  // B42
+  `${project}/feasibility/assessments`,
+  // B43
+  '/api/routing/capabilities', `${project}/routing/decisions`,
+  // B44
+  `${project}/collaboration`, `${project}/collaboration/members`, `${project}/collaboration/members/:userId`, `${project}/collaboration/revisions/:revisionId`,
+  `${project}/collaboration/revisions/:revisionId/comments`, `${project}/collaboration/revisions/:revisionId/reviews`,
+  // B45
+  `${revision}/scene/delivery`, '/api/compatibility',
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
