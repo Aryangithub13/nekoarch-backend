@@ -52,6 +52,7 @@ import { instructionRoutes } from './routes/instructions.js';
 import { feasibilityRoutes } from './routes/feasibility.js';
 import { routingRoutes } from './routes/routing.js';
 import { collaborationRoutes } from './routes/collaboration.js';
+import { deliveryRoutes, routeCatalog } from './routes/delivery.js';
 import type { AiAdapter } from './ai/orchestration/registry.js';
 
 export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger; captureError?: typeof reportError; interpreter?: InterpreterOptions; conversationProvider?: ConversationProvider; optimizationPool?: OptimizationPool; scenePool?: ScenePool; appearancePool?: AppearancePool; inspectionPool?: InspectionPool; designConceptAdapters?: ReadonlyMap<string, AiAdapter> }) {
@@ -106,6 +107,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
   });
   app.register(async scope => {
     await installLimits(scope, options.env);
+    const catalog = routeCatalog(scope);
     scope.setNotFoundHandler(() => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); });
     scope.get('/health/live', async () => ({ status: 'ok' }));
     scope.get('/health/ready', async (_request, reply) => {
@@ -143,6 +145,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     feasibilityRoutes(scope, backend);
     routingRoutes(scope, backend, options.env);
     collaborationRoutes(scope, backend, options.env);
+    deliveryRoutes(scope, backend, catalog);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
     workflowsRoutes(scope, backend, options.env);

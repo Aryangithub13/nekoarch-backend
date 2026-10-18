@@ -57,6 +57,7 @@ import { INSTRUCTION_ROUTE, RESOLUTION_VERSION } from '../instructions/contracts
 import { FEASIBILITY_ROUTE, FEASIBILITY_VERSION } from '../feasibility/contracts.js';
 import { ROUTING_DECISIONS_ROUTE, ROUTING_VERSION } from '../routing/contracts.js';
 import { COLLABORATION_ROOT, COLLABORATION_VERSION } from '../collaboration/contracts.js';
+import { DELIVERY_ROUTE, DELIVERY_VERSION } from '../delivery/contracts.js';
 
 export const DISCOVERY_VERSION = 'capability-discovery-v2';
 export const OVERVIEW_VERSION = 'project-overview-v1';
@@ -119,6 +120,8 @@ export const SERVICES = Object.freeze([
   { serviceId: 'CAPABILITY_ROUTING', version: ROUTING_VERSION, persistence: 'DERIVED_ON_READ', route: ROUTING_DECISIONS_ROUTE, workflowCapability: null },
   // B44 S1: owner-managed members, element-anchored comments, reviews bound to the model hash and the change audit (0030). Never a certification.
   { serviceId: 'COLLABORATION', version: COLLABORATION_VERSION, persistence: 'IMMUTABLE_ARTIFACT', route: COLLABORATION_ROOT, workflowCapability: null },
+  // B45 S1: desktop delivery manifest of a stored scene artifact (per-level chunks, pick anchors, measured budgets, checksums, ETag). Frame rate is a frontend measurement.
+  { serviceId: 'SCENE_DELIVERY', version: DELIVERY_VERSION, persistence: 'DERIVED_ON_READ', route: DELIVERY_ROUTE, workflowCapability: null },
 ].map(s => Object.freeze({ ...s, status: 'AVAILABLE' as const })));
 
 /** Media types the frontend may ask for; a static render is never offered as an interactive model. */

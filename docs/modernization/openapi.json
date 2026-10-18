@@ -25399,6 +25399,201 @@
     }
    }
   },
+  "/api/compatibility": {
+   "get": {
+    "operationId": "get /api/compatibility",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "compatibilityVersion": {
+           "type": "string",
+           "enum": [
+            "api-compatibility-v1"
+           ]
+          },
+          "routeCatalog": {
+           "type": "object",
+           "properties": {
+            "routes": {
+             "type": "integer"
+            },
+            "sha256": {
+             "type": "string",
+             "pattern": "^[a-f0-9]{64}$"
+            }
+           },
+           "required": [
+            "routes",
+            "sha256"
+           ],
+           "additionalProperties": false
+          },
+          "services": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "serviceId": {
+              "type": "string",
+              "maxLength": 64
+             },
+             "version": {
+              "type": "string",
+              "maxLength": 100
+             },
+             "route": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "serviceId",
+             "version",
+             "route"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 64
+          },
+          "conventions": {
+           "type": "object",
+           "properties": {
+            "errors": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "pagination": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "idempotency": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "concurrency": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "units": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "identity": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "errors",
+            "pagination",
+            "idempotency",
+            "concurrency",
+            "units",
+            "identity"
+           ],
+           "additionalProperties": false
+          },
+          "media": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capability": {
+              "type": "string",
+              "enum": [
+               "model",
+               "rendered_image",
+               "panorama_360",
+               "interactive_scene",
+               "walkthrough",
+               "video"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "UNSUPPORTED"
+              ]
+             }
+            },
+            "required": [
+             "capability",
+             "status"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 6,
+           "maxItems": 6
+          },
+          "mockSubstitution": {
+           "type": "string",
+           "enum": [
+            "FORBIDDEN_AS_LIVE_EVIDENCE"
+           ]
+          },
+          "supportedClients": {
+           "type": "object",
+           "properties": {
+            "desktop": {
+             "type": "string",
+             "enum": [
+              "SUPPORTED"
+             ]
+            },
+            "mobile": {
+             "type": "string",
+             "enum": [
+              "OUT_OF_SCOPE"
+             ]
+            }
+           },
+           "required": [
+            "desktop",
+            "mobile"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "compatibilityVersion",
+          "routeCatalog",
+          "services",
+          "conventions",
+          "media",
+          "mockSubstitution",
+          "supportedClients"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/estimates": {
    "post": {
     "operationId": "post /api/estimates",
@@ -70013,6 +70208,551 @@
           "artifactId",
           "sceneHash",
           "manifest"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/scene/delivery": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/scene/delivery",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "artifactId",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "deliveryVersion": {
+           "type": "string",
+           "enum": [
+            "scene-delivery-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "revisionCurrency": {
+           "type": "string",
+           "enum": [
+            "CURRENT",
+            "HISTORICAL"
+           ]
+          },
+          "artifact": {
+           "type": "object",
+           "properties": {
+            "artifactId": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "compilerVersion": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "inputHash": {
+             "$ref": "#/components/properties/modelHash"
+            },
+            "glb": {
+             "type": "object",
+             "properties": {
+              "route": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "mimeType": {
+               "type": "string",
+               "enum": [
+                "model/gltf-binary"
+               ]
+              },
+              "bytes": {
+               "type": "integer"
+              },
+              "sha256": {
+               "$ref": "#/components/properties/modelHash"
+              },
+              "rangeRequests": {
+               "type": "string",
+               "enum": [
+                "NOT_SUPPORTED"
+               ]
+              },
+              "compression": {
+               "type": "string",
+               "enum": [
+                "NONE"
+               ]
+              },
+              "instancing": {
+               "type": "string",
+               "enum": [
+                "NONE"
+               ]
+              },
+              "levelsOfDetail": {
+               "type": "number",
+               "enum": [
+                1
+               ]
+              }
+             },
+             "required": [
+              "route",
+              "mimeType",
+              "bytes",
+              "sha256",
+              "rangeRequests",
+              "compression",
+              "instancing",
+              "levelsOfDetail"
+             ],
+             "additionalProperties": false
+            },
+            "manifestRoute": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "artifactId",
+            "compilerVersion",
+            "inputHash",
+            "glb",
+            "manifestRoute"
+           ],
+           "additionalProperties": false
+          },
+          "frame": {
+           "type": "object",
+           "properties": {
+            "coordinateSystem": {
+             "type": "string",
+             "maxLength": 40
+            },
+            "manifestUnits": {
+             "type": "string",
+             "enum": [
+              "mm"
+             ]
+            },
+            "glbUnits": {
+             "type": "string",
+             "enum": [
+              "m"
+             ]
+            },
+            "originMm": {
+             "type": "object",
+             "properties": {
+              "x": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              },
+              "y": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              },
+              "z": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              }
+             },
+             "required": [
+              "x",
+              "y",
+              "z"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "coordinateSystem",
+            "manifestUnits",
+            "glbUnits",
+            "originMm"
+           ],
+           "additionalProperties": false
+          },
+          "bounds": {
+           "type": "object",
+           "properties": {
+            "min": {
+             "$ref": "#/components/properties/frame/properties/originMm"
+            },
+            "max": {
+             "$ref": "#/components/properties/frame/properties/originMm"
+            }
+           },
+           "required": [
+            "min",
+            "max"
+           ],
+           "additionalProperties": false
+          },
+          "chunks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "chunkId": {
+              "type": "string",
+              "maxLength": 420
+             },
+             "levelId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 400
+             },
+             "name": {
+              "type": "string",
+              "maxLength": 200
+             },
+             "index": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "elevationMm": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "nodeName": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "bounds": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/bounds"
+               }
+              ],
+              "nullable": true
+             },
+             "objects": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "triangles": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "vertices": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "layers": {
+              "type": "object",
+              "additionalProperties": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              }
+             }
+            },
+            "required": [
+             "chunkId",
+             "levelId",
+             "name",
+             "index",
+             "elevationMm",
+             "nodeName",
+             "bounds",
+             "objects",
+             "triangles",
+             "vertices",
+             "layers"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 256
+          },
+          "pickAnchors": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "sceneObjectId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "sourceEntityType": {
+              "type": "string",
+              "maxLength": 20
+             },
+             "sourceEntityId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "bimElementId": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "levelId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "layer": {
+              "type": "string",
+              "maxLength": 40
+             },
+             "bounds": {
+              "$ref": "#/components/properties/bounds"
+             }
+            },
+            "required": [
+             "sceneObjectId",
+             "sourceEntityType",
+             "sourceEntityId",
+             "bimElementId",
+             "levelId",
+             "layer",
+             "bounds"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 2048
+          },
+          "navigation": {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "maxLength": 60
+            },
+            "nodes": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "edges": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "cameraPresets": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "collisionFreePath": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "source",
+            "nodes",
+            "edges",
+            "cameraPresets",
+            "collisionFreePath"
+           ],
+           "additionalProperties": false
+          },
+          "budgets": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "budgetId": {
+              "type": "string",
+              "enum": [
+               "OBJECTS",
+               "TRIANGLES",
+               "VERTICES",
+               "GLB_BYTES"
+              ]
+             },
+             "limit": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "measured": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "usedThousandths": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             }
+            },
+            "required": [
+             "budgetId",
+             "limit",
+             "measured",
+             "usedThousandths"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 4,
+           "maxItems": 4
+          },
+          "cache": {
+           "type": "object",
+           "properties": {
+            "etag": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "cacheKey": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "immutableArtifact": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            },
+            "invalidatedBy": {
+             "type": "string",
+             "enum": [
+              "NEW_REVISION_OR_ARTIFACT"
+             ]
+            }
+           },
+           "required": [
+            "etag",
+            "cacheKey",
+            "immutableArtifact",
+            "invalidatedBy"
+           ],
+           "additionalProperties": false
+          },
+          "media": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capability": {
+              "type": "string",
+              "enum": [
+               "model",
+               "rendered_image",
+               "panorama_360",
+               "interactive_scene",
+               "walkthrough",
+               "video"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "UNSUPPORTED"
+              ]
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capability",
+             "status",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 6,
+           "maxItems": 6
+          },
+          "nonWebGlFallback": {
+           "type": "object",
+           "properties": {
+            "available": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "available",
+            "basis"
+           ],
+           "additionalProperties": false
+          },
+          "clientPerformance": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "NOT_MEASURED"
+             ]
+            },
+            "reason": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "status",
+            "reason"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "deliveryVersion",
+          "projectId",
+          "revisionId",
+          "modelHash",
+          "revisionCurrency",
+          "artifact",
+          "frame",
+          "bounds",
+          "chunks",
+          "pickAnchors",
+          "navigation",
+          "budgets",
+          "cache",
+          "media",
+          "nonWebGlFallback",
+          "clientPerformance"
          ],
          "additionalProperties": false
         }

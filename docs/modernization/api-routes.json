@@ -5,6 +5,11 @@
   "anonymous": 200
  },
  {
+  "method": "GET",
+  "url": "/api/compatibility",
+  "anonymous": 401
+ },
+ {
   "method": "POST",
   "url": "/api/estimates",
   "anonymous": 400
@@ -642,6 +647,11 @@
  {
   "method": "GET",
   "url": "/api/projects/:projectId/revisions/:revisionId/scene/artifacts/:artifactId/manifest",
+  "anonymous": 401
+ },
+ {
+  "method": "GET",
+  "url": "/api/projects/:projectId/revisions/:revisionId/scene/delivery",
   "anonymous": 401
  },
  {
