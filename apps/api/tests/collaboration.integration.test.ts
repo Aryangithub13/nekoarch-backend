@@ -95,4 +95,25 @@ describe('B44 S1: members, element-anchored comments, reviews and the change aud
     expect((await call('reviewer', 'GET', `${root}/revisions/${rev2}`)).statusCode).toBe(404);
     expect(await code('owner', 'DELETE', `${root}/members/${users.reviewer}`)).toEqual([404, 'MEMBER_NOT_FOUND']);
   });
+
+  // SEC-004: each cap is a count followed by an insert; without serialization, concurrent writes all see room and all insert.
+  it('holds the comment and member caps under concurrent writes', async () => {
+    const projectId = (await ok('owner', 'POST', '/api/projects', { title: 'B44 caps' })).id as string;
+    const revisionId = ((await ok('owner', 'POST', `/api/projects/${projectId}/revisions`, { model: authored() })).revision as Json).id as string;
+    const root = `/api/projects/${projectId}/collaboration`;
+    const stored = async (sql: string) => Number((await db.pool.query(sql, [projectId])).rows[0].count);
+    const tally = (codes: unknown[][]) => codes.reduce<Record<string, number>>((all, [s, c]) => ({ ...all, [`${s} ${c}`]: (all[`${s} ${c}`] ?? 0) + 1 }), {});
+
+    const comment = (i: number) => code('owner', 'POST', `${root}/revisions/${revisionId}/comments`, { body: `comment ${i}` });
+    for (let i = 0; i < 195; i++) expect(await comment(i)).toEqual([201, null]);
+    expect(tally(await Promise.all(Array.from({ length: 40 }, (_, i) => comment(1000 + i)))))
+      .toEqual({ '201 null': 5, '409 COLLABORATION_LIMIT_REACHED': 35 });
+    expect(await stored('select count(*) from public.project_revision_comments where project_id = $1')).toBe(200);
+
+    const candidates = await Promise.all(Array.from({ length: 30 }, () => createTestUser(db.pool)));
+    for (const userId of candidates.slice(0, 18)) await ok('owner', 'POST', `${root}/members`, { userId, role: 'viewer' });
+    expect(tally(await Promise.all(candidates.slice(18).map(userId => code('owner', 'POST', `${root}/members`, { userId, role: 'viewer' })))))
+      .toEqual({ '201 null': 2, '409 COLLABORATION_LIMIT_REACHED': 10 });
+    expect(await stored('select count(*) from public.project_members where project_id = $1 and removed_at is null')).toBe(20);
+  }, 120_000);
 });

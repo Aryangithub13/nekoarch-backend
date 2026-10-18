@@ -120,6 +120,9 @@ begin
  if uid is null then raise insufficient_privilege; end if;
  role := project_private.project_role(pid, uid);
  if role is null then raise exception using errcode = 'P1201', message = 'Project not found'; end if;
+ -- Serialize collaboration writes per project, so the member, comment and review caps below hold under concurrency (count then insert).
+ -- A transaction-scoped advisory lock, not FOR UPDATE on projects, which would also block other writers' foreign-key checks.
+ perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('collaboration:' || pid::text, 0));
  if p_action = 'member_upsert' then
    perform project_private.verify_envelope('/api/projects/:projectId/collaboration/members', p_input, null, p_envelope, p_signature);
    if role <> 'owner' then raise exception using errcode = 'P4401', message = 'Only the project owner manages members'; end if;
