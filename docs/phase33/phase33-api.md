@@ -9,7 +9,7 @@ All routes are additive. The route catalog grows from 110 to 120 entries ([api-r
 | Writes | Signed (HMAC envelope) and re-validated in SQL; settings and briefs use optimistic concurrency (`expectedVersion`) |
 | Idempotency | `Idempotency-Key` on `POST …/brief/versions` |
 | Schemas | Zod v3 in `apps/api/src/account/contracts.ts`; exported to [openapi.json](../modernization/openapi.json) |
-| Quota errors | 429 `ACCOUNT_QUOTA_EXCEEDED` from project creation, reference upload or job submission once an account limit is reached |
+| Quota errors | 429 `ACCOUNT_QUOTA_EXCEEDED` from project creation, reference upload, job submission or job retry once an account limit is reached. Each limit holds under concurrent requests (serialized per owner since `0031`) |
 
 ## Account
 
