@@ -10,7 +10,8 @@ import { EnvSchema, parseEnv } from '../src/config/env.js';
 import { ApiError } from '../src/lib/errors.js';
 import { createLogger } from '../src/lib/logger.js';
 import type { Backend, Repository } from '../src/lib/repository.js';
-import { initializeSentry, reportError, sanitizeEvent } from '../src/lib/sentry.js';
+import { createShutdown } from '../src/lib/lifecycle.js';
+import { flushSentry, initializeSentry, reportError, sanitizeEvent } from '../src/lib/sentry.js';
 
 const envInput = {
   NODE_ENV: 'test',
@@ -308,6 +309,44 @@ describe('Sentry transport privacy', () => {
     expect(env.SENTRY_DSN).toBeUndefined();
     initializeSentry(env);
     expect(Sentry.getClient()).toBeUndefined();
+  });
+
+  // BUG-001: without a DSN the SDK has no client, and its flush resolves false; a clean shutdown must still succeed.
+  it('shuts down cleanly without a DSN, and still reports a failed close', async () => {
+    initializeSentry(env);
+    expect(Sentry.getClient()).toBeUndefined();
+    expect(await flushSentry()).toBe(true);
+    const failed = vi.fn();
+    await createShutdown(async () => undefined, flushSentry, failed)();
+    expect(failed).not.toHaveBeenCalled();
+    await createShutdown(async () => { throw new Error('close failed'); }, flushSentry, failed)();
+    expect(failed).toHaveBeenCalledOnce();
+  });
+
+  it('flushes an initialized client on shutdown, and reports a flush that does not complete', async () => {
+    const envelopes: unknown[] = [];
+    let deliver = true;
+    Sentry.init({
+      dsn: 'https://0123456789abcdef0123456789abcdef01@example.invalid/1',
+      environment: 'test', defaultIntegrations: false, sendDefaultPii: false, beforeSend: sanitizeEvent,
+      // The SDK's own transport buffer, so flush reports a delivery that never settles exactly as in production.
+      transport: options => Sentry.createTransport(options, request => deliver
+        ? (envelopes.push(request.body), Promise.resolve({ statusCode: 200 })) : new Promise(() => undefined)),
+    });
+    try {
+      const failed = vi.fn();
+      reportError(new Error('delivered'), requestId, 'INTERNAL_ERROR');
+      await createShutdown(async () => undefined, flushSentry, failed)();
+      expect(envelopes).toHaveLength(1);
+      expect(failed).not.toHaveBeenCalled();
+      deliver = false;
+      reportError(new Error('undelivered'), requestId, 'INTERNAL_ERROR');
+      await createShutdown(async () => undefined, () => flushSentry(50), failed)();
+      expect(failed).toHaveBeenCalledOnce();
+    } finally {
+      await Sentry.close(50);
+      Sentry.getCurrentScope().setClient(undefined);
+    }
   });
 });
 
