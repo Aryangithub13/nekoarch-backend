@@ -1,0 +1,211 @@
+{
+  "evidenceVersion": "release-evidence-v1",
+  "generatedAt": "2026-10-18T13:50:00.729Z",
+  "source": {
+    "commit": "3ea7a45fa1749e85fe905d322471a5fd41fc6d0a",
+    "branch": "phases-40-46",
+    "workingTreeClean": true
+  },
+  "environment": {
+    "node": "v24.20.0",
+    "platform": "win32-x64",
+    "database": "embedded PostgreSQL (test-support/postgres.ts), every migration applied"
+  },
+  "contract": {
+    "routes": 165,
+    "routeCatalogSha256": "25abc1fa08802d1bf010bc5a76e22616e96e214a446495782e632d96a5fc15dc",
+    "migrations": 30,
+    "latestMigration": "0030_collaboration.sql"
+  },
+  "slices": [
+    {
+      "record": "docs/phase40/b40-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B40 as a phase is not complete** (see §6)."
+    },
+    {
+      "record": "docs/phase40/b40-s2-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B40 is not complete** (§4)."
+    },
+    {
+      "record": "docs/phase41/b41-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B41 is not complete** (§5)."
+    },
+    {
+      "record": "docs/phase42/b42-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B42 is not complete** (§4)."
+    },
+    {
+      "record": "docs/phase43/b43-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B43 is not complete** (§4)."
+    },
+    {
+      "record": "docs/phase44/b44-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B44 is not complete** (§5)."
+    },
+    {
+      "record": "docs/phase45/b45-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B45 is not complete** (§4)."
+    },
+    {
+      "record": "docs/phase46/b46-s1-implementation.md",
+      "status": "implemented and locally verified as a **vertical slice**. **B46 is not complete, and its gate is not met** (§3)."
+    }
+  ],
+  "suites": [
+    {
+      "slice": "B40 S1+S2",
+      "files": [
+        "apps/api/tests/integration-plan.test.ts",
+        "apps/api/tests/integration-plan.integration.test.ts",
+        "apps/api/tests/integration-branches.integration.test.ts"
+      ],
+      "status": "PASSED",
+      "tests": {
+        "passed": 26,
+        "failed": 0,
+        "total": 26
+      },
+      "suiteErrors": [],
+      "exitCode": 0,
+      "durationMs": 105723
+    },
+    {
+      "slice": "B41 S1",
+      "files": [
+        "apps/api/tests/instructions.test.ts",
+        "apps/api/tests/instructions.integration.test.ts"
+      ],
+      "status": "PASSED_WITH_SUITE_ERRORS",
+      "tests": {
+        "passed": 14,
+        "failed": 0,
+        "total": 14
+      },
+      "suiteErrors": [
+        ""
+      ],
+      "exitCode": 1,
+      "durationMs": 61118
+    },
+    {
+      "slice": "B42 S1",
+      "files": [
+        "apps/api/tests/feasibility.test.ts",
+        "apps/api/tests/feasibility.integration.test.ts"
+      ],
+      "status": "PASSED",
+      "tests": {
+        "passed": 7,
+        "failed": 0,
+        "total": 7
+      },
+      "suiteErrors": [],
+      "exitCode": 0,
+      "durationMs": 45211
+    },
+    {
+      "slice": "B43 S1",
+      "files": [
+        "apps/api/tests/routing.test.ts",
+        "apps/api/tests/routing.integration.test.ts"
+      ],
+      "status": "PASSED",
+      "tests": {
+        "passed": 7,
+        "failed": 0,
+        "total": 7
+      },
+      "suiteErrors": [],
+      "exitCode": 0,
+      "durationMs": 48725
+    },
+    {
+      "slice": "B44 S1",
+      "files": [
+        "apps/api/tests/collaboration.integration.test.ts",
+        "supabase/tests/database.test.ts",
+        "apps/api/tests/hosted-migration-ledger.test.ts"
+      ],
+      "status": "PASSED_WITH_SUITE_ERRORS",
+      "tests": {
+        "passed": 5,
+        "failed": 0,
+        "total": 25
+      },
+      "suiteErrors": [
+        ""
+      ],
+      "exitCode": 1,
+      "durationMs": 6543098
+    },
+    {
+      "slice": "B45 S1",
+      "files": [
+        "apps/api/tests/delivery.integration.test.ts"
+      ],
+      "status": "PASSED",
+      "tests": {
+        "passed": 2,
+        "failed": 0,
+        "total": 2
+      },
+      "suiteErrors": [],
+      "exitCode": 0,
+      "durationMs": 27373
+    },
+    {
+      "slice": "B46 S1",
+      "files": [
+        "apps/api/tests/e2e-pipeline.integration.test.ts"
+      ],
+      "status": "PASSED_WITH_SUITE_ERRORS",
+      "tests": {
+        "passed": 1,
+        "failed": 0,
+        "total": 1
+      },
+      "suiteErrors": [
+        ""
+      ],
+      "exitCode": 1,
+      "durationMs": 31561
+    },
+    {
+      "slice": "Conformance",
+      "files": [
+        "apps/api/tests/modernization.test.ts"
+      ],
+      "status": "PASSED",
+      "tests": {
+        "passed": 6,
+        "failed": 0,
+        "total": 6
+      },
+      "suiteErrors": [],
+      "exitCode": 0,
+      "durationMs": 17162
+    }
+  ],
+  "stageTimingsMs": {
+    "project": 59,
+    "generation": 306,
+    "feasibility": 32,
+    "routing": 22,
+    "instruction": 93,
+    "plan": 444,
+    "execution": 3626,
+    "review": 76,
+    "scene": 2207,
+    "restore": 1549
+  },
+  "unverified": [
+    "Live Supabase acceptance (scripts/test-local-supabase.mjs) for migration 0030 and the B40–B46 routes",
+    "Hosted migration history (D-9) and staging workflow (D-10); no hosted database was migrated",
+    "CI on a pushed head (Node 22.22.0 and 22.23.3)",
+    "Connected frontend contracts and the live 3D viewer (B45 gate), desktop GPU-tier performance",
+    "Any external AI, render or compute provider (none is configured or called)",
+    "Independent review of these slices"
+  ],
+  "knownLimits": "Each slice record lists its outstanding work (§ \"Outstanding\"); every engineering, certification and statutory claim stays NOT_CLAIMED.",
+  "productionReady": false
+}
