@@ -6,7 +6,7 @@
 | **Starting point** | [`BACKEND_AUDIT_REPORT.md`](BACKEND_AUDIT_REPORT.md), preserved verbatim in `dbf1e89` (sha256 `18f0b2ba…aade`) |
 | **Code line** | `phase31/development` @ `6bd84a5` (default branch), unchanged since the audit |
 | **Changes made in this follow-up** | (1) the audit report, committed unchanged, plus this document, on `docs/backend-audit-2026-10-18` (draft PR #32 → `main`); (2) the BUG-001 fix on `fix/bug-001-shutdown-without-sentry` (`b3f0837`, draft PR #33 → `phase31/development`) |
-| **Not done** | No merge, rebase, force-push, tag, release, deployment, migration or hosted access. PR #31 and PR #29 are untouched. No other branch or document is modified |
+| **Not done** | No merge, rebase, force-push, tag, release, deployment, migration or hosted access. PR #29 is untouched. PR #31 received one commit on request, the SEC-004 fix `479b2bc` (§6.3), added on top with no history rewritten. No other branch or document is modified |
 
 Evidence labels match the audit: **RAN** (executed here), **CI**, **CODE**, **DOC**, **GH** (live GitHub API).
 
@@ -344,7 +344,7 @@ I left the B34 documents unchanged, because none of the facts that would change 
 | Hosted ledger, hosted Auth settings, staging | Need credentials and owner approval; forbidden in this task | §5.4 |
 | Writing the new live Supabase scenarios | They could not be executed here; untested acceptance tests would be false evidence | Write and run them on a Docker host |
 | Writing the README (SHOW-002) | Its local-stack steps cannot be verified without Docker; an unverified setup guide would mislead | Write it while running §5.3 |
-| Editing PR #29, the B34 documents or PR #31 | Owned by other work; the facts that would change them are owner decisions | §6, §7 |
+| Editing PR #29 or the B34 documents; further changes to PR #31 beyond the SEC-004 fix | Owned by other work; the facts that would change them are owner decisions | §6, §7 |
 | Branch protection, Dependabot and secret-scanning alerts | Not exposed by available tools | Repository settings |
 | Human code review of PR #31 | Needs a human reviewer (process finding) | Owner |
 
