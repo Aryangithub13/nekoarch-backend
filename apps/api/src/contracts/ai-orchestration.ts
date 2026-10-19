@@ -9,9 +9,12 @@ export const AiFailureSchema = z.enum(['PROVIDER_DISABLED', 'PROVIDER_UNAVAILABL
   'PROVIDER_OUTPUT_UNSAFE']);
 export type AiFailureCode = z.infer<typeof AiFailureSchema>;
 export const AiPrivacySchema = z.enum(['LOCAL_ONLY', 'REMOTE_ALLOWED', 'PUBLIC_NON_SENSITIVE']);
+/** PROJECT_BRIEF: no design exists yet, so every stated requirement is extracted. MODIFICATION: only requested changes to an existing design. */
+export const IntentModeSchema = z.enum(['PROJECT_BRIEF', 'MODIFICATION']);
+export type IntentMode = z.infer<typeof IntentModeSchema>;
 export const AiRequestSchema = z.object({
   requestId: z.string().uuid(), capability: AiCapabilitySchema,
-  text: z.string().min(1).max(4000), context: z.object({intent:z.unknown(),questions:z.array(z.string().max(300)).max(24)}).strict(),
+  text: z.string().min(1).max(4000), context: z.object({intent:z.unknown(),questions:z.array(z.string().max(300)).max(24),mode:IntentModeSchema.optional()}).strict(),
   privacyClass: AiPrivacySchema, maxOutputTokens: z.number().int().min(128).max(4096), timeoutMs: z.number().int().min(1).max(15000), structuredOutput: z.literal(true),
 }).strict();
 const identifier = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/);

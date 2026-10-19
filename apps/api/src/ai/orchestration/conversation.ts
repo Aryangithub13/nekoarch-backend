@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { AiPolicySchema, AiProviderError, type AiPolicy, type AiFailureCode, type AiAttempt } from '../../contracts/ai-orchestration.js';
-import { CONVERSATION_LIMITS, type ConversationIntent } from '../../contracts/conversations.js';
-import { createLocalInferenceProvider, INTENT_SYSTEM_PROMPT, type ConversationProvider } from '../conversation-provider.js';
+import { CONVERSATION_LIMITS } from '../../contracts/conversations.js';
+import { createLocalInferenceProvider, INTENT_SYSTEM_PROMPT, type ConversationProvider, type IntentContext } from '../conversation-provider.js';
 import { InterpreterProviderError } from '../interpreter-provider.js';
 import { AiOrchestrator } from './orchestrator.js';
 import type { AiAdapter } from './registry.js';
@@ -11,7 +11,7 @@ const codes:Record<string,AiFailureCode>={AI_PROVIDER_TIMEOUT:'PROVIDER_TIMEOUT'
 export function localAdapter(provider:ConversationProvider):AiAdapter {
   return {async execute(request,_model,signal){
     try {
-      const context=request.context as {intent:ConversationIntent;questions:string[]};
+      const context=request.context as IntentContext;
       if(provider.interpretWithUsage){const result=await provider.interpretWithUsage(request.text,context,signal);return {output:result.intent,usage:result.usage,finishReason:'stop'};}
       return {output:await provider.interpret(request.text,context,signal),finishReason:'stop'};
     }catch(error){if(error instanceof InterpreterProviderError)throw new AiProviderError(codes[error.code]??'PROVIDER_UNAVAILABLE');throw error;}

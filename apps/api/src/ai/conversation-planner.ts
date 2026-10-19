@@ -67,6 +67,23 @@ function parseConversation(text: string) {
   const parsed = ConversationIntentSchema.safeParse({ ...candidate, ...extra });
   return parsed.success ? parsed.data : ConversationIntentSchema.parse({ unsupported: ['unsupported_constraint'] });
 }
+const CONTRADICTABLE = new Set<string>(ConversationIntentSchema.shape.contradictions.removeDefault().element.options);
+/**
+ * Provider output may add what the bounded grammar could not read; it never removes or overrides a value the grammar extracted. A disagreement
+ * on a field the contract can mark contradictory becomes a question the user resolves; elsewhere the grammar's explicit value stands. The grammar's presence-only defaults
+ * (kitchen 'unspecified') are not explicit values.
+ */
+export function mergeProviderIntent(deterministic: ConversationIntent, provider: ConversationIntent): ConversationIntent {
+  const { inferredFields, contradictions, unsupported, ...explicit } = deterministic;
+  if (explicit.kitchen === 'unspecified') delete explicit.kitchen;
+  const conflicts = Object.keys(explicit).filter(k => k in provider && JSON.stringify(provider[k as keyof ConversationIntent]) !== JSON.stringify(explicit[k as keyof typeof explicit]));
+  return ConversationIntentSchema.parse({ ...provider, ...explicit,
+    inferredFields: [...new Set([...provider.inferredFields, ...inferredFields])],
+    contradictions: [...new Set([...provider.contradictions, ...contradictions, ...conflicts.filter(k => CONTRADICTABLE.has(k))])],
+    // The provider exists to read language the grammar flagged; everything else the grammar refused stays refused.
+    unsupported: [...new Set([...provider.unsupported, ...unsupported.filter(u => u !== 'unrecognized_language')])],
+  });
+}
 function applyNative(r: Requirements, c: ConversationIntent, questions: string[]) {
   if(c.roomChange) {
     const change=c.roomChange,groups=r.rooms.filter(room=>room.type===change.type && (change.level===undefined || room.level===change.level));
@@ -190,11 +207,12 @@ export async function planConversation(previous: ConversationState, message: Con
   const ambiguous = /\b(?:move it|that room|the room|previous version|another feasible alternative)\b/i.test(message.text);
   if (ambiguous) state.questions.push('Name the room and its ordinal, or the exact previous revision. No ambiguous reference has been applied.');
   if (options.disabled) { state.status = 'FAILED'; state.provider.failure = 'AI_CONFIGURATION_UNAVAILABLE'; return boundedState(state); }
+  const mode = state.requirements ? 'MODIFICATION' as const : 'PROJECT_BRIEF' as const;
   if (options.provider?.orchestrate && !ambiguous) {
     const deterministic=structuredClone(patch);
     try {
-      const result=await options.provider.orchestrate(message.text,{intent:state.intent,questions:previous.questions},patch,options.signal);
-      patch=ConversationIntentSchema.parse(result.intent);state.orchestration=result.provenance;
+      const result=await options.provider.orchestrate(message.text,{intent:state.intent,questions:previous.questions,mode},patch,options.signal);
+      patch=result.provenance.intentSource==='PROVIDER'?mergeProviderIntent(deterministic,ConversationIntentSchema.parse(result.intent)):ConversationIntentSchema.parse(result.intent);state.orchestration=result.provenance;
       state.provider={kind:result.provenance.providerId,model:result.provenance.modelId,failure:[...result.provenance.attempts].reverse().find(a=>a.status==='FAILED')?.failure??null};
       // Deterministically understood explicit constraints retain precedence over advisory output.
       if(!deterministic.unsupported.includes('unrecognized_language')){patch=deterministic;state.orchestration.intentSource='DETERMINISTIC';}
@@ -205,7 +223,7 @@ export async function planConversation(previous: ConversationState, message: Con
       throw error;
     }
   } else if (options.provider && !ambiguous && patch.unsupported.includes('unrecognized_language')) {
-    try { patch = ConversationIntentSchema.parse(await options.provider.interpret(message.text,{intent:state.intent,questions:previous.questions},options.signal)); state.provider = {kind:options.provider.kind,model:options.provider.model,failure:null}; }
+    try { patch = mergeProviderIntent(patch,ConversationIntentSchema.parse(await options.provider.interpret(message.text,{intent:state.intent,questions:previous.questions,mode},options.signal))); state.provider = {kind:options.provider.kind,model:options.provider.model,failure:null}; }
     catch (error) { state.provider.failure = error instanceof InterpreterProviderError ? error.code : 'AI_PROVIDER_INVALID_RESPONSE'; state.explanations.push('Optional inference failed; bounded deterministic interpretation remains available.'); }
   }
   // Never allow inferred upstairs language to overwrite an explicit/persisted floor count.
@@ -244,6 +262,14 @@ export async function planConversation(previous: ConversationState, message: Con
   let r = state.requirements ? structuredClone(state.requirements) : null;
   try {
     if (!r) {
+      // A new brief has no room graph to edit: "kitchen connected to the dining" is the brief's kitchen relationship, which also implies that room.
+      const edge = intent.relationship, ends = edge && [edge.from.type, edge.to.type];
+      const target = ends?.includes('kitchen') ? ends.find(t => t === 'living' || t === 'dining') : undefined;
+      if (edge && target && intent.kitchenConnection === undefined) {
+        Object.assign(intent, { kitchenConnection: target, relationshipKind: edge.kind === 'adjacent' ? 'adjacent' : 'connected', relationshipStrength: edge.strength });
+        if (target === 'dining') intent.dining ??= 1;
+        delete intent.relationship;
+      }
       const {roomChange:_roomChange,relationship:_relationship,privacy:_privacy,daylight:_daylight,ventilation:_ventilation,circulationWidthMm:_circulation,accessSide:_access,northMilliDegrees:_north,...base} = intent;
       const basic = IntentCandidateSchema.parse({...base,preserveBedrooms:false,kitchenLarger:false,unsupported:[]});
       const interpreted = await interpretRequirements(NaturalLanguageDesignRequestSchema.parse({text:'conversation intent'}),null,{provider:{...fallbackProvider,async interpret(){return basic;}}});

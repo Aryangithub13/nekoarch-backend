@@ -49,7 +49,7 @@ export function parseFallback(text: string): IntentCandidate {
   const ground = '(?:on\\s+the\\s+ground\\s+floor|on\\s+ground\\s+floor|downstairs|ground\\s+floor|neeche)';
   const upper = '(?:on\\s+the\\s+(?:second|first)\\s+floor|upstairs|upar)';
   for (const [location, field] of [[ground, 'groundFloorBedrooms'], [upper, 'upperFloorBedrooms']] as const) {
-    consume(new RegExp(`\\b(?:${location}\\s+(?:me\\s+)?(\\d+)\\s+bedrooms?|(\\d+)\\s+bedrooms?\\s+${location})\\b`, 'g'), m => {
+    consume(new RegExp(`\\b(?:${location}\\s+(?:(?:me|mein|pe|par)\\s+)?(\\d+)\\s+bedrooms?|(\\d+)\\s+bedrooms?\\s+${location})\\b`, 'g'), m => {
       const n = Number(m[1] ?? m[2]); if (c[field] !== undefined && c[field] !== n) conflict(field); c[field] = n;
     });
   }
@@ -71,7 +71,7 @@ export function parseFallback(text: string): IntentCandidate {
   });
   consume(/\b(?:keep\s+(?:the\s+)?bedrooms\s+(?:the\s+)?same|preserve\s+(?:the\s+)?bedrooms|keep\s+everything\s+(?:the\s+)?same)\b/g, () => { c.preserveBedrooms = true; });
   consume(/\b(?:make\s+(?:the\s+)?kitchen\s+larger|larger\s+kitchen|increase\s+(?:the\s+)?kitchen\s+area)\b/g, () => { c.kitchenLarger = true; });
-  if (/\b(?:near|adjacent|connected|next to)\b/.test(t)) {
+  if (/\b(?:near|adjacent|connected|next to|paas)\b/.test(t)) {
     if (/\bkitchen\b/.test(text.toLowerCase()) && /\b(?:dining|living)\b/.test(t)) {
       if (/\bdining\b/.test(t) && /\bliving\b/.test(t)) addUnsupported('unsupported_constraint');
       c.kitchenConnection = /\bdining\b/.test(t) ? 'dining' : 'living';
@@ -85,7 +85,7 @@ export function parseFallback(text: string): IntentCandidate {
   if (/\bkitchen\b/.test(t)) c.kitchen ??= 'unspecified';
   if (/\b(?:bedrooms?|bhk|bathrooms?|washrooms?)\b/.test(t)) addUnsupported('unsupported_constraint');
   // Filler is intentionally finite: new vocabulary requires clarification, never silent interpretation.
-  const filler = new Set('i have a an the my me make want need would like prefer preferably please house home modern nice good natural maximize plot site on with and aur hai ka ki ke chahiye rakhna me floor ground downstairs upstairs upar neeche bedroom bedrooms kitchen dining living room rooms study connected connect to near adjacent next open plan but for keep same everything only'.split(' '));
+  const filler = new Set('i have a an the my me make want need would like prefer preferably please house home modern nice good natural maximize plot site on with and aur hai ka ki ke chahiye rakhna me floor ground downstairs upstairs upar neeche bedroom bedrooms kitchen dining living room rooms study connected connect to near adjacent next open plan but for keep same everything only mujhe ghar pe par ho bhi mein paas'.split(' '));
   const residual = t.replace(/[.,!?;:]/g, ' ').trim().split(/\s+/).filter(Boolean);
   if (residual.some(s => !filler.has(s))) addUnsupported('unrecognized_language');
   return c;

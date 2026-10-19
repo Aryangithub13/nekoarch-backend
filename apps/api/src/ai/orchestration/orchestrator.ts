@@ -37,7 +37,7 @@ export class AiOrchestrator {
     // Only intent extraction has this schema and deterministic parser; every other capability is a typed task (run).
     if (request.capability!=='ARCHITECTURAL_INTENT_EXTRACTION' || AI_CAPABILITIES.find(c=>c.capability===request.capability)?.status!=='AVAILABLE') throw new AiProviderError('CAPABILITY_UNSUPPORTED');
     // Validation copies context so malicious in-process adapters cannot mutate authoritative state.
-    const safeContext={intent:ConversationIntentSchema.parse(request.context.intent),questions:request.context.questions.slice()};
+    const safeContext={intent:ConversationIntentSchema.parse(request.context.intent),questions:request.context.questions.slice(),...(request.context.mode?{mode:request.context.mode}:{})};
     if(request.text.length>CONVERSATION_LIMITS.text || safeContext.questions.length>24 || safeContext.questions.some(q=>q.length>300)) throw new AiProviderError('PROVIDER_POLICY_REJECTED');
     const run=await this.dispatch({...request,context:safeContext},INTENT_TASK,callerSignal);
     const finish=(intent:ConversationIntent,providerId:string,modelId:string,position:number,usage:AiProvenance['usage'],fallback:boolean)=>({intent,provenance:AiProvenanceSchema.parse({requestId:request.requestId,capability:request.capability,privacyClass:request.privacyClass,providerId,modelId,routingReason:fallback?'DETERMINISTIC':position?'SECONDARY':'PREFERRED',fallbackPosition:position,latencyMs:performance.now()-start,status:fallback?'FALLBACK':'SUCCESS',intentSource:fallback?'DETERMINISTIC':'PROVIDER',requests:run.requests,attempts:run.attempts,usage})});

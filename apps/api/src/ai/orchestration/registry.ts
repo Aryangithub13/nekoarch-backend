@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AiCapabilitySchema, AiPolicySchema, AiPrivacySchema, type AiAttempt, type AiCapability, type AiPolicy, type AiModel, type AiProviderConfig, type AiUsage } from '../../contracts/ai-orchestration.js';
+import { AiCapabilitySchema, AiPolicySchema, AiPrivacySchema, type AiAttempt, type AiCapability, type AiPolicy, type AiModel, type AiProviderConfig, type AiUsage, type IntentMode } from '../../contracts/ai-orchestration.js';
 
 /** Operational capabilities; every other name is PLANNED. Phase 39 adds the two advisory design-concept tasks (structured text, never images or geometry). */
 const OPERATIONAL: readonly AiCapability[] = ['ARCHITECTURAL_INTENT_EXTRACTION', 'INTERIOR_DESIGN_CONCEPT', 'EXTERIOR_DESIGN_CONCEPT'];
@@ -8,7 +8,7 @@ export interface AiRequest {
   requestId: string;
   capability: AiCapability;
   text: string;
-  context: { intent: unknown; questions: string[] };
+  context: { intent: unknown; questions: string[]; mode?: IntentMode };
   privacyClass: AiPolicy['privacyClass'];
   maxOutputTokens: number;
   timeoutMs: number;
