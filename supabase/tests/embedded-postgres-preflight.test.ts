@@ -16,4 +16,9 @@ describe('embedded PostgreSQL host preflight', () => {
     expect(embeddedPostgresPreflight({ uid: 1000, platform: 'linux', locales: null })).toBeNull();
     expect(embeddedPostgresPreflight({ uid: undefined, platform: 'win32', locales: null })).toBeNull();
   });
+  it('names skipped install scripts when initdb cannot load its bundled libraries (npm 12 allowScripts)', () => {
+    const initdbError = 'initdb: error while loading shared libraries: libpq.so.5: cannot open shared object file: No such file or directory';
+    expect(embeddedPostgresPreflight({ uid: 1000, platform: 'linux', locales, initdbError })).toMatch(/install script was skipped.*install-scripts ls/);
+    expect(embeddedPostgresPreflight({ uid: 1000, platform: 'linux', locales, initdbError: null })).toBeNull();
+  });
 });

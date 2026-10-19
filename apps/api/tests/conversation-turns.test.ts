@@ -47,6 +47,12 @@ describe('Phase 36 deterministic turn interpretation', () => {
     const c = classifyTurn('Restore revision 1, but keep the stairs unchanged.', levels, false);
     expect(c.kind === 'CHANGE_REQUEST' && c.family === 'RESTORE' && c.revision.preservation.map(p => p.scope)).toEqual(['STAIRS']);
   });
+  it('classifies restore wording at the full turn length without growing past the revision grammar limit (was a 500)', () => {
+    const text = 'undo '.repeat(400).trim();
+    expect(TurnRequestSchema.shape.text.safeParse(text).success).toBe(true);
+    expect(classifyTurn(text, levels, false).kind).toBe('CHANGE_REQUEST');
+    expect(classifyTurn(('Restore revision 1 and undo, but keep the stairs. ').repeat(40).slice(0, 2000), levels, false).kind).toBe('CHANGE_REQUEST');
+  });
   it('lets an explicit structured operation decide the turn whatever the wording', () => {
     expect(kind('What do you think?', true)).toBe('CHANGE_REQUEST:ZONE_REGENERATION');
   });
