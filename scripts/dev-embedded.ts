@@ -25,13 +25,17 @@ import { specification } from '../packages/construction-calculations/tests/fixtu
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const port = Number(process.env.PORT ?? 3001);
-const origins = process.env.CORS_ORIGINS ?? ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://127.0.0.1:3200', 'http://127.0.0.1:3201'].join(',');
+// Local frontends: dev server (3000), Playwright (3200/3201) and a local production build (3300), by name or loopback IP.
+const origins = process.env.CORS_ORIGINS ?? [3000, 3200, 3201, 3300].flatMap(port => [`http://localhost:${port}`, `http://127.0.0.1:${port}`]).join(',');
 const out = process.env.DEV_SESSION_FILE ?? path.join(root, '.dev-embedded', 'session.json');
 
 const db = await startTestDatabase();
 const secret: string = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
 const users = { owner: await createTestUser(db.pool), other: await createTestUser(db.pool) };
-const tokens = { owner: randomBytes(24).toString('hex'), other: randomBytes(24).toString('hex') };
+// Optional stable local tokens (DEV_OWNER_TOKEN / DEV_OTHER_TOKEN, 16-128 URL-safe characters) so a restart keeps the same sign-in.
+const devToken = (value: string | undefined) => value && /^[A-Za-z0-9._-]{16,128}$/.test(value) ? value : randomBytes(24).toString('hex');
+const tokens = { owner: devToken(process.env.DEV_OWNER_TOKEN), other: devToken(process.env.DEV_OTHER_TOKEN) };
+if (tokens.owner === tokens.other) throw new Error('DEV_OWNER_TOKEN and DEV_OTHER_TOKEN must differ');
 const app = buildApp({
   env: parseEnv({ NODE_ENV: 'development', SUPABASE_URL: 'http://127.0.0.1:54321', SUPABASE_ANON_KEY: 'embedded-dev-unused', PROJECT_COMMIT_SECRET: secret,
     CORS_ORIGINS: origins, LOG_LEVEL: process.env.LOG_LEVEL ?? 'warn', RATE_LIMIT_ENABLED: 'false', HOST: '127.0.0.1', PORT: String(port) }),
