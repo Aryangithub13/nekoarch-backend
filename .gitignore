@@ -12,3 +12,4 @@ credentials.*
 **/credentials/
 *.pem
 *.key
+.dev-embedded/
