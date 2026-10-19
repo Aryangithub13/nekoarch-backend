@@ -7,9 +7,10 @@ const image = process.argv[2] ?? 'designflow-api:phase8';
 const docker = args => execFileSync('docker', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 try {
   // No network and synthetic configuration: this cannot contact an external Sentry or Supabase project.
+  // Production requires an explicit CORS_ORIGINS (audit B INT-B-016); `none` because no browser calls this container.
   docker(['run', '-d', '--network', 'none', '--name', name,
     '-e', 'SUPABASE_URL=http://127.0.0.1:9', '-e', 'SUPABASE_ANON_KEY=smoke-fixture',
-    '-e', 'SENTRY_DSN=http://fixture@127.0.0.1:9/1', image]);
+    '-e', 'SENTRY_DSN=http://fixture@127.0.0.1:9/1', '-e', 'CORS_ORIGINS=none', image]);
   docker(['exec', name, 'node', '--input-type=module', '-e', `
     import { setTimeout } from 'node:timers/promises';
     let live;
