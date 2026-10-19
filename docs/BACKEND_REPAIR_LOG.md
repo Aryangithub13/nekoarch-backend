@@ -408,3 +408,27 @@ Session 1 rebuilt two **local, never-pushed** commits (`b6174ea`, `de5f0a5`) bef
 ## 12. Single safest next step
 
 **A human review of PR #35** (it contains #34 unchanged): nothing in it is on the code line until then, and the B40–B46 code it builds on has not been reviewed either. After that, and before any hosted migration, the operator's **read-only** hosted ledger check (`scripts/verify-hosted-migrations.mjs`). It changes nothing, and it is the only way to learn what hosted actually contains.
+
+---
+
+## 13. Merge outcome (2026-10-19, after r2)
+
+Every open PR was finished and merged into `phase31/development` with merge commits, at the owner's request. Nothing was force-pushed, and no tag, release or deployment was made.
+
+| PR | Merged as | Evidence on the merged head |
+|---|---|---|
+| #34 `0031` quota integrity | `ea60da3` | CI run 39156993823 green on its head; merge tree full suite 3,173/3,173 locally. GitHub Actions minutes were exhausted at the time, so no CI ran on the merge itself (#35's later green runs cover this tree) |
+| #35 audit B repairs (`0032`, `0033`) | `17d9d9a` | CI run 39256194565 green on `d81b844`; the same tree (`872ab47`) passed the local full suite 3,219/3,219 and live Supabase 129/129 (receipt `supabase-2026-10-19T12-17-42.068Z.json`) |
+| #29 B39 release gates (runbook refreshed for `0001`–`0033`) | `3158eda` | CI run 39260236052 green on `7d8573a`; local full suite 3,222/3,222 on the same tree |
+
+**Also on the code line now:**
+- PRs #36 and #37 were merged by their author.
+- #35 carries a fix for #36's embedded dev runtime (`scripts/dev-embedded.ts`). It exited 1 on SIGTERM with an unhandled pool error and leaked its temporary database directory. The fix gives a clean shutdown with no leaked directory, verified in 2 of 2 runs.
+
+**CI history.** The repository was made public after the monthly Actions minutes ran out. Before that, run 39251474774 had failed with no runner assigned; its re-run passed.
+
+**Two process notes:**
+- `#35` needed a base merge (`d81b844`) because #34's commits gave the branches two merge bases. GitHub then reported a conflict, although the content merged cleanly; the tree was unchanged by that merge.
+- None of the three PRs received a human review (SEC-007 remains BLOCKED).
+
+**Status of the 83 IDs:** unchanged from §2. Merging adds no new evidence about hosted state, which is still unknown. The next step is unchanged too (§12): the operator's read-only hosted ledger check before any hosted migration.
