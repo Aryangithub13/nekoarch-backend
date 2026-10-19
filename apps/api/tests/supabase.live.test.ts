@@ -44,6 +44,7 @@ import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
 import { sampleCostingPolicy } from '@designflow/boq-cost';
 import { parseEnv, type Env } from '../src/config/env.js';
+import { EXPECTED_SCHEMA_VERSION } from '../src/lib/deployment-state.js';
 import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
 import { fixtureEstimate, fixturePlan } from '../../../test-support/fixtures.js';
 
@@ -813,6 +814,35 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     const after = RevisionCollaborationSchema.parse((await app.inject({ url: `${root}/revisions/${rev2}`, headers: owner.headers })).json());
     expect([after.comments.map(c => c.id), after.reviews.length]).toEqual([[commentId], 1]);
   }, 180_000);
+
+  it('0032 and 0033 through actual JWT and PostgREST: readiness checks the commit key and schema, and a keyed B44 retry stores one comment', async () => {
+    if (!app || !owner) throw new Error('Local setup incomplete');
+    // 0032: the anonymous probes the production adapter makes for readiness and discovery (audit B INT-B-015, INT-B-017).
+    expect((await app.inject({ url: '/health/ready' })).statusCode).toBe(200);
+    expect((await app.inject({ url: '/api/capabilities' })).json().deployment)
+      .toEqual({ writes: 'AVAILABLE', schema: { expectedVersion: EXPECTED_SCHEMA_VERSION, status: 'CURRENT' } });
+    const stale = buildApp({ env: { ...localEnvironment(), PROJECT_COMMIT_SECRET: '0'.repeat(64) }, captureError: () => undefined });
+    try {
+      await stale.ready();
+      expect((await stale.inject({ url: '/health/ready' })).statusCode).toBe(503);
+      const created = await stale.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: '0032 stale secret live' } });
+      expect(created.statusCode, created.body).toBe(201);
+      const refused = await stale.inject({ method: 'POST', url: `/api/projects/${created.json().id}/revisions`, headers: owner.headers, payload: { model: authored() } });
+      expect([refused.statusCode, refused.json().error.code]).toEqual([503, 'COMMIT_ATTESTATION_UNAVAILABLE']);
+    } finally { await stale.close(); }
+    // 0033: a retried comment with one Idempotency-Key replays the first response and stores one row (INT-B-014).
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: '0033 retries live' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id as string;
+    const rev = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions`, headers: owner.headers, payload: { model: authored() } });
+    expect(rev.statusCode, rev.body.slice(0, 300)).toBe(201);
+    const url = `/api/projects/${id}/collaboration/revisions/${rev.json().revision.id}/comments`, headers = { ...owner.headers, 'idempotency-key': 'live-comment-retry' };
+    const first = await app.inject({ method: 'POST', url, headers, payload: { body: 'Retried once' } });
+    const retry = await app.inject({ method: 'POST', url, headers, payload: { body: 'Retried once' } });
+    expect([first.statusCode, retry.statusCode, retry.json().id]).toEqual([201, 201, first.json().id]);
+    const stored = await owner.client.from('project_revision_comments').select('id').eq('project_id', id);
+    expect(stored.error).toBeNull(); expect(stored.data).toEqual([{ id: first.json().id }]);
+    expect((await app.inject({ url: `/api/projects/${id}/collaboration`, headers: owner.headers })).json().revisionsTruncated).toBe(false);
+  }, 120_000);
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {
     if (!app || !owner || !other || !publicClient || !admin) throw new Error('Local setup incomplete');

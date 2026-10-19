@@ -3,13 +3,22 @@
 import { spawnSync } from 'node:child_process';
 import { request } from 'node:http';
 import { Buffer } from 'node:buffer';
-import { URL } from 'node:url';
+import { URL, pathToFileURL } from 'node:url';
 import { setTimeout } from 'node:timers/promises';
 import process from 'node:process';
 import console from 'node:console';
 
 const name = 'supabase_rest_designflow';
-const target = 'public.ecr.aws/supabase/postgrest:v16.3';
+// SUPA-003: the CLI pulls PostgREST from ECR by default, or from another registry (SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io gives
+// postgrest/postgrest). Only 16.2 has the defect: it is replaced by 16.3 from the same repository; 16.3 or later is kept as it is.
+const REPOSITORIES = ['public.ecr.aws/supabase/postgrest', 'postgrest/postgrest', 'docker.io/postgrest/postgrest', 'ghcr.io/supabase/postgrest'];
+export function restImagePlan(image) {
+  const match = /^(.+):v(\d+)\.(\d+)(?:\.\d+)?$/.exec(image ?? '');
+  if (!match || !REPOSITORIES.includes(match[1])) return { action: 'refuse' };
+  const [major, minor] = [Number(match[2]), Number(match[3])];
+  if (major > 16 || (major === 16 && minor >= 3)) return { action: 'keep' };
+  return major === 16 && minor === 2 ? { action: 'replace', target: `${match[1]}:v16.3` } : { action: 'refuse' };
+}
 function docker(args) {
   const r = spawnSync('docker', args, { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
   if (r.status !== 0) throw new Error(`Docker ${args[0]} failed; potentially sensitive output withheld`);
@@ -27,7 +36,7 @@ function api(path, body) {
     req.end(data);
   });
 }
-try {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) try {
   // Refuse remote Docker contexts and remote Supabase endpoints.
   if (process.env.DOCKER_HOST && process.env.DOCKER_HOST !== 'unix:///var/run/docker.sock') throw new Error('Remote Docker refused');
   const context = JSON.parse(docker(['context', 'inspect']))[0];
@@ -37,10 +46,12 @@ try {
   const local = JSON.parse(status.stdout);
   for (const key of ['API_URL', 'DB_URL']) if (!['127.0.0.1', 'localhost'].includes(new URL(local[key]).hostname)) throw new Error('Remote Supabase refused');
   const old = JSON.parse(docker(['inspect', name]))[0];
-  if (old.Config.Image === target) {
-    console.log(`Local PostgREST already uses ${target}`);
+  const plan = restImagePlan(old.Config.Image);
+  if (plan.action === 'refuse') throw new Error('Unexpected REST image; manual review required');
+  if (plan.action === 'keep') {
+    console.log(`Local PostgREST already uses ${old.Config.Image}`);
   } else {
-    if (old.Config.Image !== 'public.ecr.aws/supabase/postgrest:v16.2') throw new Error('Unexpected REST image; manual review required');
+    const target = plan.target;
     const networks = Object.entries(old.NetworkSettings.Networks);
     if (old.Mounts.length || networks.length !== 1 || !old.State.Running || old.State.Paused) throw new Error('Unexpected REST container state; manual review required');
     const [network, endpoint] = networks[0];
