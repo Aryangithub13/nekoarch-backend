@@ -13,9 +13,11 @@ import { CAPABILITIES, MODES, validateRegistry } from '../workflows/registry.js'
 import { resolveWorkflow } from '../workflows/sources.js';
 import { executeWorkflow, workflowFingerprint } from '../services/workflow-service.js';
 import { discovery } from '../services/overview-service.js';
-export function workflowsRoutes(app: FastifyInstance, backend: Backend, env: Env) {
+import type { DeploymentState } from '../lib/deployment-state.js';
+export function workflowsRoutes(app: FastifyInstance, backend: Backend, env: Env, deployment: DeploymentState) {
   validateRegistry(CAPABILITIES);
-  app.get('/api/capabilities',async()=>({workflowVersion:WORKFLOW_VERSION,modes:MODES,capabilities:CAPABILITIES,...discovery()}));
+  // Service statuses describe what this release implements; `deployment` says whether this instance can write and its schema is current.
+  app.get('/api/capabilities',async()=>({workflowVersion:WORKFLOW_VERSION,modes:MODES,capabilities:CAPABILITIES,...discovery(),deployment:await deployment.discovery()}));
   app.post(`${WORKFLOW_OPERATION}/plan`,{bodyLimit:Math.min(env.BODY_LIMIT_BYTES,131072)},async request=>{
     const {repository}=await requestContext(request,backend,true), {projectId}=parseRequest(ProjectParamsSchema,request.params);
     const input=parseRequest(WorkflowRequestSchema,request.body);

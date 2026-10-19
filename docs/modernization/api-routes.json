@@ -820,7 +820,17 @@
   "anonymous": 200
  },
  {
+  "method": "HEAD",
+  "url": "/health/live",
+  "anonymous": 200
+ },
+ {
   "method": "GET",
+  "url": "/health/ready",
+  "anonymous": 200
+ },
+ {
+  "method": "HEAD",
   "url": "/health/ready",
   "anonymous": 200
  }

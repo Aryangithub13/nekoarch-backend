@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { createServer } from 'node:net';
@@ -8,6 +9,20 @@ import EmbeddedPostgres from 'embedded-postgres';
 import pg, { type Pool, type PoolClient } from 'pg';
 
 const supabaseDir = fileURLToPath(new URL('../supabase/', import.meta.url));
+
+/** TEST-003: embedded PostgreSQL fails opaquely (an initdb EACCES or exit 1, then a 120 s hook timeout) as root or without the
+ * en_US.UTF-8 locale that embedded-postgres passes as --lc-messages. Name the cause before starting it. `locales` is `locale -a`. */
+export function embeddedPostgresPreflight(host: { uid: number | undefined; platform: string; locales: string | null }): string | null {
+  if (host.uid === 0) return 'Embedded PostgreSQL cannot run as root: run the database tests as a non-root user (CI runs as the unprivileged runner).';
+  if (host.platform === 'linux' && host.locales !== null && !/^en_US\.utf-?8$/im.test(host.locales)) {
+    return 'Embedded PostgreSQL needs the en_US.UTF-8 locale: run `sudo locale-gen en_US.UTF-8` or `localedef -i en_US -f UTF-8 en_US.UTF-8` (CI does the former).';
+  }
+  return null;
+}
+function hostLocales(): string | null {
+  const result = spawnSync('locale', ['-a'], { encoding: 'utf8' });
+  return result.status === 0 ? result.stdout : null; // no `locale` command: nothing to check
+}
 
 async function availablePort(): Promise<number> {
   const server = createServer();
@@ -53,6 +68,8 @@ export async function seedTestDatabase(pool: Pool): Promise<void> {
 
 /** `migrations` selects a prefix of the ordered migrations, e.g. to test an upgrade from an earlier schema. */
 export async function startTestDatabase(options: { seed?: boolean; migrations?: (name: string) => boolean } = {}) {
+  const problem = embeddedPostgresPreflight({ uid: process.getuid?.(), platform: process.platform, locales: process.platform === 'linux' ? hostLocales() : null });
+  if (problem) throw new Error(problem);
   const port = await availablePort();
   const databaseDir = await mkdtemp(path.join(tmpdir(), 'designflow-postgres-'));
   const password = randomBytes(24).toString('hex');

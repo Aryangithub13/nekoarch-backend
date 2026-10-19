@@ -6,7 +6,7 @@ Phase 7 baseline: `b88902d`, tag `backend-v1-phase7-complete`. The initial worki
 
 Use Node 22. Install with `npm ci`, build with `npm run build`, and run `npm start`. Start reads injected environment variables; it no longer requires a disk `.env`. For local file-based configuration, use `node --env-file=.env apps/api/dist/server.js`. Development still supports `npm run dev`.
 
-Apply append-only migrations through `0005_idempotency.sql` before releasing the API. Use the normal controlled Supabase migration process for the target environment; the API never migrates on boot and never needs service-role credentials. `npx supabase migration up --local` upgrades a local stack. `npx supabase db reset --local` is only for disposable local databases. The existing seed remains repeatable and illustrative, not verified production pricing.
+Apply append-only migrations through `0005_idempotency.sql` before releasing the API. *[2026-10-19, SHOW-002] Historical Phase 8 text: today every migration in `supabase/migrations` must be applied first (the API's readiness is 503 while the schema is behind); the current setup guide is the root [`README.md`](../README.md).* Use the normal controlled Supabase migration process for the target environment; the API never migrates on boot and never needs service-role credentials. `npx supabase migration up --local` upgrades a local stack. `npx supabase db reset --local` is only for disposable local databases. The existing seed remains repeatable and illustrative, not verified production pricing.
 
 Build the container with `docker build -t designflow-api:phase8 .`. It installs the lockfile, compiles TypeScript, prunes development dependencies, and copies only production artifacts into a non-root Node runtime. No `.env`, fixtures, or secrets enter the image. The Node executable runs directly as PID 1 and receives SIGTERM. Port 3001 is exposed. `node scripts/smoke-container.mjs` verifies liveness, failed-dependency readiness, non-root execution, and clean SIGTERM exit with container networking disabled.
 
@@ -15,7 +15,7 @@ Production still requires environment-specific Supabase URL/anon key, Sentry DSN
 ## HTTP and lifecycle behavior
 
 - `GET /health/live`: cheap `200 {"status":"ok"}`, independent of Supabase and exempt from quotas.
-- `GET /health/ready`: bounded, read-only `rate_table_versions` projection through the public Supabase client. Returns 200 when reachable, 503 `{"status":"unavailable"}` on failure or draining. It discloses no internals. It verifies database/PostgREST access, not every Auth endpoint or completeness of business rate data.
+- `GET /health/ready`: bounded, read-only `rate_table_versions` projection through the public Supabase client. Returns 200 when reachable, 503 `{"status":"unavailable"}` on failure or draining. It discloses no internals. It verifies database/PostgREST access, not every Auth endpoint or completeness of business rate data. *Since `0032` (audit B INT-B-015/017) it is also 503 when the configured `PROJECT_COMMIT_SECRET` does not match the database key, or when the database is older than the migration this API needs (`schema_version()`). Both health routes also answer `HEAD`.*
 - Fastify closes its listener and drains active requests before the adapter's optional owned-resource close hook. Production uses stateless Supabase HTTP clients, with no owned PostgreSQL pool or Auth refresh timers to close. The executable then awaits Sentry flush. Both signals share one shutdown promise, including repeated mixed signals. Failures set exit code 1 and produce safe logs; no early `process.exit()` is used.
 - All sensitive responses use `Cache-Control: no-store`; Helmet adds `nosniff` and `no-referrer`. API CSP/COEP are disabled. HSTS requires an explicit production setting and HTTPS termination.
 - Body sizes default to 1 MiB for plan JSON and 64 KiB for generation/estimates. Existing malformed JSON, unsupported media type, and oversized-body responses deliberately remain structured 400s for compatibility.
@@ -75,7 +75,7 @@ All numeric values are positive validated integers. Empty optional values use de
 | `NODE_ENV` | `development` |
 | `HOST`, `PORT` | `127.0.0.1`, `3001`; container host `0.0.0.0` |
 | `LOG_LEVEL` | `info` |
-| `CORS_ORIGINS` | Development/test localhost:5173; production denies all origins when empty |
+| `CORS_ORIGINS` | Development/test localhost:5173. Production requires it (audit B INT-B-016): list the origins, or `none` to allow no browser origin; empty refuses to start |
 | `TRUST_PROXY` | Empty = false; explicit comma-separated IPs/CIDRs only |
 | `RATE_LIMIT_ENABLED` | `true`; exact `true`/`false` |
 | `RATE_LIMIT_WINDOW_MS` | `60000` |

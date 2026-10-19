@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Repository } from './repository.js';
+import type { IdempotencyContext, Repository } from './repository.js';
 import { ApiError } from './errors.js';
 import { projectDatabaseError } from './project-repository.js';
 import { CommentSchema, MemberSchema, ReviewSchema, StoredRevisionViewSchema, WorkspaceSchema } from '../collaboration/contracts.js';
@@ -30,11 +30,15 @@ export class CollaborationRepository {
   async revision(projectId: string, revisionId: string) {
     return StoredRevisionViewSchema.parse(await this.rpc('collaboration_read', { p_action: 'revision', p_project_id: projectId, p_revision_id: revisionId }));
   }
-  private write<T extends z.ZodTypeAny>(schema: T, action: string, input: Record<string, unknown>, a: Attestation): Promise<z.infer<T>> {
-    return this.rpc('collaboration_write', { p_action: action, p_input: input, p_envelope: a.envelope, p_signature: a.signature }).then(r => schema.parse(r));
+  /** `context` is an Idempotency-Key receipt (0033): member removal, comments and reviews store their response under it. */
+  private write<T extends z.ZodTypeAny>(schema: T, action: string, input: Record<string, unknown>, a: Attestation, context?: IdempotencyContext): Promise<z.infer<T>> {
+    return this.rpc('collaboration_write', { p_action: action, p_input: input, p_envelope: a.envelope, p_signature: a.signature, p_context: context ?? null })
+      .then(r => schema.parse(r));
   }
   upsertMember(input: Record<string, unknown>, a: Attestation) { return this.write(MemberSchema, 'member_upsert', input, a); }
-  removeMember(input: Record<string, unknown>, a: Attestation) { return this.write(z.object({ userId: z.string().uuid(), removed: z.literal(true) }).strict(), 'member_remove', input, a); }
-  comment(input: Record<string, unknown>, a: Attestation) { return this.write(CommentSchema, 'comment', input, a); }
-  review(input: Record<string, unknown>, a: Attestation) { return this.write(ReviewSchema, 'review', input, a); }
+  removeMember(input: Record<string, unknown>, a: Attestation, context?: IdempotencyContext) {
+    return this.write(z.object({ userId: z.string().uuid(), removed: z.literal(true) }).strict(), 'member_remove', input, a, context);
+  }
+  comment(input: Record<string, unknown>, a: Attestation, context?: IdempotencyContext) { return this.write(CommentSchema, 'comment', input, a, context); }
+  review(input: Record<string, unknown>, a: Attestation, context?: IdempotencyContext) { return this.write(ReviewSchema, 'review', input, a, context); }
 }

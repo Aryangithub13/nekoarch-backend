@@ -25,7 +25,7 @@ afterEach(async () => { await Promise.all(apps.splice(0).map(app => app.close())
 
 describe('health and lifecycle', () => {
   it('reports missing production signing capability through readiness without disabling reads or liveness', async () => {
-    const settings = { NODE_ENV: 'production', SENTRY_DSN: 'https://public@example.test/1' };
+    const settings = { NODE_ENV: 'production', SENTRY_DSN: 'https://public@example.test/1', CORS_ORIGINS: 'https://app.example.test' };
     const app = appWith(settings);
     expect((await app.inject('/health/live')).statusCode).toBe(200);
     expect((await app.inject('/health/ready')).statusCode).toBe(503);
@@ -121,7 +121,7 @@ describe('HTTP abuse and browser protections', () => {
   });
   it.each(['/api/plans/generate', '/api/estimates'])('bounds small JSON on %s with a safe envelope', async url => {
     const response = await appWith({ SMALL_BODY_LIMIT_BYTES: '64' }).inject({ method: 'POST', url, payload: { private: 'x'.repeat(100) } });
-    expect(response.statusCode).toBe(400); expect(response.json().error.code).toBe('INVALID_REQUEST'); expect(response.body).not.toContain('xxxx');
+    expect(response.statusCode).toBe(400); expect(response.json().error.code).toBe('PAYLOAD_TOO_LARGE'); expect(response.body).not.toContain('xxxx');
   });
   it.each(['', 'space key', 'x'.repeat(129), 'invalid/key'])('rejects malformed idempotency key %s', async key => {
     const response = await appWith().inject({ method: 'POST', url: '/api/plans', headers: { authorization: `Bearer ${userId}`, 'idempotency-key': key }, payload: { plan: fixturePlan() } });
@@ -130,9 +130,12 @@ describe('HTTP abuse and browser protections', () => {
 });
 
 describe('production configuration and safe diagnostics', () => {
-  it('strips unused service-role credentials and denies browser origins by default in production', () => {
-    const env = parseEnv({ ...envInput, NODE_ENV: 'production', SENTRY_DSN: 'https://key@example.invalid/1', SUPABASE_SERVICE_ROLE_KEY: 'private' });
-    expect(env).not.toHaveProperty('SUPABASE_SERVICE_ROLE_KEY'); expect(env.CORS_ORIGINS).toBe(''); expect(env.TRUST_PROXY).toBe('');
+  it('strips unused service-role credentials and never allows a browser origin by default in production', () => {
+    // INT-B-016: an empty origin list no longer starts a production API that silently refuses every browser; denying all is an explicit `none`.
+    const production = { ...envInput, NODE_ENV: 'production', SENTRY_DSN: 'https://key@example.invalid/1', SUPABASE_SERVICE_ROLE_KEY: 'private' };
+    expect(() => parseEnv(production)).toThrow('CORS_ORIGINS: Required in production');
+    const env = parseEnv({ ...production, CORS_ORIGINS: 'none' });
+    expect(env).not.toHaveProperty('SUPABASE_SERVICE_ROLE_KEY'); expect(env.CORS_ORIGINS).toBe('none'); expect(env.TRUST_PROXY).toBe('');
   });
   it.each([{ TRUST_PROXY: 'true' }, { TRUST_PROXY: '0.0.0.0/99' }, { RATE_LIMIT_ENABLED: '0' }, { REQUEST_TIMEOUT_MS: '0' }, { CORS_ORIGINS: '*' }])('rejects unsafe or malformed configuration %j', settings => {
     expect(() => parseEnv({ ...envInput, ...settings })).toThrow('Invalid environment configuration');

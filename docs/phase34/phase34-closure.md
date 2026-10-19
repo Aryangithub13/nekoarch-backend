@@ -55,14 +55,14 @@ Not verified in this pass: a live real-JWT Supabase run of the B34 routes. They 
 
 1. The owner reviews and merges PR #27 once CI is green on its final head.
 2. For each deferred capability in §2, the owner records "deferred to <phase>" or "build in B34". The decision is recorded in this file (§6).
-3. Optional: run the local disposable Supabase acceptance (`scripts/test-local-supabase.mjs`, localhost only) to turn row 14 from NOT VERIFIED into PASS.
+3. Optional: run the local disposable Supabase acceptance (`scripts/test-local-supabase.mjs`, localhost only) to turn row 14 from NOT VERIFIED into PASS. *Done 2026-10-19 (audit B repair session, PR #35): row 14 is PASS on a local stack; staging is still D-10.*
 4. Staging and the phase tag follow D-10 and D-11 when the owner authorises them.
 
 ## 5. Outstanding gates
 
 - **D-10:** staging proof of a live workflow (prepared, not run).
 - **D-11:** phase tag (none).
-- **Optional:** local disposable Supabase run of the B34 routes (matrix row 14).
+- ~~**Optional:** local disposable Supabase run of the B34 routes (matrix row 14).~~ Done 2026-10-19 (row 14 PASS, local only).
 
 ## 6. Owner decisions
 

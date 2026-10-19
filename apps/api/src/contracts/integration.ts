@@ -130,7 +130,10 @@ export const IntegrationExecutionSchema = z.object({
   reasons: z.array(ReasonSchema).max(16),
   /** The plan as re-derived at execution (for a refusal, why nothing ran). */
   plan: IntegrationPlanSchema,
-  operationId: id.nullable(), committedRevisionId: id.nullable(),
+  operationId: id.nullable(),
+  // INT-B-021: published in openapi.json.
+  committedRevisionId: id.nullable().describe('The revision this execution committed, which is now the project\'s current revision; non-null also when status is '
+    + 'FAILED or PARTIAL (a consistency check or a regeneration branch failed after the commit). null means no revision was committed and the base is unchanged.'),
   tasks: z.array(z.object({ taskId: z.enum(TASK_KINDS), status: z.enum(TASK_STATUSES), revisionId: id.nullable(), artifactId: id.nullable(),
     error: ReasonSchema.nullable(),
     /** B40 S2: a derived-on-read task's checkpoint (COMPLEX_VERIFICATION: its report status and input hash); null otherwise. */
