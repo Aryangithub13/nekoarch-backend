@@ -160,11 +160,16 @@ const ReferenceUseSchema = z.object({ referenceId: id, purpose: ReferencePurpose
   use: z.literal('RECORDED_NOT_CONSUMED') }).strict();
 export const SpecialistResultSchema = z.object({
   envelopeVersion: z.literal(SPECIALIST_VERSION), module: z.enum(SPECIALIST_MODULES), operation: z.enum(SPECIALIST_OPERATIONS),
-  projectId: id, baseRevisionId: id, resultRevisionId: id.nullable(),
-  status: z.enum(SPECIALIST_STATUSES), reasons: z.array(ReasonSchema).max(16),
+  projectId: id, baseRevisionId: id,
+  // INT-B-021: these descriptions are published in openapi.json, so a client does not read FAILED as "nothing changed".
+  resultRevisionId: id.nullable().describe('The revision this request committed, which is now the project\'s current revision; non-null even when status is FAILED '
+    + '(a Blueprint revision that failed independent verification after it was committed). Refresh the current revision whenever it is non-null.'),
+  status: z.enum(SPECIALIST_STATUSES).describe('The outcome of the checks; it does not say whether anything was stored: read written and resultRevisionId for that'),
+  reasons: z.array(ReasonSchema).max(16),
   targetScopes: z.array(scope), preserveScopes: z.array(scope),
   /** true when this request stored something (a revision or an artifact); false for every refusal. */
-  written: z.boolean(), replayed: z.boolean(),
+  written: z.boolean().describe('true when this request stored something (a revision or an artifact), whatever its status; false for every refusal'),
+  replayed: z.boolean(),
   /** The Phase 30 operation an Exterior or Interior request stored (completed through the existing routes); null for every other module. No module runs as a job. */
   operationId: id.nullable(), jobIds: z.array(id).max(0),
   artifacts: z.array(ArtifactReferenceSchema).max(8),

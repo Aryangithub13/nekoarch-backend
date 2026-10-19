@@ -60,7 +60,9 @@ export const EnvSchema = z.object({
       ctx.addIssue({ code: 'custom', path: ['TRUST_PROXY'], message: 'Use explicit comma-separated proxy IP addresses or CIDRs' });
     }
   }
-  for (const origin of env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean)) {
+  // Production with no origin would start healthy and refuse every browser call; denying all browsers must be said explicitly with `none`.
+  if (env.NODE_ENV === 'production' && !env.CORS_ORIGINS) ctx.addIssue({ code: 'custom', path: ['CORS_ORIGINS'], message: 'Required in production (or `none` to allow no browser origin)' });
+  for (const origin of env.CORS_ORIGINS === 'none' ? [] : env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean)) {
     try { if (!/^https?:/.test(origin) || new URL(origin).origin !== origin) throw new Error(); }
     catch { ctx.addIssue({ code: 'custom', path: ['CORS_ORIGINS'], message: 'Use comma-separated exact URL origins' }); }
   }

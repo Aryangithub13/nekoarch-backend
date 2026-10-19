@@ -76,7 +76,7 @@ describe('startup configuration', () => {
     expect(parseEnv({ ...envInput, SENTRY_DSN: '', PORT: '', LOG_LEVEL: '', HOST: '' })).toMatchObject({
       NODE_ENV: 'test', PORT: 3001, LOG_LEVEL: 'info', HOST: '127.0.0.1',
     });
-    expect(parseEnv({ ...envInput, NODE_ENV: 'production', SENTRY_DSN: 'https://public-key@example.invalid/1' }).NODE_ENV).toBe('production');
+    expect(parseEnv({ ...envInput, NODE_ENV: 'production', SENTRY_DSN: 'https://public-key@example.invalid/1', CORS_ORIGINS: 'https://app.example.invalid' }).NODE_ENV).toBe('production');
   });
 
   it('never echoes malformed credential values in startup errors', () => {

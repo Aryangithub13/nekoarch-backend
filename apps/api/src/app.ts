@@ -30,7 +30,7 @@ import { projectsRoutes } from './routes/projects.js';
 import helmet from '@fastify/helmet';
 import { installLimits } from './lib/http-protection.js';
 import { randomUUID } from 'node:crypto';
-import Fastify, { LogController, type FastifyBaseLogger } from 'fastify';
+import Fastify, { LogController, type FastifyBaseLogger, type FastifyReply, type FastifyRequest } from 'fastify';
 import cors from '@fastify/cors';
 import type { Logger } from 'pino';
 import { ApiErrorResponseSchema } from '@designflow/shared';
@@ -38,6 +38,7 @@ import type { Env } from './config/env.js';
 import type { Backend } from './lib/repository.js';
 import { createSupabaseBackend } from './lib/supabase.js';
 import { createLogger } from './lib/logger.js';
+import { deploymentState } from './lib/deployment-state.js';
 import { ApiError } from './lib/errors.js';
 import { reportError } from './lib/sentry.js';
 import { plansRoutes } from './routes/plans.js';
@@ -67,19 +68,30 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     connectionTimeout: options.env.CONNECTION_TIMEOUT_MS, keepAliveTimeout: options.env.KEEP_ALIVE_TIMEOUT_MS,
     trustProxy: options.env.TRUST_PROXY ? options.env.TRUST_PROXY.split(',').map(value => value.trim()) : false,
     exposeHeadRoutes: false });
-  app.register(cors, { origin: options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'If-None-Match'], exposedHeaders: ['x-request-id', 'ETag'] });
+  // Browser code can read only exposed headers: Retry-After carries the rate-limit backoff, Content-Disposition the download file name.
+  app.register(cors, { origin: options.env.CORS_ORIGINS === 'none' ? [] : options.env.CORS_ORIGINS.split(',').map(value => value.trim()).filter(Boolean),
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key', 'If-None-Match'],
+    exposedHeaders: ['x-request-id', 'ETag', 'Retry-After', 'Content-Disposition'] });
   app.register(helmet, { contentSecurityPolicy: false, crossOriginEmbedderPolicy: false,
     strictTransportSecurity: options.env.NODE_ENV === 'production' && options.env.HSTS_ENABLED ? { maxAge: 31_536_000 } : false,
     referrerPolicy: { policy: 'no-referrer' } });
+  // INT-B-031: behind a proxy without TRUST_PROXY, every client shares the proxy's per-IP rate-limit bucket. Say so once per process.
+  let forwardedWarned = Boolean(options.env.TRUST_PROXY);
   app.addHook('onRequest', async (request, reply) => {
     reply.header('x-request-id', request.id).header('Cache-Control', 'no-store');
     request.log.info({ route: request.routeOptions.url ?? '<unmatched>', method: request.method }, 'request started');
+    if (!forwardedWarned && request.headers['x-forwarded-for'] !== undefined) {
+      forwardedWarned = true;
+      request.log.warn({ code: 'FORWARDED_FOR_IGNORED' }, 'X-Forwarded-For arrived but TRUST_PROXY is empty: all clients behind that proxy share one per-IP rate limit');
+    }
   });
   app.addHook('onRoute', route => {
     if (route.url === '/api/plans/generate' || route.url === '/api/estimates') route.bodyLimit = options.env.SMALL_BODY_LIMIT_BYTES;
   });
   let draining = false;
+  const deployment = deploymentState(backend, options.env.PROJECT_COMMIT_SECRET, app.log);
+  // A stale secret or a missing migration is logged by the first readiness probe or refused write (deployment-state.ts); startup stays offline.
+  if (!options.env.PROJECT_COMMIT_SECRET) app.log.warn({ code: 'COMMIT_SECRET_MISSING' }, 'PROJECT_COMMIT_SECRET is not set; signed project writes are disabled');
   const runner = new JobRunner({ secret: options.env.PROJECT_COMMIT_SECRET, log: app.log,
     executors: createExecutors({ scene: () => pools.scene, optimization: () => pools.optimization, appearance: () => pools.appearance }, options.env.PROJECT_COMMIT_SECRET) });
   // preClose runs before the routes' onClose hooks drain the pools, so running jobs finish or are released first.
@@ -90,33 +102,50 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     request.log.info({ route: request.routeOptions.url ?? '<unmatched>', method: request.method,
       statusCode: reply.statusCode, durationMs: reply.elapsedTime }, 'request completed');
   });
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler(async (error, request, reply) => {
     let safe: ApiError;
     if (error instanceof ApiError) safe = error;
     else if (typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number' && error.statusCode >= 400 && error.statusCode < 500) {
       const status = error.statusCode;
-      safe = new ApiError(status === 413 || status === 415 ? 400 : status, 'INVALID_REQUEST', 'The request is malformed or unsupported');
+      // 413 and 415 keep the uniform 400 status but get their own codes, so a client can tell "too large" from malformed JSON.
+      safe = status === 413 ? new ApiError(400, 'PAYLOAD_TOO_LARGE', `The request body exceeds this route's limit of ${request.routeOptions.bodyLimit ?? options.env.BODY_LIMIT_BYTES} bytes`)
+        : status === 415 ? new ApiError(400, 'UNSUPPORTED_MEDIA_TYPE', 'The request content type is not supported by this route')
+        : new ApiError(status, 'INVALID_REQUEST', 'The request is malformed or unsupported');
     } else safe = new ApiError(500, 'INTERNAL_ERROR', 'An unexpected error occurred');
+    // Signed writes refuse a bad signature with the same SQLSTATE as a genuine permission failure. When this server's commit secret does
+    // not verify against the database key (a stale secret after `supabase db reset`), the refusal is a configuration fault, not a 403.
+    if (safe.code === 'FORBIDDEN' && await deployment.secretMismatch()) {
+      safe = new ApiError(503, 'COMMIT_ATTESTATION_UNAVAILABLE', 'Project writes are unavailable until the server commit secret matches the database');
+    }
     if (safe.statusCode >= 500) {
       request.log.error({ code: safe.code }, 'request failed');
       try { capture(error, request.id, safe.code, { route: request.routeOptions.url ?? '<unmatched>', method: request.method }); } catch { request.log.warn('Error reporting unavailable'); }
     }
     const body = ApiErrorResponseSchema.parse({ error: { code: safe.code, message: safe.message, requestId: request.id,
       ...(safe.fieldErrors ? { fieldErrors: safe.fieldErrors } : {}) } });
-    reply.code(safe.statusCode).send(body);
+    return reply.code(safe.statusCode).send(body);
   });
   app.register(async scope => {
     await installLimits(scope, options.env);
     const catalog = routeCatalog(scope);
     scope.setNotFoundHandler(() => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); });
-    scope.get('/health/live', async () => ({ status: 'ok' }));
-    scope.get('/health/ready', async (_request, reply) => {
+    // HEAD as well as GET: load balancers commonly probe health with HEAD (exposeHeadRoutes is off for every other route).
+    // Like Fastify's generated HEAD routes, HEAD keeps the GET Content-Length and sends no body.
+    const onSend = async (request: FastifyRequest, reply: FastifyReply, payload: unknown) => {
+      if (request.method !== 'HEAD') return payload;
+      reply.header('content-length', String(Buffer.byteLength(String(payload ?? ''))));
+      return null;
+    };
+    scope.route({ method: ['GET', 'HEAD'], url: '/health/live', onSend, handler: async () => ({ status: 'ok' }) });
+    scope.route({ method: ['GET', 'HEAD'], url: '/health/ready', onSend, handler: async (_request, reply) => {
       try {
         if (draining || !backend.ready || (options.env.NODE_ENV === 'production' && !options.env.PROJECT_COMMIT_SECRET)) throw new Error('Unavailable');
         await backend.ready();
+        // Not ready while the commit secret does not verify or the schema is older than this API (deployment-state.ts).
+        if (!await deployment.ready()) throw new Error('Unavailable');
         return { status: 'ok' };
       } catch { return reply.code(503).send({ status: 'unavailable' }); }
-    });
+    } });
     plansRoutes(scope, backend);
     projectsRoutes(scope, backend, options.env);
     requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
@@ -148,7 +177,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     deliveryRoutes(scope, backend, catalog);
     constructionRoutes(scope, backend, options.env);
     costsRoutes(scope, backend, options.env);
-    workflowsRoutes(scope, backend, options.env);
+    workflowsRoutes(scope, backend, options.env, deployment);
     estimatesRoutes(scope, backend);
     regionsRoutes(scope, backend);
   });

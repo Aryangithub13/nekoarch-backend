@@ -10,7 +10,7 @@ All routes are additive. The route catalog grows from 94 to 104 entries ([api-ro
 | Idempotency | `Idempotency-Key` on upload and delete. A replay returns the identical stored response; a reused key with a different body → 409 `IDEMPOTENCY_CONFLICT`. |
 | Rate-limit groups | Upload and `/validate` → `generate` quota; other writes → `write`; reads → `read`; the token download → per-IP only |
 | Schemas | Zod v3 in `apps/api/src/references/contracts.ts`; exported to [openapi.json](../modernization/openapi.json) |
-| Body size | Uploads ≤ 10 MiB (`REFERENCE_LIMITS.maxBytes`); larger → 400 `INVALID_REQUEST` (the existing 413 mapping) |
+| Body size | Uploads ≤ 10 MiB (`REFERENCE_LIMITS.maxBytes`); larger → 400 `PAYLOAD_TOO_LARGE`, with the limit in the message (the 413 mapping; `INVALID_REQUEST` before audit B INT-B-010) |
 
 `ROOT = /api/projects/:projectId/references`, `ITEM = ROOT/:referenceId`
 

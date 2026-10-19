@@ -19,7 +19,8 @@ export const ROLE_PERMISSIONS = Object.freeze({
   owner: ['READ', 'COMMENT', 'REVIEW', 'MANAGE_MEMBERS'], editor: ['READ', 'COMMENT'], reviewer: ['READ', 'COMMENT', 'REVIEW'], viewer: ['READ'],
 } as const);
 
-const id = z.string().uuid(), hash = z.string().regex(/^[a-f0-9]{64}$/), ts = z.string().min(1).max(40), elementId = z.string().min(1).max(200);
+// Timestamps come from timestamptz columns as RFC 3339 with an offset (+00:00 on a UTC database), like every other database-sourced timestamp (INT-B-018).
+const id = z.string().uuid(), hash = z.string().regex(/^[a-f0-9]{64}$/), ts = z.string().datetime({ offset: true }), elementId = z.string().min(1).max(200);
 export const ProjectParamsSchema = z.object({ projectId: id }).strict();
 export const MemberParamsSchema = z.object({ projectId: id, userId: id }).strict();
 export const RevisionParamsSchema = z.object({ projectId: id, revisionId: id }).strict();
@@ -37,7 +38,9 @@ export const ReviewSchema = z.object({ id, reviewerId: id, reviewerRole: z.enum(
 const RevisionSummary = z.object({ id, revisionNumber: z.number().int().positive(), parentRevisionId: id.nullable(), sourceMode: z.enum(['generated', 'supplied']),
   createdBy: id, createdAt: ts }).strict();
 export const WorkspaceSchema = z.object({ project: z.object({ id, title: z.string().max(200), status: z.enum(['ACTIVE', 'ARCHIVED']), currentRevisionId: id.nullable() }).strict(),
-  role: z.enum(ROLES), members: z.array(MemberSchema).max(20), revisions: z.array(RevisionSummary).max(100) }).strict();
+  role: z.enum(ROLES), members: z.array(MemberSchema).max(20), revisions: z.array(RevisionSummary).max(100),
+  /** The newest 100 revisions are listed; true when the project has more (0033). */
+  revisionsTruncated: z.boolean() }).strict();
 export const WorkspaceResponseSchema = WorkspaceSchema.extend({ collaborationVersion: z.literal(COLLABORATION_VERSION),
   permissions: z.array(z.enum(['READ', 'COMMENT', 'REVIEW', 'MANAGE_MEMBERS'])).max(4) }).strict();
 

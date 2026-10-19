@@ -20,7 +20,7 @@ All routes are additive. The route catalog grows from 104 to 110 entries ([api-r
 | `GET ROOT/:jobId` | — | 200 `JobDetail` | Runs recovery first: an expired lease is requeued (or failed when attempts are exhausted) and due jobs are dispatched. |
 | `GET ROOT/:jobId/events?after&limit` | — | 200 `{ jobId, status, events: JobEvent[], nextAfter }` | Incremental: pass the previous `nextAfter`. Runs recovery first. |
 | `POST ROOT/:jobId/cancel` | `{}` | 200 `JobDetail` | Queued → `CANCELLED` at once. Running → `cancelRequested: true`, honoured at the next stage boundary (see design §2). Finished → 409 `JOB_INVALID_TRANSITION`. |
-| `POST ROOT/:jobId/retry` | `{}` | 200 `JobDetail` (`QUEUED`) | Only a `FAILED` job whose failure is retryable, at most 3 times; otherwise 409 `JOB_NOT_RETRYABLE`. |
+| `POST ROOT/:jobId/retry` | `{}` | 200 `JobDetail` (`QUEUED`) | Only a `FAILED` job whose failure is retryable, at most 3 times; otherwise 409 `JOB_NOT_RETRYABLE`. A retry makes the job active again, so it counts against the same limits as a submission (`0031`): 429 `JOB_LIMIT_EXCEEDED` beyond 4 active per project, 429 `ACCOUNT_QUOTA_EXCEEDED` beyond 8 active per owner. |
 
 ## JobRequest
 

@@ -70,7 +70,7 @@ export function sanitizeEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
     safe.tags!['requestId'] = requestId;
   }
   const code = event.tags?.['code'];
-  if (typeof code === 'string' && ['INTERNAL_ERROR', 'DATABASE_ERROR', 'RATE_DATA_INVALID', 'RATE_DATA_UNAVAILABLE', 'RATE_GRID_INCOMPLETE', 'GENERATION_FAILED', 'IDEMPOTENCY_UNAVAILABLE', 'AUTH_UNAVAILABLE'].includes(code)) {
+  if (typeof code === 'string' && ['INTERNAL_ERROR', 'DATABASE_ERROR', 'RATE_DATA_INVALID', 'RATE_DATA_UNAVAILABLE', 'RATE_GRID_INCOMPLETE', 'GENERATION_FAILED', 'IDEMPOTENCY_UNAVAILABLE', 'AUTH_UNAVAILABLE', 'COMMIT_ATTESTATION_UNAVAILABLE'].includes(code)) {
     safe.tags!['code'] = code;
   }
   const method = event.tags?.['method'];

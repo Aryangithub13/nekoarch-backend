@@ -6,7 +6,7 @@ Both routes are additive and **change nothing**. The report is computed from the
 |---|---|
 | Authentication | Supabase bearer session; anonymous → 401 |
 | Foreign or unknown project/revision | 404 |
-| Body | `POST` ≤ 64 KiB. Larger bodies get the app's uniform `400 INVALID_REQUEST`. Unknown fields → `400 VALIDATION_ERROR`. |
+| Body | `POST` ≤ 64 KiB. Larger bodies get the app's uniform 400 status with code `PAYLOAD_TOO_LARGE` (audit B INT-B-010; `INVALID_REQUEST` before). Unknown fields → `400 VALIDATION_ERROR`. |
 | Evidence reference not a live reference of this project | `422 ASSESSMENT_EVIDENCE_NOT_FOUND` |
 | Stored identity differs from the model | `422 VERIFICATION_SOURCE_MISMATCH` (Phase 34 loader) |
 | Determinism | The same revision, brief, related-service state and request always give the same `inputHash` and `resultHash`; only `generatedAt` differs |

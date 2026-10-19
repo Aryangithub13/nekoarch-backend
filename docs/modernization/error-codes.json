@@ -1,0 +1,2742 @@
+{
+ "method": "Generated from apps/api/src by test-support/error-catalog.ts (TypeScript checker): every new ApiError(status, code) site and every SQLSTATE table entry",
+ "codes": [
+  {
+   "code": "ACCOUNT_QUOTA_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts"
+   ]
+  },
+  {
+   "code": "ACCOUNT_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/account-repository.ts",
+    "apps/api/src/services/account-service.ts"
+   ]
+  },
+  {
+   "code": "ACTION_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts"
+   ]
+  },
+  {
+   "code": "ACTION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts"
+   ]
+  },
+  {
+   "code": "ACTION_NOT_PENDING",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts"
+   ]
+  },
+  {
+   "code": "ACTION_OPERATION_REQUIRED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts"
+   ]
+  },
+  {
+   "code": "ALL_PROVIDERS_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "ASSESSMENT_EVIDENCE_NOT_FOUND",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/engineering-service.ts"
+   ]
+  },
+  {
+   "code": "AUTH_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/supabase.ts"
+   ]
+  },
+  {
+   "code": "BASE_REVISION_SUPERSEDED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/integration-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_ELEMENT_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts"
+   ]
+  },
+  {
+   "code": "BIM_INVALID_MODEL",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_INVALID_SOURCE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_SOURCE_MISMATCH",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_UNSUPPORTED_EXPORT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BIM_UNSUPPORTED_MODEL",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/services/bim-service.ts"
+   ]
+  },
+  {
+   "code": "BLUEPRINT_INVARIANT_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "BLUEPRINT_QA_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/services/project-service.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "BRIEF_REFERENCE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/account-repository.ts"
+   ]
+  },
+  {
+   "code": "BRIEF_VERSION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/account-repository.ts"
+   ]
+  },
+  {
+   "code": "BUILDING_SYSTEMS_INPUT_INCOMPLETE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "BUILDING_SYSTEMS_MODEL_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "BUILDING_SYSTEMS_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/systems.ts",
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "BUILDING_SYSTEMS_SOURCE_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "CAPABILITY_NOT_IMPLEMENTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/workflow-service.ts"
+   ]
+  },
+  {
+   "code": "CAPABILITY_UNSUPPORTED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "COLLABORATION_FORBIDDEN",
+   "statuses": [
+    403
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "COLLABORATION_LIMIT_REACHED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "COLLABORATION_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts",
+    "apps/api/src/services/collaboration-service.ts"
+   ]
+  },
+  {
+   "code": "COMMENT_ELEMENT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "COMMENT_PARENT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "COMMIT_ATTESTATION_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/app.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_CONSENT_MISMATCH",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_JOB_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_KIND_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_LIMIT_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/compute-repository.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_PLACEMENT_DISABLED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_QUOTE_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/compute-repository.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_QUOTE_EXPIRED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_QUOTE_INVALID",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_QUOTE_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_REQUEST_TOO_LARGE",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts"
+   ]
+  },
+  {
+   "code": "COMPUTE_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/compute/gateway.ts",
+    "apps/api/src/lib/compute-repository.ts"
+   ]
+  },
+  {
+   "code": "CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/errors.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_CALCULATION_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_CALCULATION_NOT_ACCEPTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/cost-repository.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_FAILED",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/construction-repository.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/construction-repository.ts",
+    "apps/api/src/services/specialist-service.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_RECIPE_NOT_FOUND",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_SPEC_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "CONSTRUCTION_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/construction-repository.ts",
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "CONVERSATION_LIMIT",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/conversation-repository.ts"
+   ]
+  },
+  {
+   "code": "CONVERSATION_MEMORY_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/conversation/memory.ts"
+   ]
+  },
+  {
+   "code": "CONVERSATION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/conversation-repository.ts"
+   ]
+  },
+  {
+   "code": "CONVERSATIONS_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/conversation-repository.ts"
+   ]
+  },
+  {
+   "code": "COST_CALCULATION_FAILED",
+   "statuses": [
+    422,
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/cost-repository.ts",
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "COST_ESTIMATE_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/cost-repository.ts"
+   ]
+  },
+  {
+   "code": "COST_POLICY_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "COST_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "COST_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/cost-repository.ts",
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "DATABASE_ERROR",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/errors.ts"
+   ]
+  },
+  {
+   "code": "DEPENDENCY_GRAPH_CYCLE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/graph/dependency-graph.ts"
+   ]
+  },
+  {
+   "code": "DEPENDENCY_GRAPH_LIMIT_EXCEEDED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/graph/dependency-graph.ts"
+   ]
+  },
+  {
+   "code": "DEPENDENCY_GRAPH_READ_INCONSISTENT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/graph/dependency-graph.ts",
+    "apps/api/src/services/dependency-graph-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_INPUT_TOO_LARGE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/design-concept-repository.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_NO_EXTERIOR_WALLS",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_NO_SPACES",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/design-concept-repository.ts",
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_PROVIDER_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_QUOTA_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/design-concept-repository.ts",
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_READ_INCONSISTENT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_REFERENCE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_SOURCE_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_SOURCE_UNVERIFIED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPT_SPACE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DESIGN_CONCEPTS_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/design-concept-repository.ts",
+    "apps/api/src/services/design-concept-service.ts"
+   ]
+  },
+  {
+   "code": "DIMENSION_RECONCILIATION_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_GEOMETRY_INCONSISTENT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_NOT_SUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_SOURCE_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "DOCUMENT_SOURCE_UNVERIFIED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/documents-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_ANALYSIS_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_ANALYSIS_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/environmental-repository.ts",
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_ANALYSIS_TIMEOUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_INPUT_INCOMPLETE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_LOCATION_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_MODEL_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_PROPERTY_MISSING",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/environmental.ts",
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_RESULT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/environmental-repository.ts",
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_RESULT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_SOURCE_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/environmental-repository.ts",
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ENVIRONMENTAL_WEATHER_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/environmental-service.ts"
+   ]
+  },
+  {
+   "code": "ESTIMATE_OUT_OF_RANGE",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/services/estimate-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_MODE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_PACKAGE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/evidence-repository.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_PACKAGE_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/evidence-repository.ts",
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_READ_INCONSISTENT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_SOURCE_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/evidence-repository.ts",
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_SOURCE_UNVERIFIED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "EVIDENCE_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/evidence-repository.ts",
+    "apps/api/src/services/evidence-service.ts"
+   ]
+  },
+  {
+   "code": "FORBIDDEN",
+   "statuses": [
+    403
+   ],
+   "sources": [
+    "apps/api/src/lib/errors.ts"
+   ]
+  },
+  {
+   "code": "GENERATION_FAILED",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/services/generation-service.ts"
+   ]
+  },
+  {
+   "code": "HARD_RELATIONSHIP_UNSATISFIABLE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "IDEMPOTENCY_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/idempotency.ts",
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/lib/supabase.ts"
+   ]
+  },
+  {
+   "code": "IDEMPOTENCY_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/idempotency.ts"
+   ]
+  },
+  {
+   "code": "IMPOSSIBLE_LAYOUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/generation-service.ts",
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "INTEGRATION_ELEMENT_IDENTITY_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/integration/element-diff.ts"
+   ]
+  },
+  {
+   "code": "INTEGRATION_PLAN_CHANGED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/integration-service.ts"
+   ]
+  },
+  {
+   "code": "INTEGRATION_PLAN_DRIFT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/integration-service.ts"
+   ]
+  },
+  {
+   "code": "INTERNAL_ERROR",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/app.ts"
+   ]
+  },
+  {
+   "code": "INVALID_IDEMPOTENCY_KEY",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/lib/idempotency.ts",
+    "apps/api/src/routes/integration.ts",
+    "apps/api/src/routes/specialists.ts"
+   ]
+  },
+  {
+   "code": "INVALID_REQUIREMENTS",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "JOB_INVALID_TRANSITION",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts"
+   ]
+  },
+  {
+   "code": "JOB_LEASE_LOST",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts"
+   ]
+  },
+  {
+   "code": "JOB_LIMIT_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts"
+   ]
+  },
+  {
+   "code": "JOB_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts"
+   ]
+  },
+  {
+   "code": "JOB_NOT_RETRYABLE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts"
+   ]
+  },
+  {
+   "code": "JOBS_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/job-repository.ts",
+    "apps/api/src/services/job-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_ANALYSIS_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/knowledge-repository.ts",
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_MODEL_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_PACK_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_PACK_UNKNOWN",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/knowledge.ts",
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_RESULT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/knowledge-repository.ts",
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_RESULT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_SOURCE_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "KNOWLEDGE_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/knowledge-repository.ts",
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "MEMBER_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "MEMBER_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/collaboration-repository.ts"
+   ]
+  },
+  {
+   "code": "MEMORY_REFERENCE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/conversation/turns.ts"
+   ]
+  },
+  {
+   "code": "MESSAGE_IN_PROGRESS",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/conversation-repository.ts"
+   ]
+  },
+  {
+   "code": "MODEL_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "NATIVE_REQUIREMENTS_UNAVAILABLE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/conversations.ts"
+   ]
+  },
+  {
+   "code": "NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/app.ts",
+    "apps/api/src/services/estimate-service.ts",
+    "apps/api/src/services/plan-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_BASELINE_MISMATCH",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_INPUT_INVALID",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_QUEUE_FULL",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_RESULT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/optimization-repository.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_RESULT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_STUDY_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/optimization-repository.ts",
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/optimization-repository.ts",
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_VALIDATION_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_WORKER_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "OPTIMIZATION_WORKER_TIMEOUT",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/optimization-service.ts"
+   ]
+  },
+  {
+   "code": "PARKING_UNSATISFIABLE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "PAYLOAD_TOO_LARGE",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/app.ts"
+   ]
+  },
+  {
+   "code": "PRESERVATION_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/routes/conversations.ts"
+   ]
+  },
+  {
+   "code": "PROGRAM_DOES_NOT_FIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "PROJECT_ARCHIVED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts"
+   ]
+  },
+  {
+   "code": "PROJECT_MANIFEST_LIMIT_EXCEEDED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-manifest-service.ts"
+   ]
+  },
+  {
+   "code": "PROJECT_MANIFEST_READ_INCONSISTENT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/project-manifest-service.ts"
+   ]
+  },
+  {
+   "code": "PROJECT_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts"
+   ]
+  },
+  {
+   "code": "PROJECTS_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "PROPOSAL_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts",
+    "apps/api/src/lib/conversation-repository.ts",
+    "apps/api/src/routes/conversations.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_AUTH_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_DISABLED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_OUTPUT_UNSAFE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_POLICY_REJECTED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_RATE_LIMITED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_RESPONSE_INVALID",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_RESPONSE_TOO_LARGE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_SCHEMA_VIOLATION",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_TIMEOUT",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "PROVIDER_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "RATE_BOOK_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "RATE_BOOK_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "RATE_DATA_INVALID",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/rate-service.ts"
+   ]
+  },
+  {
+   "code": "RATE_DATA_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/rate-service.ts"
+   ]
+  },
+  {
+   "code": "RATE_GRID_INCOMPLETE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/rate-service.ts"
+   ]
+  },
+  {
+   "code": "RATE_LIMITED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/http-protection.ts"
+   ]
+  },
+  {
+   "code": "RATE_MATCH_AMBIGUOUS",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/cost-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_INTEGRITY_FAILURE",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_INTEGRITY_REJECTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_INVALID_TRANSITION",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_LIMIT_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_LINK_INVALID",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/routes/references.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_QUEUE_FULL",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_REJECTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_TYPE_UNSUPPORTED",
+   "statuses": [
+    415
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_WORKER_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCE_WORKER_TIMEOUT",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REFERENCES_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/services/reference-service.ts"
+   ]
+  },
+  {
+   "code": "REGENERATION_TEMPLATE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/engineering-service.ts"
+   ]
+  },
+  {
+   "code": "REQUEST_CANCELLED",
+   "statuses": [
+    408,
+    503
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts",
+    "apps/api/src/routes/conversations.ts"
+   ]
+  },
+  {
+   "code": "REVIEW_MODEL_MISMATCH",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/collaboration-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_ARTIFACT_INTEGRITY",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_BASE_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_CANDIDATE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_CANDIDATE_MISMATCH",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts",
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/routes/conversations.ts",
+    "apps/api/src/routes/requirement-interpretation.ts"
+   ]
+  },
+  {
+   "code": "REVISION_CONSENT_MISMATCH",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_LIMIT_EXCEEDED",
+   "statuses": [
+    429
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_LOCK_VIOLATION",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_NOT_ACCEPTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/design-concept-repository.ts",
+    "apps/api/src/lib/environmental-repository.ts",
+    "apps/api/src/lib/evidence-repository.ts",
+    "apps/api/src/lib/knowledge-repository.ts",
+    "apps/api/src/lib/optimization-repository.ts",
+    "apps/api/src/lib/scene-repository.ts",
+    "apps/api/src/lib/structural-repository.ts",
+    "apps/api/src/lib/systems-repository.ts",
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/services/bim-service.ts",
+    "apps/api/src/services/optimization-service.ts",
+    "apps/api/src/services/scene-service.ts",
+    "apps/api/src/services/takeoff-service.ts",
+    "apps/api/src/workflows/sources.ts"
+   ]
+  },
+  {
+   "code": "REVISION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/services/bim-service.ts",
+    "apps/api/src/services/documents-service.ts",
+    "apps/api/src/services/optimization-service.ts",
+    "apps/api/src/services/scene-service.ts",
+    "apps/api/src/services/verification-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_OPERATION_ALREADY_COMMITTED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_OPERATION_EXPIRED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_OPERATION_INVALID_STATE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_OPERATION_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts"
+   ]
+  },
+  {
+   "code": "REVISION_QUEUE_FULL",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/routes/conversations.ts",
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_WORKER_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_WORKER_TIMEOUT",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/revision-service.ts"
+   ]
+  },
+  {
+   "code": "REVISION_WORKER_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/integration-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_ARTIFACT_INTEGRITY",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_ARTIFACT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/scene-repository.ts"
+   ]
+  },
+  {
+   "code": "SCENE_ARTIFACT_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/scene-repository.ts",
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_ARTIFACT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_INPUT_INVALID",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_INVALID_SOURCE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_NOT_COMPILED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/delivery-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_QUEUE_FULL",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_SOURCE_MISMATCH",
+   "statuses": [
+    409,
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/delivery-service.ts",
+    "apps/api/src/services/revision-service.ts",
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/scene-repository.ts",
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_UNSUPPORTED_MODEL",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_VALIDATION_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_WORKER_FAILED",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SCENE_WORKER_TIMEOUT",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/services/scene-service.ts"
+   ]
+  },
+  {
+   "code": "SEARCH_LIMIT_EXHAUSTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "SECTION_TARGET_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/engineering-service.ts"
+   ]
+  },
+  {
+   "code": "SITE_TOO_COMPLEX",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "SOLVER_CANCELLED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "SOLVER_TIMEOUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "SOLVER_VERSION_CONFLICT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts",
+    "apps/api/src/routes/conversations.ts"
+   ]
+  },
+  {
+   "code": "SPECIALIST_REFERENCE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/specialist-service.ts"
+   ]
+  },
+  {
+   "code": "STAIR_PLACEMENT_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_ANALYSIS_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/structural-repository.ts",
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_ANALYSIS_TIMEOUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_LOAD_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_MATERIAL_MISSING",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_MODEL_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/structural.ts",
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_RESULT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/structural-repository.ts",
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_RESULT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_SOLVER_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_SOURCE_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_SUPPORT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_SYSTEM_DISCONNECTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_SYSTEM_UNSTABLE",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "STRUCTURAL_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/structural-repository.ts",
+    "apps/api/src/services/structural-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_ANALYSIS_FAILED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_ANALYSIS_TIMEOUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_CLASH_UNRESOLVED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_RESULT_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/systems-repository.ts",
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_ROUTE_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEM_ROUTE_NOT_FOUND",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEMS_ANALYSIS_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/systems-repository.ts",
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEMS_RESULT_STALE",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "SYSTEMS_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/systems-repository.ts",
+    "apps/api/src/services/systems-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_FAILED",
+   "statuses": [
+    422,
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/services/takeoff-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_NOT_ACCEPTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/lib/construction-repository.ts",
+    "apps/api/src/services/construction-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/services/specialist-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_RESOURCE_LIMIT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/takeoff-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/services/takeoff-service.ts"
+   ]
+  },
+  {
+   "code": "TAKEOFF_UNSUPPORTED_MODEL",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/takeoff-service.ts"
+   ]
+  },
+  {
+   "code": "TRANSITIVE_UPSTREAM_BINDING_INCONSISTENT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/knowledge-service.ts"
+   ]
+  },
+  {
+   "code": "UNAUTHORIZED",
+   "statuses": [
+    401
+   ],
+   "sources": [
+    "apps/api/src/lib/auth.ts",
+    "apps/api/src/lib/supabase.ts"
+   ]
+  },
+  {
+   "code": "UNSAFE_CONVERSATION_INPUT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/ai/conversation-planner.ts"
+   ]
+  },
+  {
+   "code": "UNSATISFIED_HARD_CONSTRAINT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "UNSUPPORTED_GEOMETRY",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "UNSUPPORTED_MEDIA_TYPE",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/app.ts"
+   ]
+  },
+  {
+   "code": "UNSUPPORTED_PARAMETRIC_CAPABILITY",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "UNSUPPORTED_REQUIREMENT",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/generation-service.ts"
+   ]
+  },
+  {
+   "code": "UNSUPPORTED_SITE_GEOMETRY",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/project-service.ts"
+   ]
+  },
+  {
+   "code": "USE_PROPOSAL_APPROVAL",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/conversation/actions.ts"
+   ]
+  },
+  {
+   "code": "V2_INTERPRETATION_UNSUPPORTED",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/routes/requirement-interpretation.ts"
+   ]
+  },
+  {
+   "code": "VALIDATION_ERROR",
+   "statuses": [
+    400
+   ],
+   "sources": [
+    "apps/api/src/lib/account-repository.ts",
+    "apps/api/src/lib/construction-repository.ts",
+    "apps/api/src/lib/cost-repository.ts",
+    "apps/api/src/lib/design-concept-repository.ts",
+    "apps/api/src/lib/environmental-repository.ts",
+    "apps/api/src/lib/errors.ts",
+    "apps/api/src/lib/evidence-repository.ts",
+    "apps/api/src/lib/job-repository.ts",
+    "apps/api/src/lib/knowledge-repository.ts",
+    "apps/api/src/lib/optimization-repository.ts",
+    "apps/api/src/lib/project-repository.ts",
+    "apps/api/src/lib/reference-repository.ts",
+    "apps/api/src/lib/revision-repository.ts",
+    "apps/api/src/lib/scene-repository.ts",
+    "apps/api/src/lib/structural-repository.ts",
+    "apps/api/src/lib/systems-repository.ts",
+    "apps/api/src/lib/takeoff-repository.ts",
+    "apps/api/src/lib/workflow-repository.ts",
+    "apps/api/src/routes/bim.ts",
+    "apps/api/src/routes/environmental.ts",
+    "apps/api/src/routes/knowledge.ts",
+    "apps/api/src/routes/structural.ts",
+    "apps/api/src/routes/systems.ts",
+    "apps/api/src/services/generation-service.ts",
+    "apps/api/src/services/specialist-service.ts"
+   ]
+  },
+  {
+   "code": "VERIFICATION_SOURCE_MISMATCH",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/verification-service.ts"
+   ]
+  },
+  {
+   "code": "VERSION_CONFLICT",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/account-repository.ts",
+    "apps/api/src/services/account-service.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_FENCED",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/workflow-repository.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_IN_PROGRESS",
+   "statuses": [
+    409
+   ],
+   "sources": [
+    "apps/api/src/lib/workflow-repository.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_NOT_FOUND",
+   "statuses": [
+    404
+   ],
+   "sources": [
+    "apps/api/src/lib/workflow-repository.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_PROVENANCE_FAILED",
+   "statuses": [
+    500
+   ],
+   "sources": [
+    "apps/api/src/lib/workflow-repository.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_SPACE_NOT_FOUND",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/workflows/sources.ts"
+   ]
+  },
+  {
+   "code": "WORKFLOW_UNAVAILABLE",
+   "statuses": [
+    503
+   ],
+   "sources": [
+    "apps/api/src/lib/workflow-repository.ts",
+    "apps/api/src/services/workflow-service.ts"
+   ]
+  },
+  {
+   "code": "ZONE_DECLARATION_INVALID",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/engineering-service.ts"
+   ]
+  },
+  {
+   "code": "ZONE_TARGET_NOT_FOUND",
+   "statuses": [
+    422
+   ],
+   "sources": [
+    "apps/api/src/services/engineering-service.ts"
+   ]
+  }
+ ],
+ "unresolved": [
+  {
+   "file": "apps/api/src/app.ts",
+   "expression": "new ApiError(status, 'INVALID_REQUEST', 'The request is malformed or unsupported')",
+   "reason": "status `status` is number, not a literal"
+  },
+  {
+   "file": "apps/api/src/services/revision-service.ts",
+   "expression": "new ApiError(422, validationFailure ? 'REVISION_VALIDATION_FAILED' : error.code, error.message)",
+   "reason": "code is string, not a literal or literal union"
+  }
+ ]
+}

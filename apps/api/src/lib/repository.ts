@@ -54,6 +54,9 @@ export interface Repository {
 }
 export interface Backend {
   ready?(): Promise<void>;
+  /** Deployment probes (0032): the database's `schema_version()` and whether a probe signature verifies under its commit key. */
+  schemaVersion?(): Promise<number>;
+  commitKeyMatches?(probe: string, signature: string): Promise<boolean>;
   close?(): Promise<void>;
   authenticate(token: string): Promise<{ id: string }>;
   repository(token?: string): Repository;

@@ -66,7 +66,8 @@ describe('B45 S1: scene delivery manifest and the compatibility package on Postg
     expect((await app.inject({ url: '/api/compatibility' })).statusCode).toBe(401);
     const c = CompatibilitySchema.parse((await app.inject({ url: '/api/compatibility', headers: other })).json());
     const catalog = JSON.parse(readFileSync(new URL('../../../docs/modernization/api-routes.json', import.meta.url), 'utf8'));
-    const routes = ((catalog.routes ?? catalog) as { method: string; url?: string; path?: string }[]).map(x => `${x.method} ${x.url ?? x.path}`).sort();
+    // Same rule as routeCatalog (routes/delivery.ts): HEAD, served only beside a GET (the health checks), is not a separate contract entry.
+    const routes = ((catalog.routes ?? catalog) as { method: string; url?: string; path?: string }[]).filter(x => x.method !== 'HEAD').map(x => `${x.method} ${x.url ?? x.path}`).sort();
     expect(c.routeCatalog).toEqual({ routes: routes.length, sha256: createHash('sha256').update(routes.join('\n')).digest('hex') });
     expect(c.services.map(s => s.serviceId)).toContain('SCENE_DELIVERY');
     expect([c.mockSubstitution, c.supportedClients.mobile]).toEqual(['FORBIDDEN_AS_LIVE_EVIDENCE', 'OUT_OF_SCOPE']);

@@ -81,6 +81,9 @@ let closing = false;
 async function shutdown() {
   if (closing) return;
   closing = true;
+  // An idle pool client can be terminated by the server while the database stops. Without a listener, node-postgres re-throws that
+  // 'error' event and the process exits 1 with a stack trace instead of shutting down cleanly.
+  db.pool.on('error', () => undefined);
   await app.close();
   await db.stop().catch(() => undefined);
   process.exit(0);

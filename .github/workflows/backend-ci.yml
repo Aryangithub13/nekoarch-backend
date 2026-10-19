@@ -25,8 +25,8 @@ jobs:
         # release CI last resolved for '22' (run 38359376575). Pinned so results are reproducible; add newer lines deliberately.
         node: ['22.22.0', '22.23.3']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -49,9 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
       # The smoke script runs on the host and uses only Node built-ins.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
         with:
           node-version: '22.23.3'
       - run: docker build -t designflow-api:ci .
@@ -62,10 +62,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0, the v4 tag on 2026-10-19 (SEC-005)
         with:
-          node-version: '22'
+          # Pinned like the backend job, so the live gate runs on a version CI also tests.
+          node-version: '22.22.0'
           cache: npm
       - run: npm ci
       - run: npx supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1

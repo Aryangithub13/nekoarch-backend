@@ -4,6 +4,7 @@ import type { Backend } from '../lib/repository.js';
 import type { Env } from '../config/env.js';
 import { requestContext } from '../lib/auth.js';
 import { parseRequest } from '../lib/errors.js';
+import { durableCommand } from '../lib/idempotency.js';
 import { COLLABORATION_ROUTES, CommentRequestSchema, MemberParamsSchema, MemberRequestSchema, ProjectParamsSchema, ReviewRequestSchema, RevisionParamsSchema }
   from '../collaboration/contracts.js';
 import { addComment, addReview, readRevisionCollaboration, readWorkspace, removeMember, upsertMember } from '../services/collaboration-service.js';
@@ -25,10 +26,11 @@ export function collaborationRoutes(app: FastifyInstance, backend: Backend, env:
     const { projectId } = parseRequest(ProjectParamsSchema, request.params);
     return reply.code(201).send(await upsertMember(repository, userId!, projectId, parseRequest(MemberRequestSchema, request.body ?? {}), env.PROJECT_COMMIT_SECRET));
   });
+  // Member removal, comments and reviews honour Idempotency-Key (0033): a retry with the same key replays the stored response.
   app.delete(COLLABORATION_ROUTES.member, async request => {
     const { userId, repository } = await requestContext(request, backend, true);
     const { projectId, userId: memberId } = parseRequest(MemberParamsSchema, request.params);
-    return removeMember(repository, userId!, projectId, memberId, env.PROJECT_COMMIT_SECRET);
+    return durableCommand(request, repository, { projectId, memberId }, context => removeMember(repository, userId!, projectId, memberId, env.PROJECT_COMMIT_SECRET, context));
   });
   app.get(COLLABORATION_ROUTES.revision, async request => {
     const { repository } = await requestContext(request, backend, true);
@@ -38,12 +40,14 @@ export function collaborationRoutes(app: FastifyInstance, backend: Backend, env:
   });
   app.post(COLLABORATION_ROUTES.comments, { bodyLimit: 8192 }, async (request, reply) => {
     const { userId, repository } = await requestContext(request, backend, true);
-    const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
-    return reply.code(201).send(await addComment(repository, userId!, projectId, revisionId, parseRequest(CommentRequestSchema, request.body ?? {}), env.PROJECT_COMMIT_SECRET));
+    const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params), body = parseRequest(CommentRequestSchema, request.body ?? {});
+    return reply.code(201).send(await durableCommand(request, repository, { projectId, revisionId, body },
+      context => addComment(repository, userId!, projectId, revisionId, body, env.PROJECT_COMMIT_SECRET, context)));
   });
   app.post(COLLABORATION_ROUTES.reviews, { bodyLimit: 4096 }, async (request, reply) => {
     const { userId, repository } = await requestContext(request, backend, true);
-    const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params);
-    return reply.code(201).send(await addReview(repository, userId!, projectId, revisionId, parseRequest(ReviewRequestSchema, request.body ?? {}), env.PROJECT_COMMIT_SECRET));
+    const { projectId, revisionId } = parseRequest(RevisionParamsSchema, request.params), body = parseRequest(ReviewRequestSchema, request.body ?? {});
+    return reply.code(201).send(await durableCommand(request, repository, { projectId, revisionId, body },
+      context => addReview(repository, userId!, projectId, revisionId, body, env.PROJECT_COMMIT_SECRET, context)));
   });
 }

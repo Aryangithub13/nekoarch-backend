@@ -47,6 +47,8 @@ export const CompatibilitySchema = z.object({
   compatibilityVersion: z.literal(COMPATIBILITY_VERSION),
   /** sha256 over the sorted "METHOD /path" list of every registered API route: a client pins it and detects contract drift. */
   routeCatalog: z.object({ routes: int, sha256: hash }).strict(),
+  /** sha256 of docs/modernization/openapi.json, which is generated from the Zod contracts: it changes when a request or response schema changes (INT-B-022). */
+  openapi: z.object({ sha256: hash }).strict(),
   services: z.array(z.object({ serviceId: z.string().max(64), version: z.string().max(100), route: z.string().max(300) }).strict()).max(64),
   conventions: z.object({ errors: z.string().max(200), pagination: z.string().max(200), idempotency: z.string().max(200), concurrency: z.string().max(200),
     units: z.string().max(200), identity: z.string().max(200) }).strict(),
