@@ -1,0 +1,597 @@
+Integration audit B (docs/BACKEND_INTEGRATION_AUDIT.md §12, rows 11-13): browser-contract probes of the built API.
+Tree: PR #31 merge d569391. Local only: SUPABASE_URL=http://127.0.0.1:9 (unreachable), placeholder anon key, no credentials.
+Run as an unprivileged user from a built checkout: node <script> <checkout-root> [TRUST_PROXY]
+
+===== int-audit-b-probe.mjs =====
+// Integration audit B: black-box browser-contract probe of the built API (local only, unreachable Supabase placeholder).
+import { spawn } from 'node:child_process';
+
+const root = process.argv[2];
+const ORIGIN = 'http://localhost:5173';
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+async function start(port, extra) {
+  const env = { PATH: process.env.PATH, HOME: process.env.HOME, NODE_ENV: 'development', HOST: '127.0.0.1', PORT: String(port),
+    SUPABASE_URL: 'http://127.0.0.1:9', SUPABASE_ANON_KEY: 'probe-placeholder', LOG_LEVEL: 'silent', UPSTREAM_TIMEOUT_MS: '500', READINESS_TIMEOUT_MS: '500', ...extra };
+  const child = spawn(process.execPath, ['apps/api/dist/server.js'], { cwd: root, env, stdio: ['ignore', 'ignore', 'pipe'] });
+  let err = ''; child.stderr.on('data', d => { err += d; });
+  for (let i = 0; i < 50; i++) { try { await fetch(`http://127.0.0.1:${port}/health/live`); return { child, err: () => err }; } catch { await wait(100); } }
+  child.kill('SIGKILL'); throw new Error(`server did not start: ${err.slice(0, 500)}`);
+}
+async function call(port, method, path, headers = {}, body) {
+  const r = await fetch(`http://127.0.0.1:${port}${path}`, { method, headers, body });
+  const text = await r.text();
+  const h = Object.fromEntries([...r.headers].filter(([k]) => k.startsWith('access-control') || ['retry-after', 'content-type', 'x-request-id', 'cache-control', 'etag', 'vary'].includes(k)));
+  let json; try { json = JSON.parse(text); } catch { json = text.slice(0, 120); }
+  return { status: r.status, headers: h, body: json };
+}
+const out = [];
+const record = (name, res) => { out.push({ name, ...res }); };
+
+// 1. Development defaults.
+{
+  const port = 39101, s = await start(port, { RATE_LIMIT_IP: '1000' });
+  record('preflight POST /api/projects with Authorization, Content-Type, Idempotency-Key', await call(port, 'OPTIONS', '/api/projects',
+    { Origin: ORIGIN, 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'authorization,content-type,idempotency-key' }));
+  record('preflight with an extra client header (x-client-version)', await call(port, 'OPTIONS', '/api/projects',
+    { Origin: ORIGIN, 'Access-Control-Request-Method': 'GET', 'Access-Control-Request-Headers': 'authorization,x-client-version' }));
+  record('preflight PUT', await call(port, 'OPTIONS', '/api/projects', { Origin: ORIGIN, 'Access-Control-Request-Method': 'PUT' }));
+  record('preflight from a disallowed origin', await call(port, 'OPTIONS', '/api/projects',
+    { Origin: 'http://localhost:3000', 'Access-Control-Request-Method': 'GET', 'Access-Control-Request-Headers': 'authorization' }));
+  record('GET /api/projects without a token', await call(port, 'GET', '/api/projects', { Origin: ORIGIN }));
+  record('GET /api/projects with a token, Auth upstream unreachable', await call(port, 'GET', '/api/projects', { Origin: ORIGIN, Authorization: 'Bearer probe.invalid.token' }));
+  record('GET /api/regions with a token, Auth upstream unreachable', await call(port, 'GET', '/api/regions', { Origin: ORIGIN, Authorization: 'Bearer probe.invalid.token' }));
+  record('POST /api/plans anonymous with an invalid body (validation before auth)', await call(port, 'POST', '/api/plans', { Origin: ORIGIN, 'Content-Type': 'application/json' }, '{}'));
+  record('POST /api/plans with a 70 KB body (SMALL_BODY_LIMIT 64 KiB)', await call(port, 'POST', '/api/plans',
+    { Origin: ORIGIN, 'Content-Type': 'application/json', Authorization: 'Bearer probe.invalid.token' }, JSON.stringify({ plan: 'x'.repeat(70_000) })));
+  record('POST /api/projects text/plain body', await call(port, 'POST', '/api/projects', { Origin: ORIGIN, 'Content-Type': 'text/plain' }, 'hello'));
+  record('POST /api/projects malformed JSON', await call(port, 'POST', '/api/projects', { Origin: ORIGIN, 'Content-Type': 'application/json', Authorization: 'Bearer x' }, '{"title":'));
+  record('GET unknown route', await call(port, 'GET', '/api/does-not-exist', { Origin: ORIGIN }));
+  record('GET /api/projects/not-a-uuid without a token', await call(port, 'GET', '/api/projects/not-a-uuid', { Origin: ORIGIN }));
+  record('HEAD /health/live', await call(port, 'HEAD', '/health/live', { Origin: ORIGIN }));
+  record('GET /health/ready (Supabase unreachable)', await call(port, 'GET', '/health/ready', { Origin: ORIGIN }));
+  record('GET /api/capabilities anonymous', await call(port, 'GET', '/api/capabilities', { Origin: ORIGIN }));
+  s.child.kill('SIGTERM'); await wait(500);
+}
+// 2. Rate limit: what a browser can read from a 429.
+{
+  const port = 39102, s = await start(port, { RATE_LIMIT_IP: '2' });
+  for (let i = 0; i < 2; i++) await call(port, 'GET', '/api/capabilities', { Origin: ORIGIN });
+  record('third request over RATE_LIMIT_IP=2', await call(port, 'GET', '/api/capabilities', { Origin: ORIGIN }));
+  s.child.kill('SIGTERM'); await wait(500);
+}
+// 3. Production with CORS_ORIGINS unset: does it start, and what does a browser get?
+{
+  const port = 39103;
+  try {
+    const s = await start(port, { NODE_ENV: 'production', SENTRY_DSN: 'https://public@example.invalid/1', CORS_ORIGINS: '' });
+    record('production, CORS_ORIGINS empty: started', { status: 'started' });
+    record('production, CORS_ORIGINS empty: preflight', await call(port, 'OPTIONS', '/api/projects',
+      { Origin: ORIGIN, 'Access-Control-Request-Method': 'GET', 'Access-Control-Request-Headers': 'authorization' }));
+    record('production, CORS_ORIGINS empty: GET /health/live', await call(port, 'GET', '/health/live'));
+    record('production, CORS_ORIGINS empty, no PROJECT_COMMIT_SECRET: GET /health/ready', await call(port, 'GET', '/health/ready'));
+    s.child.kill('SIGTERM'); await wait(500);
+  } catch (error) { record('production, CORS_ORIGINS empty: start failed', { status: 'error', body: String(error).slice(0, 300) }); }
+}
+console.log(JSON.stringify(out, null, 1));
+
+===== int-audit-b-probe2.mjs =====
+// Integration audit B: body-size limit mapping probe (local only).
+import { spawn } from 'node:child_process';
+const root = process.argv[2], port = 39104, ORIGIN = 'http://localhost:5173';
+const env = { PATH: process.env.PATH, HOME: process.env.HOME, NODE_ENV: 'development', HOST: '127.0.0.1', PORT: String(port), SUPABASE_URL: 'http://127.0.0.1:9',
+  SUPABASE_ANON_KEY: 'probe-placeholder', LOG_LEVEL: 'silent', UPSTREAM_TIMEOUT_MS: '500', RATE_LIMIT_IP: '1000' };
+const child = spawn(process.execPath, ['apps/api/dist/server.js'], { cwd: root, env, stdio: 'ignore' });
+const wait = ms => new Promise(r => setTimeout(r, ms));
+for (let i = 0; i < 50; i++) { try { await fetch(`http://127.0.0.1:${port}/health/live`); break; } catch { await wait(100); } }
+const call = async (name, path, type, body) => { const r = await fetch(`http://127.0.0.1:${port}${path}`, { method: 'POST', headers: { Origin: ORIGIN, 'Content-Type': type, Authorization: 'Bearer probe.invalid' }, body });
+  console.log(JSON.stringify({ name, status: r.status, body: await r.text() })); };
+await call('POST /api/estimates 70 KB JSON (SMALL_BODY_LIMIT 64 KiB)', '/api/estimates', 'application/json', JSON.stringify({ pad: 'x'.repeat(70_000) }));
+await call('POST /api/projects 1.1 MB JSON (BODY_LIMIT 1 MiB)', '/api/projects', 'application/json', JSON.stringify({ title: 'x'.repeat(1_100_000) }));
+await call('POST references 10 MiB + 1 byte image/png (REFERENCE maxBytes 10 MiB)', '/api/projects/00000000-0000-4000-8000-000000000001/references?purpose=SITE_PHOTO', 'image/png', Buffer.alloc(10_485_761));
+await call('POST references application/x-msdownload 10 bytes', '/api/projects/00000000-0000-4000-8000-000000000001/references?purpose=SITE_PHOTO', 'application/x-msdownload', Buffer.alloc(10));
+child.kill('SIGTERM');
+
+===== int-audit-b-probe3.mjs =====
+// Integration audit B: perimeter rate-limit keying with distinct X-Forwarded-For clients (local only).
+import { spawn } from 'node:child_process';
+const [root, trust] = process.argv.slice(2), port = 39105;
+const env = { PATH: process.env.PATH, HOME: process.env.HOME, NODE_ENV: 'development', HOST: '127.0.0.1', PORT: String(port), SUPABASE_URL: 'http://127.0.0.1:9',
+  SUPABASE_ANON_KEY: 'probe-placeholder', LOG_LEVEL: 'silent', RATE_LIMIT_IP: '2', TRUST_PROXY: trust ?? '' };
+const child = spawn(process.execPath, ['apps/api/dist/server.js'], { cwd: root, env, stdio: 'ignore' });
+const wait = ms => new Promise(r => setTimeout(r, ms));
+for (let i = 0; i < 50; i++) { try { await fetch(`http://127.0.0.1:${port}/health/live`); break; } catch { await wait(100); } }
+const codes = [];
+for (const client of ['203.0.113.1', '203.0.113.2', '203.0.113.3', '203.0.113.4'])
+  codes.push(`${client}:${(await fetch(`http://127.0.0.1:${port}/api/capabilities`, { headers: { 'X-Forwarded-For': client } })).status}`);
+console.log(JSON.stringify({ TRUST_PROXY: env.TRUST_PROXY || '(empty)', codes }));
+child.kill('SIGTERM');
+
+===== probe 1 output (capabilities body trimmed; request IDs are random per run) =====
+[
+ {
+  "name": "preflight POST /api/projects with Authorization, Content-Type, Idempotency-Key",
+  "status": 204,
+  "headers": {
+   "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key, If-None-Match",
+   "access-control-allow-methods": "GET, POST, PATCH, DELETE",
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "vary": "Origin"
+  },
+  "body": ""
+ },
+ {
+  "name": "preflight with an extra client header (x-client-version)",
+  "status": 204,
+  "headers": {
+   "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key, If-None-Match",
+   "access-control-allow-methods": "GET, POST, PATCH, DELETE",
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "vary": "Origin"
+  },
+  "body": ""
+ },
+ {
+  "name": "preflight PUT",
+  "status": 204,
+  "headers": {
+   "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key, If-None-Match",
+   "access-control-allow-methods": "GET, POST, PATCH, DELETE",
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "vary": "Origin"
+  },
+  "body": ""
+ },
+ {
+  "name": "preflight from a disallowed origin",
+  "status": 204,
+  "headers": {
+   "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key, If-None-Match",
+   "access-control-allow-methods": "GET, POST, PATCH, DELETE",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "vary": "Origin"
+  },
+  "body": ""
+ },
+ {
+  "name": "GET /api/projects without a token",
+  "status": 401,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "6bebd7be-6160-48e1-98fa-8afa684ffbe4"
+  },
+  "body": {
+   "error": {
+    "code": "UNAUTHORIZED",
+    "message": "A valid Supabase session is required",
+    "requestId": "6bebd7be-6160-48e1-98fa-8afa684ffbe4"
+   }
+  }
+ },
+ {
+  "name": "GET /api/projects with a token, Auth upstream unreachable",
+  "status": 503,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "444f38ec-9036-4310-997a-c9876f899c64"
+  },
+  "body": {
+   "error": {
+    "code": "AUTH_UNAVAILABLE",
+    "message": "Authentication is temporarily unavailable",
+    "requestId": "444f38ec-9036-4310-997a-c9876f899c64"
+   }
+  }
+ },
+ {
+  "name": "GET /api/regions with a token, Auth upstream unreachable",
+  "status": 503,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "c43b1176-bf13-496b-9861-37febb43aa45"
+  },
+  "body": {
+   "error": {
+    "code": "AUTH_UNAVAILABLE",
+    "message": "Authentication is temporarily unavailable",
+    "requestId": "c43b1176-bf13-496b-9861-37febb43aa45"
+   }
+  }
+ },
+ {
+  "name": "POST /api/plans anonymous with an invalid body (validation before auth)",
+  "status": 400,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "39e9ebf5-2a99-4422-8019-fb91353889a7"
+  },
+  "body": {
+   "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Request validation failed",
+    "requestId": "39e9ebf5-2a99-4422-8019-fb91353889a7",
+    "fieldErrors": {
+     "plan": [
+      "Required"
+     ]
+    }
+   }
+  }
+ },
+ {
+  "name": "POST /api/plans with a 70 KB body (SMALL_BODY_LIMIT 64 KiB)",
+  "status": 400,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "bbe8dee2-bc4c-4c53-b195-f2bf8a7f4af5"
+  },
+  "body": {
+   "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Request validation failed",
+    "requestId": "bbe8dee2-bc4c-4c53-b195-f2bf8a7f4af5",
+    "fieldErrors": {
+     "plan": [
+      "Expected object, received string"
+     ]
+    }
+   }
+  }
+ },
+ {
+  "name": "POST /api/projects text/plain body",
+  "status": 401,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "fccc717d-7ee0-483e-8416-be1669cc4bc1"
+  },
+  "body": {
+   "error": {
+    "code": "UNAUTHORIZED",
+    "message": "A valid Supabase session is required",
+    "requestId": "fccc717d-7ee0-483e-8416-be1669cc4bc1"
+   }
+  }
+ },
+ {
+  "name": "POST /api/projects malformed JSON",
+  "status": 400,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "54ceab9c-080d-49ae-aeac-abdeb47bd81a"
+  },
+  "body": {
+   "error": {
+    "code": "INVALID_REQUEST",
+    "message": "The request is malformed or unsupported",
+    "requestId": "54ceab9c-080d-49ae-aeac-abdeb47bd81a"
+   }
+  }
+ },
+ {
+  "name": "GET unknown route",
+  "status": 404,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "ce60bc6f-0e12-4cd5-8b81-18a85b9755d0"
+  },
+  "body": {
+   "error": {
+    "code": "NOT_FOUND",
+    "message": "Resource not found",
+    "requestId": "ce60bc6f-0e12-4cd5-8b81-18a85b9755d0"
+   }
+  }
+ },
+ {
+  "name": "GET /api/projects/not-a-uuid without a token",
+  "status": 401,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "7b0fd0d2-d874-4f09-81a6-7daabd983a87"
+  },
+  "body": {
+   "error": {
+    "code": "UNAUTHORIZED",
+    "message": "A valid Supabase session is required",
+    "requestId": "7b0fd0d2-d874-4f09-81a6-7daabd983a87"
+   }
+  }
+ },
+ {
+  "name": "HEAD /health/live",
+  "status": 404,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "065a6372-6777-402d-9164-e98965d48bae"
+  },
+  "body": ""
+ },
+ {
+  "name": "GET /health/ready (Supabase unreachable)",
+  "status": 503,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "783863a9-1b5c-466c-8589-060d6da65c02"
+  },
+  "body": {
+   "status": "unavailable"
+  }
+ },
+ {
+  "name": "GET /api/capabilities anonymous",
+  "status": 200,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "061d1bba-88b9-4ee7-9b0f-56e2a1b751b8"
+  },
+  "body": {
+   "keys": [
+    "workflowVersion",
+    "modes",
+    "capabilities",
+    "discoveryVersion",
+    "services",
+    "media",
+    "aiCapabilities",
+    "modelLimits",
+    "unsupportedOperations",
+    "computeProviders"
+   ],
+   "services": [
+    [
+     "BUILDING_MODEL",
+     "AVAILABLE"
+    ],
+    [
+     "BIM",
+     "AVAILABLE"
+    ],
+    [
+     "QUANTITY_TAKEOFF",
+     "AVAILABLE"
+    ],
+    [
+     "CONSTRUCTION_CALCULATION",
+     "AVAILABLE"
+    ],
+    [
+     "BOQ_COST",
+     "AVAILABLE"
+    ],
+    [
+     "STRUCTURAL_ANALYSIS",
+     "AVAILABLE"
+    ],
+    [
+     "ENVIRONMENTAL_ANALYSIS",
+     "AVAILABLE"
+    ],
+    [
+     "BUILDING_SYSTEMS_ANALYSIS",
+     "AVAILABLE"
+    ],
+    [
+     "SPECIALIZED_KNOWLEDGE",
+     "AVAILABLE"
+    ],
+    [
+     "DESIGN_OPTIMIZATION",
+     "AVAILABLE"
+    ],
+    [
+     "SCENE_3D",
+     "AVAILABLE"
+    ],
+    [
+     "SELECTIVE_REVISION",
+     "AVAILABLE"
+    ],
+    [
+     "REFERENCE_LIBRARY",
+     "AVAILABLE"
+    ],
+    [
+     "DURABLE_JOBS",
+     "AVAILABLE"
+    ],
+    [
+     "PROJECT_CONTEXT",
+     "AVAILABLE"
+    ],
+    [
+     "COMPLEX_VERIFICATION",
+     "AVAILABLE"
+    ],
+    [
+     "ENGINEERING_ASSESSMENT",
+     "AVAILABLE"
+    ],
+    [
+     "ZONE_ASSESSMENT",
+     "AVAILABLE"
+    ],
+    [
+     "ZONE_REGENERATION",
+     "AVAILABLE"
+    ],
+    [
+     "ZONE_PARTITIONS",
+     "AVAILABLE"
+    ],
+    [
+     "COMPUTE_GATEWAY",
+     "AVAILABLE"
+    ],
+    [
+     "DEPENDENCY_GRAPH",
+     "AVAILABLE"
+    ],
+    [
+     "CONSTRUCTION_DOCUMENTS",
+     "AVAILABLE"
+    ],
+    [
+     "EVIDENCE_PACKAGES",
+     "AVAILABLE"
+    ],
+    [
+     "DESIGN_CONCEPTS",
+     "AVAILABLE"
+    ],
+    [
+     "PROJECT_MANIFEST",
+     "AVAILABLE"
+    ],
+    [
+     "SPECIALISTS",
+     "AVAILABLE"
+    ],
+    [
+     "INSTRUCTION_RESOLUTION",
+     "AVAILABLE"
+    ],
+    [
+     "FEASIBILITY_ASSESSMENT",
+     "AVAILABLE"
+    ],
+    [
+     "CAPABILITY_ROUTING",
+     "AVAILABLE"
+    ],
+    [
+     "COLLABORATION",
+     "AVAILABLE"
+    ],
+    [
+     "SCENE_DELIVERY",
+     "AVAILABLE"
+    ]
+   ],
+   "note": "trimmed for the evidence file"
+  }
+ },
+ {
+  "name": "third request over RATE_LIMIT_IP=2",
+  "status": 429,
+  "headers": {
+   "access-control-allow-origin": "http://localhost:5173",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "retry-after": "60",
+   "vary": "Origin",
+   "x-request-id": "f7b83d84-c9ca-49e8-8f94-9bc00fb8d142"
+  },
+  "body": {
+   "error": {
+    "code": "RATE_LIMITED",
+    "message": "Too many requests; retry later",
+    "requestId": "f7b83d84-c9ca-49e8-8f94-9bc00fb8d142"
+   }
+  }
+ },
+ {
+  "name": "production, CORS_ORIGINS empty: started",
+  "status": "started"
+ },
+ {
+  "name": "production, CORS_ORIGINS empty: preflight",
+  "status": 204,
+  "headers": {
+   "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key, If-None-Match",
+   "access-control-allow-methods": "GET, POST, PATCH, DELETE",
+   "access-control-expose-headers": "x-request-id, ETag",
+   "vary": "Origin"
+  },
+  "body": ""
+ },
+ {
+  "name": "production, CORS_ORIGINS empty: GET /health/live",
+  "status": 200,
+  "headers": {
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "f734f016-4bd1-46b1-8d06-b984bd427836"
+  },
+  "body": {
+   "status": "ok"
+  }
+ },
+ {
+  "name": "production, CORS_ORIGINS empty, no PROJECT_COMMIT_SECRET: GET /health/ready",
+  "status": 503,
+  "headers": {
+   "access-control-expose-headers": "x-request-id, ETag",
+   "cache-control": "no-store",
+   "content-type": "application/json; charset=utf-8",
+   "vary": "Origin",
+   "x-request-id": "85d9443e-7cfa-456c-9a61-89c4679b5742"
+  },
+  "body": {
+   "status": "unavailable"
+  }
+ }
+]
+===== probe 2 output =====
+400 INVALID_REQUEST: POST /api/estimates 70 KB JSON (SMALL_BODY_LIMIT 64 KiB)
+400 INVALID_REQUEST: POST /api/projects 1.1 MB JSON (BODY_LIMIT 1 MiB)
+400 INVALID_REQUEST: POST references 10 MiB + 1 byte image/png (REFERENCE maxBytes 10 MiB)
+503 AUTH_UNAVAILABLE: POST references application/x-msdownload 10 bytes (Auth runs before the media-type check; Auth unreachable here)
+
+===== probe 3 output =====
+{"TRUST_PROXY":"(empty)","codes":["203.0.113.1:200","203.0.113.2:200","203.0.113.3:429","203.0.113.4:429"]}
+{"TRUST_PROXY":"127.0.0.1","codes":["203.0.113.1:200","203.0.113.2:200","203.0.113.3:200","203.0.113.4:200"]}
