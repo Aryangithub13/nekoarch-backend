@@ -211,7 +211,8 @@ it('enforces a closed import boundary for all AI modules and their contract', ()
       if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
         if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
           const name = node.moduleSpecifier.text;
-          if(['node:https','node:dns/promises','node:net'].includes(name))expect(file.endsWith('/orchestration/transport.ts')).toBe(true);
+          // Normalise separators: readdirSync reports `orchestration\transport.ts` on Windows. The rule is unchanged.
+          if(['node:https','node:dns/promises','node:net'].includes(name))expect(file.replaceAll('\\', '/').endsWith('/orchestration/transport.ts'), `${file}: ${name}`).toBe(true);
           expect(allowed.has(name), `${file}: ${name}`).toBe(true);
           if (ts.isImportDeclaration(node) && ['@designflow/generator', '@designflow/shared'].includes(name)) {
             const binding = node.importClause?.namedBindings; expect(binding && ts.isNamedImports(binding)).toBe(true);
