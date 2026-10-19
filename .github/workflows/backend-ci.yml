@@ -65,7 +65,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          # Pinned like the backend job, so the live gate runs on a version CI also tests.
+          node-version: '22.22.0'
           cache: npm
       - run: npm ci
       - run: npx supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1

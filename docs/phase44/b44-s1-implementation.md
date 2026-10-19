@@ -33,7 +33,7 @@ Comments and reviews are immutable, through the existing `immutable_revision` tr
 | `POST ROOT/revisions/:revisionId/comments` `{ kind?, body, elementIds?, parentId? }` | Owner, editor, reviewer | 201 comment |
 | `POST ROOT/revisions/:revisionId/reviews` `{ decision, note?, expectedModelHash }` | Owner, reviewer | 201 review |
 
-Writes are signed (`PROJECT_COMMIT_SECRET`; without it they return 503) and are not idempotency-keyed. Discovery lists `COLLABORATION`.
+Writes are signed (`PROJECT_COMMIT_SECRET`; without it they return 503). *Since `0033` (audit B INT-B-014), member removal, comments and reviews honour `Idempotency-Key`, and the workspace reports `revisionsTruncated`; see [`phase44-api.md`](phase44-api.md).* Discovery lists `COLLABORATION`.
 
 **Error codes:**
 

@@ -28,6 +28,7 @@
     "test:supabase": "npm run build && node scripts/test-local-supabase.mjs",
     "db:start": "supabase start && node scripts/ensure-local-postgrest.mjs",
     "db:reset": "supabase db reset",
+    "db:secret": "node scripts/print-local-commit-secret.mjs",
     "db:test": "supabase test db",
     "sentry:smoke": "tsx --env-file=.env scripts/sentry-smoke.ts",
     "check": "npm run build && npm run typecheck && npm run lint && npm test && npm run test:interpretation && npm run test:conversations",

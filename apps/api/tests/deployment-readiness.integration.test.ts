@@ -8,6 +8,8 @@ import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { EXPECTED_SCHEMA_VERSION } from '../src/lib/deployment-state.js';
 import type { Backend } from '../src/lib/repository.js';
+// @ts-expect-error untyped local tooling script (plain .mjs)
+import { assertLocal, readLocalCommitSecret } from '../../../scripts/print-local-commit-secret.mjs';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Json = Record<string, any>;
@@ -81,6 +83,11 @@ describe('Deployment readiness: commit secret and schema version on PostgreSQL',
     const refused = await saveRevision(app, await project(app));
     expect([refused.statusCode, refused.json<Json>().error.code]).toEqual([503, 'PROJECTS_UNAVAILABLE']);
     expect((await app.inject({ method: 'GET', url: '/api/capabilities' })).json<Json>().deployment.writes).toBe('UNAVAILABLE');
+  });
+
+  it('`npm run db:secret` reads the current key of a local database and refuses any other host', async () => {
+    expect(await readLocalCommitSecret({ DB_URL: db.connectionString })).toBe(secret);
+    expect(() => assertLocal('postgresql://user:pw@db.example.com:5432/postgres')).toThrow('Non-local database refused');
   });
 
   it('pins the schema version to the newest migration, so a new migration must raise it', async () => {

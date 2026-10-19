@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase } from '../../../test-support/postgres.js';
 // @ts-expect-error untyped operator script (plain .mjs)
@@ -24,6 +26,18 @@ describe('D-9 read-only hosted migration-history check (operator script)', () =>
     expect(all[0]).toEqual({ version: '0001', name: expect.any(String) });
     expect(all.at(-1)!.version).toBe('0033');
     expect(new Set(all.map(m => m.version)).size).toBe(all.length);
+  });
+
+  // INT-B-025: the hosted ledger records versions and names only, so a migration edited in place (as 0030 was) goes unnoticed there.
+  // The committed manifest makes any edit to an existing migration fail here and show in review. Never edit a migration that any database
+  // has applied: add a new one. A new migration adds its line (cd supabase/migrations && sha256sum 0*.sql > ../migrations.sha256).
+  it('matches every migration to its committed checksum, so an in-place edit cannot pass unnoticed', () => {
+    const dir = new URL('../../../supabase/migrations/', import.meta.url);
+    const manifest = readFileSync(new URL('../../../supabase/migrations.sha256', import.meta.url), 'utf8').trim().split('\n')
+      .map(line => { const [sha256, file] = line.split(/\s+\*?/); return { file, sha256 }; });
+    const actual = readdirSync(dir).filter(file => /^\d{4}_[a-z0-9_]+\.sql$/.test(file)).sort()
+      .map(file => ({ file, sha256: createHash('sha256').update(readFileSync(new URL(file, dir))).digest('hex') }));
+    expect(actual).toEqual(manifest);
   });
 
   describe('against a real PostgreSQL ledger', () => {
