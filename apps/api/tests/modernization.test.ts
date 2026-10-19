@@ -13,7 +13,7 @@ import { SpecialistParamsSchema } from '../src/contracts/specialists.js';
 import { SCENE_COMPILER_VERSION, SceneInputSchema } from '../src/scene3d/contracts.js';
 import { CreateProjectRequestSchema, GenerateRevisionRequestSchema } from '../src/contracts/projects.js';
 import { WorkflowRequestSchema } from '../src/contracts/workflows.js';
-import { CONTRACTS, ERROR_CODES, PATH_PARAMS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
+import { CONTRACTS, ERROR_CODES, PATH_PARAMS, apiReference, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
 import { errorCatalog, type ErrorCatalog } from '../../../test-support/error-catalog.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { fixturePlan } from '../../../test-support/fixtures.js';
@@ -22,7 +22,7 @@ import Ajv from 'ajv';
 
 /** Source-derived route catalog (docs/modernization/api-routes.json). Regenerate with UPDATE_ROUTE_CATALOG=1 after an intentional API change. */
 const CATALOG = new URL('../../../docs/modernization/api-routes.json', import.meta.url), OPENAPI = new URL('../../../docs/modernization/openapi.json', import.meta.url);
-const OPENAPI_HASH = new URL('../src/delivery/openapi-hash.ts', import.meta.url);
+const OPENAPI_HASH = new URL('../src/delivery/openapi-hash.ts', import.meta.url), REFERENCE = new URL('../../../docs/modernization/api-reference.md', import.meta.url);
 const notFound = () => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); };
 const repository = new Proxy({}, { get: () => async () => notFound() }) as Repository;
 const backend: Backend = { authenticate: async () => ({ id: randomUUID() }), repository: () => repository, ready: async () => undefined };
@@ -47,6 +47,7 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
       writeFileSync(ERROR_CODES, JSON.stringify(errors, null, 1) + '\n'); // before the OpenAPI document, which embeds it
       const document = JSON.stringify(openApiDocument(catalog), null, 1) + '\n';
       writeFileSync(OPENAPI, document);
+      writeFileSync(REFERENCE, apiReference(openApiDocument(catalog)) + '\n');
       writeFileSync(OPENAPI_HASH, readFileSync(OPENAPI_HASH, 'utf8').replace(/'[a-f0-9]{64}'/, `'${createHash('sha256').update(document).digest('hex')}'`));
     }
   }, 60_000);
@@ -197,17 +198,31 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     expect((openApiDocument(catalog) as { components: { 'x-error-codes': unknown } }).components['x-error-codes'])
       .toEqual(errors.codes.map(({ code, statuses }) => ({ code, statuses })));
   });
-  it('every $ref in the OpenAPI document resolves (1,007 of 2,754 on the base branch pointed nowhere)', () => {
+  it('every $ref in the OpenAPI document resolves (1,007 of 2,754 on the base branch pointed nowhere), and no schema is a tuple', () => {
     const doc = openApiDocument(catalog), refs: string[] = [];
+    let tuples = 0;
     const walk = (x: unknown): void => {
       if (Array.isArray(x)) x.forEach(walk);
-      else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) { if (k === '$ref') refs.push(v as string); else walk(v); }
+      else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) { if (k === '$ref') refs.push(v as string); else { if (k === 'items' && Array.isArray(v)) tuples++; walk(v); } }
     };
     walk(doc);
     const resolves = (ref: string) => ref.startsWith('#/') && ref.slice(2).split('/').reduce<unknown>((at, part) =>
       at && typeof at === 'object' ? (at as Record<string, unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')] : undefined, doc) !== undefined;
     expect(refs.length).toBeGreaterThan(100);
     expect([...new Set(refs.filter(ref => !resolves(ref)))]).toEqual([]);
+    expect(tuples, 'OpenAPI 3.0 items must be one schema, not a tuple').toBe(0);
+  });
+  it('INT-B-027: the generated API reference documents every route, including B37, B38 and B40-B46, and matches the OpenAPI document', () => {
+    const reference = readFileSync(REFERENCE, 'utf8');
+    expect(reference).toBe(apiReference(openApiDocument(catalog)) + '\n');
+    for (const r of catalog) expect(reference, `${r.method} ${r.url}`).toContain(`## ${r.method} \`${r.url.replace(/:([A-Za-z]+)/g, '{$1}')}\``);
+    // Routes of the phases that had no API document: B37 manifest and dependency graph, B38 documents and evidence packages, B40 integration,
+    // B41 instructions, B42 feasibility, B43 routing, B45 compatibility and delivery (B44 now has one; B46 added no route).
+    for (const route of ['/api/projects/{projectId}/revisions/{revisionId}/manifest', '/api/projects/{projectId}/revisions/{revisionId}/dependency-graph',
+      '/api/projects/{projectId}/revisions/{revisionId}/documents/schedules', '/api/projects/{projectId}/revisions/{revisionId}/evidence-packages',
+      '/api/projects/{projectId}/integration/plans/execute', '/api/projects/{projectId}/revisions/{revisionId}/instructions/resolve',
+      '/api/projects/{projectId}/feasibility/assessments', '/api/projects/{projectId}/routing/decisions', '/api/compatibility',
+      '/api/projects/{projectId}/revisions/{revisionId}/scene/delivery']) expect(reference).toContain(`\`${route}\``);
   });
   it('INT-B-021: the published contract says that FAILED does not mean "nothing changed", and which field does', () => {
     type Schema = { properties: Record<string, { description?: string }> };

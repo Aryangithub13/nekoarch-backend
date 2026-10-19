@@ -241,6 +241,18 @@ const referenced = (schema: ZodTypeAny) => {
   return root;
 };
 
+/** OpenAPI 3.0 has no tuple schema (`items` must be one schema): a Zod tuple becomes `items: { anyOf }`, its length kept by minItems and maxItems. */
+function openApi30<T>(node: T): T {
+  if (Array.isArray(node)) return node.map(openApi30) as T;
+  if (!node || typeof node !== 'object') return node;
+  const out = Object.fromEntries(Object.entries(node).map(([k, v]) => [k, openApi30(v)])) as Record<string, unknown>;
+  if (Array.isArray(out.items)) {
+    const members = [...new Map((out.items as unknown[]).map(m => [JSON.stringify(m), m])).values()];
+    out.items = members.length === 1 ? members[0] : { anyOf: members };
+  }
+  return out as T;
+}
+
 /** The route-catalog hash `GET /api/compatibility` serves (HEAD is implied by GET), so a client can match this document to a running API. */
 export const routeCatalogHash = (routes: { method: string; url: string }[]) =>
   createHash('sha256').update([...new Set(routes.filter(r => r.method !== 'HEAD').map(r => `${r.method} ${r.url}`))].sort().join('\n')).digest('hex');
@@ -268,8 +280,59 @@ export function openApiDocument(routes: { method: string; url: string; anonymous
   }
   // INT-B-008: the version names the compatibility package and the exact route catalog, as GET /api/compatibility reports them.
   const catalog = routes.filter(r => r.method !== 'HEAD');
-  return { openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: `${COMPATIBILITY_VERSION}+${catalog.length}.${routeCatalogHash(catalog).slice(0, 12)}` },
+  return openApi30({ openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: `${COMPATIBILITY_VERSION}+${catalog.length}.${routeCatalogHash(catalog).slice(0, 12)}` },
     components: { securitySchemes: { bearer: { type: 'http', scheme: 'bearer', description: 'Supabase session access token' } }, schemas,
       // INT-B-012: every error code and the statuses it is sent with, from the generated catalog (test-support/error-catalog.ts).
-      'x-error-codes': (JSON.parse(readFileSync(ERROR_CODES, 'utf8')) as ErrorCatalog).codes.map(({ code, statuses }) => ({ code, statuses })) }, paths };
+      'x-error-codes': (JSON.parse(readFileSync(ERROR_CODES, 'utf8')) as ErrorCatalog).codes.map(({ code, statuses }) => ({ code, statuses })) }, paths });
+}
+
+type JsonSchemaNode = { $ref?: string; type?: string; enum?: unknown[]; items?: JsonSchemaNode; anyOf?: JsonSchemaNode[]; oneOf?: JsonSchemaNode[]; allOf?: JsonSchemaNode[];
+  properties?: Record<string, JsonSchemaNode>; required?: string[]; nullable?: boolean; format?: string; description?: string; additionalProperties?: unknown };
+/** A short type label for the reference: `Name` for a component, `string (uuid)`, `'A' | 'B'`, `T[]`, `object`. */
+function typeLabel(s: JsonSchemaNode | undefined): string {
+  if (!s) return 'any';
+  const base = s.$ref ? s.$ref.split('/').pop()!
+    : s.enum ? (s.enum.length > 6 ? `${s.enum.slice(0, 6).map(v => JSON.stringify(v)).join(' \\| ')} \\| …` : s.enum.map(v => JSON.stringify(v)).join(' \\| '))
+      : s.anyOf ?? s.oneOf ? (s.anyOf ?? s.oneOf)!.map(typeLabel).join(' \\| ')
+        : s.allOf ? typeLabel(s.allOf[s.allOf.length - 1]) // zod-to-json-schema's allOf is a refinement chain of one type
+        : s.type === 'array' ? `${typeLabel(s.items)}[]`
+          : s.type ? `${s.type}${s.format ? ` (${s.format})` : ''}` : 'any';
+  return s.nullable ? `${base} \\| null` : base;
+}
+const fieldRows = (s: JsonSchemaNode | undefined) => Object.entries(s?.properties ?? {}).map(([name, p]) =>
+  `| \`${name}\` | ${typeLabel(p)} | ${(s!.required ?? []).includes(name) ? 'yes' : ''} | ${(p.description ?? '').replace(/\|/g, '\\|')} |`);
+
+/**
+ * INT-B-027: the API reference (docs/modernization/api-reference.md), rendered from the same OpenAPI document, so every route has one,
+ * including the phases that had no hand-written API document (B37, B38, B40–B46). Top-level fields only; the full schemas are in openapi.json.
+ */
+export function apiReference(doc: ReturnType<typeof openApiDocument>): string {
+  const out = ['# API reference (generated)', '',
+    `Generated from [openapi.json](openapi.json) (\`${doc.info.version}\`) by \`test-support/openapi.ts\`; regenerate with \`UPDATE_ROUTE_CATALOG=1 npx vitest run apps/api/tests/modernization.test.ts\`. Do not edit.`,
+    'Every error is `ApiErrorResponse` (`{ error: { code, message, requestId, fieldErrors? } }`); the codes and their statuses are in [error-codes.json](error-codes.json).',
+    'Nested schemas, limits and patterns are in openapi.json. Per-phase behaviour is in the `docs/phase*/…-api.md` documents where they exist.', ''];
+  for (const [path, methods] of Object.entries(doc.paths as Record<string, Record<string, { security?: unknown; parameters: { name: string; in: string; required: boolean; schema: JsonSchemaNode }[];
+    requestBody?: { content: Record<string, { schema: JsonSchemaNode }> }; responses: Record<string, { description: string; content?: Record<string, { schema: JsonSchemaNode }> }> }>>)) {
+    for (const [method, op] of Object.entries(methods)) {
+      out.push(`## ${method.toUpperCase()} \`${path}\``, '', `Auth: ${op.security ? 'bearer (Supabase session)' : 'none'}`, '');
+      if (op.parameters.length) {
+        out.push('| Parameter | In | Type | Required |', '|---|---|---|---|');
+        for (const p of op.parameters) out.push(`| \`${p.name}\` | ${p.in} | ${typeLabel(p.schema)} | ${p.required ? 'yes' : ''} |`);
+        out.push('');
+      }
+      for (const [media, { schema }] of Object.entries(op.requestBody?.content ?? {})) {
+        const rows = media === 'application/json' ? fieldRows(schema) : [];
+        out.push(`Request body (\`${media}\`)${rows.length ? ':' : `: ${typeLabel(schema)}`}`, '');
+        if (rows.length) out.push('| Field | Type | Required | Description |', '|---|---|---|---|', ...rows, '');
+      }
+      for (const [status, response] of Object.entries(op.responses)) {
+        if (status === 'default') continue;
+        const [media, body] = Object.entries(response.content ?? {})[0] ?? [];
+        const rows = media === 'application/json' ? fieldRows(body!.schema) : [];
+        out.push(`**${status}**: ${response.description}${media ? ` (\`${media}\`${rows.length ? '' : `, ${typeLabel(body!.schema)}`})` : ''}`, '');
+        if (rows.length) out.push('| Field | Type | Required | Description |', '|---|---|---|---|', ...rows, '');
+      }
+    }
+  }
+  return out.join('\n');
 }

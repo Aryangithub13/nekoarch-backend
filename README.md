@@ -73,7 +73,8 @@ Live receipts are written to `docs/phase16-evidence/`.
 
 - It signs users in directly with Supabase Auth (`SUPABASE_URL`, the anon key) and calls this API with `Authorization: Bearer <access token>`.
 - In development the allowed browser origin is `http://localhost:5173`; set `CORS_ORIGINS` for anything else.
-- Contract: [`docs/modernization/openapi.json`](docs/modernization/openapi.json), [`docs/modernization/api-routes.json`](docs/modernization/api-routes.json),
+- Contract: [`docs/modernization/openapi.json`](docs/modernization/openapi.json), its rendering [`api-reference.md`](docs/modernization/api-reference.md),
+  the error codes [`error-codes.json`](docs/modernization/error-codes.json), [`docs/modernization/api-routes.json`](docs/modernization/api-routes.json),
   `GET /api/compatibility` (route-catalog hash, matching the OpenAPI `info.version`, and `openapi.sha256`, the sha256 of `openapi.json`: it changes when
   any request or response schema changes), and the per-phase `docs/phase*/…-api.md` documents.
 
