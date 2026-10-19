@@ -1,4 +1,5 @@
-FROM node:22-bookworm-slim AS build
+# SEC-005: the base image is pinned by digest (node:22-bookworm-slim on 2026-10-19); refresh it deliberately, together with both stages.
+FROM node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392 AS build
 WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 COPY apps/api/package.json apps/api/package.json
@@ -23,7 +24,7 @@ COPY packages/boq-cost packages/boq-cost
 RUN npm run build
 RUN npm prune --omit=dev --omit=optional --ignore-scripts
 
-FROM node:22-bookworm-slim AS runtime
+FROM node:22-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392 AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3001
 WORKDIR /app
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
