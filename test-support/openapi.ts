@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import type { ErrorCatalog } from './error-catalog.js';
 import { z, type ZodTypeAny } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { ignoreOverride, zodToJsonSchema, type Options } from 'zod-to-json-schema';
 import { ArchitecturalBuildingModelV2Schema, ApiErrorResponseSchema, CreatePlanRequestSchema, CreatePlanResponseSchema, EstimateInputsSchema, EstimateResponseSchema, GetPlanResponseSchema,
   PatchPlanRequestSchema, PatchPlanResponseSchema, RegionsResponseSchema } from '@designflow/shared';
 import { SelectedBlueprintRequirementsSchema } from '@designflow/generator';
@@ -152,10 +152,10 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${R}/appearance`]: { query: EmptySchema, response: AppearanceResponseSchema },
   [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
   // B39 S1: 201 when the request stored a revision or artifact; a typed refusal or a replay is 200 with the same schema.
-  [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201, alternatives: replay('A typed refusal, or a replay of an earlier request') },
+  [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201, alternatives: replay('A typed refusal (written: false; nothing stored), or a replay of an earlier request (replayed: true). 201 means this request stored something, even with status FAILED') },
   // B40 S1: a plan preview stores nothing (200); an execution that wrote anything is 201, a refusal 200 with the same schema.
   [`POST ${P}/integration/plans`]: { body: ChangeSetSchema, response: IntegrationPlanSchema, status: 200 },
-  [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201, alternatives: replay('A refusal: nothing was written') },
+  [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201, alternatives: replay('No task completed: nothing was written and the base revision is unchanged. A 201 can still have status FAILED; committedRevisionId says whether a revision was committed') },
   // B41 S1: deterministic instruction resolution (read only).
   [`POST ${R}/instructions/resolve`]: { body: InstructionRequestSchema, response: InstructionResolutionSchema },
   // B42 S1: feasibility assessment of a declared ambition (read only).
@@ -223,9 +223,21 @@ const SHARED = { BuildingModelV2: ArchitecturalBuildingModelV2Schema, BlueprintR
   EnvironmentalDetail: EnvironmentalDetailSchema, SystemsDetail: SystemsDetailSchema, KnowledgeDetail: KnowledgeDetailSchema, OptimizationDetail: OptimizationDetailSchema,
   StructuralInput: StructuralInputSchema, EnvironmentalInput: EnvironmentalInputSchema, SystemsInput: SystemsInputSchema, KnowledgeInput: KnowledgeInputSchema, OptimizationInput: OptimizationInputSchema,
   RevisionOperation: OperationDetailSchema, AppearanceManifest: CandidateManifestResponseSchema.shape.manifest };
+/**
+ * Only the SHARED components are referenced (`#/components/schemas/Name`); any other repeated sub-schema is inlined. The default `root` strategy
+ * referenced a repeat by its path from the document root, which assumed the operation's schema sat at `#/components`: it is inlined under `paths`,
+ * so 1,007 of 2,754 references on the base branch pointed nowhere (for example `#/components/properties/projectId`).
+ */
+const COMPONENT_REFS: Partial<Options<'openApi3'>> = { target: 'openApi3', definitions: SHARED, $refStrategy: 'none', basePath: ['#', 'components'], definitionPath: 'schemas',
+  effectStrategy: 'input', removeAdditionalStrategy: 'strict',
+  override: (_def, refs, seen, forceResolution) => {
+    if (!seen || forceResolution) return ignoreOverride;
+    if (seen.path[2] === 'schemas' && seen.path.length === 4) return { $ref: seen.path.join('/') };
+    // A recursive type (the QA report's arbitrary JSON values) is any JSON value at the point it recurses.
+    return seen.path.length < refs.currentPath.length && seen.path.every((part, i) => refs.currentPath[i] === part) ? {} : ignoreOverride;
+  } };
 const referenced = (schema: ZodTypeAny) => {
-  const { schemas: _shared, ...root } = zodToJsonSchema(schema, { target: 'openApi3', definitions: SHARED, $refStrategy: 'root', basePath: ['#', 'components'],
-    definitionPath: 'schemas', effectStrategy: 'input', removeAdditionalStrategy: 'strict' }) as Record<string, unknown>;
+  const { schemas: _shared, ...root } = zodToJsonSchema(schema, COMPONENT_REFS) as Record<string, unknown>;
   return root;
 };
 
@@ -236,8 +248,7 @@ export const routeCatalogHash = (routes: { method: string; url: string }[]) =>
 /** OpenAPI 3.0 document from the live route table plus CONTRACTS; nothing is hand-written per route beyond the schema mapping. */
 export function openApiDocument(routes: { method: string; url: string; anonymous: number }[]) {
   const paths: Record<string, Record<string, unknown>> = {};
-  const { schemas } = zodToJsonSchema(z.object({}), { target: 'openApi3', definitions: SHARED, $refStrategy: 'root', basePath: ['#', 'components'], definitionPath: 'schemas',
-    effectStrategy: 'input', removeAdditionalStrategy: 'strict' }) as { schemas: Record<string, unknown> };
+  const { schemas } = zodToJsonSchema(z.object({}), COMPONENT_REFS) as { schemas: Record<string, unknown> };
   for (const r of routes) {
     const op = CONTRACTS[`${r.method} ${r.url}`] ?? {}, path = r.url.replace(/:([A-Za-z]+)/g, '{$1}');
     const params = [...r.url.matchAll(/:([A-Za-z]+)/g)].map(([, name]) => ({ name, in: 'path', required: true, schema: jsonSchema(PATH_PARAMS[name!] ?? z.string().uuid()) }));

@@ -197,6 +197,28 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     expect((openApiDocument(catalog) as { components: { 'x-error-codes': unknown } }).components['x-error-codes'])
       .toEqual(errors.codes.map(({ code, statuses }) => ({ code, statuses })));
   });
+  it('every $ref in the OpenAPI document resolves (1,007 of 2,754 on the base branch pointed nowhere)', () => {
+    const doc = openApiDocument(catalog), refs: string[] = [];
+    const walk = (x: unknown): void => {
+      if (Array.isArray(x)) x.forEach(walk);
+      else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) { if (k === '$ref') refs.push(v as string); else walk(v); }
+    };
+    walk(doc);
+    const resolves = (ref: string) => ref.startsWith('#/') && ref.slice(2).split('/').reduce<unknown>((at, part) =>
+      at && typeof at === 'object' ? (at as Record<string, unknown>)[part.replace(/~1/g, '/').replace(/~0/g, '~')] : undefined, doc) !== undefined;
+    expect(refs.length).toBeGreaterThan(100);
+    expect([...new Set(refs.filter(ref => !resolves(ref)))]).toEqual([]);
+  });
+  it('INT-B-021: the published contract says that FAILED does not mean "nothing changed", and which field does', () => {
+    type Schema = { properties: Record<string, { description?: string }> };
+    const doc = openApiDocument(catalog) as { paths: Record<string, Record<string, { responses: Record<string, { description: string; content?: { 'application/json': { schema: Schema } } }> }>> };
+    const props = (path: string) => doc.paths[path]!.post!.responses['201']!.content!['application/json'].schema.properties;
+    const specialist = props('/api/projects/{projectId}/specialists/{module}/requests'), integration = props('/api/projects/{projectId}/integration/plans/execute');
+    expect(specialist.resultRevisionId!.description).toMatch(/non-null even when status is FAILED/);
+    expect(specialist.written!.description).toMatch(/whatever its status/);
+    expect(integration.committedRevisionId!.description).toMatch(/non-null also when status is FAILED or PARTIAL/);
+    expect(doc.paths['/api/projects/{projectId}/integration/plans/execute']!.post!.responses['200']!.description).toMatch(/nothing was written/);
+  });
   it('INT-B-022: /api/compatibility publishes the sha256 of the checked-in OpenAPI document, so a schema change is visible, not only a route change', async () => {
     const document = readFileSync(OPENAPI, 'utf8');
     expect(document).toBe(JSON.stringify(openApiDocument(catalog), null, 1) + '\n');
