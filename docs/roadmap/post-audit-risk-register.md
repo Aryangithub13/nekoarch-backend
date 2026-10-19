@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Revision | **r3, 2026-10-13: PR #16 addendum at the end; r2 rows unchanged.** **r2, 2026-10-13.** Re-based on the owner-designated authoritative roadmap. r1 is `4fb5919`. Changes are listed in "Revision log" at the end |
+| Revision | **r4, 2026-10-19: audit-B repair addendum at the end; earlier rows unchanged.** **r3, 2026-10-13: PR #16 addendum at the end; r2 rows unchanged.** **r2, 2026-10-13.** Re-based on the owner-designated authoritative roadmap. r1 is `4fb5919`. Changes are listed in "Revision log" at the end |
 | Authoritative roadmap | [`docs/sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md`](../sources/NekoArch_Backend_Roadmap_46_Phases_Frontend_Optimized.md) (sha256 `0ebc4479…3a03`) |
 | Date of inspection | 2026-10-13 |
 | Baseline | `phase31/development` @ `ea2b5d0c0533e7e3f682b42a029fef7c0b3f5359` |
@@ -491,3 +491,16 @@ The r2 rows above are kept as written. Their current state:
 |---|---|---|---|---|---|
 | R29 | Governance | Work merged under the label "Phase 39" is B43/B41 groundwork plus a partial advisory precursor. Code comments, test names and the `0028` header still say "Phase 39" (left unchanged: documentation-only correction; no history relabelling) | Docs (this addendum); owner decision D-6 | CONFIRMED | P1 (until D-6) |
 | R30 | Contracts | Discovery lists `INTERIOR_DESIGN_CONCEPT` / `EXTERIOR_DESIGN_CONCEPT` as `AVAILABLE` (`advisory: true`). A client could mistake them for the B39 F49/F50 modules (ROADMAP L669–670) | Docs guidance now; optional runtime change D-7 (proposed, not implemented) | CONFIRMED (code) | P2 |
+
+## r4 addendum: audit-B repairs (`fix/audit-b-repairs`, PR #35, 2026-10-19)
+
+Evidence is local only: embedded PostgreSQL 18 and a local Supabase CLI stack (Postgres 17.6, GoTrue, PostgREST 16.3, real JWTs). **Nothing here
+says anything about a hosted database.** The full record is `docs/BACKEND_REPAIR_LOG.md` on `main`.
+
+| Risk | r4 status |
+|---|---|
+| R03 | **Still NEEDS VERIFICATION, and wider:** the range is now `0018`–`0033`. No hosted ledger was read. Forward-only: `0031`–`0033` add to, and never edit, earlier migrations; `supabase/migrations.sha256` and its test detect an in-place edit; `0031`–`0033` were applied to a populated `0030` database in a test (rows unchanged) |
+| R04 | **Locally RESOLVED; CI unchanged.** Live receipts on `0001`–`0033` now also cover every route family audit B (INT-B-024) found with no live call: B31 references, B33 settings and library, B34 verification, B37 graph and manifest, B38 documents and evidence, B40 integration, B41 instructions, B42 feasibility, B43 routing, B44 collaboration, B45 delivery and compatibility, and conversation turns (`docs/phase16-evidence/supabase-2026-10-19T*.json`). `supabase-acceptance` still runs only on `workflow_dispatch` (owner) |
+| R26 | **Unchanged.** No background sweeper (DEBT-003) |
+| R28 | **Unchanged.** No staging environment (SHOW-001) |
+

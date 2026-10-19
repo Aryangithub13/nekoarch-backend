@@ -47,6 +47,7 @@ import { specification } from '../../../packages/construction-calculations/tests
 import { sampleCostingPolicy } from '@designflow/boq-cost';
 import { parseEnv, type Env } from '../src/config/env.js';
 import { EXPECTED_SCHEMA_VERSION } from '../src/lib/deployment-state.js';
+import { OPENAPI_SHA256 } from '../src/delivery/openapi-hash.js';
 import { DISCLAIMER, SOIL_DISCLAIMER } from '../src/content/disclaimers.js';
 import { fixtureEstimate, fixturePlan } from '../../../test-support/fixtures.js';
 
@@ -899,7 +900,7 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expectFailure(await call(other, 'GET', `/api/projects/${id}/context`), 404);
   }, 180_000);
 
-  it('B35, B37, B38, B41-B43, B45 and conversation turns through actual JWT and PostgREST: read-only derivations, scene delivery, owner-only', async () => {
+  it('B35, B37, B38, B41-B43, B45 and conversation turns through actual JWT and PostgREST: read-only derivations, scene delivery and compatibility, owner-only', async () => {
     if (!app || !owner || !other) throw new Error('Local setup incomplete');
     const call = (who: Principal, method: 'GET' | 'POST', url: string, payload?: unknown, headers: Record<string, string> = {}) =>
       app!.inject({ method, url, headers: { ...who.headers, ...headers }, ...(payload === undefined ? {} : { payload: payload as string }) });
@@ -935,6 +936,10 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect(delivery.json()).toMatchObject({ revisionCurrency: 'CURRENT', artifact: { artifactId: scene.json().id } });
     expect((await call(owner, 'GET', `${base}/scene/delivery`, undefined, { 'if-none-match': String(delivery.headers.etag) })).statusCode).toBe(304);
     expectFailure(await call(other, 'GET', `${base}/scene/delivery`), 404);
+    // B45 compatibility package: the route catalog and OpenAPI hashes this build publishes (INT-B-022).
+    const compatibility = await call(owner, 'GET', '/api/compatibility');
+    expect(compatibility.statusCode, compatibility.body.slice(0, 300)).toBe(200);
+    expect(compatibility.json()).toMatchObject({ compatibilityVersion: 'api-compatibility-v1', openapi: { sha256: OPENAPI_SHA256 } });
     // B42 feasibility and B43 routing: advisory, store nothing.
     const feasibility = await call(owner, 'POST', `/api/projects/${id}/feasibility/assessments`, { text: 'A floating 40 storey glass tower' });
     expect(feasibility.statusCode, feasibility.body.slice(0, 300)).toBe(200); expect(feasibility.json().status).toBe('ALTERNATIVES_PROPOSED');
