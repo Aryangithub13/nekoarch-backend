@@ -99,4 +99,5 @@ export function reportError(error: unknown, requestId: string, code: string, con
     exception: { values: [{ type: safe.type, value: 'DesignFlow backend request failure', stacktrace: { frames: safe.frames.reverse() } }] },
     tags: { requestId, code, ...context } });
 }
-export const flushSentry = () => Sentry.flush(5_000);
+// Without a DSN no client exists and nothing is pending; the SDK's flush would still resolve false and fail every clean shutdown.
+export const flushSentry = (timeoutMs = 5_000) => Sentry.getClient() ? Sentry.flush(timeoutMs) : Promise.resolve(true);
