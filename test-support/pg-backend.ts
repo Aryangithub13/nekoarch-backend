@@ -277,7 +277,7 @@ export function createPgBackend(pool: Pool, sessions: Record<string, string>): B
           }
         },
         async collaborationRpc(name, args) {
-          const keys = name === 'collaboration_write' ? ['p_action','p_input','p_envelope','p_signature'] : ['p_action','p_project_id','p_revision_id'];
+          const keys = name === 'collaboration_write' ? ['p_action','p_input','p_envelope','p_signature','p_context'] : ['p_action','p_project_id','p_revision_id'];
           const values = keys.map(key => args[key] ?? null);
           try {
             const result = await asPrincipal(pool, userId, client => client.query(

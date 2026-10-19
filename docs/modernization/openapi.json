@@ -29475,8 +29475,7 @@
              },
              "createdAt": {
               "type": "string",
-              "minLength": 1,
-              "maxLength": 40
+              "format": "date-time"
              },
              "updatedAt": {
               "$ref": "#/components/properties/members/items/properties/createdAt"
@@ -29540,6 +29539,9 @@
            },
            "maxItems": 100
           },
+          "revisionsTruncated": {
+           "type": "boolean"
+          },
           "collaborationVersion": {
            "type": "string",
            "enum": [
@@ -29565,6 +29567,7 @@
           "role",
           "members",
           "revisions",
+          "revisionsTruncated",
           "collaborationVersion",
           "permissions"
          ],
@@ -29659,8 +29662,7 @@
           },
           "createdAt": {
            "type": "string",
-           "minLength": 1,
-           "maxLength": 40
+           "format": "date-time"
           },
           "updatedAt": {
            "$ref": "#/components/properties/createdAt"
@@ -29846,8 +29848,7 @@
             },
             "createdAt": {
              "type": "string",
-             "minLength": 1,
-             "maxLength": 40
+             "format": "date-time"
             },
             "generatorVersion": {
              "type": "string",
@@ -30478,8 +30479,7 @@
           },
           "createdAt": {
            "type": "string",
-           "minLength": 1,
-           "maxLength": 40
+           "format": "date-time"
           }
          },
          "required": [
@@ -30610,8 +30610,7 @@
           },
           "createdAt": {
            "type": "string",
-           "minLength": 1,
-           "maxLength": 40
+           "format": "date-time"
           }
          },
          "required": [

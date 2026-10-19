@@ -3,7 +3,7 @@ import type { FastifyBaseLogger } from 'fastify';
 import type { Backend } from './repository.js';
 
 /** The newest migration this API needs: `public.schema_version()`, created by 0032 and replaced by every later migration. */
-export const EXPECTED_SCHEMA_VERSION = 32;
+export const EXPECTED_SCHEMA_VERSION = 33;
 const PROBE_PREFIX = 'designflow:commit-key-probe:';
 
 export type DeploymentCheck = { secret: 'MATCH' | 'MISMATCH' | 'MISSING' | 'UNKNOWN' | 'NOT_CHECKED'; schema: 'CURRENT' | 'BEHIND' | 'UNKNOWN' | 'NOT_CHECKED' };

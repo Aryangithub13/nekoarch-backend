@@ -1,6 +1,6 @@
 import type { BuildingModelV2 } from '@designflow/shared';
 import type { z } from 'zod';
-import type { Repository } from '../lib/repository.js';
+import type { IdempotencyContext, Repository } from '../lib/repository.js';
 import { ApiError } from '../lib/errors.js';
 import { modelHash } from '../lib/generation-identity.js';
 import { CollaborationRepository } from '../lib/collaboration-repository.js';
@@ -23,9 +23,9 @@ export async function upsertMember(repository: Repository, userId: string, proje
   const input = { projectId, userId: body.userId, role: body.role };
   return new CollaborationRepository(repository).upsertMember(input, signProjectCommit(need(secret), userId, COLLABORATION_ROUTES.members, input));
 }
-export async function removeMember(repository: Repository, userId: string, projectId: string, memberId: string, secret?: string) {
+export async function removeMember(repository: Repository, userId: string, projectId: string, memberId: string, secret?: string, context?: IdempotencyContext) {
   const input = { projectId, userId: memberId };
-  return new CollaborationRepository(repository).removeMember(input, signProjectCommit(need(secret), userId, COLLABORATION_ROUTES.member, input));
+  return new CollaborationRepository(repository).removeMember(input, signProjectCommit(need(secret), userId, COLLABORATION_ROUTES.member, input, context), context);
 }
 
 /**
@@ -52,16 +52,18 @@ export async function readRevisionCollaboration(repository: Repository, projectI
     claims: { professionalCertification: 'NOT_CLAIMED', regulatoryApproval: 'NOT_CLAIMED' } });
 }
 
-export async function addComment(repository: Repository, userId: string, projectId: string, revisionId: string, body: z.infer<typeof CommentRequestSchema>, secret?: string) {
+export async function addComment(repository: Repository, userId: string, projectId: string, revisionId: string, body: z.infer<typeof CommentRequestSchema>, secret?: string,
+  context?: IdempotencyContext) {
   const input = { projectId, revisionId, kind: body.kind, body: body.body, elementIds: body.elementIds, parentId: body.parentId };
-  return new CollaborationRepository(repository).comment(input, signProjectCommit(need(secret), userId, COLLABORATION_ROUTES.comments, input));
+  return new CollaborationRepository(repository).comment(input, signProjectCommit(need(secret), userId, COLLABORATION_ROUTES.comments, input, context), context);
 }
 
 /** The review is recorded against the model hash the server computes from the stored revision, and only if it is the model the reviewer saw. */
-export async function addReview(repository: Repository, userId: string, projectId: string, revisionId: string, body: z.infer<typeof ReviewRequestSchema>, secret?: string) {
+export async function addReview(repository: Repository, userId: string, projectId: string, revisionId: string, body: z.infer<typeof ReviewRequestSchema>, secret?: string,
+  context?: IdempotencyContext) {
   const key = need(secret), collaboration = new CollaborationRepository(repository);
   const v = await collaboration.revision(projectId, revisionId), hash = modelHash(v.revision.model as unknown as BuildingModelV2);
   if (hash !== body.expectedModelHash) throw new ApiError(409, 'REVIEW_MODEL_MISMATCH', 'The revision\'s model differs from the one reviewed; reload it before recording a review');
   const input = { projectId, revisionId, decision: body.decision, note: body.note, modelHash: hash };
-  return collaboration.review(input, signProjectCommit(key, userId, COLLABORATION_ROUTES.reviews, input));
+  return collaboration.review(input, signProjectCommit(key, userId, COLLABORATION_ROUTES.reviews, input, context), context);
 }
