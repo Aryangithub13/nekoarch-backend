@@ -11,7 +11,8 @@ import { exportIfc } from '../bim/ifc.js';
 const root = '/api/projects/:projectId/revisions/:revisionId/bim';
 const page = z.object({ limit:z.coerce.number().int().min(1).max(100).default(50), after:z.string().regex(/^bim-[a-f0-9]{40}$/).optional(), kind:BimKindSchema.optional() }).strict();
 const relationshipPage = page.extend({ kind:RelationshipSchema.shape.kind.optional() });
-const elementParams = RevisionParamsSchema.extend({ elementId:z.string().regex(/^bim-[a-f0-9]{40}$/) });
+export const BimElementParamsSchema = RevisionParamsSchema.extend({ elementId:z.string().regex(/^bim-[a-f0-9]{40}$/) });
+const elementParams = BimElementParamsSchema;
 export function bimRoutes(app: FastifyInstance, backend: Backend) {
   for (const view of ['','/validation','/elements','/relationships','/export.json','/export.ifc'] as const) app.get(`${root}${view}`,async (request,reply) => {
     const { repository } = await requestContext(request,backend,true);

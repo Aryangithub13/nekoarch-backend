@@ -29,6 +29,13 @@ import { PlanRecordSchema, RateEntrySchema, RateVersionSchema, type Backend, typ
 export function createPgBackend(pool: Pool, sessions: Record<string, string>): Backend {
   return {
     async ready() { await pool.query('select 1'); },
+    async schemaVersion() {
+      try { return (await asPrincipal(pool, null, client => client.query('select public.schema_version() v'))).rows[0].v as number; }
+      catch (error) { if (typeof error === 'object' && error !== null && 'code' in error && error.code === '42883') return 0; throw error; }
+    },
+    async commitKeyMatches(probe, signature) {
+      return (await asPrincipal(pool, null, client => client.query('select public.commit_key_matches($1, $2) ok', [probe, signature]))).rows[0].ok as boolean;
+    },
     async authenticate(token) {
       const id = sessions[token];
       if (!id) throw new ApiError(401, 'UNAUTHORIZED', 'A valid Supabase session is required');

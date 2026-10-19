@@ -110,6 +110,6 @@ describe('Phase 35 engineering assessment over HTTP on stored revisions', () => 
     expect((await app.inject({ url: `${mine.root(revision.id)}?verbose=1`, headers: owner })).statusCode).toBe(400);
     expect((await app.inject({ method: 'POST', url: mine.root(revision.id), headers: owner, payload: { cost: { currency: 'INR', components: [] } } })).statusCode).toBe(400);
     const oversized = await app.inject({ method: 'POST', url: mine.root(revision.id), headers: owner, payload: { padding: 'x'.repeat(70_000) } });
-    expect([oversized.statusCode, oversized.json().error.code]).toEqual([400, 'INVALID_REQUEST']); // the app maps 413 to its uniform 400 (app.ts)
+    expect([oversized.statusCode, oversized.json().error.code]).toEqual([400, 'PAYLOAD_TOO_LARGE']); // the app maps 413 to its uniform 400 with its own code (app.ts, INT-B-010)
   }, 60_000);
 });

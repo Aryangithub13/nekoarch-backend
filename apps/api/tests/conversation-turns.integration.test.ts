@@ -415,7 +415,7 @@ describe('Phase 36 conversational turns on PostgreSQL', () => {
       const conversationId = randomUUID(), url = `/api/projects/${projectId}/conversations/${conversationId}/turns`;
       await limited.inject({ method: 'POST', url: `/api/projects/${projectId}/conversations`, headers: owner, payload: { conversationId, baseRevisionId: null } });
       const big = await limited.inject({ method: 'POST', url, headers: owner, payload: { turnId: randomUUID(), expectedVersion: 0, baseRevisionId: null, text: 'x'.repeat(50_000) } });
-      expect([big.statusCode, big.json().error.code]).toEqual([400, 'INVALID_REQUEST']);
+      expect([big.statusCode, big.json().error.code]).toEqual([400, 'PAYLOAD_TOO_LARGE']); // the 413 body limit, with its own code (INT-B-010)
       const long = await limited.inject({ method: 'POST', url, headers: owner, payload: { turnId: randomUUID(), expectedVersion: 0, baseRevisionId: null, text: 'x'.repeat(2001) } });
       expect([long.statusCode, long.json().error.code]).toEqual([400, 'VALIDATION_ERROR']);
       // The oversized body is refused before authentication; the validation failure and one turn use the user's quota of two.

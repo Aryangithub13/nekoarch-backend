@@ -18,7 +18,7 @@ Rate group `generate`; body ≤ 40 960 bytes.
 
 | Status | Code | When |
 |---|---|---|
-| 400 | `VALIDATION_ERROR` / `INVALID_REQUEST` | Schema, unknown field, text > 2 000, body too large |
+| 400 | `VALIDATION_ERROR` / `INVALID_REQUEST` / `PAYLOAD_TOO_LARGE` | Schema, unknown field, text > 2 000; body too large (`PAYLOAD_TOO_LARGE` since audit B INT-B-010) |
 | 409 | `REVISION_CONFLICT` | The project moved past the conversation's base (rebase first) |
 | 409 | `PROPOSAL_CONFLICT` | `expectedVersion` stale, or the conversation is `SUBMITTED` (rebase first) |
 | 409 | `MESSAGE_IN_PROGRESS` / `IDEMPOTENCY_CONFLICT` | Concurrent turn / same `turnId` with a different body |

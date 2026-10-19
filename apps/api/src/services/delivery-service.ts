@@ -27,8 +27,9 @@ export function compatibility(routes: readonly string[]) {
     routeCatalog: { routes: sorted.length, sha256: createHash('sha256').update(sorted.join('\n')).digest('hex') },
     services: SERVICES.map(s => ({ serviceId: s.serviceId, version: s.version, route: s.route })),
     conventions: { errors: 'ApiErrorResponse { error: { code, message, requestId, fieldErrors? } } with stable codes',
-      pagination: 'Keyset: limit and an opaque cursor; nextCursor null at the end',
-      idempotency: 'Idempotency-Key header on durable writes; an identical replay returns the stored response',
+      // INT-B-013 / INT-B-014: say what the routes actually do; the per-route detail is in the API documents.
+      pagination: 'Keyset: mostly limit and an opaque cursor, nextCursor null at the end; BIM lists and job events use after/nextAfter; conversations use a UUID cursor',
+      idempotency: 'Idempotency-Key replays the stored response on writes that keep receipts (listed in the API documents); other writes ignore it',
       concurrency: 'Expected base revision, plan or model hashes; a stale precondition is 409',
       units: 'Integer millimetres in models and manifests; GLB in metres', identity: 'Stable element ids shared by the model, BIM, scene, comments and change sets' },
     media: MEDIA_CAPABILITIES.map(capability => ({ capability, status: MEDIA_STATUS[capability].status })),

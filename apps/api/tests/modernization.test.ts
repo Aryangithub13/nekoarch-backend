@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildApp } from '../src/app.js';
@@ -8,11 +8,13 @@ import type { Backend, Repository } from '../src/lib/repository.js';
 import { CAPABILITIES, MODES } from '../src/workflows/registry.js';
 import { AI_CAPABILITIES } from '../src/ai/orchestration/registry.js';
 import { DISCOVERY_VERSION, MEDIA, SERVICES } from '../src/services/overview-service.js';
+import { SpecialistParamsSchema } from '../src/contracts/specialists.js';
 import { SCENE_COMPILER_VERSION, SceneInputSchema } from '../src/scene3d/contracts.js';
 import { CreateProjectRequestSchema, GenerateRevisionRequestSchema } from '../src/contracts/projects.js';
 import { WorkflowRequestSchema } from '../src/contracts/workflows.js';
-import { CONTRACTS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
+import { CONTRACTS, PATH_PARAMS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
+import { fixturePlan } from '../../../test-support/fixtures.js';
 // Test-only: Ajv 6 (draft-07) is already in the lockfile through the lint toolchain; it independently checks the exported JSON Schema.
 import Ajv from 'ajv';
 
@@ -48,7 +50,8 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
   });
   it('requires a session on every project-scoped route; anonymous access is limited to an explicit allowlist', () => {
     const open = catalog.filter(r => r.anonymous !== 401).map(r => `${r.method} ${r.url}`).sort();
-    const anonymousReads = ['GET /api/capabilities', 'GET /api/plans/:id', 'GET /api/projects/:projectId/public', 'GET /api/regions', 'GET /health/live', 'GET /health/ready'];
+    const anonymousReads = ['GET /api/capabilities', 'GET /api/plans/:id', 'GET /api/projects/:projectId/public', 'GET /api/regions', 'GET /health/live', 'GET /health/ready',
+      'HEAD /health/live', 'HEAD /health/ready'];
     // Phase 5 routes that parse the body before authenticating (an empty body is a 400 before the 401); they still require a session. Finding R06-F1.
     const validateBeforeAuth = ['POST /api/estimates', 'POST /api/plans', 'POST /api/plans/generate', 'PATCH /api/plans/:id'];
     // Phase 31: the signed reference link is its own authorization; anything that is not a valid token is the uniform 404.
@@ -87,6 +90,83 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     expect([...keys].filter(k => !(k in CONTRACTS))).toEqual([]);
     // Every write documents its request body: a JSON contract, or (Phase 31 uploads) the accepted raw media types.
     expect(catalog.filter(r => ['POST', 'PATCH'].includes(r.method) && !CONTRACTS[`${r.method} ${r.url}`]!.body && !CONTRACTS[`${r.method} ${r.url}`]!.rawBody).map(r => r.url)).toEqual([]);
+  });
+  it('INT-B-005: every documented path parameter schema is the one the handler enforces', async () => {
+    // Values drawn from the PUBLISHED parameter schema must pass the handler's own params parsing; a value outside it must be refused for that parameter.
+    const doc = openApiDocument(catalog) as { paths: Record<string, Record<string, { parameters: { name: string; in: string; schema: Record<string, unknown> }[] }>> };
+    const samples = (schema: Record<string, unknown>): string[] => schema.format === 'uuid' ? [randomUUID()] : Array.isArray(schema.enum) ? schema.enum.map(String)
+      : schema.type === 'integer' ? ['1'] : [`bim-${'a'.repeat(40)}`, 'level-1'].filter(v => new RegExp(String(schema.pattern)).test(v)).slice(0, 1);
+    const published = (r: { method: string; url: string }) => Object.fromEntries(doc.paths[r.url.replace(/:([A-Za-z]+)/g, '{$1}')]![r.method.toLowerCase()]!
+      .parameters.filter(p => p.in === 'path').map(p => [p.name, p.schema]));
+    const fieldErrors = async (method: string, url: string) => {
+      const res = await app.inject({ method: method as 'GET', url, headers: { authorization: 'Bearer conformance' }, ...(['GET', 'HEAD', 'DELETE'].includes(method) ? {} : { payload: {} }) });
+      return (res.json() as { error?: { fieldErrors?: Record<string, string[]> } }).error?.fieldErrors ?? {};
+    };
+    let checked = 0;
+    for (const r of catalog.filter(c => c.url.includes(':') && c.method !== 'HEAD')) {
+      const names = [...r.url.matchAll(/:([A-Za-z]+)/g)].map(m => m[1]!), schemas = published(r);
+      expect(Object.keys(schemas).sort(), `${r.method} ${r.url}`).toEqual([...names].sort());
+      const fill = (target: string, value: string) => r.url.replace(/:([A-Za-z]+)/g, (_, name: string) => encodeURIComponent(name === target ? value : samples(schemas[name]!)[0]!));
+      for (const name of names) {
+        const valid = samples(schemas[name]!);
+        expect(valid.length, `${r.method} ${r.url} :${name} has a sample`).toBeGreaterThan(0);
+        for (const value of valid) expect(await fieldErrors(r.method, fill(name, value)), `${r.method} ${r.url} :${name}=${value}`).not.toHaveProperty(name);
+        if (r.method === 'GET' || r.method === 'DELETE') expect(await fieldErrors(r.method, fill(name, 'not~valid')), `${r.method} ${r.url} :${name} refuses a value outside its schema`).toHaveProperty(name);
+        checked++;
+      }
+    }
+    expect(checked).toBeGreaterThan(250);
+    // The three parameters that were wrongly published as UUIDs; the source table must agree with the document.
+    for (const [name, schema] of Object.entries(PATH_PARAMS)) expect(JSON.stringify(jsonSchema(schema)), name).not.toContain('uuid');
+    const param = (path: string, name: string) => Object.values(doc.paths[path]!)[0]!.parameters.find(p => p.name === name)!.schema;
+    expect(param('/api/projects/{projectId}/specialists/{module}/requests', 'module').enum).toEqual(SpecialistParamsSchema.shape.module.options);
+    expect(param('/api/projects/{projectId}/revisions/{revisionId}/documents/schedules/{schedule}/csv', 'schedule')).toHaveProperty('enum');
+    expect(param('/api/projects/{projectId}/revisions/{revisionId}/documents/plan-sheets/{levelId}', 'levelId')).toMatchObject({ type: 'string', pattern: expect.any(String) });
+  }, 120_000);
+  it('INT-B-006: every route that requires a session is documented with bearer security, including the four that validate first', async () => {
+    const doc = openApiDocument(catalog) as { paths: Record<string, Record<string, { security?: unknown }>> };
+    for (const r of catalog) {
+      const op = doc.paths[r.url.replace(/:([A-Za-z]+)/g, '{$1}')]![r.method.toLowerCase()]!;
+      expect([`${r.method} ${r.url}`, 'security' in op]).toEqual([`${r.method} ${r.url}`, r.anonymous === 401 || CONTRACTS[`${r.method} ${r.url}`]!.auth === true]);
+    }
+    // R06-F1 (accepted) keeps their validate-then-authenticate order; a VALID body without a session proves the session requirement that `auth` declares.
+    const valid: Record<string, [string, unknown]> = {
+      'POST /api/estimates': ['/api/estimates', { location: 'Pune', buildingType: 'residential', builtUpAreaSqft: 1200 }],
+      'POST /api/plans': ['/api/plans', { plan: fixturePlan() }], 'POST /api/plans/generate': ['/api/plans/generate', { prompt: '2BHK with open kitchen' }],
+      'PATCH /api/plans/:id': [`/api/plans/${randomUUID()}`, { isPublic: true }] };
+    expect(Object.entries(CONTRACTS).filter(([, op]) => op.auth).map(([key]) => key).sort()).toEqual(Object.keys(valid).sort());
+    for (const [key, [url, payload]] of Object.entries(valid)) {
+      const res = await app.inject({ method: key.split(' ')[0] as 'POST', url, payload: payload as Record<string, unknown> });
+      expect([key, res.statusCode]).toEqual([key, 401]);
+    }
+  });
+  it('INT-B-007: documents every success status a handler can choose', () => {
+    const routesDir = new URL('../src/routes/', import.meta.url);
+    const source = readdirSync(routesDir).map(file => readFileSync(new URL(file, routesDir), 'utf8')).join('\n');
+    const pair = (statuses: (number | string)[]) => statuses.map(String).sort().join('/');
+    const chosen = [...source.matchAll(/code\([^)?]*\?\s*(\d{3})\s*:\s*(\d{3})\s*\)/g)].map(([, a, b]) => pair([a!, b!])).sort();
+    const documented = Object.values(CONTRACTS).filter(op => op.alternatives?.some(a => a.body !== false))
+      .map(op => pair([op.status ?? 200, ...op.alternatives!.map(a => a.status)])).sort();
+    expect(chosen.length).toBeGreaterThan(0);
+    expect(documented).toEqual(chosen);
+    const delivery = (openApiDocument(catalog) as { paths: Record<string, Record<string, { responses: Record<string, unknown> }>> })
+      .paths['/api/projects/{projectId}/revisions/{revisionId}/scene/delivery']!.get!.responses;
+    expect(Object.keys(delivery).sort()).toEqual(['200', '304', 'default']);
+  });
+  it('INT-B-008: no new JSON route ships without a response schema, and the version names the live route catalog', async () => {
+    // Shrink this list as response schemas are exported; a new untyped JSON route fails here.
+    const untyped = ['GET /api/capabilities', 'GET /api/projects/:projectId/workflows', 'GET /api/projects/:projectId/revisions/:revisionId/overview',
+      ...['', '/diff/:otherRevisionId', '/elements', '/elements/:elementId', '/export.json', '/relationships', '/validation'].map(v => `GET /api/projects/:projectId/revisions/:revisionId/bim${v}`),
+      ...['environmental', 'knowledge', 'structural', 'systems'].flatMap(e => [`GET /api/projects/:projectId/revisions/:revisionId/${e}/analyses`,
+        `GET /api/projects/:projectId/revisions/:revisionId/${e}/status`, `POST /api/projects/:projectId/revisions/:revisionId/${e}/validate`]),
+      'GET /api/projects/:projectId/revisions/:revisionId/knowledge/packs', 'GET /api/projects/:projectId/revisions/:revisionId/optimization/status',
+      'GET /api/projects/:projectId/revisions/:revisionId/optimization/studies', 'POST /api/projects/:projectId/revisions/:revisionId/optimization/validate',
+      'GET /api/projects/:projectId/revisions/:revisionId/scene/artifacts', 'GET /api/projects/:projectId/revisions/:revisionId/scene/status',
+      'POST /api/projects/:projectId/revisions/:revisionId/scene/validate'];
+    expect(catalog.filter(r => r.method !== 'HEAD' && !CONTRACTS[`${r.method} ${r.url}`]!.media && !CONTRACTS[`${r.method} ${r.url}`]!.response)
+      .map(r => `${r.method} ${r.url}`).sort()).toEqual(untyped.sort());
+    const live = (await app.inject({ method: 'GET', url: '/api/compatibility', headers: { authorization: 'Bearer conformance' } })).json();
+    expect(openApiDocument(catalog).info.version).toBe(`${live.compatibilityVersion}+${live.routeCatalog.routes}.${String(live.routeCatalog.sha256).slice(0, 12)}`);
   });
   it('R01-G3: the exported JSON Schema accepts and rejects the same payloads as the Zod contracts', () => {
     const ajv = new Ajv({ allErrors: true });

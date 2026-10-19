@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { z, type ZodTypeAny } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ArchitecturalBuildingModelV2Schema, ApiErrorResponseSchema, CreatePlanRequestSchema, CreatePlanResponseSchema, EstimateInputsSchema, EstimateResponseSchema, GetPlanResponseSchema,
@@ -34,26 +35,36 @@ import { AssessmentReportSchema, AssessmentRequestSchema } from '../apps/api/src
 import { ZoneAssessmentReportSchema, ZoneAssessmentRequestSchema, ZonePreflightReportSchema, ZonePreflightRequestSchema } from '../apps/api/src/engineering/zone-contracts.js';
 import { RegenerationReportSchema, RegenerationRequestSchema, RegenerationVerificationReportSchema } from '../apps/api/src/engineering/regeneration-contracts.js';
 import { PartitionReportSchema, PartitionRequestSchema } from '../apps/api/src/engineering/partition-contracts.js';
-import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
+import { AccountUsageSchema, BriefCreateSchema, BriefCurrentSchema, BriefListSchema, BriefVersionParamsSchema, BriefVersionSchema, ContextBundleSchema, EmptyQuerySchema, LibraryEntrySchema,
   LibraryListSchema, LibraryPatchSchema, LibraryQuerySchema, SettingsDocumentSchema, SettingsPatchSchema } from '../apps/api/src/account/contracts.js';
 import { ComputeJobSchema, ComputeQuoteSchema, QuoteRequestSchema, SubmitRequestSchema, SubmitResponseSchema } from '../apps/api/src/compute/contracts.js';
 import { DependencyGraphSchema } from '../apps/api/src/contracts/dependency-graph.js';
 import { ManifestQuerySchema, ProjectManifestSchema } from '../apps/api/src/contracts/project-manifest.js';
-import { SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
+import { SpecialistParamsSchema, SpecialistRequestSchema, SpecialistResultSchema } from '../apps/api/src/contracts/specialists.js';
 import { InstructionRequestSchema, InstructionResolutionSchema } from '../apps/api/src/instructions/contracts.js';
 import { FeasibilityAssessmentSchema, FeasibilityRequestSchema } from '../apps/api/src/feasibility/contracts.js';
 import { CapabilityRegistrySchema, RoutingDecisionSchema, RoutingRequestSchema } from '../apps/api/src/routing/contracts.js';
-import { CompatibilitySchema, DeliveryManifestSchema, DeliveryQuerySchema } from '../apps/api/src/delivery/contracts.js';
+import { COMPATIBILITY_VERSION, CompatibilitySchema, DeliveryManifestSchema, DeliveryQuerySchema } from '../apps/api/src/delivery/contracts.js';
 import { CommentRequestSchema, CommentSchema, MemberRequestSchema, MemberSchema, ReviewRequestSchema, ReviewSchema, RevisionCollaborationSchema, WorkspaceResponseSchema }
   from '../apps/api/src/collaboration/contracts.js';
 import { ChangeSetSchema, ExecuteRequestSchema as IntegrationExecuteSchema, IntegrationExecutionSchema, IntegrationPlanSchema } from '../apps/api/src/contracts/integration.js';
-import { DocumentsManifestSchema, DocumentsQuerySchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
+import { DocumentsManifestSchema, DocumentsQuerySchema, PlanSheetParamsSchema, ScheduleParamsSchema, SchedulesResponseSchema } from '../apps/api/src/contracts/documents.js';
+import { BimElementParamsSchema } from '../apps/api/src/routes/bim.js';
 import { EvidenceCreateRequestSchema, EvidenceDetailSchema, EvidenceListSchema, EvidencePageQuerySchema, EvidenceReadQuerySchema } from '../apps/api/src/contracts/evidence.js';
 import { DesignConceptDetailSchema, DesignConceptListSchema, DesignConceptPageQuerySchema, DesignConceptReadQuerySchema, DesignConceptRequestSchema } from '../apps/api/src/contracts/design-concepts.js';
 import { EmptyBodySchema as JobEmpty, JobDetailSchema, JobEventListSchema, JobEventsQuerySchema, JobListQuerySchema, JobListSchema, JobRequestSchema } from '../apps/api/src/jobs/contracts.js';
 
-/** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet. */
-type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string; rawBody?: readonly string[] };
+/** Route → the Zod schemas its handler parses (request) or returns (response). `null` response = JSON whose schema is not exported yet.
+ * `alternatives`: other success statuses the handler can return (INT-B-007), with the same response schema unless `body` is false. */
+type Alternative = { status: number; description: string; body?: false };
+/** `auth`: a session is required although the anonymous probe cannot see it (INT-B-006): these Phase 5 routes validate the body before they
+ * authenticate (R06-F1, accepted), so an anonymous empty body gets 400. modernization.test.ts proves the 401 with a valid body. */
+type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string; rawBody?: readonly string[]; alternatives?: readonly Alternative[];
+  auth?: true };
+/** Path parameters that are not UUIDs, taken from the routes' own *ParamsSchema (INT-B-005); every other path parameter is a UUID. */
+export const PATH_PARAMS: Record<string, ZodTypeAny> = { elementId: BimElementParamsSchema.shape.elementId, version: BriefVersionParamsSchema.shape.version,
+  module: SpecialistParamsSchema.shape.module, levelId: PlanSheetParamsSchema.shape.levelId, schedule: ScheduleParamsSchema.shape.schedule };
+const replay = (description: string): readonly Alternative[] => [{ status: 200, description }];
 const P = '/api/projects/:projectId', R = `${P}/revisions/:revisionId`, T = `${R}/takeoffs`, C = `${T}/:takeoffId/construction-calculations`, V = `${P}/conversations/:conversationId`;
 const empty = z.object({}).strict(), current = z.object({ require: z.literal('current').optional() }).strict();
 const bimPage = z.object({ limit: z.coerce.number().int().min(1).max(100).default(50), after: z.string().regex(/^bim-[a-f0-9]{40}$/).optional(), kind: BimKindSchema.optional() }).strict();
@@ -63,10 +74,13 @@ const analyses = (root: string, input: ZodTypeAny, detail: ZodTypeAny, read: Zod
   [`GET ${R}/${root}/status`]: { query: empty, response: null } });
 export const CONTRACTS: Record<string, Op> = {
   'GET /health/live': { response: z.object({ status: z.literal('ok') }) }, 'GET /health/ready': { response: z.object({ status: z.enum(['ok', 'unavailable']) }) },
+  // INT-B-028: HEAD health checks answer like GET without a body.
+  'HEAD /health/live': {}, 'HEAD /health/ready': {},
   'GET /api/capabilities': { response: null }, 'GET /api/regions': { response: RegionsResponseSchema },
-  'POST /api/estimates': { body: EstimateInputsSchema, response: EstimateResponseSchema },
-  'POST /api/plans': { body: CreatePlanRequestSchema, response: CreatePlanResponseSchema, status: 201 }, 'POST /api/plans/generate': { body: GeneratePlanRequestSchema, response: CreatePlanResponseSchema, status: 201 },
-  'GET /api/plans/:id': { response: GetPlanResponseSchema }, 'PATCH /api/plans/:id': { body: PatchPlanRequestSchema, response: PatchPlanResponseSchema },
+  'POST /api/estimates': { body: EstimateInputsSchema, response: EstimateResponseSchema, auth: true },
+  'POST /api/plans': { body: CreatePlanRequestSchema, response: CreatePlanResponseSchema, status: 201, auth: true },
+  'POST /api/plans/generate': { body: GeneratePlanRequestSchema, response: CreatePlanResponseSchema, status: 201, auth: true },
+  'GET /api/plans/:id': { response: GetPlanResponseSchema }, 'PATCH /api/plans/:id': { body: PatchPlanRequestSchema, response: PatchPlanResponseSchema, auth: true },
   'POST /api/projects': { body: CreateProjectRequestSchema, response: ProjectDetailSchema, status: 201 }, 'GET /api/projects': { query: PageQuerySchema, response: ProjectListSchema },
   [`GET ${P}`]: { query: ProjectReadQuerySchema, response: ProjectDetailSchema }, [`PATCH ${P}`]: { body: UpdateProjectRequestSchema, response: ProjectDetailSchema },
   [`GET ${P}/public`]: { response: PublicProjectSchema },
@@ -85,7 +99,7 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${R}/evidence-packages`]: { query: EvidencePageQuerySchema, response: EvidenceListSchema },
   [`GET ${R}/evidence-packages/:packageId`]: { query: EvidenceReadQuerySchema, response: EvidenceDetailSchema },
   // Phase 39: 201 for a new set; an identical request replays the stored set with 200 (`replayed: true`).
-  [`POST ${R}/design-concepts`]: { body: DesignConceptRequestSchema, response: DesignConceptDetailSchema, status: 201 },
+  [`POST ${R}/design-concepts`]: { body: DesignConceptRequestSchema, response: DesignConceptDetailSchema, status: 201, alternatives: replay('An identical request replays the stored set (`replayed: true`)') },
   [`GET ${R}/design-concepts`]: { query: DesignConceptPageQuerySchema, response: DesignConceptListSchema },
   [`GET ${R}/design-concepts/:conceptSetId`]: { query: DesignConceptReadQuerySchema, response: DesignConceptDetailSchema },
   [`POST ${P}/workflows/plan`]: { body: WorkflowRequestSchema, response: z.object({ projectId: z.string().uuid(), sourceRevisionId: z.string().uuid().nullable(), inputFingerprint: z.string(), plan: WorkflowPlanSchema }).strict() },
@@ -134,10 +148,10 @@ export const CONTRACTS: Record<string, Op> = {
   [`GET ${R}/appearance`]: { query: EmptySchema, response: AppearanceResponseSchema },
   [`GET ${R}/appearance/glb`]: { query: EmptySchema, media: 'model/gltf-binary' },
   // B39 S1: 201 when the request stored a revision or artifact; a typed refusal or a replay is 200 with the same schema.
-  [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201 },
+  [`POST ${P}/specialists/:module/requests`]: { body: SpecialistRequestSchema, response: SpecialistResultSchema, status: 201, alternatives: replay('A typed refusal, or a replay of an earlier request') },
   // B40 S1: a plan preview stores nothing (200); an execution that wrote anything is 201, a refusal 200 with the same schema.
   [`POST ${P}/integration/plans`]: { body: ChangeSetSchema, response: IntegrationPlanSchema, status: 200 },
-  [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201 },
+  [`POST ${P}/integration/plans/execute`]: { body: IntegrationExecuteSchema, response: IntegrationExecutionSchema, status: 201, alternatives: replay('A refusal: nothing was written') },
   // B41 S1: deterministic instruction resolution (read only).
   [`POST ${R}/instructions/resolve`]: { body: InstructionRequestSchema, response: InstructionResolutionSchema },
   // B42 S1: feasibility assessment of a declared ambition (read only).
@@ -153,11 +167,12 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${P}/collaboration/revisions/:revisionId/comments`]: { body: CommentRequestSchema, response: CommentSchema, status: 201 },
   [`POST ${P}/collaboration/revisions/:revisionId/reviews`]: { body: ReviewRequestSchema, response: ReviewSchema, status: 201 },
   // B45 S1: scene delivery manifest (ETag; 304 on If-None-Match) and the compatibility package.
-  [`GET ${R}/scene/delivery`]: { query: DeliveryQuerySchema, response: DeliveryManifestSchema },
+  [`GET ${R}/scene/delivery`]: { query: DeliveryQuerySchema, response: DeliveryManifestSchema, alternatives: [{ status: 304, description: 'Not modified (If-None-Match)', body: false }] },
   ['GET /api/compatibility']: { query: empty, response: CompatibilitySchema },
   // Phase 31 reference ingestion: uploads are raw bodies of a supported media type; downloads are the stored bytes.
   [`POST ${P}/references/validate`]: { query: empty, rawBody: REFERENCE_MEDIA_TYPES, response: ValidateResponseSchema },
-  [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201 },
+  [`POST ${P}/references`]: { query: ReferenceUploadQuerySchema, rawBody: REFERENCE_MEDIA_TYPES, response: ReferenceDetailSchema, status: 201,
+    alternatives: replay('The same bytes are already stored for this project (`deduplicated: true`)') },
   [`GET ${P}/references`]: { query: ReferenceListQuerySchema, response: ReferenceListSchema }, [`GET ${P}/references/usage`]: { query: empty, response: ReferenceUsageSchema },
   [`GET ${P}/references/:referenceId`]: { query: empty, response: ReferenceDetailSchema }, [`PATCH ${P}/references/:referenceId`]: { body: ReferenceUpdateSchema, response: ReferenceDetailSchema },
   [`DELETE ${P}/references/:referenceId`]: { response: ReferenceDetailSchema }, [`GET ${P}/references/:referenceId/content`]: { query: empty, media: 'application/octet-stream' },
@@ -165,9 +180,10 @@ export const CONTRACTS: Record<string, Op> = {
   'GET /api/reference-downloads': { query: DownloadTokenSchema, media: 'application/octet-stream' },
   // Phase 32 durable jobs.
   // Phase 36: compute gateway (quote → consent → durable job; polling).
-  [`POST ${P}/compute/quotes`]: { body: QuoteRequestSchema, response: ComputeQuoteSchema }, [`POST ${P}/compute/jobs`]: { body: SubmitRequestSchema, response: SubmitResponseSchema, status: 202 },
+  [`POST ${P}/compute/quotes`]: { body: QuoteRequestSchema, response: ComputeQuoteSchema },
+  [`POST ${P}/compute/jobs`]: { body: SubmitRequestSchema, response: SubmitResponseSchema, status: 202, alternatives: replay('A replay of an earlier submission (`replayed: true`)') },
   [`GET ${P}/compute/jobs/:jobId`]: { query: JobEmpty, response: ComputeJobSchema },
-  [`POST ${P}/jobs`]: { body: JobRequestSchema, response: JobDetailSchema, status: 202 }, [`GET ${P}/jobs`]: { query: JobListQuerySchema, response: JobListSchema },
+  [`POST ${P}/jobs`]: { body: JobRequestSchema, response: JobDetailSchema, status: 202, alternatives: replay('An identical active job already exists (`deduplicated: true`)') }, [`GET ${P}/jobs`]: { query: JobListQuerySchema, response: JobListSchema },
   [`GET ${P}/jobs/:jobId`]: { query: JobEmpty, response: JobDetailSchema }, [`GET ${P}/jobs/:jobId/events`]: { query: JobEventsQuerySchema, response: JobEventListSchema },
   [`POST ${P}/jobs/:jobId/cancel`]: { body: JobEmpty, response: JobDetailSchema }, [`POST ${P}/jobs/:jobId/retry`]: { body: JobEmpty, response: JobDetailSchema },
   // Phase 33 account, library, brief and context.
@@ -209,6 +225,10 @@ const referenced = (schema: ZodTypeAny) => {
   return root;
 };
 
+/** The route-catalog hash `GET /api/compatibility` serves (HEAD is implied by GET), so a client can match this document to a running API. */
+export const routeCatalogHash = (routes: { method: string; url: string }[]) =>
+  createHash('sha256').update([...new Set(routes.filter(r => r.method !== 'HEAD').map(r => `${r.method} ${r.url}`))].sort().join('\n')).digest('hex');
+
 /** OpenAPI 3.0 document from the live route table plus CONTRACTS; nothing is hand-written per route beyond the schema mapping. */
 export function openApiDocument(routes: { method: string; url: string; anonymous: number }[]) {
   const paths: Record<string, Record<string, unknown>> = {};
@@ -216,20 +236,23 @@ export function openApiDocument(routes: { method: string; url: string; anonymous
     effectStrategy: 'input', removeAdditionalStrategy: 'strict' }) as { schemas: Record<string, unknown> };
   for (const r of routes) {
     const op = CONTRACTS[`${r.method} ${r.url}`] ?? {}, path = r.url.replace(/:([A-Za-z]+)/g, '{$1}');
-    const params = [...r.url.matchAll(/:([A-Za-z]+)/g)].map(([, name]) => ({ name, in: 'path', required: true,
-      schema: name === 'elementId' ? { type: 'string', pattern: '^bim-[a-f0-9]{40}$' } : name === 'version' ? { type: 'integer', minimum: 1 } : { type: 'string', format: 'uuid' } }));
+    const params = [...r.url.matchAll(/:([A-Za-z]+)/g)].map(([, name]) => ({ name, in: 'path', required: true, schema: jsonSchema(PATH_PARAMS[name!] ?? z.string().uuid()) }));
     const query = op.query ? Object.entries((jsonSchema(op.query).properties ?? {}) as Record<string, unknown>).map(([name, schema]) =>
       ({ name, in: 'query', required: ((jsonSchema(op.query!).required ?? []) as string[]).includes(name), schema })) : []; // query params are small: inline
-    const ok = op.media ? { description: 'Binary', content: { [op.media]: { schema: { type: 'string', format: 'binary' } } } }
-      : op.response ? { description: 'Success', content: { 'application/json': { schema: referenced(op.response) } } }
-        : { description: 'JSON success response; schema not exported yet (see route source)' };
+    const ok = r.method === 'HEAD' ? { description: 'The GET response headers, without a body' }
+      : op.media ? { description: 'Binary', content: { [op.media]: { schema: { type: 'string', format: 'binary' } } } }
+        : op.response ? { description: 'Success', content: { 'application/json': { schema: referenced(op.response) } } }
+          : { description: 'JSON success response; schema not exported yet (see route source)' };
+    const alternatives = Object.fromEntries((op.alternatives ?? []).map(a => [String(a.status), a.body === false ? { description: a.description } : { ...ok, description: a.description }]));
     (paths[path] ??= {})[r.method.toLowerCase()] = { operationId: `${r.method.toLowerCase()} ${r.url}`,
-      ...(r.anonymous === 401 ? { security: [{ bearer: [] }] } : {}), parameters: [...params, ...query],
+      ...(r.anonymous === 401 || op.auth ? { security: [{ bearer: [] }] } : {}), parameters: [...params, ...query],
       ...(op.body ? { requestBody: { required: true, content: { 'application/json': { schema: referenced(op.body) } } } } : {}),
       ...(op.rawBody ? { requestBody: { required: true, content: Object.fromEntries(op.rawBody.map(m => [m, { schema: { type: 'string', format: 'binary' } }])) } } : {}),
-      responses: { [String(op.status ?? 200)]: ok, ...(op.media === 'model/gltf-binary' || op.media === 'application/octet-stream' ? { 304: { description: 'Not modified (If-None-Match)' } } : {}),
+      responses: { [String(op.status ?? 200)]: ok, ...alternatives, ...(op.media === 'model/gltf-binary' || op.media === 'application/octet-stream' ? { 304: { description: 'Not modified (If-None-Match)' } } : {}),
         default: { description: 'Typed error', content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } } } } };
   }
-  return { openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: 'modernization-phases-1-29' },
+  // INT-B-008: the version names the compatibility package and the exact route catalog, as GET /api/compatibility reports them.
+  const catalog = routes.filter(r => r.method !== 'HEAD');
+  return { openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: `${COMPATIBILITY_VERSION}+${catalog.length}.${routeCatalogHash(catalog).slice(0, 12)}` },
     components: { securitySchemes: { bearer: { type: 'http', scheme: 'bearer', description: 'Supabase session access token' } }, schemas }, paths };
 }

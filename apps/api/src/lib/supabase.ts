@@ -188,6 +188,19 @@ export function createSupabaseBackend(env: Env): Backend {
         .abortSignal(AbortSignal.timeout(env.READINESS_TIMEOUT_MS));
       if (error) databaseError(error);
     },
+    async schemaVersion() {
+      const { data, error } = await authClient.rpc('schema_version').abortSignal(AbortSignal.timeout(env.READINESS_TIMEOUT_MS));
+      // No such function (PostgREST PGRST202, PostgreSQL 42883): the database predates 0032.
+      if (error?.code === 'PGRST202' || error?.code === '42883') return 0;
+      if (error) databaseError(error);
+      return z.number().int().parse(data);
+    },
+    async commitKeyMatches(probe, signature) {
+      const { data, error } = await authClient.rpc('commit_key_matches', { p_probe: probe, p_signature: signature })
+        .abortSignal(AbortSignal.timeout(env.READINESS_TIMEOUT_MS));
+      if (error) databaseError(error);
+      return z.boolean().parse(data);
+    },
     async authenticate(token) {
       const { data, error } = await authClient.auth.getUser(token);
       if (error && (error.status === undefined || error.status === 0 || error.status >= 500)) throw new ApiError(503, 'AUTH_UNAVAILABLE', 'Authentication is temporarily unavailable');

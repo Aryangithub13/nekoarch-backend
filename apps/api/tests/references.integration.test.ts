@@ -88,7 +88,7 @@ describe('Phase 31 reference ingestion on PostgreSQL', () => {
     }
     expect((await app.inject({ method: 'POST', url: `${root}?purpose=SKETCH`, headers: owner, payload: { not: 'a file' } })).statusCode).toBe(415);
     const tooLarge = await upload(root, Buffer.alloc(REFERENCE_LIMITS.maxBytes + 1), 'image/png');
-    expect([tooLarge.statusCode, tooLarge.json().error.code]).toEqual([400, 'INVALID_REQUEST']);
+    expect([tooLarge.statusCode, tooLarge.json().error.code]).toEqual([400, 'PAYLOAD_TOO_LARGE']);
   });
 
   it('validate inspects without storing or auditing anything', async () => {
