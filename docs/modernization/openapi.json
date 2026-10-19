@@ -25439,6 +25439,18 @@
            ],
            "additionalProperties": false
           },
+          "openapi": {
+           "type": "object",
+           "properties": {
+            "sha256": {
+             "$ref": "#/components/properties/routeCatalog/properties/sha256"
+            }
+           },
+           "required": [
+            "sha256"
+           ],
+           "additionalProperties": false
+          },
           "services": {
            "type": "array",
            "items": {
@@ -25570,6 +25582,7 @@
          "required": [
           "compatibilityVersion",
           "routeCatalog",
+          "openapi",
           "services",
           "conventions",
           "media",

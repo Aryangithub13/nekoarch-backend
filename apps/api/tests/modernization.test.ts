@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
@@ -7,6 +7,7 @@ import { ApiError } from '../src/lib/errors.js';
 import type { Backend, Repository } from '../src/lib/repository.js';
 import { CAPABILITIES, MODES } from '../src/workflows/registry.js';
 import { AI_CAPABILITIES } from '../src/ai/orchestration/registry.js';
+import { OPENAPI_SHA256 } from '../src/delivery/openapi-hash.js';
 import { DISCOVERY_VERSION, MEDIA, SERVICES } from '../src/services/overview-service.js';
 import { SpecialistParamsSchema } from '../src/contracts/specialists.js';
 import { SCENE_COMPILER_VERSION, SceneInputSchema } from '../src/scene3d/contracts.js';
@@ -20,6 +21,7 @@ import Ajv from 'ajv';
 
 /** Source-derived route catalog (docs/modernization/api-routes.json). Regenerate with UPDATE_ROUTE_CATALOG=1 after an intentional API change. */
 const CATALOG = new URL('../../../docs/modernization/api-routes.json', import.meta.url), OPENAPI = new URL('../../../docs/modernization/openapi.json', import.meta.url);
+const OPENAPI_HASH = new URL('../src/delivery/openapi-hash.ts', import.meta.url);
 const notFound = () => { throw new ApiError(404, 'NOT_FOUND', 'Resource not found'); };
 const repository = new Proxy({}, { get: () => async () => notFound() }) as Repository;
 const backend: Backend = { authenticate: async () => ({ id: randomUUID() }), repository: () => repository, ready: async () => undefined };
@@ -40,7 +42,9 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     }
     if (process.env.UPDATE_ROUTE_CATALOG === '1') {
       writeFileSync(CATALOG, JSON.stringify(catalog, null, 1) + '\n');
-      writeFileSync(OPENAPI, JSON.stringify(openApiDocument(catalog), null, 1) + '\n');
+      const document = JSON.stringify(openApiDocument(catalog), null, 1) + '\n';
+      writeFileSync(OPENAPI, document);
+      writeFileSync(OPENAPI_HASH, readFileSync(OPENAPI_HASH, 'utf8').replace(/'[a-f0-9]{64}'/, `'${createHash('sha256').update(document).digest('hex')}'`));
     }
   });
   afterAll(async () => { await app.close(); });
@@ -167,6 +171,13 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
       .map(r => `${r.method} ${r.url}`).sort()).toEqual(untyped.sort());
     const live = (await app.inject({ method: 'GET', url: '/api/compatibility', headers: { authorization: 'Bearer conformance' } })).json();
     expect(openApiDocument(catalog).info.version).toBe(`${live.compatibilityVersion}+${live.routeCatalog.routes}.${String(live.routeCatalog.sha256).slice(0, 12)}`);
+  });
+  it('INT-B-022: /api/compatibility publishes the sha256 of the checked-in OpenAPI document, so a schema change is visible, not only a route change', async () => {
+    const document = readFileSync(OPENAPI, 'utf8');
+    expect(document).toBe(JSON.stringify(openApiDocument(catalog), null, 1) + '\n');
+    expect(OPENAPI_SHA256).toBe(createHash('sha256').update(document).digest('hex'));
+    const live = (await app.inject({ method: 'GET', url: '/api/compatibility', headers: { authorization: 'Bearer conformance' } })).json();
+    expect(live.openapi).toEqual({ sha256: OPENAPI_SHA256 });
   });
   it('R01-G3: the exported JSON Schema accepts and rejects the same payloads as the Zod contracts', () => {
     const ajv = new Ajv({ allErrors: true });
