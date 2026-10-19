@@ -17,9 +17,11 @@ import { costAcceptance,costSetup } from '../../../test-support/cost-acceptance.
 import { constructionAcceptance } from '../../../test-support/construction-acceptance.js';
 import { takeoffAcceptance } from '../../../test-support/takeoff-acceptance.js';
 import { projectAcceptance } from '../../../test-support/project-acceptance.js';
-import { authored, requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
+import { authored, generated, requirements } from '../../../packages/blueprint-qa/tests/fixtures.js';
+import { png } from '../../../test-support/reference-fixtures.js';
 import { frameInput } from '../../../test-support/structural-fixtures.js';
 import { existsSync } from 'node:fs';
+import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -184,7 +186,8 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
         for (const row of rows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
       }
       // B44 comments and reviews (0030) are immutable history likewise: a cascade from the project would hit their immutability triggers.
-      for (const table of ['project_revision_comments', 'project_revision_reviews'] as const) {
+      // B31 references are retained as tombstones (reference_guard refuses their deletion).
+      for (const table of ['project_revision_comments', 'project_revision_reviews', 'project_references'] as const) {
         const rows = await admin.from(table).select('project_id').in('project_id', ownedIds);
         if (rows.error) failures.push(`read protected ${table} projects`);
         for (const row of rows.data ?? []) protectedIds.add(row.project_id);
@@ -843,6 +846,123 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
     expect(stored.error).toBeNull(); expect(stored.data).toEqual([{ id: first.json().id }]);
     expect((await app.inject({ url: `/api/projects/${id}/collaboration`, headers: owner.headers })).json().revisionsTruncated).toBe(false);
   }, 120_000);
+
+  // Audit B INT-B-024: route families whose production adapter path had never run against Supabase (real GoTrue JWTs, PostgREST, RLS).
+  it('B31 references, B33 settings and library, brief and context through actual JWT and PostgREST: owner-only, signed download link, versioned writes', async () => {
+    if (!app || !owner || !other) throw new Error('Local setup incomplete');
+    const call = (who: Principal | null, method: 'GET' | 'POST' | 'PATCH', url: string, payload?: unknown, headers: Record<string, string> = {}) =>
+      app!.inject({ method, url, headers: { ...(who?.headers ?? {}), ...headers }, ...(payload === undefined ? {} : { payload: payload as string }) });
+    const p = await call(owner, 'POST', '/api/projects', { title: 'B31 live villa' });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id as string;
+    const generatedRevision = await call(owner, 'POST', `/api/projects/${id}/revisions/generate`, { requirements: parametricInput(true) });
+    expect(generatedRevision.statusCode, generatedRevision.body.slice(0, 300)).toBe(201);
+    // B31: raw upload, list, content, signed download link (anonymous, token-authorized), and owner-only reads.
+    const bytes = png({ width: 7 });
+    const up = await call(owner, 'POST', `/api/projects/${id}/references?purpose=SITE_PHOTO`, bytes, { 'content-type': 'image/png' });
+    expect(up.statusCode, up.body.slice(0, 300)).toBe(201);
+    const ref = up.json();
+    expect([ref.status, ref.mediaType, ref.deduplicated]).toEqual(['ACTIVE', 'image/png', false]);
+    expect((await call(owner, 'POST', `/api/projects/${id}/references?purpose=SITE_PHOTO`, bytes, { 'content-type': 'image/png' })).json().deduplicated).toBe(true);
+    expect((await call(owner, 'GET', `/api/projects/${id}/references`)).json().items.map((r: { id: string }) => r.id)).toEqual([ref.id]);
+    const content = await call(owner, 'GET', `/api/projects/${id}/references/${ref.id}/content`);
+    expect(content.statusCode).toBe(200);
+    expect(createHash('sha256').update(content.rawPayload).digest('hex')).toBe(ref.storedSha256);
+    const link = await call(owner, 'POST', `/api/projects/${id}/references/${ref.id}/download-links`, { expiresInSeconds: 120 });
+    expect(link.statusCode, link.body).toBe(201);
+    const download = await call(null, 'GET', link.json().url);
+    expect(download.statusCode).toBe(200);
+    expect(createHash('sha256').update(download.rawPayload).digest('hex')).toBe(ref.storedSha256);
+    expectFailure(await call(null, 'GET', '/api/reference-downloads?token=forged'), 404);
+    expectFailure(await call(other, 'GET', `/api/projects/${id}/references/${ref.id}`), 404);
+    const direct = await other.client.from('project_references').select('id').eq('project_id', id);
+    expect(direct.error).toBeNull(); expect(direct.data).toEqual([]);
+    // B33 settings: optimistic versioning per user.
+    const settings = await call(owner, 'GET', '/api/me/settings');
+    expect(settings.statusCode, settings.body).toBe(200);
+    const patched = await call(owner, 'PATCH', '/api/me/settings', { expectedVersion: settings.json().version, settings: { units: 'IMPERIAL' } });
+    expect(patched.statusCode, patched.body).toBe(200); expect(patched.json().isDefault).toBe(false);
+    expectFailure(await call(owner, 'PATCH', '/api/me/settings', { expectedVersion: settings.json().version, settings: { units: 'METRIC' } }), 409);
+    expect((await call(other, 'GET', '/api/me/settings')).json().isDefault).toBe(true);
+    expect((await call(owner, 'GET', '/api/me/usage')).statusCode).toBe(200);
+    // Library: star and tag, then search; another user sees nothing.
+    expect((await call(owner, 'PATCH', `/api/projects/${id}/library`, { starred: true, tags: ['live-b33'] })).json()).toMatchObject({ projectId: id, starred: true, tags: ['live-b33'] });
+    expect((await call(owner, 'GET', '/api/library/projects?tag=live-b33&status=ALL')).json().items.map((i: { title: string }) => i.title)).toEqual(['B31 live villa']);
+    expect((await call(other, 'GET', '/api/library/projects?tag=live-b33&status=ALL')).json().items).toEqual([]);
+    // Brief: versioned, citing the stored reference; context binds the current revision.
+    const brief = await call(owner, 'POST', `/api/projects/${id}/brief/versions`, { expectedVersion: 0, brief: { summary: '3BHK for a family of four', referenceIds: [ref.id] } });
+    expect(brief.statusCode, brief.body).toBe(201); expect(brief.json().version).toBe(1);
+    expectFailure(await call(owner, 'POST', `/api/projects/${id}/brief/versions`, { expectedVersion: 0, brief: { summary: 'stale' } }), 409);
+    expect((await call(owner, 'GET', `/api/projects/${id}/brief`)).json().version).toBe(1);
+    const context = await call(owner, 'GET', `/api/projects/${id}/context`);
+    expect(context.statusCode, context.body.slice(0, 300)).toBe(200);
+    expect(context.json()).toMatchObject({ contextVersion: 'project-context-v1', projectId: id, currentRevision: { id: generatedRevision.json().revision.id } });
+    expectFailure(await call(other, 'GET', `/api/projects/${id}/context`), 404);
+  }, 180_000);
+
+  it('B35, B37, B38, B41-B43, B45 and conversation turns through actual JWT and PostgREST: read-only derivations, scene delivery, owner-only', async () => {
+    if (!app || !owner || !other) throw new Error('Local setup incomplete');
+    const call = (who: Principal, method: 'GET' | 'POST', url: string, payload?: unknown, headers: Record<string, string> = {}) =>
+      app!.inject({ method, url, headers: { ...who.headers, ...headers }, ...(payload === undefined ? {} : { payload: payload as string }) });
+    const p = await call(owner, 'POST', '/api/projects', { title: 'B35-B45 live' });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id as string;
+    const g = await call(owner, 'POST', `/api/projects/${id}/revisions/generate`, { requirements: parametricInput(true) });
+    expect(g.statusCode, g.body.slice(0, 300)).toBe(201); const rev = g.json().revision; const base = `/api/projects/${id}/revisions/${rev.id}`;
+    // B38 documents: the manifest's hrefs serve exactly the hashed content.
+    const docs = await call(owner, 'GET', `${base}/documents`);
+    expect(docs.statusCode, docs.body.slice(0, 300)).toBe(200);
+    expect(docs.json()).toMatchObject({ documentsVersion: 'construction-documents-v1', binding: { projectId: id, revisionId: rev.id }, freshness: { documentStatus: 'CURRENT_REVISION' } });
+    for (const d of docs.json().documents as { href: string; contentHash: string }[]) {
+      const body = await call(owner, 'GET', d.href);
+      expect(body.statusCode, d.href).toBe(200);
+      expect(createHash('sha256').update(body.rawPayload).digest('hex'), d.href).toBe(d.contentHash);
+    }
+    expect((await call(owner, 'GET', `${base}/documents/schedules/rooms/csv`)).statusCode).toBe(200);
+    expectFailure(await call(other, 'GET', `${base}/documents`), 404);
+    // B37 dependency graph and B35 engineering assessment: derived on read, bound to this revision.
+    const graph = await call(owner, 'GET', `${base}/dependency-graph`);
+    expect(graph.statusCode, graph.body.slice(0, 300)).toBe(200);
+    expect(graph.json()).toMatchObject({ graphVersion: 'dependency-graph-v1', inputIdentity: { projectId: id, revisionId: rev.id } });
+    const assessment = await call(owner, 'GET', `${base}/engineering-assessment`);
+    expect(assessment.statusCode, assessment.body.slice(0, 300)).toBe(200);
+    expect(assessment.json()).toMatchObject({ projectId: id, revisionId: rev.id, claims: { structuralSafety: 'NOT_CLAIMED' } });
+    expectFailure(await call(other, 'GET', `${base}/engineering-assessment`), 404);
+    // B45: compile a scene, then deliver it with a revalidating ETag.
+    expectFailure(await call(owner, 'GET', `${base}/scene/delivery`), 409);
+    const scene = await call(owner, 'POST', `${base}/scene/artifacts`, {});
+    expect(scene.statusCode, scene.body.slice(0, 300)).toBe(201);
+    const delivery = await call(owner, 'GET', `${base}/scene/delivery`);
+    expect(delivery.statusCode, delivery.body.slice(0, 300)).toBe(200);
+    expect(delivery.json()).toMatchObject({ revisionCurrency: 'CURRENT', artifact: { artifactId: scene.json().id } });
+    expect((await call(owner, 'GET', `${base}/scene/delivery`, undefined, { 'if-none-match': String(delivery.headers.etag) })).statusCode).toBe(304);
+    expectFailure(await call(other, 'GET', `${base}/scene/delivery`), 404);
+    // B42 feasibility and B43 routing: advisory, store nothing.
+    const feasibility = await call(owner, 'POST', `/api/projects/${id}/feasibility/assessments`, { text: 'A floating 40 storey glass tower' });
+    expect(feasibility.statusCode, feasibility.body.slice(0, 300)).toBe(200); expect(feasibility.json().status).toBe('ALTERNATIVES_PROPOSED');
+    expect((await call(owner, 'GET', '/api/routing/capabilities')).statusCode).toBe(200);
+    const routing = await call(owner, 'POST', `/api/projects/${id}/routing/decisions`, { targetScopes: ['FACADE_APPEARANCE', 'INTERIOR_RENDER'] });
+    expect(routing.statusCode, routing.body.slice(0, 300)).toBe(200);
+    expect(routing.json().refused.map((r: { scope: string }) => r.scope)).toEqual(['INTERIOR_RENDER']);
+    expectFailure(await call(other, 'POST', `/api/projects/${id}/routing/decisions`, { targetScopes: ['FACADE_APPEARANCE'] }), 404);
+    // Conversation turns on the generated revision: deterministic interpretation, no provider configured.
+    const conversationId = randomUUID();
+    const conversation = await call(owner, 'POST', `/api/projects/${id}/conversations`, { conversationId, baseRevisionId: rev.id });
+    expect(conversation.statusCode, conversation.body.slice(0, 300)).toBe(200);
+    const turn = await call(owner, 'POST', `/api/projects/${id}/conversations/${conversationId}/turns`, { turnId: randomUUID(),
+      expectedVersion: conversation.json().state.version, baseRevisionId: conversation.json().state.baseRevisionId, text: 'Keep the staircase exactly as it is.' });
+    expect(turn.statusCode, turn.body.slice(0, 300)).toBe(200);
+    expect(turn.json().turn).toMatchObject({ classification: 'CONSTRAINT', status: 'RECORDED' });
+    expectFailure(await call(other, 'POST', `/api/projects/${id}/conversations/${conversationId}/turns`, { turnId: randomUUID(),
+      expectedVersion: turn.json().conversation.state.version, baseRevisionId: rev.id, text: 'Add a floor' }), 404);
+    // B41 instructions on a supplied model: resolution is read-only and deterministic.
+    const supplied = await call(owner, 'POST', `/api/projects/${id}/revisions`, { model: generated(), baseRevisionId: rev.id });
+    expect(supplied.statusCode, supplied.body.slice(0, 300)).toBe(201);
+    const resolveUrl = `/api/projects/${id}/revisions/${supplied.json().revision.id}/instructions/resolve`;
+    const resolved = await call(owner, 'POST', resolveUrl, { text: 'Change only the kitchen floor to stone tile' });
+    expect(resolved.statusCode, resolved.body.slice(0, 300)).toBe(200);
+    expect(resolved.json().status).toBe('RESOLVED');
+    expect((await call(owner, 'POST', resolveUrl, { text: 'Change only the kitchen floor to stone tile' })).json()).toEqual(resolved.json());
+    expectFailure(await call(other, 'POST', resolveUrl, { text: 'Change only the kitchen floor to stone tile' }), 404);
+  }, 300_000);
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {
     if (!app || !owner || !other || !publicClient || !admin) throw new Error('Local setup incomplete');
