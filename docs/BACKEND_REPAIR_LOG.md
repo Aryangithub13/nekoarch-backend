@@ -87,7 +87,7 @@ Suffix `a`/`b` splits a finding into the part repaired here and the part that re
 | 10 | Hosted ledger, hosted Auth, staging | — | — | — | **BLOCKED**: no credentials or authorisation |
 | 11 | CI on PR #35 | GitHub Actions | `d35a5da` | **1** | run 39212211328: **container smoke failed** (L-22); backend jobs superseded by the next push. `supabase-acceptance` skipped (dispatch only) |
 | 11a | Container smoke, local | `docker build` (session CA overlay on the build stage only; runtime stage as committed), then `node scripts/smoke-container.mjs designflow-api:ci` | `d35a5da` script vs `8e7b536` | 1 → **0** | committed script: "Production container smoke test failed"; fixed: non-root, liveness 200, failed-dependency readiness 503, SIGTERM exit 0 |
-| 11b | CI on PR #35 after the fix | GitHub Actions | `8e7b536` | pending at time of writing | the subscription on PR #35 reports it; see the PR checks |
+| 11b | CI on PR #35 after the fix | GitHub Actions run 39213021503 | `8e7b536` | **0** | **backend (Node 22.22.0): 132 files, 3,206/3,206 passed** (733 s); backend (Node 22.23.3): success; **container smoke: success**; `supabase-acceptance` skipped (dispatch only). PR `mergeable_state: clean` |
 | 12 | Diff and Git review | `git diff 6cf8050 HEAD`; secret-pattern scan of the diff | `3f2e588` | — | 0 secret matches; no unrelated files; `.env` (temporary, git-ignored) deleted |
 
 ---
