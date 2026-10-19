@@ -25375,7 +25375,1747 @@
     ],
     "additionalProperties": false
    }
-  }
+  },
+  "x-error-codes": [
+   {
+    "code": "ACCOUNT_QUOTA_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "ACCOUNT_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "ACTION_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "ACTION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "ACTION_NOT_PENDING",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "ACTION_OPERATION_REQUIRED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ALL_PROVIDERS_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "ASSESSMENT_EVIDENCE_NOT_FOUND",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "AUTH_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "BASE_REVISION_SUPERSEDED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "BIM_ELEMENT_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "BIM_INVALID_MODEL",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BIM_INVALID_SOURCE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BIM_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BIM_SOURCE_MISMATCH",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BIM_UNSUPPORTED_EXPORT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BIM_UNSUPPORTED_MODEL",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BLUEPRINT_INVARIANT_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BLUEPRINT_QA_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BRIEF_REFERENCE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BRIEF_VERSION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "BUILDING_SYSTEMS_INPUT_INCOMPLETE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BUILDING_SYSTEMS_MODEL_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BUILDING_SYSTEMS_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "BUILDING_SYSTEMS_SOURCE_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CAPABILITY_NOT_IMPLEMENTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CAPABILITY_UNSUPPORTED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "COLLABORATION_FORBIDDEN",
+    "statuses": [
+     403
+    ]
+   },
+   {
+    "code": "COLLABORATION_LIMIT_REACHED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COLLABORATION_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "COMMENT_ELEMENT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COMMENT_PARENT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COMMIT_ATTESTATION_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "COMPUTE_CONSENT_MISMATCH",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COMPUTE_JOB_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "COMPUTE_KIND_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COMPUTE_LIMIT_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "COMPUTE_PLACEMENT_DISABLED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COMPUTE_QUOTE_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COMPUTE_QUOTE_EXPIRED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COMPUTE_QUOTE_INVALID",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COMPUTE_QUOTE_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "COMPUTE_REQUEST_TOO_LARGE",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "COMPUTE_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_CALCULATION_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_CALCULATION_NOT_ACCEPTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_FAILED",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_RECIPE_NOT_FOUND",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_SPEC_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONSTRUCTION_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "CONVERSATION_LIMIT",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "CONVERSATION_MEMORY_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "CONVERSATION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "CONVERSATIONS_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "COST_CALCULATION_FAILED",
+    "statuses": [
+     422,
+     500
+    ]
+   },
+   {
+    "code": "COST_ESTIMATE_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "COST_POLICY_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COST_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "COST_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "DATABASE_ERROR",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "DEPENDENCY_GRAPH_CYCLE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DEPENDENCY_GRAPH_LIMIT_EXCEEDED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DEPENDENCY_GRAPH_READ_INCONSISTENT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_INPUT_TOO_LARGE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_NO_EXTERIOR_WALLS",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_NO_SPACES",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_PROVIDER_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_QUOTA_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_READ_INCONSISTENT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_REFERENCE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_SOURCE_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_SOURCE_UNVERIFIED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPT_SPACE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DESIGN_CONCEPTS_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "DIMENSION_RECONCILIATION_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DOCUMENT_GEOMETRY_INCONSISTENT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DOCUMENT_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "DOCUMENT_NOT_SUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DOCUMENT_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "DOCUMENT_SOURCE_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "DOCUMENT_SOURCE_UNVERIFIED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_ANALYSIS_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_ANALYSIS_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_ANALYSIS_TIMEOUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_INPUT_INCOMPLETE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_LOCATION_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_MODEL_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_PROPERTY_MISSING",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_RESULT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_RESULT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_SOURCE_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "ENVIRONMENTAL_WEATHER_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ESTIMATE_OUT_OF_RANGE",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "EVIDENCE_MODE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "EVIDENCE_PACKAGE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "EVIDENCE_PACKAGE_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "EVIDENCE_READ_INCONSISTENT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "EVIDENCE_SOURCE_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "EVIDENCE_SOURCE_UNVERIFIED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "EVIDENCE_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "FORBIDDEN",
+    "statuses": [
+     403
+    ]
+   },
+   {
+    "code": "GENERATION_FAILED",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "HARD_RELATIONSHIP_UNSATISFIABLE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "IDEMPOTENCY_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "IDEMPOTENCY_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "IMPOSSIBLE_LAYOUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "INTEGRATION_ELEMENT_IDENTITY_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "INTEGRATION_PLAN_CHANGED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "INTEGRATION_PLAN_DRIFT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "INTERNAL_ERROR",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "INVALID_IDEMPOTENCY_KEY",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "INVALID_REQUIREMENTS",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "JOB_INVALID_TRANSITION",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "JOB_LEASE_LOST",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "JOB_LIMIT_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "JOB_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "JOB_NOT_RETRYABLE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "JOBS_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_ANALYSIS_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_MODEL_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_PACK_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_PACK_UNKNOWN",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_RESULT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_RESULT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_SOURCE_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "KNOWLEDGE_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "MEMBER_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "MEMBER_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "MEMORY_REFERENCE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "MESSAGE_IN_PROGRESS",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "MODEL_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "NATIVE_REQUIREMENTS_UNAVAILABLE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_BASELINE_MISMATCH",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_INPUT_INVALID",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_QUEUE_FULL",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_RESULT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_RESULT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_STUDY_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_VALIDATION_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_WORKER_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "OPTIMIZATION_WORKER_TIMEOUT",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PARKING_UNSATISFIABLE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "PAYLOAD_TOO_LARGE",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "PRESERVATION_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "PROGRAM_DOES_NOT_FIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "PROJECT_ARCHIVED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "PROJECT_MANIFEST_LIMIT_EXCEEDED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "PROJECT_MANIFEST_READ_INCONSISTENT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "PROJECT_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "PROJECTS_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROPOSAL_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "PROVIDER_AUTH_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_DISABLED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_OUTPUT_UNSAFE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_POLICY_REJECTED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_RATE_LIMITED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_RESPONSE_INVALID",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_RESPONSE_TOO_LARGE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_SCHEMA_VIOLATION",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_TIMEOUT",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "PROVIDER_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "RATE_BOOK_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "RATE_BOOK_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "RATE_DATA_INVALID",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "RATE_DATA_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "RATE_GRID_INCOMPLETE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "RATE_LIMITED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "RATE_MATCH_AMBIGUOUS",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REFERENCE_INTEGRITY_FAILURE",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "REFERENCE_INTEGRITY_REJECTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REFERENCE_INVALID_TRANSITION",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REFERENCE_LIMIT_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "REFERENCE_LINK_INVALID",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "REFERENCE_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "REFERENCE_QUEUE_FULL",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REFERENCE_REJECTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REFERENCE_TYPE_UNSUPPORTED",
+    "statuses": [
+     415
+    ]
+   },
+   {
+    "code": "REFERENCE_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REFERENCE_WORKER_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REFERENCE_WORKER_TIMEOUT",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REFERENCES_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REGENERATION_TEMPLATE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REQUEST_CANCELLED",
+    "statuses": [
+     408,
+     503
+    ]
+   },
+   {
+    "code": "REVIEW_MODEL_MISMATCH",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_ARTIFACT_INTEGRITY",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "REVISION_BASE_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_CANDIDATE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REVISION_CANDIDATE_MISMATCH",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_CONSENT_MISMATCH",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_LIMIT_EXCEEDED",
+    "statuses": [
+     429
+    ]
+   },
+   {
+    "code": "REVISION_LOCK_VIOLATION",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REVISION_NOT_ACCEPTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "REVISION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "REVISION_OPERATION_ALREADY_COMMITTED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_OPERATION_EXPIRED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_OPERATION_INVALID_STATE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "REVISION_OPERATION_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "REVISION_QUEUE_FULL",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REVISION_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REVISION_WORKER_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REVISION_WORKER_TIMEOUT",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "REVISION_WORKER_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SCENE_ARTIFACT_INTEGRITY",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "SCENE_ARTIFACT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SCENE_ARTIFACT_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "SCENE_ARTIFACT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "SCENE_INPUT_INVALID",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "SCENE_INVALID_SOURCE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SCENE_NOT_COMPILED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "SCENE_QUEUE_FULL",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SCENE_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SCENE_SOURCE_MISMATCH",
+    "statuses": [
+     409,
+     422
+    ]
+   },
+   {
+    "code": "SCENE_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SCENE_UNSUPPORTED_MODEL",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SCENE_VALIDATION_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SCENE_WORKER_FAILED",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SCENE_WORKER_TIMEOUT",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SEARCH_LIMIT_EXHAUSTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SECTION_TARGET_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SITE_TOO_COMPLEX",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SOLVER_CANCELLED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SOLVER_TIMEOUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SOLVER_VERSION_CONFLICT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SPECIALIST_REFERENCE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STAIR_PLACEMENT_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_ANALYSIS_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "STRUCTURAL_ANALYSIS_TIMEOUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_LOAD_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_MATERIAL_MISSING",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_MODEL_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_RESULT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_RESULT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "STRUCTURAL_SOLVER_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_SOURCE_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_SUPPORT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_SYSTEM_DISCONNECTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_SYSTEM_UNSTABLE",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "STRUCTURAL_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "SYSTEM_ANALYSIS_FAILED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEM_ANALYSIS_TIMEOUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEM_CLASH_UNRESOLVED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEM_RESULT_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEM_ROUTE_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEM_ROUTE_NOT_FOUND",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "SYSTEMS_ANALYSIS_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "SYSTEMS_RESULT_STALE",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "SYSTEMS_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "TAKEOFF_FAILED",
+    "statuses": [
+     422,
+     500
+    ]
+   },
+   {
+    "code": "TAKEOFF_NOT_ACCEPTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "TAKEOFF_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "TAKEOFF_RESOURCE_LIMIT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "TAKEOFF_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "TAKEOFF_UNSUPPORTED_MODEL",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "TRANSITIVE_UPSTREAM_BINDING_INCONSISTENT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNAUTHORIZED",
+    "statuses": [
+     401
+    ]
+   },
+   {
+    "code": "UNSAFE_CONVERSATION_INPUT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNSATISFIED_HARD_CONSTRAINT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNSUPPORTED_GEOMETRY",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNSUPPORTED_MEDIA_TYPE",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "UNSUPPORTED_PARAMETRIC_CAPABILITY",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNSUPPORTED_REQUIREMENT",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "UNSUPPORTED_SITE_GEOMETRY",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "USE_PROPOSAL_APPROVAL",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "V2_INTERPRETATION_UNSUPPORTED",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "VALIDATION_ERROR",
+    "statuses": [
+     400
+    ]
+   },
+   {
+    "code": "VERIFICATION_SOURCE_MISMATCH",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "VERSION_CONFLICT",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "WORKFLOW_FENCED",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "WORKFLOW_IN_PROGRESS",
+    "statuses": [
+     409
+    ]
+   },
+   {
+    "code": "WORKFLOW_NOT_FOUND",
+    "statuses": [
+     404
+    ]
+   },
+   {
+    "code": "WORKFLOW_PROVENANCE_FAILED",
+    "statuses": [
+     500
+    ]
+   },
+   {
+    "code": "WORKFLOW_SPACE_NOT_FOUND",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "WORKFLOW_UNAVAILABLE",
+    "statuses": [
+     503
+    ]
+   },
+   {
+    "code": "ZONE_DECLARATION_INVALID",
+    "statuses": [
+     422
+    ]
+   },
+   {
+    "code": "ZONE_TARGET_NOT_FOUND",
+    "statuses": [
+     422
+    ]
+   }
+  ]
  },
  "paths": {
   "/api/capabilities": {
@@ -25387,7 +27127,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -25595,7 +27335,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -25815,7 +27555,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -26045,7 +27785,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -26156,7 +27896,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -26337,7 +28077,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -26458,7 +28198,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -26909,7 +28649,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27151,7 +28891,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27415,7 +29155,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27800,7 +29540,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27873,7 +29613,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27923,7 +29663,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -27978,7 +29718,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -28041,7 +29781,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -28389,7 +30129,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -28500,7 +30240,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -29045,7 +30785,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -29384,7 +31124,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -29590,7 +31330,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -29694,7 +31434,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -29763,7 +31503,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -30354,7 +32094,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -30511,7 +32251,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -30641,7 +32381,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -31917,7 +33657,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -32431,7 +34171,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -32962,7 +34702,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -33632,7 +35372,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -33717,7 +35457,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -33797,7 +35537,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -33861,7 +35601,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -33911,7 +35651,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -34246,7 +35986,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -34543,7 +36283,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -34873,7 +36613,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -34971,7 +36711,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -35094,7 +36834,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -35578,7 +37318,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -35950,7 +37690,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -36521,7 +38261,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -37449,7 +39189,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -39602,7 +41342,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -39901,7 +41641,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -40626,7 +42366,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -40964,7 +42704,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -41314,7 +43054,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -41459,7 +43199,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -41809,7 +43549,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -41902,7 +43642,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -41989,7 +43729,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -42256,7 +43996,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -43455,7 +45195,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -44037,7 +45777,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -44617,7 +46357,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -45254,7 +46994,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -45310,7 +47050,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -45405,7 +47145,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -45518,7 +47258,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -45899,7 +47639,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46538,7 +48278,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46681,7 +48421,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46772,7 +48512,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46824,7 +48564,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46912,7 +48652,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -46976,7 +48716,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -47032,7 +48772,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -47170,7 +48910,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -47929,7 +49669,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48023,7 +49763,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48087,7 +49827,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48258,7 +49998,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48388,7 +50128,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48457,7 +50197,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48509,7 +50249,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48712,7 +50452,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48768,7 +50508,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48813,7 +50553,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48867,7 +50607,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -48957,7 +50697,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49011,7 +50751,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49064,7 +50804,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49109,7 +50849,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49194,7 +50934,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49239,7 +50979,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49407,7 +51147,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49468,7 +51208,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -49870,7 +51610,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -50063,7 +51803,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -52472,7 +54212,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -53678,7 +55418,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -54171,7 +55911,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -54246,7 +55986,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -54635,7 +56375,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -54714,7 +56454,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -56353,7 +58093,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -58481,7 +60221,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -59164,7 +60904,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -59886,7 +61626,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -60883,7 +62623,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -61957,7 +63697,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -62784,7 +64524,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63437,7 +65177,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63503,7 +65243,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63563,7 +65303,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63635,7 +65375,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63680,7 +65420,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63735,7 +65475,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -63923,7 +65663,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -67245,7 +68985,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -70083,7 +71823,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -70780,7 +72520,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -70846,7 +72586,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -70906,7 +72646,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -70978,7 +72718,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -71023,7 +72763,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -71068,7 +72808,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -71123,7 +72863,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72685,7 +74425,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72730,7 +74470,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72796,7 +74536,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72856,7 +74596,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72928,7 +74668,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -72983,7 +74723,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73028,7 +74768,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73094,7 +74834,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73254,7 +74994,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73421,7 +75161,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73497,7 +75237,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -73588,7 +75328,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74136,7 +75876,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74181,7 +75921,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74238,7 +75978,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74304,7 +76044,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74364,7 +76104,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74436,7 +76176,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74481,7 +76221,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74536,7 +76276,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74602,7 +76342,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74662,7 +76402,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74734,7 +76474,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74779,7 +76519,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74834,7 +76574,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -74974,7 +76714,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75034,7 +76774,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75095,7 +76835,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75240,7 +76980,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75309,7 +77049,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75379,7 +77119,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75459,7 +77199,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -75877,7 +77617,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -76326,7 +78066,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -76587,7 +78327,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -76658,7 +78398,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -77026,7 +78766,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79484,7 +81224,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79541,7 +81281,7 @@
       "description": "JSON success response; schema not exported yet (see route source)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79592,7 +81332,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79644,7 +81384,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79721,7 +81461,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79763,7 +81503,7 @@
       "description": "Not modified (If-None-Match)"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -79840,7 +81580,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -80101,7 +81841,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -80141,7 +81881,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -80160,7 +81900,7 @@
       "description": "The GET response headers, without a body"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -80201,7 +81941,7 @@
       }
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {
@@ -80220,7 +81960,7 @@
       "description": "The GET response headers, without a body"
      },
      "default": {
-      "description": "Typed error",
+      "description": "Typed error; error.code is one of components.x-error-codes",
       "content": {
        "application/json": {
         "schema": {

@@ -13,7 +13,8 @@ import { SpecialistParamsSchema } from '../src/contracts/specialists.js';
 import { SCENE_COMPILER_VERSION, SceneInputSchema } from '../src/scene3d/contracts.js';
 import { CreateProjectRequestSchema, GenerateRevisionRequestSchema } from '../src/contracts/projects.js';
 import { WorkflowRequestSchema } from '../src/contracts/workflows.js';
-import { CONTRACTS, PATH_PARAMS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
+import { CONTRACTS, ERROR_CODES, PATH_PARAMS, jsonSchema, openApiDocument } from '../../../test-support/openapi.js';
+import { errorCatalog, type ErrorCatalog } from '../../../test-support/error-catalog.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { fixturePlan } from '../../../test-support/fixtures.js';
 // Test-only: Ajv 6 (draft-07) is already in the lockfile through the lint toolchain; it independently checks the exported JSON Schema.
@@ -32,8 +33,9 @@ app.addHook('onRoute', r => { for (const method of [r.method].flat()) if (method
 const concrete = (url: string) => url.replace(/:elementId/g, `bim-${'a'.repeat(40)}`).replace(/:[A-Za-z]+/g, () => randomUUID());
 
 describe('modernization R01/R06: source-derived API catalog and anonymous-access inventory', () => {
-  let catalog: { method: string; url: string; anonymous: number }[];
+  let catalog: { method: string; url: string; anonymous: number }[], errors: ErrorCatalog;
   beforeAll(async () => {
+    errors = errorCatalog();
     await app.ready();
     catalog = [];
     for (const r of [...routes].sort((a, b) => a.url.localeCompare(b.url, 'en') || a.method.localeCompare(b.method, 'en'))) {
@@ -42,11 +44,12 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
     }
     if (process.env.UPDATE_ROUTE_CATALOG === '1') {
       writeFileSync(CATALOG, JSON.stringify(catalog, null, 1) + '\n');
+      writeFileSync(ERROR_CODES, JSON.stringify(errors, null, 1) + '\n'); // before the OpenAPI document, which embeds it
       const document = JSON.stringify(openApiDocument(catalog), null, 1) + '\n';
       writeFileSync(OPENAPI, document);
       writeFileSync(OPENAPI_HASH, readFileSync(OPENAPI_HASH, 'utf8').replace(/'[a-f0-9]{64}'/, `'${createHash('sha256').update(document).digest('hex')}'`));
     }
-  });
+  }, 60_000);
   afterAll(async () => { await app.close(); });
 
   it('matches the checked-in catalog (no undocumented route, no silently removed route)', () => {
@@ -171,6 +174,28 @@ describe('modernization R01/R06: source-derived API catalog and anonymous-access
       .map(r => `${r.method} ${r.url}`).sort()).toEqual(untyped.sort());
     const live = (await app.inject({ method: 'GET', url: '/api/compatibility', headers: { authorization: 'Bearer conformance' } })).json();
     expect(openApiDocument(catalog).info.version).toBe(`${live.compatibilityVersion}+${live.routeCatalog.routes}.${String(live.routeCatalog.sha256).slice(0, 12)}`);
+  });
+  it('INT-B-012: the error-code catalog lists every code the source can send, with each status it is sent with', () => {
+    expect(errors).toEqual(JSON.parse(readFileSync(ERROR_CODES, 'utf8')));
+    expect(errors.codes.length).toBeGreaterThan(250);
+    for (const { code, statuses } of errors.codes) {
+      expect(code).toMatch(/^[A-Z][A-Z0-9_]+$/);
+      expect(statuses.length, code).toBeGreaterThan(0);
+      for (const status of statuses) expect(status >= 400 && status <= 599, `${code} ${status}`).toBe(true);
+    }
+    const statuses = (code: string) => errors.codes.find(c => c.code === code)?.statuses;
+    // Codes reached through the checker's narrowing of engine errors, SQLSTATE tables and per-code status maps.
+    expect(statuses('STRUCTURAL_RESULT_STALE')).toEqual([409]);
+    expect(statuses('STRUCTURAL_SOLVER_FAILED')).toEqual([422]);
+    expect(statuses('REFERENCE_LIMIT_EXCEEDED')).toEqual([429]);
+    expect(statuses('SCENE_INPUT_INVALID')).toEqual([400]);
+    expect(statuses('COMMIT_ATTESTATION_UNAVAILABLE')).toEqual([503]);
+    // The audit's inconsistency stays visible rather than hidden: one code, two statuses.
+    expect(statuses('SCENE_SOURCE_MISMATCH')).toEqual([409, 422]);
+    // The only sites the checker cannot resolve, and why: Fastify's own 4xx status, and worker-reported refusal codes typed as string.
+    expect(errors.unresolved.map(u => u.file)).toEqual(['apps/api/src/app.ts', 'apps/api/src/services/revision-service.ts']);
+    expect((openApiDocument(catalog) as { components: { 'x-error-codes': unknown } }).components['x-error-codes'])
+      .toEqual(errors.codes.map(({ code, statuses }) => ({ code, statuses })));
   });
   it('INT-B-022: /api/compatibility publishes the sha256 of the checked-in OpenAPI document, so a schema change is visible, not only a route change', async () => {
     const document = readFileSync(OPENAPI, 'utf8');

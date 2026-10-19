@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import type { ErrorCatalog } from './error-catalog.js';
 import { z, type ZodTypeAny } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ArchitecturalBuildingModelV2Schema, ApiErrorResponseSchema, CreatePlanRequestSchema, CreatePlanResponseSchema, EstimateInputsSchema, EstimateResponseSchema, GetPlanResponseSchema,
@@ -61,6 +63,8 @@ type Alternative = { status: number; description: string; body?: false };
  * authenticate (R06-F1, accepted), so an anonymous empty body gets 400. modernization.test.ts proves the 401 with a valid body. */
 type Op = { body?: ZodTypeAny; query?: ZodTypeAny; response?: ZodTypeAny | null; status?: number; media?: string; rawBody?: readonly string[]; alternatives?: readonly Alternative[];
   auth?: true };
+/** The generated error-code catalog (INT-B-012); regenerated with docs/modernization/openapi.json. */
+export const ERROR_CODES = new URL('../docs/modernization/error-codes.json', import.meta.url);
 /** Path parameters that are not UUIDs, taken from the routes' own *ParamsSchema (INT-B-005); every other path parameter is a UUID. */
 export const PATH_PARAMS: Record<string, ZodTypeAny> = { elementId: BimElementParamsSchema.shape.elementId, version: BriefVersionParamsSchema.shape.version,
   module: SpecialistParamsSchema.shape.module, levelId: PlanSheetParamsSchema.shape.levelId, schedule: ScheduleParamsSchema.shape.schedule };
@@ -249,10 +253,12 @@ export function openApiDocument(routes: { method: string; url: string; anonymous
       ...(op.body ? { requestBody: { required: true, content: { 'application/json': { schema: referenced(op.body) } } } } : {}),
       ...(op.rawBody ? { requestBody: { required: true, content: Object.fromEntries(op.rawBody.map(m => [m, { schema: { type: 'string', format: 'binary' } }])) } } : {}),
       responses: { [String(op.status ?? 200)]: ok, ...alternatives, ...(op.media === 'model/gltf-binary' || op.media === 'application/octet-stream' ? { 304: { description: 'Not modified (If-None-Match)' } } : {}),
-        default: { description: 'Typed error', content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } } } } };
+        default: { description: 'Typed error; error.code is one of components.x-error-codes', content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } } } } };
   }
   // INT-B-008: the version names the compatibility package and the exact route catalog, as GET /api/compatibility reports them.
   const catalog = routes.filter(r => r.method !== 'HEAD');
   return { openapi: '3.0.3', info: { title: 'NekoArch designflow API', version: `${COMPATIBILITY_VERSION}+${catalog.length}.${routeCatalogHash(catalog).slice(0, 12)}` },
-    components: { securitySchemes: { bearer: { type: 'http', scheme: 'bearer', description: 'Supabase session access token' } }, schemas }, paths };
+    components: { securitySchemes: { bearer: { type: 'http', scheme: 'bearer', description: 'Supabase session access token' } }, schemas,
+      // INT-B-012: every error code and the statuses it is sent with, from the generated catalog (test-support/error-catalog.ts).
+      'x-error-codes': (JSON.parse(readFileSync(ERROR_CODES, 'utf8')) as ErrorCatalog).codes.map(({ code, statuses }) => ({ code, statuses })) }, paths };
 }
