@@ -82,7 +82,7 @@ export const ConversationToolResponseSchema = z.object({ schemaVersion: z.litera
     z.object({ name: z.literal('READ_CURRENT_REVISION'), revisionId: id.nullable(), identity: GenerationIdentitySchema.nullable() }).strict(),
     z.object({ name: z.literal('CHECK_CAPABILITIES'), capabilities: z.array(CapabilitySchema).max(32),
       // Additive (modernization R04): standalone services and media availability, so the assistant never reports an available engine as unimplemented.
-      services: z.array(z.object({ serviceId: z.string().max(64), version: z.string().max(100), status: z.literal('AVAILABLE'), workflowCapability: z.string().max(64).nullable() }).strip()).max(32).optional(),
+      services: z.array(z.object({ serviceId: z.string().max(64), version: z.string().max(100), status: z.literal('AVAILABLE'), workflowCapability: z.string().max(64).nullable() }).strip()).max(48).optional(),
       media: z.array(z.object({ media: z.string().max(64), status: z.enum(['AVAILABLE', 'PARTIAL', 'UNSUPPORTED']), reason: z.string().max(200).nullable() }).strip()).max(16).optional() }).strict(),
     z.object({ name: z.literal('COMPARE_REQUIREMENTS'), proposal: ProposalSchema.nullable() }).strict(),
     z.object({ name: z.literal('EXPLAIN_QA_RESULT'), qa: QaSummarySchema.nullable(), explanation: z.string().max(300) }).strict(),

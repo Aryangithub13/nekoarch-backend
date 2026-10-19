@@ -25399,6 +25399,201 @@
     }
    }
   },
+  "/api/compatibility": {
+   "get": {
+    "operationId": "get /api/compatibility",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "compatibilityVersion": {
+           "type": "string",
+           "enum": [
+            "api-compatibility-v1"
+           ]
+          },
+          "routeCatalog": {
+           "type": "object",
+           "properties": {
+            "routes": {
+             "type": "integer"
+            },
+            "sha256": {
+             "type": "string",
+             "pattern": "^[a-f0-9]{64}$"
+            }
+           },
+           "required": [
+            "routes",
+            "sha256"
+           ],
+           "additionalProperties": false
+          },
+          "services": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "serviceId": {
+              "type": "string",
+              "maxLength": 64
+             },
+             "version": {
+              "type": "string",
+              "maxLength": 100
+             },
+             "route": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "serviceId",
+             "version",
+             "route"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 64
+          },
+          "conventions": {
+           "type": "object",
+           "properties": {
+            "errors": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "pagination": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "idempotency": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "concurrency": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "units": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "identity": {
+             "type": "string",
+             "maxLength": 200
+            }
+           },
+           "required": [
+            "errors",
+            "pagination",
+            "idempotency",
+            "concurrency",
+            "units",
+            "identity"
+           ],
+           "additionalProperties": false
+          },
+          "media": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capability": {
+              "type": "string",
+              "enum": [
+               "model",
+               "rendered_image",
+               "panorama_360",
+               "interactive_scene",
+               "walkthrough",
+               "video"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "UNSUPPORTED"
+              ]
+             }
+            },
+            "required": [
+             "capability",
+             "status"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 6,
+           "maxItems": 6
+          },
+          "mockSubstitution": {
+           "type": "string",
+           "enum": [
+            "FORBIDDEN_AS_LIVE_EVIDENCE"
+           ]
+          },
+          "supportedClients": {
+           "type": "object",
+           "properties": {
+            "desktop": {
+             "type": "string",
+             "enum": [
+              "SUPPORTED"
+             ]
+            },
+            "mobile": {
+             "type": "string",
+             "enum": [
+              "OUT_OF_SCOPE"
+             ]
+            }
+           },
+           "required": [
+            "desktop",
+            "mobile"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "compatibilityVersion",
+          "routeCatalog",
+          "services",
+          "conventions",
+          "media",
+          "mockSubstitution",
+          "supportedClients"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/estimates": {
    "post": {
     "operationId": "post /api/estimates",
@@ -29148,6 +29343,1264 @@
           "createdAt",
           "provenance",
           "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/collaboration",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "project": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "title": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "status": {
+             "type": "string",
+             "enum": [
+              "ACTIVE",
+              "ARCHIVED"
+             ]
+            },
+            "currentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/project/properties/id"
+              }
+             ],
+             "nullable": true
+            }
+           },
+           "required": [
+            "id",
+            "title",
+            "status",
+            "currentRevisionId"
+           ],
+           "additionalProperties": false
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "members": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "userId": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "role": {
+              "type": "string",
+              "enum": [
+               "editor",
+               "reviewer",
+               "viewer"
+              ]
+             },
+             "addedBy": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "createdAt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+             },
+             "updatedAt": {
+              "$ref": "#/components/properties/members/items/properties/createdAt"
+             }
+            },
+            "required": [
+             "userId",
+             "role",
+             "addedBy",
+             "createdAt",
+             "updatedAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 20
+          },
+          "revisions": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "revisionNumber": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0
+             },
+             "parentRevisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/project/properties/id"
+               }
+              ],
+              "nullable": true
+             },
+             "sourceMode": {
+              "type": "string",
+              "enum": [
+               "generated",
+               "supplied"
+              ]
+             },
+             "createdBy": {
+              "$ref": "#/components/properties/project/properties/id"
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/members/items/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "revisionNumber",
+             "parentRevisionId",
+             "sourceMode",
+             "createdBy",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "collaborationVersion": {
+           "type": "string",
+           "enum": [
+            "collaboration-v1"
+           ]
+          },
+          "permissions": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "READ",
+             "COMMENT",
+             "REVIEW",
+             "MANAGE_MEMBERS"
+            ]
+           },
+           "maxItems": 4
+          }
+         },
+         "required": [
+          "project",
+          "role",
+          "members",
+          "revisions",
+          "collaborationVersion",
+          "permissions"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/members": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/members",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "userId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "role": {
+          "type": "string",
+          "enum": [
+           "editor",
+           "reviewer",
+           "viewer"
+          ]
+         }
+        },
+        "required": [
+         "userId",
+         "role"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "userId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "addedBy": {
+           "$ref": "#/components/properties/userId"
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          },
+          "updatedAt": {
+           "$ref": "#/components/properties/createdAt"
+          }
+         },
+         "required": [
+          "userId",
+          "role",
+          "addedBy",
+          "createdAt",
+          "updatedAt"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/members/{userId}": {
+   "delete": {
+    "operationId": "delete /api/projects/:projectId/collaboration/members/:userId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "userId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "userId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "removed": {
+           "type": "boolean",
+           "enum": [
+            true
+           ]
+          }
+         },
+         "required": [
+          "userId",
+          "removed"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/collaboration/revisions/:revisionId",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "collaborationVersion": {
+           "type": "string",
+           "enum": [
+            "collaboration-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "role": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer",
+            "viewer"
+           ]
+          },
+          "revision": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "sourceMode": {
+             "type": "string",
+             "enum": [
+              "generated",
+              "supplied"
+             ]
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "type": "string",
+             "minLength": 1,
+             "maxLength": 40
+            },
+            "generatorVersion": {
+             "type": "string",
+             "maxLength": 100,
+             "nullable": true
+            },
+            "modelHash": {
+             "type": "string",
+             "pattern": "^[a-f0-9]{64}$"
+            },
+            "model": {
+             "type": "object",
+             "additionalProperties": {}
+            }
+           },
+           "required": [
+            "id",
+            "revisionNumber",
+            "parentRevisionId",
+            "sourceMode",
+            "createdBy",
+            "createdAt",
+            "generatorVersion",
+            "modelHash",
+            "model"
+           ],
+           "additionalProperties": false
+          },
+          "comments": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "authorId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "authorRole": {
+              "type": "string",
+              "enum": [
+               "owner",
+               "editor",
+               "reviewer"
+              ]
+             },
+             "kind": {
+              "type": "string",
+              "enum": [
+               "COMMENT",
+               "CHANGE_REQUEST"
+              ]
+             },
+             "body": {
+              "type": "string",
+              "maxLength": 2000
+             },
+             "elementIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "maxItems": 16
+             },
+             "parentId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/revision/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "authorId",
+             "authorRole",
+             "kind",
+             "body",
+             "elementIds",
+             "parentId",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 200
+          },
+          "reviews": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "reviewerId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "reviewerRole": {
+              "type": "string",
+              "enum": [
+               "owner",
+               "reviewer"
+              ]
+             },
+             "decision": {
+              "type": "string",
+              "enum": [
+               "APPROVED",
+               "CHANGES_REQUESTED"
+              ]
+             },
+             "note": {
+              "type": "string",
+              "maxLength": 2000
+             },
+             "modelHash": {
+              "$ref": "#/components/properties/revision/properties/modelHash"
+             },
+             "createdAt": {
+              "$ref": "#/components/properties/revision/properties/createdAt"
+             }
+            },
+            "required": [
+             "id",
+             "reviewerId",
+             "reviewerRole",
+             "decision",
+             "note",
+             "modelHash",
+             "createdAt"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 100
+          },
+          "reviewState": {
+           "type": "object",
+           "properties": {
+            "approvals": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "changesRequested": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "latest": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/reviews/items"
+             },
+             "maxItems": 21
+            }
+           },
+           "required": [
+            "approvals",
+            "changesRequested",
+            "latest"
+           ],
+           "additionalProperties": false
+          },
+          "audit": {
+           "type": "object",
+           "properties": {
+            "revisionId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "revisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "parentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "modelHash": {
+             "$ref": "#/components/properties/revision/properties/modelHash"
+            },
+            "sourceMode": {
+             "type": "string",
+             "enum": [
+              "generated",
+              "supplied"
+             ]
+            },
+            "createdBy": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "createdAt": {
+             "$ref": "#/components/properties/revision/properties/createdAt"
+            },
+            "operation": {
+             "type": "object",
+             "properties": {
+              "operationId": {
+               "$ref": "#/components/properties/projectId"
+              },
+              "kind": {
+               "type": "string",
+               "maxLength": 40,
+               "nullable": true
+              },
+              "requestedBy": {
+               "$ref": "#/components/properties/projectId"
+              },
+              "approvedBy": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/projectId"
+                }
+               ],
+               "nullable": true
+              },
+              "instruction": {
+               "type": "string",
+               "maxLength": 2000,
+               "nullable": true
+              },
+              "events": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "eventType": {
+                  "type": "string",
+                  "maxLength": 40
+                 },
+                 "actor": {
+                  "allOf": [
+                   {
+                    "$ref": "#/components/properties/projectId"
+                   }
+                  ],
+                  "nullable": true
+                 },
+                 "createdAt": {
+                  "$ref": "#/components/properties/revision/properties/createdAt"
+                 }
+                },
+                "required": [
+                 "eventType",
+                 "actor",
+                 "createdAt"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 32
+              }
+             },
+             "required": [
+              "operationId",
+              "kind",
+              "requestedBy",
+              "approvedBy",
+              "instruction",
+              "events"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "changes": {
+             "type": "object",
+             "properties": {
+              "diffVersion": {
+               "type": "string",
+               "enum": [
+                "element-diff-v1"
+               ]
+              },
+              "baseModelHash": {
+               "type": "string",
+               "pattern": "^[a-f0-9]{64}$"
+              },
+              "candidateModelHash": {
+               "$ref": "#/components/properties/audit/properties/changes/properties/baseModelHash"
+              },
+              "modelIdentical": {
+               "type": "boolean"
+              },
+              "elementsIdentical": {
+               "type": "boolean"
+              },
+              "documentFields": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "maxItems": 32
+              },
+              "collections": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "base": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "candidate": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "added": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "removed": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "modified": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "preserved": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "reordered": {
+                  "type": "boolean"
+                 }
+                },
+                "required": [
+                 "collection",
+                 "base",
+                 "candidate",
+                 "added",
+                 "removed",
+                 "modified",
+                 "preserved",
+                 "reordered"
+                ],
+                "additionalProperties": false
+               }
+              },
+              "changes": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "elementId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                 },
+                 "change": {
+                  "type": "string",
+                  "enum": [
+                   "ADDED",
+                   "REMOVED",
+                   "MODIFIED"
+                  ]
+                 },
+                 "fields": {
+                  "type": "array",
+                  "items": {
+                   "type": "string",
+                   "maxLength": 80
+                  },
+                  "maxItems": 32
+                 }
+                },
+                "required": [
+                 "collection",
+                 "elementId",
+                 "change",
+                 "fields"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 256
+              },
+              "changesTruncated": {
+               "type": "boolean"
+              }
+             },
+             "required": [
+              "diffVersion",
+              "baseModelHash",
+              "candidateModelHash",
+              "modelIdentical",
+              "elementsIdentical",
+              "documentFields",
+              "collections",
+              "changes",
+              "changesTruncated"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "invalidation": {
+             "type": "string",
+             "enum": [
+              "WHOLE_MODEL"
+             ]
+            }
+           },
+           "required": [
+            "revisionId",
+            "revisionNumber",
+            "parentRevisionId",
+            "modelHash",
+            "sourceMode",
+            "createdBy",
+            "createdAt",
+            "operation",
+            "changes",
+            "invalidation"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "professionalCertification": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "regulatoryApproval": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "professionalCertification",
+            "regulatoryApproval"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "collaborationVersion",
+          "projectId",
+          "role",
+          "revision",
+          "comments",
+          "reviews",
+          "reviewState",
+          "audit",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}/comments": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/revisions/:revisionId/comments",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "kind": {
+          "type": "string",
+          "enum": [
+           "COMMENT",
+           "CHANGE_REQUEST"
+          ],
+          "default": "COMMENT"
+         },
+         "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+         },
+         "elementIds": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 200
+          },
+          "maxItems": 16,
+          "default": []
+         },
+         "parentId": {
+          "type": "string",
+          "format": "uuid",
+          "nullable": true,
+          "default": null
+         }
+        },
+        "required": [
+         "body"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "authorId": {
+           "$ref": "#/components/properties/id"
+          },
+          "authorRole": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "editor",
+            "reviewer"
+           ]
+          },
+          "kind": {
+           "type": "string",
+           "enum": [
+            "COMMENT",
+            "CHANGE_REQUEST"
+           ]
+          },
+          "body": {
+           "type": "string",
+           "maxLength": 2000
+          },
+          "elementIds": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+           },
+           "maxItems": 16
+          },
+          "parentId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/id"
+            }
+           ],
+           "nullable": true
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          }
+         },
+         "required": [
+          "id",
+          "authorId",
+          "authorRole",
+          "kind",
+          "body",
+          "elementIds",
+          "parentId",
+          "createdAt"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/collaboration/revisions/{revisionId}/reviews": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/collaboration/revisions/:revisionId/reviews",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "decision": {
+          "type": "string",
+          "enum": [
+           "APPROVED",
+           "CHANGES_REQUESTED"
+          ]
+         },
+         "note": {
+          "type": "string",
+          "maxLength": 2000,
+          "default": ""
+         },
+         "expectedModelHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+         }
+        },
+        "required": [
+         "decision",
+         "expectedModelHash"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "reviewerId": {
+           "$ref": "#/components/properties/id"
+          },
+          "reviewerRole": {
+           "type": "string",
+           "enum": [
+            "owner",
+            "reviewer"
+           ]
+          },
+          "decision": {
+           "type": "string",
+           "enum": [
+            "APPROVED",
+            "CHANGES_REQUESTED"
+           ]
+          },
+          "note": {
+           "type": "string",
+           "maxLength": 2000
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "createdAt": {
+           "type": "string",
+           "minLength": 1,
+           "maxLength": 40
+          }
+         },
+         "required": [
+          "id",
+          "reviewerId",
+          "reviewerRole",
+          "decision",
+          "note",
+          "modelHash",
+          "createdAt"
          ],
          "additionalProperties": false
         }
@@ -33507,7 +34960,7 @@
                  ],
                  "additionalProperties": true
                 },
-                "maxItems": 32
+                "maxItems": 48
                },
                "media": {
                 "type": "array",
@@ -34043,6 +35496,2720 @@
           "conversation",
           "turn",
           "action"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/feasibility/assessments": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/feasibility/assessments",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "text": {
+          "type": "string",
+          "maxLength": 1000,
+          "default": ""
+         },
+         "declared": {
+          "type": "object",
+          "properties": {
+           "storeys": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+           },
+           "rooms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+           },
+           "heightMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000000
+           },
+           "maxSpanMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+           },
+           "cantileverMm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+           },
+           "features": {
+            "type": "array",
+            "items": {
+             "type": "string",
+             "enum": [
+              "CURVED_OR_ORGANIC_FORM",
+              "TWISTING_OR_ROTATING_FORM",
+              "FLOATING_OR_LEVITATING_VOLUME",
+              "UNDERWATER_OR_SUBMERGED",
+              "INVERTED_OR_GRAVITY_DEFYING",
+              "FULL_GLASS_ENVELOPE",
+              "TRANSPARENT_FLOORS",
+              "SCULPTURAL_FACADE"
+             ]
+            },
+            "maxItems": 8
+           }
+          },
+          "additionalProperties": false,
+          "default": {}
+         },
+         "baseRevisionId": {
+          "type": "string",
+          "format": "uuid",
+          "nullable": true,
+          "default": null
+         },
+         "preserve": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "enum": [
+            "BUILDING_GEOMETRY",
+            "FLOOR_PLANS",
+            "STRUCTURE",
+            "STAIRS",
+            "OPENINGS",
+            "WALLS",
+            "ROOMS",
+            "INTERIOR",
+            "BUILDING_DIMENSIONS",
+            "EXTERIOR_APPEARANCE",
+            "LEVEL"
+           ]
+          },
+          "maxItems": 11,
+          "default": []
+         }
+        },
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "assessmentVersion": {
+           "type": "string",
+           "enum": [
+            "feasibility-assessment-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "inputHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "WITHIN_ENGINE_SCOPE",
+            "ALTERNATIVES_PROPOSED"
+           ]
+          },
+          "constraints": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "constraintId": {
+              "type": "string",
+              "enum": [
+               "STOREYS",
+               "ROOMS",
+               "HEIGHT",
+               "SPAN",
+               "CANTILEVER",
+               "CURVED_OR_ORGANIC_FORM",
+               "TWISTING_OR_ROTATING_FORM",
+               "FLOATING_OR_LEVITATING_VOLUME",
+               "UNDERWATER_OR_SUBMERGED",
+               "INVERTED_OR_GRAVITY_DEFYING",
+               "FULL_GLASS_ENVELOPE",
+               "TRANSPARENT_FLOORS",
+               "SCULPTURAL_FACADE"
+              ]
+             },
+             "source": {
+              "type": "string",
+              "enum": [
+               "TEXT",
+               "DECLARED"
+              ]
+             },
+             "phrase": {
+              "type": "string",
+              "maxLength": 120,
+              "nullable": true
+             },
+             "value": {
+              "type": "integer",
+              "nullable": true
+             },
+             "unit": {
+              "type": "string",
+              "enum": [
+               "storeys",
+               "rooms",
+               "mm"
+              ],
+              "nullable": true
+             },
+             "classification": {
+              "type": "string",
+              "enum": [
+               "WITHIN_ENGINE_SCOPE",
+               "EXCEEDS_ENGINE_LIMIT",
+               "CONCEPT_ONLY",
+               "REQUIRES_PROFESSIONAL_REVIEW"
+              ]
+             },
+             "limit": {
+              "type": "object",
+              "properties": {
+               "limitId": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "value": {
+                "type": "integer"
+               },
+               "requested": {
+                "type": "integer"
+               }
+              },
+              "required": [
+               "limitId",
+               "value",
+               "requested"
+              ],
+              "additionalProperties": false,
+              "nullable": true
+             },
+             "unverifiedDomains": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "HEIGHT_AND_STOREYS",
+                "AREAS_AND_VOLUME",
+                "SITE_AND_GEOMETRY",
+                "BASE_SLENDERNESS",
+                "PRELIMINARY_COST",
+                "GRAVITY_LOADS",
+                "WIND_LOADS",
+                "SEISMIC_LOADS",
+                "GEOTECHNICAL_AND_FOUNDATIONS",
+                "LATERAL_DRIFT_AND_STABILITY",
+                "DYNAMIC_RESPONSE",
+                "MEMBER_DESIGN",
+                "PROGRESSIVE_COLLAPSE",
+                "FIRE_AND_LIFE_SAFETY",
+                "VERTICAL_TRANSPORT",
+                "CODE_COMPLIANCE",
+                "CERTIFICATION_AND_APPROVAL"
+               ]
+              },
+              "maxItems": 17
+             },
+             "reason": {
+              "type": "string",
+              "maxLength": 400
+             }
+            },
+            "required": [
+             "constraintId",
+             "source",
+             "phrase",
+             "value",
+             "unit",
+             "classification",
+             "limit",
+             "unverifiedDomains",
+             "reason"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "alternatives": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "alternativeId": {
+              "type": "string",
+              "enum": [
+               "AS_REQUESTED",
+               "BOUNDED_GENERATION",
+               "SUPPLIED_MODEL_ASSESSMENT",
+               "CONCEPT_ONLY"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "PROPOSED_FOR_CONSENT",
+               "BLOCKED_BY_LOCK"
+              ]
+             },
+             "title": {
+              "type": "string",
+              "maxLength": 120
+             },
+             "reachesStage": {
+              "type": "string",
+              "enum": [
+               "CONCEPT",
+               "BOUNDED_GEOMETRY",
+               "ENGINEERING_EVIDENCE",
+               "PROFESSIONAL_REVIEW"
+              ]
+             },
+             "keeps": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 160
+              },
+              "maxItems": 16
+             },
+             "givesUp": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 16
+             },
+             "lockConflicts": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "BUILDING_GEOMETRY",
+                "FLOOR_PLANS",
+                "STRUCTURE",
+                "STAIRS",
+                "OPENINGS",
+                "WALLS",
+                "ROOMS",
+                "INTERIOR",
+                "BUILDING_DIMENSIONS",
+                "EXTERIOR_APPEARANCE",
+                "LEVEL"
+               ]
+              },
+              "maxItems": 11
+             },
+             "handoff": {
+              "type": "object",
+              "properties": {
+               "method": {
+                "type": "string",
+                "enum": [
+                 "POST"
+                ]
+               },
+               "route": {
+                "type": "string",
+                "maxLength": 200
+               },
+               "purpose": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "method",
+               "route",
+               "purpose"
+              ],
+              "additionalProperties": false
+             },
+             "requiresConsent": {
+              "type": "boolean",
+              "enum": [
+               true
+              ]
+             },
+             "applied": {
+              "type": "boolean",
+              "enum": [
+               false
+              ]
+             }
+            },
+            "required": [
+             "alternativeId",
+             "status",
+             "title",
+             "reachesStage",
+             "keeps",
+             "givesUp",
+             "lockConflicts",
+             "handoff",
+             "requiresConsent",
+             "applied"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 4
+          },
+          "ladder": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "stage": {
+              "type": "string",
+              "enum": [
+               "CONCEPT",
+               "BOUNDED_GEOMETRY",
+               "ENGINEERING_EVIDENCE",
+               "PROFESSIONAL_REVIEW"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "BLOCKED",
+               "NOT_PERFORMED"
+              ]
+             },
+             "artifacts": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 8
+             },
+             "gaps": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "maxItems": 16
+             },
+             "acceptance": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "stage",
+             "status",
+             "artifacts",
+             "gaps",
+             "acceptance"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 4,
+           "maxItems": 4
+          },
+          "separation": {
+           "type": "object",
+           "properties": {
+            "conceptOnly": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "maxItems": 16
+            },
+            "feasibilityAssessed": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "maxItems": 16
+            }
+           },
+           "required": [
+            "conceptOnly",
+            "feasibilityAssessed"
+           ],
+           "additionalProperties": false
+          },
+          "interpretation": {
+           "type": "object",
+           "properties": {
+            "mode": {
+             "type": "string",
+             "enum": [
+              "DETERMINISTIC"
+             ]
+            },
+            "languageModel": {
+             "type": "string",
+             "enum": [
+              "NONE"
+             ]
+            }
+           },
+           "required": [
+            "mode",
+            "languageModel"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "buildability": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "engineeringFeasibility": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "codeCompliance": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "professionalReview": {
+             "type": "string",
+             "enum": [
+              "NOT_PERFORMED"
+             ]
+            }
+           },
+           "required": [
+            "buildability",
+            "engineeringFeasibility",
+            "codeCompliance",
+            "professionalReview"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "assessmentVersion",
+          "projectId",
+          "baseRevisionId",
+          "inputHash",
+          "status",
+          "constraints",
+          "alternatives",
+          "ladder",
+          "separation",
+          "interpretation",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/integration/plans": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/integration/plans",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "changeSetVersion": {
+          "type": "string",
+          "enum": [
+           "change-set-v1"
+          ]
+         },
+         "baseRevisionId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "changes": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "operation": {
+             "type": "string",
+             "enum": [
+              "add",
+              "modify",
+              "remove",
+              "replace"
+             ]
+            },
+            "elementType": {
+             "type": "string",
+             "enum": [
+              "level",
+              "space",
+              "wall",
+              "opening",
+              "stair",
+              "slab",
+              "column"
+             ]
+            },
+            "elementId": {
+             "type": "string",
+             "minLength": 1,
+             "maxLength": 200,
+             "nullable": true,
+             "default": null
+            },
+            "properties": {
+             "type": "object",
+             "additionalProperties": {},
+             "default": {}
+            }
+           },
+           "required": [
+            "operation",
+            "elementType"
+           ],
+           "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 24
+         },
+         "preserve": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "scope": {
+             "type": "string",
+             "enum": [
+              "BUILDING_GEOMETRY",
+              "FLOOR_PLANS",
+              "STRUCTURE",
+              "STAIRS",
+              "OPENINGS",
+              "WALLS",
+              "ROOMS",
+              "INTERIOR",
+              "BUILDING_DIMENSIONS",
+              "EXTERIOR_APPEARANCE",
+              "LEVEL"
+             ]
+            },
+            "levelId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/changes/items/properties/elementId"
+              }
+             ],
+             "nullable": true,
+             "default": null
+            }
+           },
+           "required": [
+            "scope"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 16,
+          "default": []
+         },
+         "regenerate": {
+          "type": "object",
+          "properties": {
+           "materials": {
+            "type": "object",
+            "properties": {
+             "specification": {
+              "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/specification"
+             },
+             "takeoffOptions": {
+              "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/takeoff/properties/options",
+              "default": {}
+             },
+             "constructionOptions": {
+              "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/options",
+              "default": {}
+             }
+            },
+            "required": [
+             "specification"
+            ],
+            "additionalProperties": false
+           },
+           "budget": {
+            "type": "object",
+            "properties": {
+             "rateBookId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+             },
+             "costingPolicy": {
+              "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy"
+             },
+             "options": {
+              "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/options",
+              "default": {}
+             }
+            },
+            "required": [
+             "rateBookId",
+             "costingPolicy"
+            ],
+            "additionalProperties": false
+           },
+           "structural": {
+            "$ref": "#/components/schemas/StructuralInput"
+           },
+           "verification": {
+            "type": "object",
+            "properties": {
+             "declaredLimits": {
+              "type": "object",
+              "properties": {
+               "maxCoverageRatio": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.0001
+               },
+               "maxFar": {
+                "type": "number",
+                "exclusiveMinimum": true,
+                "minimum": 0,
+                "maximum": 100,
+                "multipleOf": 0.0001
+               }
+              },
+              "additionalProperties": false,
+              "nullable": true,
+              "default": null
+             }
+            },
+            "additionalProperties": false
+           }
+          },
+          "additionalProperties": false,
+          "default": {}
+         },
+         "limits": {
+          "type": "object",
+          "properties": {
+           "maxTasks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16
+           }
+          },
+          "additionalProperties": false,
+          "default": {}
+         }
+        },
+        "required": [
+         "changeSetVersion",
+         "baseRevisionId",
+         "changes"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "planVersion": {
+           "type": "string",
+           "enum": [
+            "integration-plan-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "baseRevisionNumber": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "baseModelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "projectCurrentRevisionId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "INVALID",
+            "BLOCKED_BY_LOCK",
+            "UNSUPPORTED",
+            "NEEDS_CLARIFICATION",
+            "OVER_BUDGET",
+            "STALE_BASE",
+            "READY_FOR_APPROVAL"
+           ]
+          },
+          "reasons": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+             },
+             "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+             }
+            },
+            "required": [
+             "code",
+             "message"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "changes": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "index": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "operation": {
+              "type": "string",
+              "enum": [
+               "add",
+               "modify",
+               "remove",
+               "replace"
+              ]
+             },
+             "elementType": {
+              "type": "string",
+              "enum": [
+               "level",
+               "space",
+               "wall",
+               "opening",
+               "stair",
+               "slab",
+               "column"
+              ]
+             },
+             "elementId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "nullable": true
+             },
+             "levelId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/changes/items/properties/elementId"
+               }
+              ],
+              "nullable": true
+             },
+             "disposition": {
+              "type": "string",
+              "enum": [
+               "SUPPORTED",
+               "INVALID",
+               "NEEDS_CLARIFICATION",
+               "UNSUPPORTED",
+               "BLOCKED_BY_LOCK"
+              ]
+             },
+             "module": {
+              "type": "string",
+              "enum": [
+               "INTERIOR"
+              ],
+              "nullable": true
+             },
+             "reasons": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/reasons/items"
+              },
+              "maxItems": 8
+             },
+             "limit": {
+              "type": "object",
+              "properties": {
+               "limitId": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "value": {
+                "type": "integer"
+               },
+               "requested": {
+                "type": "integer"
+               }
+              },
+              "required": [
+               "limitId",
+               "value",
+               "requested"
+              ],
+              "additionalProperties": false,
+              "nullable": true
+             },
+             "requiredChecks": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 120
+              },
+              "maxItems": 12
+             }
+            },
+            "required": [
+             "index",
+             "operation",
+             "elementType",
+             "elementId",
+             "levelId",
+             "disposition",
+             "module",
+             "reasons",
+             "limit",
+             "requiredChecks"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 24
+          },
+          "modelChange": {
+           "type": "object",
+           "properties": {
+            "operationKind": {
+             "type": "string",
+             "enum": [
+              "INTERIOR_FINISH_MODIFY"
+             ]
+            },
+            "preflightStatus": {
+             "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/status"
+            },
+            "preflightHash": {
+             "$ref": "#/components/properties/baseModelHash"
+            },
+            "candidateModelHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/baseModelHash"
+              }
+             ],
+             "nullable": true
+            },
+            "geometryModelHash": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/baseModelHash"
+              }
+             ],
+             "nullable": true
+            },
+            "locks": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/locks/items"
+             },
+             "maxItems": 32
+            },
+            "verifications": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 200
+             },
+             "maxItems": 24
+            }
+           },
+           "required": [
+            "operationKind",
+            "preflightStatus",
+            "preflightHash",
+            "candidateModelHash",
+            "geometryModelHash",
+            "locks",
+            "verifications"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "diff": {
+           "type": "object",
+           "properties": {
+            "diffVersion": {
+             "type": "string",
+             "enum": [
+              "element-diff-v1"
+             ]
+            },
+            "baseModelHash": {
+             "$ref": "#/components/properties/baseModelHash"
+            },
+            "candidateModelHash": {
+             "$ref": "#/components/properties/baseModelHash"
+            },
+            "modelIdentical": {
+             "type": "boolean"
+            },
+            "elementsIdentical": {
+             "type": "boolean"
+            },
+            "documentFields": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "maxItems": 32
+            },
+            "collections": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "type": "string",
+                "enum": [
+                 "levels",
+                 "spaces",
+                 "walls",
+                 "openings",
+                 "stairs",
+                 "slabs",
+                 "columns",
+                 "dimensions",
+                 "specifications"
+                ]
+               },
+               "base": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "candidate": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "added": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "removed": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "modified": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "preserved": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "reordered": {
+                "type": "boolean"
+               }
+              },
+              "required": [
+               "collection",
+               "base",
+               "candidate",
+               "added",
+               "removed",
+               "modified",
+               "preserved",
+               "reordered"
+              ],
+              "additionalProperties": false
+             }
+            },
+            "changes": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "collection": {
+                "type": "string",
+                "enum": [
+                 "levels",
+                 "spaces",
+                 "walls",
+                 "openings",
+                 "stairs",
+                 "slabs",
+                 "columns",
+                 "dimensions",
+                 "specifications"
+                ]
+               },
+               "elementId": {
+                "$ref": "#/components/properties/changes/items/properties/elementId"
+               },
+               "change": {
+                "type": "string",
+                "enum": [
+                 "ADDED",
+                 "REMOVED",
+                 "MODIFIED"
+                ]
+               },
+               "fields": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "maxLength": 80
+                },
+                "maxItems": 32
+               }
+              },
+              "required": [
+               "collection",
+               "elementId",
+               "change",
+               "fields"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 256
+            },
+            "changesTruncated": {
+             "type": "boolean"
+            }
+           },
+           "required": [
+            "diffVersion",
+            "baseModelHash",
+            "candidateModelHash",
+            "modelIdentical",
+            "elementsIdentical",
+            "documentFields",
+            "collections",
+            "changes",
+            "changesTruncated"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "outputs": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "module": {
+              "type": "string",
+              "enum": [
+               "BUILDING_MODEL",
+               "ACCEPTANCE_QA",
+               "BIM",
+               "COMPLEX_VERIFICATION",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "ENVIRONMENTAL_ANALYSIS",
+               "BUILDING_SYSTEMS_ANALYSIS",
+               "SPECIALIZED_KNOWLEDGE",
+               "ENGINEERING_ASSESSMENT",
+               "DESIGN_OPTIMIZATION",
+               "DESIGN_CONCEPTS",
+               "SCENE_3D",
+               "APPEARANCE_VARIANT",
+               "CONSTRUCTION_DOCUMENTS"
+              ]
+             },
+             "baseArtifactIds": {
+              "type": "array",
+              "items": {
+               "$ref": "#/components/properties/projectId"
+              },
+              "maxItems": 20
+             },
+             "action": {
+              "type": "string",
+              "enum": [
+               "REGENERATE",
+               "MARK_STALE",
+               "NOT_AFFECTED"
+              ]
+             },
+             "taskId": {
+              "type": "string",
+              "enum": [
+               "MODEL_PREFLIGHT",
+               "MODEL_CANDIDATE",
+               "MODEL_COMMIT",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
+              ],
+              "nullable": true
+             },
+             "reason": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "module",
+             "baseArtifactIds",
+             "action",
+             "taskId",
+             "reason"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 24
+          },
+          "tasks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "taskId": {
+              "type": "string",
+              "enum": [
+               "MODEL_PREFLIGHT",
+               "MODEL_CANDIDATE",
+               "MODEL_COMMIT",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
+              ]
+             },
+             "module": {
+              "type": "string",
+              "enum": [
+               "INTERIOR",
+               "MATERIALS",
+               "BUDGET",
+               "STRUCTURAL",
+               "BLUEPRINT"
+              ]
+             },
+             "branch": {
+              "type": "string",
+              "enum": [
+               "MODEL",
+               "MATERIALS_BUDGET",
+               "STRUCTURAL",
+               "VERIFICATION"
+              ]
+             },
+             "dependsOn": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "MODEL_PREFLIGHT",
+                "MODEL_CANDIDATE",
+                "MODEL_COMMIT",
+                "QUANTITY_TAKEOFF",
+                "CONSTRUCTION_CALCULATION",
+                "BOQ_COST",
+                "STRUCTURAL_ANALYSIS",
+                "COMPLEX_VERIFICATION"
+               ]
+              },
+              "maxItems": 4
+             },
+             "writes": {
+              "type": "string",
+              "enum": [
+               "REVISION_OPERATION",
+               "REVISION",
+               "ARTIFACT",
+               "NONE"
+              ]
+             },
+             "checkpoint": {
+              "type": "boolean",
+              "enum": [
+               true
+              ]
+             },
+             "description": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "taskId",
+             "module",
+             "branch",
+             "dependsOn",
+             "writes",
+             "checkpoint",
+             "description"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "invalidation": {
+           "type": "object",
+           "properties": {
+            "granularity": {
+             "type": "string",
+             "enum": [
+              "WHOLE_MODEL"
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "granularity",
+            "basis"
+           ],
+           "additionalProperties": false
+          },
+          "approvalRequired": {
+           "type": "boolean",
+           "enum": [
+            true
+           ]
+          },
+          "quote": {
+           "type": "object",
+           "properties": {
+            "execution": {
+             "type": "string",
+             "enum": [
+              "LOCAL_DETERMINISTIC",
+              "NONE"
+             ]
+            },
+            "externalProviders": {
+             "type": "array",
+             "items": {
+              "type": "string"
+             },
+             "maxItems": 0
+            },
+            "externalCostUsd": {
+             "type": "number",
+             "enum": [
+              0
+             ]
+            },
+            "taskCount": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "maxTasks": {
+             "type": "integer",
+             "minimum": 1,
+             "nullable": true
+            }
+           },
+           "required": [
+            "execution",
+            "externalProviders",
+            "externalCostUsd",
+            "taskCount",
+            "maxTasks"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "engineeringCorrectness": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "solverValidation": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "professionalReview": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "engineeringCorrectness",
+            "solverValidation",
+            "professionalReview"
+           ],
+           "additionalProperties": false
+          },
+          "planHash": {
+           "$ref": "#/components/properties/baseModelHash"
+          }
+         },
+         "required": [
+          "planVersion",
+          "projectId",
+          "baseRevisionId",
+          "baseRevisionNumber",
+          "baseModelHash",
+          "projectCurrentRevisionId",
+          "status",
+          "reasons",
+          "changes",
+          "modelChange",
+          "diff",
+          "outputs",
+          "tasks",
+          "invalidation",
+          "approvalRequired",
+          "quote",
+          "claims",
+          "planHash"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/integration/plans/execute": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/integration/plans/execute",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "changeSet": {
+          "type": "object",
+          "properties": {
+           "changeSetVersion": {
+            "type": "string",
+            "enum": [
+             "change-set-v1"
+            ]
+           },
+           "baseRevisionId": {
+            "type": "string",
+            "format": "uuid"
+           },
+           "changes": {
+            "type": "array",
+            "items": {
+             "type": "object",
+             "properties": {
+              "operation": {
+               "type": "string",
+               "enum": [
+                "add",
+                "modify",
+                "remove",
+                "replace"
+               ]
+              },
+              "elementType": {
+               "type": "string",
+               "enum": [
+                "level",
+                "space",
+                "wall",
+                "opening",
+                "stair",
+                "slab",
+                "column"
+               ]
+              },
+              "elementId": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200,
+               "nullable": true,
+               "default": null
+              },
+              "properties": {
+               "type": "object",
+               "additionalProperties": {},
+               "default": {}
+              }
+             },
+             "required": [
+              "operation",
+              "elementType"
+             ],
+             "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 24
+           },
+           "preserve": {
+            "type": "array",
+            "items": {
+             "type": "object",
+             "properties": {
+              "scope": {
+               "type": "string",
+               "enum": [
+                "BUILDING_GEOMETRY",
+                "FLOOR_PLANS",
+                "STRUCTURE",
+                "STAIRS",
+                "OPENINGS",
+                "WALLS",
+                "ROOMS",
+                "INTERIOR",
+                "BUILDING_DIMENSIONS",
+                "EXTERIOR_APPEARANCE",
+                "LEVEL"
+               ]
+              },
+              "levelId": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/changeSet/properties/changes/items/properties/elementId"
+                }
+               ],
+               "nullable": true,
+               "default": null
+              }
+             },
+             "required": [
+              "scope"
+             ],
+             "additionalProperties": false
+            },
+            "maxItems": 16,
+            "default": []
+           },
+           "regenerate": {
+            "type": "object",
+            "properties": {
+             "materials": {
+              "type": "object",
+              "properties": {
+               "specification": {
+                "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/specification"
+               },
+               "takeoffOptions": {
+                "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/takeoff/properties/options",
+                "default": {}
+               },
+               "constructionOptions": {
+                "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/options",
+                "default": {}
+               }
+              },
+              "required": [
+               "specification"
+              ],
+              "additionalProperties": false
+             },
+             "budget": {
+              "type": "object",
+              "properties": {
+               "rateBookId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+               },
+               "costingPolicy": {
+                "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy"
+               },
+               "options": {
+                "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/options",
+                "default": {}
+               }
+              },
+              "required": [
+               "rateBookId",
+               "costingPolicy"
+              ],
+              "additionalProperties": false
+             },
+             "structural": {
+              "$ref": "#/components/schemas/StructuralInput"
+             },
+             "verification": {
+              "type": "object",
+              "properties": {
+               "declaredLimits": {
+                "type": "object",
+                "properties": {
+                 "maxCoverageRatio": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "minimum": 0,
+                  "maximum": 1,
+                  "multipleOf": 0.0001
+                 },
+                 "maxFar": {
+                  "type": "number",
+                  "exclusiveMinimum": true,
+                  "minimum": 0,
+                  "maximum": 100,
+                  "multipleOf": 0.0001
+                 }
+                },
+                "additionalProperties": false,
+                "nullable": true,
+                "default": null
+               }
+              },
+              "additionalProperties": false
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           },
+           "limits": {
+            "type": "object",
+            "properties": {
+             "maxTasks": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+             }
+            },
+            "additionalProperties": false,
+            "default": {}
+           }
+          },
+          "required": [
+           "changeSetVersion",
+           "baseRevisionId",
+           "changes"
+          ],
+          "additionalProperties": false
+         },
+         "planHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+         },
+         "consent": {
+          "type": "object",
+          "properties": {
+           "acceptPlan": {
+            "type": "boolean",
+            "enum": [
+             true
+            ]
+           },
+           "acceptLocks": {
+            "type": "boolean",
+            "enum": [
+             true
+            ]
+           }
+          },
+          "required": [
+           "acceptPlan",
+           "acceptLocks"
+          ],
+          "additionalProperties": false
+         }
+        },
+        "required": [
+         "changeSet",
+         "planHash",
+         "consent"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "executionVersion": {
+           "type": "string",
+           "enum": [
+            "integration-execution-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "baseRevisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "planHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "COMPLETED",
+            "PARTIAL",
+            "FAILED",
+            "REFUSED"
+           ]
+          },
+          "reasons": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+             },
+             "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+             }
+            },
+            "required": [
+             "code",
+             "message"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "plan": {
+           "type": "object",
+           "properties": {
+            "planVersion": {
+             "type": "string",
+             "enum": [
+              "integration-plan-v1"
+             ]
+            },
+            "projectId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "baseRevisionId": {
+             "$ref": "#/components/properties/projectId"
+            },
+            "baseRevisionNumber": {
+             "type": "integer",
+             "exclusiveMinimum": true,
+             "minimum": 0
+            },
+            "baseModelHash": {
+             "$ref": "#/components/properties/planHash"
+            },
+            "projectCurrentRevisionId": {
+             "allOf": [
+              {
+               "$ref": "#/components/properties/projectId"
+              }
+             ],
+             "nullable": true
+            },
+            "status": {
+             "type": "string",
+             "enum": [
+              "INVALID",
+              "BLOCKED_BY_LOCK",
+              "UNSUPPORTED",
+              "NEEDS_CLARIFICATION",
+              "OVER_BUDGET",
+              "STALE_BASE",
+              "READY_FOR_APPROVAL"
+             ]
+            },
+            "reasons": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/properties/reasons/items"
+             },
+             "maxItems": 16
+            },
+            "changes": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "index": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "operation": {
+                "type": "string",
+                "enum": [
+                 "add",
+                 "modify",
+                 "remove",
+                 "replace"
+                ]
+               },
+               "elementType": {
+                "type": "string",
+                "enum": [
+                 "level",
+                 "space",
+                 "wall",
+                 "opening",
+                 "stair",
+                 "slab",
+                 "column"
+                ]
+               },
+               "elementId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "nullable": true
+               },
+               "levelId": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/properties/plan/properties/changes/items/properties/elementId"
+                 }
+                ],
+                "nullable": true
+               },
+               "disposition": {
+                "type": "string",
+                "enum": [
+                 "SUPPORTED",
+                 "INVALID",
+                 "NEEDS_CLARIFICATION",
+                 "UNSUPPORTED",
+                 "BLOCKED_BY_LOCK"
+                ]
+               },
+               "module": {
+                "type": "string",
+                "enum": [
+                 "INTERIOR"
+                ],
+                "nullable": true
+               },
+               "reasons": {
+                "type": "array",
+                "items": {
+                 "$ref": "#/components/properties/reasons/items"
+                },
+                "maxItems": 8
+               },
+               "limit": {
+                "type": "object",
+                "properties": {
+                 "limitId": {
+                  "type": "string",
+                  "maxLength": 80
+                 },
+                 "value": {
+                  "type": "integer"
+                 },
+                 "requested": {
+                  "type": "integer"
+                 }
+                },
+                "required": [
+                 "limitId",
+                 "value",
+                 "requested"
+                ],
+                "additionalProperties": false,
+                "nullable": true
+               },
+               "requiredChecks": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "maxLength": 120
+                },
+                "maxItems": 12
+               }
+              },
+              "required": [
+               "index",
+               "operation",
+               "elementType",
+               "elementId",
+               "levelId",
+               "disposition",
+               "module",
+               "reasons",
+               "limit",
+               "requiredChecks"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 24
+            },
+            "modelChange": {
+             "type": "object",
+             "properties": {
+              "operationKind": {
+               "type": "string",
+               "enum": [
+                "INTERIOR_FINISH_MODIFY"
+               ]
+              },
+              "preflightStatus": {
+               "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/status"
+              },
+              "preflightHash": {
+               "$ref": "#/components/properties/planHash"
+              },
+              "candidateModelHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/planHash"
+                }
+               ],
+               "nullable": true
+              },
+              "geometryModelHash": {
+               "allOf": [
+                {
+                 "$ref": "#/components/properties/planHash"
+                }
+               ],
+               "nullable": true
+              },
+              "locks": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/RevisionOperation/properties/preflight/properties/locks/items"
+               },
+               "maxItems": 32
+              },
+              "verifications": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "maxLength": 200
+               },
+               "maxItems": 24
+              }
+             },
+             "required": [
+              "operationKind",
+              "preflightStatus",
+              "preflightHash",
+              "candidateModelHash",
+              "geometryModelHash",
+              "locks",
+              "verifications"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "diff": {
+             "type": "object",
+             "properties": {
+              "diffVersion": {
+               "type": "string",
+               "enum": [
+                "element-diff-v1"
+               ]
+              },
+              "baseModelHash": {
+               "$ref": "#/components/properties/planHash"
+              },
+              "candidateModelHash": {
+               "$ref": "#/components/properties/planHash"
+              },
+              "modelIdentical": {
+               "type": "boolean"
+              },
+              "elementsIdentical": {
+               "type": "boolean"
+              },
+              "documentFields": {
+               "type": "array",
+               "items": {
+                "type": "string",
+                "maxLength": 80
+               },
+               "maxItems": 32
+              },
+              "collections": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "base": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "candidate": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "added": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "removed": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "modified": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "preserved": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "reordered": {
+                  "type": "boolean"
+                 }
+                },
+                "required": [
+                 "collection",
+                 "base",
+                 "candidate",
+                 "added",
+                 "removed",
+                 "modified",
+                 "preserved",
+                 "reordered"
+                ],
+                "additionalProperties": false
+               }
+              },
+              "changes": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "collection": {
+                  "type": "string",
+                  "enum": [
+                   "levels",
+                   "spaces",
+                   "walls",
+                   "openings",
+                   "stairs",
+                   "slabs",
+                   "columns",
+                   "dimensions",
+                   "specifications"
+                  ]
+                 },
+                 "elementId": {
+                  "$ref": "#/components/properties/plan/properties/changes/items/properties/elementId"
+                 },
+                 "change": {
+                  "type": "string",
+                  "enum": [
+                   "ADDED",
+                   "REMOVED",
+                   "MODIFIED"
+                  ]
+                 },
+                 "fields": {
+                  "type": "array",
+                  "items": {
+                   "type": "string",
+                   "maxLength": 80
+                  },
+                  "maxItems": 32
+                 }
+                },
+                "required": [
+                 "collection",
+                 "elementId",
+                 "change",
+                 "fields"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 256
+              },
+              "changesTruncated": {
+               "type": "boolean"
+              }
+             },
+             "required": [
+              "diffVersion",
+              "baseModelHash",
+              "candidateModelHash",
+              "modelIdentical",
+              "elementsIdentical",
+              "documentFields",
+              "collections",
+              "changes",
+              "changesTruncated"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "outputs": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "module": {
+                "type": "string",
+                "enum": [
+                 "BUILDING_MODEL",
+                 "ACCEPTANCE_QA",
+                 "BIM",
+                 "COMPLEX_VERIFICATION",
+                 "QUANTITY_TAKEOFF",
+                 "CONSTRUCTION_CALCULATION",
+                 "BOQ_COST",
+                 "STRUCTURAL_ANALYSIS",
+                 "ENVIRONMENTAL_ANALYSIS",
+                 "BUILDING_SYSTEMS_ANALYSIS",
+                 "SPECIALIZED_KNOWLEDGE",
+                 "ENGINEERING_ASSESSMENT",
+                 "DESIGN_OPTIMIZATION",
+                 "DESIGN_CONCEPTS",
+                 "SCENE_3D",
+                 "APPEARANCE_VARIANT",
+                 "CONSTRUCTION_DOCUMENTS"
+                ]
+               },
+               "baseArtifactIds": {
+                "type": "array",
+                "items": {
+                 "$ref": "#/components/properties/projectId"
+                },
+                "maxItems": 20
+               },
+               "action": {
+                "type": "string",
+                "enum": [
+                 "REGENERATE",
+                 "MARK_STALE",
+                 "NOT_AFFECTED"
+                ]
+               },
+               "taskId": {
+                "type": "string",
+                "enum": [
+                 "MODEL_PREFLIGHT",
+                 "MODEL_CANDIDATE",
+                 "MODEL_COMMIT",
+                 "QUANTITY_TAKEOFF",
+                 "CONSTRUCTION_CALCULATION",
+                 "BOQ_COST",
+                 "STRUCTURAL_ANALYSIS",
+                 "COMPLEX_VERIFICATION"
+                ],
+                "nullable": true
+               },
+               "reason": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "module",
+               "baseArtifactIds",
+               "action",
+               "taskId",
+               "reason"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 24
+            },
+            "tasks": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "taskId": {
+                "type": "string",
+                "enum": [
+                 "MODEL_PREFLIGHT",
+                 "MODEL_CANDIDATE",
+                 "MODEL_COMMIT",
+                 "QUANTITY_TAKEOFF",
+                 "CONSTRUCTION_CALCULATION",
+                 "BOQ_COST",
+                 "STRUCTURAL_ANALYSIS",
+                 "COMPLEX_VERIFICATION"
+                ]
+               },
+               "module": {
+                "type": "string",
+                "enum": [
+                 "INTERIOR",
+                 "MATERIALS",
+                 "BUDGET",
+                 "STRUCTURAL",
+                 "BLUEPRINT"
+                ]
+               },
+               "branch": {
+                "type": "string",
+                "enum": [
+                 "MODEL",
+                 "MATERIALS_BUDGET",
+                 "STRUCTURAL",
+                 "VERIFICATION"
+                ]
+               },
+               "dependsOn": {
+                "type": "array",
+                "items": {
+                 "type": "string",
+                 "enum": [
+                  "MODEL_PREFLIGHT",
+                  "MODEL_CANDIDATE",
+                  "MODEL_COMMIT",
+                  "QUANTITY_TAKEOFF",
+                  "CONSTRUCTION_CALCULATION",
+                  "BOQ_COST",
+                  "STRUCTURAL_ANALYSIS",
+                  "COMPLEX_VERIFICATION"
+                 ]
+                },
+                "maxItems": 4
+               },
+               "writes": {
+                "type": "string",
+                "enum": [
+                 "REVISION_OPERATION",
+                 "REVISION",
+                 "ARTIFACT",
+                 "NONE"
+                ]
+               },
+               "checkpoint": {
+                "type": "boolean",
+                "enum": [
+                 true
+                ]
+               },
+               "description": {
+                "type": "string",
+                "maxLength": 300
+               }
+              },
+              "required": [
+               "taskId",
+               "module",
+               "branch",
+               "dependsOn",
+               "writes",
+               "checkpoint",
+               "description"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 8
+            },
+            "invalidation": {
+             "type": "object",
+             "properties": {
+              "granularity": {
+               "type": "string",
+               "enum": [
+                "WHOLE_MODEL"
+               ]
+              },
+              "basis": {
+               "type": "string",
+               "maxLength": 300
+              }
+             },
+             "required": [
+              "granularity",
+              "basis"
+             ],
+             "additionalProperties": false
+            },
+            "approvalRequired": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            },
+            "quote": {
+             "type": "object",
+             "properties": {
+              "execution": {
+               "type": "string",
+               "enum": [
+                "LOCAL_DETERMINISTIC",
+                "NONE"
+               ]
+              },
+              "externalProviders": {
+               "type": "array",
+               "items": {
+                "type": "string"
+               },
+               "maxItems": 0
+              },
+              "externalCostUsd": {
+               "type": "number",
+               "enum": [
+                0
+               ]
+              },
+              "taskCount": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "maxTasks": {
+               "type": "integer",
+               "minimum": 1,
+               "nullable": true
+              }
+             },
+             "required": [
+              "execution",
+              "externalProviders",
+              "externalCostUsd",
+              "taskCount",
+              "maxTasks"
+             ],
+             "additionalProperties": false
+            },
+            "claims": {
+             "type": "object",
+             "properties": {
+              "engineeringCorrectness": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "solverValidation": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              },
+              "professionalReview": {
+               "type": "string",
+               "enum": [
+                "NOT_CLAIMED"
+               ]
+              }
+             },
+             "required": [
+              "engineeringCorrectness",
+              "solverValidation",
+              "professionalReview"
+             ],
+             "additionalProperties": false
+            },
+            "planHash": {
+             "$ref": "#/components/properties/planHash"
+            }
+           },
+           "required": [
+            "planVersion",
+            "projectId",
+            "baseRevisionId",
+            "baseRevisionNumber",
+            "baseModelHash",
+            "projectCurrentRevisionId",
+            "status",
+            "reasons",
+            "changes",
+            "modelChange",
+            "diff",
+            "outputs",
+            "tasks",
+            "invalidation",
+            "approvalRequired",
+            "quote",
+            "claims",
+            "planHash"
+           ],
+           "additionalProperties": false
+          },
+          "operationId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "committedRevisionId": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/projectId"
+            }
+           ],
+           "nullable": true
+          },
+          "tasks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "taskId": {
+              "type": "string",
+              "enum": [
+               "MODEL_PREFLIGHT",
+               "MODEL_CANDIDATE",
+               "MODEL_COMMIT",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "COMPLEX_VERIFICATION"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "COMPLETED",
+               "REPLAYED",
+               "FAILED",
+               "SKIPPED",
+               "NOT_RUN"
+              ]
+             },
+             "revisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             },
+             "artifactId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             },
+             "error": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/reasons/items"
+               }
+              ],
+              "nullable": true
+             },
+             "report": {
+              "type": "object",
+              "properties": {
+               "status": {
+                "type": "string",
+                "maxLength": 40
+               },
+               "inputHash": {
+                "$ref": "#/components/properties/planHash"
+               }
+              },
+              "required": [
+               "status",
+               "inputHash"
+              ],
+              "additionalProperties": false,
+              "nullable": true,
+              "default": null
+             }
+            },
+            "required": [
+             "taskId",
+             "status",
+             "revisionId",
+             "artifactId",
+             "error"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "checks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "check": {
+              "type": "string",
+              "enum": [
+               "PREFLIGHT_MATCHES_PLAN",
+               "CANDIDATE_MATCHES_PLAN",
+               "COMMITTED_DIFF_MATCHES_PLAN",
+               "UNTARGETED_ELEMENTS_PRESERVED"
+              ]
+             },
+             "result": {
+              "type": "string",
+              "enum": [
+               "PASSED",
+               "FAILED",
+               "NOT_RUN"
+              ]
+             }
+            },
+            "required": [
+             "check",
+             "result"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "diff": {
+           "allOf": [
+            {
+             "$ref": "#/components/properties/plan/properties/diff"
+            }
+           ],
+           "nullable": true
+          },
+          "outputs": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "module": {
+              "type": "string",
+              "enum": [
+               "BUILDING_MODEL",
+               "ACCEPTANCE_QA",
+               "BIM",
+               "COMPLEX_VERIFICATION",
+               "QUANTITY_TAKEOFF",
+               "CONSTRUCTION_CALCULATION",
+               "BOQ_COST",
+               "STRUCTURAL_ANALYSIS",
+               "ENVIRONMENTAL_ANALYSIS",
+               "BUILDING_SYSTEMS_ANALYSIS",
+               "SPECIALIZED_KNOWLEDGE",
+               "ENGINEERING_ASSESSMENT",
+               "DESIGN_OPTIMIZATION",
+               "DESIGN_CONCEPTS",
+               "SCENE_3D",
+               "APPEARANCE_VARIANT",
+               "CONSTRUCTION_DOCUMENTS"
+              ]
+             },
+             "revisionId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "artifactId": {
+              "$ref": "#/components/properties/projectId"
+             },
+             "freshness": {
+              "type": "string",
+              "enum": [
+               "current",
+               "stale",
+               "pending",
+               "blocked",
+               "not_applicable",
+               "verified"
+              ],
+              "nullable": true
+             }
+            },
+            "required": [
+             "module",
+             "revisionId",
+             "artifactId",
+             "freshness"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 64
+          },
+          "claims": {
+           "$ref": "#/components/properties/plan/properties/claims"
+          }
+         },
+         "required": [
+          "executionVersion",
+          "projectId",
+          "baseRevisionId",
+          "planHash",
+          "status",
+          "reasons",
+          "plan",
+          "operationId",
+          "committedRevisionId",
+          "tasks",
+          "checks",
+          "diff",
+          "outputs",
+          "claims"
          ],
          "additionalProperties": false
         }
@@ -62555,6 +66722,703 @@
     }
    }
   },
+  "/api/projects/{projectId}/revisions/{revisionId}/instructions/resolve": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/revisions/:revisionId/instructions/resolve",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+         }
+        },
+        "required": [
+         "text"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "resolutionVersion": {
+           "type": "string",
+           "enum": [
+            "instruction-resolution-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "$ref": "#/components/properties/projectId"
+          },
+          "revisionNumber": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "textHash": {
+           "$ref": "#/components/properties/modelHash"
+          },
+          "intent": {
+           "type": "string",
+           "enum": [
+            "EDIT_EXISTING",
+            "REGENERATE_VISUAL_DERIVATIVE",
+            "DERIVE_ALTERNATIVE",
+            "RECOMPUTE_ENGINEERING",
+            "RESTORE_PRIOR",
+            "COMPARE_REVISIONS",
+            "NEW_PROJECT",
+            "UNRECOGNIZED"
+           ]
+          },
+          "status": {
+           "type": "string",
+           "enum": [
+            "RESOLVED",
+            "NEEDS_CLARIFICATION",
+            "UNSUPPORTED"
+           ]
+          },
+          "module": {
+           "type": "string",
+           "enum": [
+            "INTERIOR",
+            "EXTERIOR",
+            "BLUEPRINT",
+            "MATERIALS",
+            "BUDGET",
+            "STRUCTURAL",
+            "SCENE",
+            "NONE"
+           ]
+          },
+          "targets": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "phrase": {
+              "type": "string",
+              "maxLength": 200
+             },
+             "elementType": {
+              "type": "string",
+              "enum": [
+               "space",
+               "level"
+              ]
+             },
+             "resolution": {
+              "type": "string",
+              "enum": [
+               "EXACT",
+               "AMBIGUOUS",
+               "NOT_FOUND"
+              ]
+             },
+             "elementIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "minLength": 1,
+               "maxLength": 200
+              },
+              "maxItems": 64
+             },
+             "candidates": {
+              "type": "array",
+              "items": {
+               "type": "object",
+               "properties": {
+                "elementId": {
+                 "$ref": "#/components/properties/targets/items/properties/elementIds/items"
+                },
+                "name": {
+                 "type": "string",
+                 "maxLength": 200
+                }
+               },
+               "required": [
+                "elementId",
+                "name"
+               ],
+               "additionalProperties": false
+              },
+              "maxItems": 12
+             },
+             "basis": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 8
+             }
+            },
+            "required": [
+             "phrase",
+             "elementType",
+             "resolution",
+             "elementIds",
+             "candidates",
+             "basis"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "exclusions": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/properties/targets/items"
+           },
+           "maxItems": 16
+          },
+          "finishes": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "surface": {
+              "type": "string",
+              "enum": [
+               "floor",
+               "walls",
+               "ceiling"
+              ]
+             },
+             "finish": {
+              "type": "string",
+              "maxLength": 40
+             },
+             "phrase": {
+              "type": "string",
+              "maxLength": 80
+             }
+            },
+            "required": [
+             "surface",
+             "finish",
+             "phrase"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 3
+          },
+          "locks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "scope": {
+              "type": "string",
+              "enum": [
+               "BUILDING_GEOMETRY",
+               "FLOOR_PLANS",
+               "STRUCTURE",
+               "STAIRS",
+               "OPENINGS",
+               "WALLS",
+               "ROOMS",
+               "INTERIOR",
+               "BUILDING_DIMENSIONS",
+               "EXTERIOR_APPEARANCE",
+               "LEVEL"
+              ]
+             },
+             "levelId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/targets/items/properties/elementIds/items"
+               }
+              ],
+              "nullable": true
+             },
+             "source": {
+              "type": "string",
+              "enum": [
+               "ONLY",
+               "KEEP",
+               "LEVEL"
+              ]
+             },
+             "phrase": {
+              "type": "string",
+              "maxLength": 80
+             }
+            },
+            "required": [
+             "scope",
+             "levelId",
+             "source",
+             "phrase"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 16
+          },
+          "conflicts": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+             },
+             "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+             }
+            },
+            "required": [
+             "code",
+             "message"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 8
+          },
+          "revisionRefs": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "phrase": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "kind": {
+              "type": "string",
+              "enum": [
+               "PREVIOUS",
+               "ORIGINAL",
+               "NUMBER",
+               "THIS"
+              ]
+             },
+             "revisionNumber": {
+              "type": "integer",
+              "exclusiveMinimum": true,
+              "minimum": 0,
+              "nullable": true
+             },
+             "revisionId": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/projectId"
+               }
+              ],
+              "nullable": true
+             }
+            },
+            "required": [
+             "phrase",
+             "kind",
+             "revisionNumber",
+             "revisionId"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 2
+          },
+          "clarifications": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "maxLength": 300
+           },
+           "maxItems": 8
+          },
+          "unsupported": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/properties/conflicts/items"
+           },
+           "maxItems": 8
+          },
+          "changeSetDraft": {
+           "type": "object",
+           "properties": {
+            "changeSetVersion": {
+             "type": "string",
+             "enum": [
+              "change-set-v1"
+             ]
+            },
+            "baseRevisionId": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "changes": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "operation": {
+                "type": "string",
+                "enum": [
+                 "add",
+                 "modify",
+                 "remove",
+                 "replace"
+                ]
+               },
+               "elementType": {
+                "type": "string",
+                "enum": [
+                 "level",
+                 "space",
+                 "wall",
+                 "opening",
+                 "stair",
+                 "slab",
+                 "column"
+                ]
+               },
+               "elementId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "nullable": true,
+                "default": null
+               },
+               "properties": {
+                "type": "object",
+                "additionalProperties": {},
+                "default": {}
+               }
+              },
+              "required": [
+               "operation",
+               "elementType"
+              ],
+              "additionalProperties": false
+             },
+             "minItems": 1,
+             "maxItems": 24
+            },
+            "preserve": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "scope": {
+                "type": "string",
+                "enum": [
+                 "BUILDING_GEOMETRY",
+                 "FLOOR_PLANS",
+                 "STRUCTURE",
+                 "STAIRS",
+                 "OPENINGS",
+                 "WALLS",
+                 "ROOMS",
+                 "INTERIOR",
+                 "BUILDING_DIMENSIONS",
+                 "EXTERIOR_APPEARANCE",
+                 "LEVEL"
+                ]
+               },
+               "levelId": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/properties/changeSetDraft/properties/changes/items/properties/elementId"
+                 }
+                ],
+                "nullable": true,
+                "default": null
+               }
+              },
+              "required": [
+               "scope"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 16,
+             "default": []
+            },
+            "regenerate": {
+             "type": "object",
+             "properties": {
+              "materials": {
+               "type": "object",
+               "properties": {
+                "specification": {
+                 "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/specification"
+                },
+                "takeoffOptions": {
+                 "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/takeoff/properties/options",
+                 "default": {}
+                },
+                "constructionOptions": {
+                 "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/construction/properties/options",
+                 "default": {}
+                }
+               },
+               "required": [
+                "specification"
+               ],
+               "additionalProperties": false
+              },
+              "budget": {
+               "type": "object",
+               "properties": {
+                "rateBookId": {
+                 "type": "string",
+                 "minLength": 1,
+                 "maxLength": 200
+                },
+                "costingPolicy": {
+                 "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/costingPolicy"
+                },
+                "options": {
+                 "$ref": "#/components/schemas/WorkflowRequest/anyOf/0/properties/cost/properties/options",
+                 "default": {}
+                }
+               },
+               "required": [
+                "rateBookId",
+                "costingPolicy"
+               ],
+               "additionalProperties": false
+              },
+              "structural": {
+               "$ref": "#/components/schemas/StructuralInput"
+              },
+              "verification": {
+               "type": "object",
+               "properties": {
+                "declaredLimits": {
+                 "type": "object",
+                 "properties": {
+                  "maxCoverageRatio": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 1,
+                   "multipleOf": 0.0001
+                  },
+                  "maxFar": {
+                   "type": "number",
+                   "exclusiveMinimum": true,
+                   "minimum": 0,
+                   "maximum": 100,
+                   "multipleOf": 0.0001
+                  }
+                 },
+                 "additionalProperties": false,
+                 "nullable": true,
+                 "default": null
+                }
+               },
+               "additionalProperties": false
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            },
+            "limits": {
+             "type": "object",
+             "properties": {
+              "maxTasks": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 16
+              }
+             },
+             "additionalProperties": false,
+             "default": {}
+            }
+           },
+           "required": [
+            "changeSetVersion",
+            "baseRevisionId",
+            "changes"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "handoff": {
+           "type": "object",
+           "properties": {
+            "method": {
+             "type": "string",
+             "enum": [
+              "GET",
+              "POST"
+             ]
+            },
+            "route": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "purpose": {
+             "type": "string",
+             "maxLength": 300
+            },
+            "body": {
+             "type": "object",
+             "additionalProperties": {},
+             "nullable": true
+            }
+           },
+           "required": [
+            "method",
+            "route",
+            "purpose",
+            "body"
+           ],
+           "additionalProperties": false,
+           "nullable": true
+          },
+          "executed": {
+           "type": "boolean",
+           "enum": [
+            false
+           ]
+          },
+          "interpretation": {
+           "type": "object",
+           "properties": {
+            "mode": {
+             "type": "string",
+             "enum": [
+              "DETERMINISTIC"
+             ]
+            },
+            "grammar": {
+             "type": "string",
+             "enum": [
+              "instruction-resolution-v1"
+             ]
+            },
+            "languageModel": {
+             "type": "string",
+             "enum": [
+              "NONE"
+             ]
+            }
+           },
+           "required": [
+            "mode",
+            "grammar",
+            "languageModel"
+           ],
+           "additionalProperties": false
+          },
+          "claims": {
+           "type": "object",
+           "properties": {
+            "engineeringCorrectness": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            },
+            "professionalReview": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "engineeringCorrectness",
+            "professionalReview"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "resolutionVersion",
+          "projectId",
+          "revisionId",
+          "revisionNumber",
+          "modelHash",
+          "textHash",
+          "intent",
+          "status",
+          "module",
+          "targets",
+          "exclusions",
+          "finishes",
+          "locks",
+          "conflicts",
+          "revisionRefs",
+          "clarifications",
+          "unsupported",
+          "changeSetDraft",
+          "handoff",
+          "executed",
+          "interpretation",
+          "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/revisions/{revisionId}/knowledge/analyses": {
    "get": {
     "operationId": "get /api/projects/:projectId/revisions/:revisionId/knowledge/analyses",
@@ -63394,7 +68258,7 @@
                 "items": {
                  "type": "string"
                 },
-                "maxItems": 2
+                "maxItems": 4
                }
               },
               "required": [
@@ -65363,6 +70227,551 @@
     }
    }
   },
+  "/api/projects/{projectId}/revisions/{revisionId}/scene/delivery": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/scene/delivery",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "artifactId",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "deliveryVersion": {
+           "type": "string",
+           "enum": [
+            "scene-delivery-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "modelHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "revisionCurrency": {
+           "type": "string",
+           "enum": [
+            "CURRENT",
+            "HISTORICAL"
+           ]
+          },
+          "artifact": {
+           "type": "object",
+           "properties": {
+            "artifactId": {
+             "type": "string",
+             "format": "uuid"
+            },
+            "compilerVersion": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "inputHash": {
+             "$ref": "#/components/properties/modelHash"
+            },
+            "glb": {
+             "type": "object",
+             "properties": {
+              "route": {
+               "type": "string",
+               "maxLength": 300
+              },
+              "mimeType": {
+               "type": "string",
+               "enum": [
+                "model/gltf-binary"
+               ]
+              },
+              "bytes": {
+               "type": "integer"
+              },
+              "sha256": {
+               "$ref": "#/components/properties/modelHash"
+              },
+              "rangeRequests": {
+               "type": "string",
+               "enum": [
+                "NOT_SUPPORTED"
+               ]
+              },
+              "compression": {
+               "type": "string",
+               "enum": [
+                "NONE"
+               ]
+              },
+              "instancing": {
+               "type": "string",
+               "enum": [
+                "NONE"
+               ]
+              },
+              "levelsOfDetail": {
+               "type": "number",
+               "enum": [
+                1
+               ]
+              }
+             },
+             "required": [
+              "route",
+              "mimeType",
+              "bytes",
+              "sha256",
+              "rangeRequests",
+              "compression",
+              "instancing",
+              "levelsOfDetail"
+             ],
+             "additionalProperties": false
+            },
+            "manifestRoute": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "artifactId",
+            "compilerVersion",
+            "inputHash",
+            "glb",
+            "manifestRoute"
+           ],
+           "additionalProperties": false
+          },
+          "frame": {
+           "type": "object",
+           "properties": {
+            "coordinateSystem": {
+             "type": "string",
+             "maxLength": 40
+            },
+            "manifestUnits": {
+             "type": "string",
+             "enum": [
+              "mm"
+             ]
+            },
+            "glbUnits": {
+             "type": "string",
+             "enum": [
+              "m"
+             ]
+            },
+            "originMm": {
+             "type": "object",
+             "properties": {
+              "x": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              },
+              "y": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              },
+              "z": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              }
+             },
+             "required": [
+              "x",
+              "y",
+              "z"
+             ],
+             "additionalProperties": false
+            }
+           },
+           "required": [
+            "coordinateSystem",
+            "manifestUnits",
+            "glbUnits",
+            "originMm"
+           ],
+           "additionalProperties": false
+          },
+          "bounds": {
+           "type": "object",
+           "properties": {
+            "min": {
+             "$ref": "#/components/properties/frame/properties/originMm"
+            },
+            "max": {
+             "$ref": "#/components/properties/frame/properties/originMm"
+            }
+           },
+           "required": [
+            "min",
+            "max"
+           ],
+           "additionalProperties": false
+          },
+          "chunks": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "chunkId": {
+              "type": "string",
+              "maxLength": 420
+             },
+             "levelId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 400
+             },
+             "name": {
+              "type": "string",
+              "maxLength": 200
+             },
+             "index": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "elevationMm": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "nodeName": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "bounds": {
+              "allOf": [
+               {
+                "$ref": "#/components/properties/bounds"
+               }
+              ],
+              "nullable": true
+             },
+             "objects": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "triangles": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "vertices": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "layers": {
+              "type": "object",
+              "additionalProperties": {
+               "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+              }
+             }
+            },
+            "required": [
+             "chunkId",
+             "levelId",
+             "name",
+             "index",
+             "elevationMm",
+             "nodeName",
+             "bounds",
+             "objects",
+             "triangles",
+             "vertices",
+             "layers"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 256
+          },
+          "pickAnchors": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "sceneObjectId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "sourceEntityType": {
+              "type": "string",
+              "maxLength": 20
+             },
+             "sourceEntityId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "bimElementId": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "levelId": {
+              "$ref": "#/components/properties/chunks/items/properties/levelId"
+             },
+             "layer": {
+              "type": "string",
+              "maxLength": 40
+             },
+             "bounds": {
+              "$ref": "#/components/properties/bounds"
+             }
+            },
+            "required": [
+             "sceneObjectId",
+             "sourceEntityType",
+             "sourceEntityId",
+             "bimElementId",
+             "levelId",
+             "layer",
+             "bounds"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 2048
+          },
+          "navigation": {
+           "type": "object",
+           "properties": {
+            "source": {
+             "type": "string",
+             "maxLength": 60
+            },
+            "nodes": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "edges": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "cameraPresets": {
+             "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+            },
+            "collisionFreePath": {
+             "type": "string",
+             "enum": [
+              "NOT_CLAIMED"
+             ]
+            }
+           },
+           "required": [
+            "source",
+            "nodes",
+            "edges",
+            "cameraPresets",
+            "collisionFreePath"
+           ],
+           "additionalProperties": false
+          },
+          "budgets": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "budgetId": {
+              "type": "string",
+              "enum": [
+               "OBJECTS",
+               "TRIANGLES",
+               "VERTICES",
+               "GLB_BYTES"
+              ]
+             },
+             "limit": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "measured": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             },
+             "usedThousandths": {
+              "$ref": "#/components/properties/artifact/properties/glb/properties/bytes"
+             }
+            },
+            "required": [
+             "budgetId",
+             "limit",
+             "measured",
+             "usedThousandths"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 4,
+           "maxItems": 4
+          },
+          "cache": {
+           "type": "object",
+           "properties": {
+            "etag": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "cacheKey": {
+             "type": "string",
+             "maxLength": 200
+            },
+            "immutableArtifact": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            },
+            "invalidatedBy": {
+             "type": "string",
+             "enum": [
+              "NEW_REVISION_OR_ARTIFACT"
+             ]
+            }
+           },
+           "required": [
+            "etag",
+            "cacheKey",
+            "immutableArtifact",
+            "invalidatedBy"
+           ],
+           "additionalProperties": false
+          },
+          "media": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capability": {
+              "type": "string",
+              "enum": [
+               "model",
+               "rendered_image",
+               "panorama_360",
+               "interactive_scene",
+               "walkthrough",
+               "video"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "UNSUPPORTED"
+              ]
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capability",
+             "status",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 6,
+           "maxItems": 6
+          },
+          "nonWebGlFallback": {
+           "type": "object",
+           "properties": {
+            "available": {
+             "type": "boolean",
+             "enum": [
+              true
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "available",
+            "basis"
+           ],
+           "additionalProperties": false
+          },
+          "clientPerformance": {
+           "type": "object",
+           "properties": {
+            "status": {
+             "type": "string",
+             "enum": [
+              "NOT_MEASURED"
+             ]
+            },
+            "reason": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "status",
+            "reason"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "deliveryVersion",
+          "projectId",
+          "revisionId",
+          "modelHash",
+          "revisionCurrency",
+          "artifact",
+          "frame",
+          "bounds",
+          "chunks",
+          "pickAnchors",
+          "navigation",
+          "budgets",
+          "cache",
+          "media",
+          "nonWebGlFallback",
+          "clientPerformance"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{projectId}/revisions/{revisionId}/scene/status": {
    "get": {
     "operationId": "get /api/projects/:projectId/revisions/:revisionId/scene/status",
@@ -66912,6 +72321,15 @@
                "NOT_APPLICABLE"
               ]
              },
+             "severity": {
+              "type": "string",
+              "enum": [
+               "BLOCKING",
+               "REVIEW",
+               "UNVERIFIED",
+               "NONE"
+              ]
+             },
              "entityIds": {
               "type": "array",
               "items": {
@@ -66932,15 +72350,25 @@
              "detail": {
               "type": "string",
               "maxLength": 300
+             },
+             "assumptions": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 4
              }
             },
             "required": [
              "checkId",
              "status",
+             "severity",
              "entityIds",
              "measured",
              "required",
-             "detail"
+             "detail",
+             "assumptions"
             ],
             "additionalProperties": false
            },
@@ -67342,6 +72770,15 @@
                "NOT_APPLICABLE"
               ]
              },
+             "severity": {
+              "type": "string",
+              "enum": [
+               "BLOCKING",
+               "REVIEW",
+               "UNVERIFIED",
+               "NONE"
+              ]
+             },
              "entityIds": {
               "type": "array",
               "items": {
@@ -67362,15 +72799,25 @@
              "detail": {
               "type": "string",
               "maxLength": 300
+             },
+             "assumptions": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 200
+              },
+              "maxItems": 4
              }
             },
             "required": [
              "checkId",
              "status",
+             "severity",
              "entityIds",
              "measured",
              "required",
-             "detail"
+             "detail",
+             "assumptions"
             ],
             "additionalProperties": false
            },
@@ -67676,7 +73123,8 @@
                "stairs",
                "dimensions",
                "specifications",
-               "site"
+               "site",
+               "document"
               ]
              },
              "entityId": {
@@ -67695,7 +73143,7 @@
               "items": {
                "$ref": "#/components/properties/scope/properties/levelIds/items"
               },
-              "maxItems": 2
+              "maxItems": 4
              },
              "inScope": {
               "type": "boolean"
@@ -67829,6 +73277,374 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/RevisionCommitResponse"
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/routing/decisions": {
+   "post": {
+    "operationId": "post /api/projects/:projectId/routing/decisions",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "targetScopes": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "enum": [
+            "FACADE_APPEARANCE",
+            "INTERIOR_FINISHES",
+            "FLOOR_PLAN",
+            "STRUCTURE",
+            "QUANTITIES",
+            "COST",
+            "ENVIRONMENT",
+            "SCENE_3D",
+            "IFC_EXPORT",
+            "EVIDENCE_REPORT",
+            "INTENT_TEXT",
+            "EXTERIOR_RENDER",
+            "INTERIOR_RENDER",
+            "REFERENCE_IMAGE"
+           ]
+          },
+          "minItems": 1,
+          "maxItems": 14
+         },
+         "privacyClass": {
+          "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass",
+          "default": "LOCAL_ONLY"
+         },
+         "allowMetered": {
+          "type": "boolean",
+          "default": false
+         }
+        },
+        "required": [
+         "targetScopes"
+        ],
+        "additionalProperties": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "routingVersion": {
+           "type": "string",
+           "enum": [
+            "capability-routing-v1"
+           ]
+          },
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "decisionHash": {
+           "type": "string",
+           "pattern": "^[a-f0-9]{64}$"
+          },
+          "targetScopes": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "enum": [
+             "FACADE_APPEARANCE",
+             "INTERIOR_FINISHES",
+             "FLOOR_PLAN",
+             "STRUCTURE",
+             "QUANTITIES",
+             "COST",
+             "ENVIRONMENT",
+             "SCENE_3D",
+             "IFC_EXPORT",
+             "EVIDENCE_REPORT",
+             "INTENT_TEXT",
+             "EXTERIOR_RENDER",
+             "INTERIOR_RENDER",
+             "REFERENCE_IMAGE"
+            ]
+           }
+          },
+          "effectivePrivacyClass": {
+           "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass"
+          },
+          "effectiveAllowMetered": {
+           "type": "boolean"
+          },
+          "invoke": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "forScopes": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "enum": [
+                "FACADE_APPEARANCE",
+                "INTERIOR_FINISHES",
+                "FLOOR_PLAN",
+                "STRUCTURE",
+                "QUANTITIES",
+                "COST",
+                "ENVIRONMENT",
+                "SCENE_3D",
+                "IFC_EXPORT",
+                "EVIDENCE_REPORT",
+                "INTENT_TEXT",
+                "EXTERIOR_RENDER",
+                "INTERIOR_RENDER",
+                "REFERENCE_IMAGE"
+               ]
+              },
+              "maxItems": 14
+             },
+             "execution": {
+              "type": "string",
+              "enum": [
+               "LOCAL_DETERMINISTIC",
+               "PROVIDER_THEN_DETERMINISTIC_FALLBACK",
+               "PROVIDER_ONLY"
+              ]
+             },
+             "providerIds": {
+              "type": "array",
+              "items": {
+               "type": "string",
+               "maxLength": 64
+              },
+              "maxItems": 8
+             },
+             "route": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "reason": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capabilityId",
+             "forScopes",
+             "execution",
+             "providerIds",
+             "route",
+             "reason"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 12
+          },
+          "notInvoked": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "reason": {
+              "type": "string",
+              "enum": [
+               "NOT_TARGETED",
+               "UNSUPPORTED",
+               "NO_ELIGIBLE_PROVIDER"
+              ]
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "capabilityId",
+             "reason",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 12
+          },
+          "refused": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "scope": {
+              "type": "string",
+              "enum": [
+               "FACADE_APPEARANCE",
+               "INTERIOR_FINISHES",
+               "FLOOR_PLAN",
+               "STRUCTURE",
+               "QUANTITIES",
+               "COST",
+               "ENVIRONMENT",
+               "SCENE_3D",
+               "IFC_EXPORT",
+               "EVIDENCE_REPORT",
+               "INTENT_TEXT",
+               "EXTERIOR_RENDER",
+               "INTERIOR_RENDER",
+               "REFERENCE_IMAGE"
+              ]
+             },
+             "code": {
+              "type": "string",
+              "maxLength": 80
+             },
+             "detail": {
+              "type": "string",
+              "maxLength": 300
+             }
+            },
+            "required": [
+             "scope",
+             "code",
+             "detail"
+            ],
+            "additionalProperties": false
+           },
+           "maxItems": 14
+          },
+          "staleIfChanged": {
+           "type": "array",
+           "items": {
+            "type": "string",
+            "maxLength": 80
+           },
+           "maxItems": 24
+          },
+          "quote": {
+           "type": "object",
+           "properties": {
+            "externalCostUsd": {
+             "anyOf": [
+              {
+               "type": "number",
+               "enum": [
+                0
+               ]
+              },
+              {
+               "enum": [
+                "null"
+               ],
+               "nullable": true
+              }
+             ]
+            },
+            "meteredProvidersEligible": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "externalCostUsd",
+            "meteredProvidersEligible",
+            "basis"
+           ],
+           "additionalProperties": false
+          },
+          "executed": {
+           "type": "boolean",
+           "enum": [
+            false
+           ]
+          }
+         },
+         "required": [
+          "routingVersion",
+          "projectId",
+          "decisionHash",
+          "targetScopes",
+          "effectivePrivacyClass",
+          "effectiveAllowMetered",
+          "invoke",
+          "notInvoked",
+          "refused",
+          "staleIfChanged",
+          "quote",
+          "executed"
+         ],
+         "additionalProperties": false
         }
        }
       }
@@ -69485,6 +75301,267 @@
          "required": [
           "regions",
           "lastUpdated"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/routing/capabilities": {
+   "get": {
+    "operationId": "get /api/routing/capabilities",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "routingVersion": {
+           "type": "string",
+           "enum": [
+            "capability-routing-v1"
+           ]
+          },
+          "defaultPrivacyClass": {
+           "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/privacyClass"
+          },
+          "allowMetered": {
+           "type": "boolean"
+          },
+          "capabilities": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "capabilityId": {
+              "type": "string",
+              "enum": [
+               "llm.intent",
+               "image.reference",
+               "image.exterior",
+               "interior.design",
+               "geometry.3d",
+               "cad.ifc",
+               "structural.solve",
+               "environmental.simulate",
+               "cost.rate_source",
+               "report.compose",
+               "quantity.takeoff",
+               "geometry.verify"
+              ]
+             },
+             "status": {
+              "type": "string",
+              "enum": [
+               "AVAILABLE",
+               "PARTIAL",
+               "ADVISORY",
+               "UNSUPPORTED"
+              ]
+             },
+             "title": {
+              "type": "string",
+              "maxLength": 120
+             },
+             "implementation": {
+              "type": "object",
+              "properties": {
+               "kind": {
+                "type": "string",
+                "enum": [
+                 "LOCAL_DETERMINISTIC",
+                 "CONFIGURED_PROVIDER",
+                 "LOCAL_WITH_OPTIONAL_PROVIDER",
+                 "NONE"
+                ]
+               },
+               "serviceId": {
+                "type": "string",
+                "maxLength": 64,
+                "nullable": true
+               },
+               "route": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+               },
+               "aiCapability": {
+                "allOf": [
+                 {
+                  "$ref": "#/components/schemas/Conversation/properties/state/properties/orchestration/properties/capability"
+                 }
+                ],
+                "nullable": true
+               }
+              },
+              "required": [
+               "kind",
+               "serviceId",
+               "route",
+               "aiCapability"
+              ],
+              "additionalProperties": false
+             },
+             "providers": {
+              "type": "array",
+              "items": {
+               "type": "object",
+               "properties": {
+                "providerId": {
+                 "type": "string",
+                 "maxLength": 64
+                },
+                "placement": {
+                 "type": "string",
+                 "enum": [
+                  "LOCAL",
+                  "REMOTE"
+                 ]
+                },
+                "enabled": {
+                 "type": "boolean"
+                },
+                "costClasses": {
+                 "type": "array",
+                 "items": {
+                  "type": "string",
+                  "enum": [
+                   "FREE",
+                   "METERED"
+                  ]
+                 },
+                 "maxItems": 2
+                },
+                "eligible": {
+                 "type": "boolean"
+                },
+                "ineligibleReason": {
+                 "type": "string",
+                 "maxLength": 80,
+                 "nullable": true
+                }
+               },
+               "required": [
+                "providerId",
+                "placement",
+                "enabled",
+                "costClasses",
+                "eligible",
+                "ineligibleReason"
+               ],
+               "additionalProperties": false
+              },
+              "maxItems": 8
+             },
+             "dataEgress": {
+              "type": "string",
+              "enum": [
+               "NONE",
+               "TASK_TEXT_TO_CONFIGURED_PROVIDER"
+              ]
+             },
+             "region": {
+              "type": "string",
+              "enum": [
+               "SERVER_LOCAL",
+               "PROVIDER_REGION_NOT_DECLARED"
+              ]
+             },
+             "costBasis": {
+              "type": "string",
+              "enum": [
+               "LOCAL_NO_EXTERNAL_COST",
+               "METERED_PROVIDER_IF_ALLOWED",
+               "NOT_AVAILABLE"
+              ]
+             },
+             "outputCheck": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "fallback": {
+              "type": "string",
+              "maxLength": 200,
+              "nullable": true
+             },
+             "limitations": {
+              "type": "string",
+              "maxLength": 300
+             },
+             "userSuppliedCredentials": {
+              "type": "string",
+              "enum": [
+               "UNSUPPORTED"
+              ]
+             }
+            },
+            "required": [
+             "capabilityId",
+             "status",
+             "title",
+             "implementation",
+             "providers",
+             "dataEgress",
+             "region",
+             "costBasis",
+             "outputCheck",
+             "fallback",
+             "limitations",
+             "userSuppliedCredentials"
+            ],
+            "additionalProperties": false
+           },
+           "minItems": 12,
+           "maxItems": 12
+          },
+          "credentials": {
+           "type": "object",
+           "properties": {
+            "userSupplied": {
+             "type": "string",
+             "enum": [
+              "UNSUPPORTED"
+             ]
+            },
+            "reason": {
+             "type": "string",
+             "maxLength": 300
+            }
+           },
+           "required": [
+            "userSupplied",
+            "reason"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "routingVersion",
+          "defaultPrivacyClass",
+          "allowMetered",
+          "capabilities",
+          "credentials"
          ],
          "additionalProperties": false
         }

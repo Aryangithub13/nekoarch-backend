@@ -16,6 +16,8 @@ export async function installLimits(app: FastifyInstance, env: Env) {
   const digest = (value: string) => createHmac('sha256', salt).update(value).digest('hex');
   const identities = new WeakMap<FastifyRequest, string>();
   const group = (request: FastifyRequest) => request.method === 'POST' && ['/api/projects/:projectId/conversations/:conversationId/messages', '/api/projects/:projectId/conversations/:conversationId/proposals/approve', '/api/projects/:projectId/requirements/interpret', '/api/plans/generate', '/api/projects/:projectId/workflows', '/api/projects/:projectId/revisions/generate', '/api/projects/:projectId/revisions', '/api/projects/:projectId/revisions/:revisionId/structural/analyses', '/api/projects/:projectId/revisions/:revisionId/structural/validate', '/api/projects/:projectId/revisions/:revisionId/environmental/analyses', '/api/projects/:projectId/revisions/:revisionId/environmental/validate', '/api/projects/:projectId/revisions/:revisionId/systems/analyses', '/api/projects/:projectId/revisions/:revisionId/systems/validate', '/api/projects/:projectId/revisions/:revisionId/optimization/studies', '/api/projects/:projectId/revisions/:revisionId/optimization/validate', '/api/projects/:projectId/revisions/:revisionId/scene/artifacts', '/api/projects/:projectId/revisions/:revisionId/scene/validate', '/api/projects/:projectId/revision-operations', '/api/projects/:projectId/revision-operations/:operationId/execute', '/api/projects/:projectId/references', '/api/projects/:projectId/references/validate', '/api/projects/:projectId/jobs', '/api/projects/:projectId/jobs/:jobId/retry', '/api/projects/:projectId/compute/jobs',
+    // Phase 34: independent verification with declared limits and the scoped diff compute over whole models (quotas, roadmap Phase 34).
+    '/api/projects/:projectId/revisions/:revisionId/verification', '/api/projects/:projectId/revisions/:revisionId/verification/diff',
     // Phase 35: whole-model computation per request (regeneration with QA, its recomputation, and per-zone QA, verification, takeoff and BIM).
     '/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration', '/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/regeneration/verification',
     '/api/projects/:projectId/revisions/:revisionId/engineering-assessment/zones/partitions',
@@ -27,7 +29,9 @@ export async function installLimits(app: FastifyInstance, env: Env) {
     // Phase 39: a design-concept request may call a configured AI provider.
     '/api/projects/:projectId/revisions/:revisionId/design-concepts',
     // B39 S1: a specialist request may generate a revision (Blueprint) or run the takeoff, construction and cost engines.
-    '/api/projects/:projectId/specialists/:module/requests'].includes(request.routeOptions.url ?? '') ? 'generate'
+    '/api/projects/:projectId/specialists/:module/requests',
+    // B40 S1: a plan builds the Phase 37 graph; an execution commits a revision and runs the takeoff, construction and cost engines.
+    '/api/projects/:projectId/integration/plans', '/api/projects/:projectId/integration/plans/execute'].includes(request.routeOptions.url ?? '') ? 'generate'
     : ['POST', 'PATCH', 'DELETE'].includes(request.method) ? 'write' : 'read';
   const perimeter = app.createRateLimit({ max: env.RATE_LIMIT_IP, keyGenerator: req => digest(`ip:${req.ip}`) });
   const operation = app.createRateLimit({

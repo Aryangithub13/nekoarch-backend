@@ -38,6 +38,19 @@ const safeRoutes = new Set([
   `${revision}/evidence-packages`, `${revision}/evidence-packages/:packageId`,
   // Phase 39
   `${revision}/design-concepts`, `${revision}/design-concepts/:conceptSetId`, `${project}/specialists/:module/requests`,
+  // B40
+  `${project}/integration/plans`, `${project}/integration/plans/execute`,
+  // B41
+  `${revision}/instructions/resolve`,
+  // B42
+  `${project}/feasibility/assessments`,
+  // B43
+  '/api/routing/capabilities', `${project}/routing/decisions`,
+  // B44
+  `${project}/collaboration`, `${project}/collaboration/members`, `${project}/collaboration/members/:userId`, `${project}/collaboration/revisions/:revisionId`,
+  `${project}/collaboration/revisions/:revisionId/comments`, `${project}/collaboration/revisions/:revisionId/reviews`,
+  // B45
+  `${revision}/scene/delivery`, '/api/compatibility',
 ]);
 
 // Drop all automatic request/user/breadcrumb attachments. Only controlled context is sent.
@@ -86,4 +99,5 @@ export function reportError(error: unknown, requestId: string, code: string, con
     exception: { values: [{ type: safe.type, value: 'DesignFlow backend request failure', stacktrace: { frames: safe.frames.reverse() } }] },
     tags: { requestId, code, ...context } });
 }
-export const flushSentry = () => Sentry.flush(5_000);
+// Without a DSN no client exists and nothing is pending; the SDK's flush would still resolve false and fail every clean shutdown.
+export const flushSentry = (timeoutMs = 5_000) => Sentry.getClient() ? Sentry.flush(timeoutMs) : Promise.resolve(true);
