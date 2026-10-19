@@ -37,6 +37,9 @@ import { generatePlan, parseRequirements } from '@designflow/generator';
 import { buildApp } from '../src/app.js';
 import { ProjectManifestSchema } from '../src/contracts/project-manifest.js';
 import { SpecialistResultSchema, SPECIALIST_VERSION } from '../src/contracts/specialists.js';
+import { CHANGE_SET_VERSION } from '../src/contracts/integration.js';
+import { RevisionCollaborationSchema, WorkspaceResponseSchema } from '../src/collaboration/contracts.js';
+import { DiffReportSchema, VerificationReportSchema } from '../src/verification/contracts.js';
 import { parametricInput } from '../../../test-support/parametric-fixtures.js';
 import { specification } from '../../../packages/construction-calculations/tests/fixtures.js';
 import { sampleCostingPolicy } from '@designflow/boq-cost';
@@ -178,6 +181,12 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
         const rows = await admin.from(table).select('project_revisions!inner(project_id)').in('project_revisions.project_id', ownedIds);
         if (rows.error) failures.push(`read protected ${table} projects`);
         for (const row of rows.data ?? []) for (const r of Array.isArray(row.project_revisions) ? row.project_revisions : [row.project_revisions]) protectedIds.add(r.project_id);
+      }
+      // B44 comments and reviews (0030) are immutable history likewise: a cascade from the project would hit their immutability triggers.
+      for (const table of ['project_revision_comments', 'project_revision_reviews'] as const) {
+        const rows = await admin.from(table).select('project_id').in('project_id', ownedIds);
+        if (rows.error) failures.push(`read protected ${table} projects`);
+        for (const row of rows.data ?? []) protectedIds.add(row.project_id);
       }
       const deletable = ownedIds.filter(id => !protectedIds.has(id));
       if (deletable.length) {
@@ -717,6 +726,93 @@ describe('local Supabase anonymous ownership and full persistence flow', () => {
       expect(after.data, table).toEqual([{ id: row.id, content_hash: row.contentHash }]);
     }
   }, 90_000);
+
+  it('B34, B40 and B44 (0030) through actual JWT and PostgREST: a planned change commits, its verification and diff are owner-only, and member roles hold', async () => {
+    if (!app || !owner || !other || !publicClient) throw new Error('Local setup incomplete');
+    const env = localEnvironment(), reviewer = await anonymousPrincipal(env), viewer = await anonymousPrincipal(env);
+    const p = await app.inject({ method: 'POST', url: '/api/projects', headers: owner.headers, payload: { title: 'B34 B40 B44 live' } });
+    expect(p.statusCode, p.body).toBe(201); const id = p.json().id as string;
+    const rev = await app.inject({ method: 'POST', url: `/api/projects/${id}/revisions`, headers: owner.headers, payload: { model: authored() } });
+    expect(rev.statusCode, rev.body.slice(0, 300)).toBe(201); const base = rev.json().revision;
+
+    // B40: preview, then execute the approved plan through the Phase 30 lifecycle; another user cannot even plan.
+    const changeSet = { changeSetVersion: CHANGE_SET_VERSION, baseRevisionId: base.id, changes: [{ operation: 'modify', elementType: 'space', elementId: 'foyer',
+      properties: { finishes: { floor: 'carpet' } } }] };
+    const plans = `/api/projects/${id}/integration/plans`;
+    expect((await app.inject({ method: 'POST', url: plans, headers: other.headers, payload: changeSet })).statusCode).toBe(404);
+    const plan = await app.inject({ method: 'POST', url: plans, headers: owner.headers, payload: changeSet });
+    expect(plan.statusCode, plan.body.slice(0, 400)).toBe(200); expect(plan.json().status).toBe('READY_FOR_APPROVAL');
+    const run = await app.inject({ method: 'POST', url: `${plans}/execute`, headers: owner.headers,
+      payload: { changeSet, planHash: plan.json().planHash, consent: { acceptPlan: true, acceptLocks: true } } });
+    expect(run.statusCode, run.body.slice(0, 400)).toBe(201);
+    expect(run.json()).toMatchObject({ status: 'COMPLETED', reasons: [] });
+    const rev2 = run.json().committedRevisionId as string;
+
+    // B34: computed on read and owner-only through RLS; nothing is stored.
+    const verification = `/api/projects/${id}/revisions/${rev2}/verification`;
+    const report = await app.inject({ url: verification, headers: owner.headers });
+    expect(report.statusCode, report.body.slice(0, 300)).toBe(200);
+    expect(VerificationReportSchema.parse(report.json())).toMatchObject({ projectId: id, revisionId: rev2, status: 'VERIFIED' });
+    expect((await app.inject({ url: verification, headers: other.headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: verification })).statusCode).toBe(401);
+    const diffBody = { otherRevisionId: base.id, scope: {} };
+    const diff = await app.inject({ method: 'POST', url: `${verification}/diff`, headers: owner.headers, payload: diffBody });
+    expect(diff.statusCode, diff.body.slice(0, 300)).toBe(200);
+    expect(DiffReportSchema.parse(diff.json())).toMatchObject({ status: 'OUT_OF_SCOPE_CHANGES', counts: { added: 0, removed: 0, changed: 1, outOfScope: 1 },
+      changes: [{ collection: 'spaces', entityId: 'foyer', change: 'CHANGED', inScope: false }] });
+    expect((await app.inject({ method: 'POST', url: `${verification}/diff`, headers: other.headers, payload: diffBody })).statusCode).toBe(404);
+
+    // B44 (0030): roles for real Auth users. Membership reaches only the collaboration routes.
+    const root = `/api/projects/${id}/collaboration`;
+    for (const [principal, role] of [[reviewer, 'reviewer'], [viewer, 'viewer']] as const) {
+      const added = await app.inject({ method: 'POST', url: `${root}/members`, headers: owner.headers, payload: { userId: principal.id, role } });
+      expect(added.statusCode, added.body.slice(0, 300)).toBe(201);
+    }
+    const forbidden = await app.inject({ method: 'POST', url: `${root}/members`, headers: reviewer.headers, payload: { userId: other.id, role: 'viewer' } });
+    expect([forbidden.statusCode, forbidden.json().error.code]).toEqual([403, 'COLLABORATION_FORBIDDEN']);
+    const workspace = await app.inject({ url: root, headers: viewer.headers });
+    expect(workspace.statusCode, workspace.body.slice(0, 300)).toBe(200); expect(WorkspaceResponseSchema.parse(workspace.json()).role).toBe('viewer');
+    expect((await app.inject({ url: `/api/projects/${id}`, headers: viewer.headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: root, headers: other.headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: root })).statusCode).toBe(401);
+    const comment = await app.inject({ method: 'POST', url: `${root}/revisions/${rev2}/comments`, headers: reviewer.headers,
+      payload: { kind: 'CHANGE_REQUEST', body: 'Carpet in the foyer will wear fast', elementIds: ['foyer'] } });
+    expect(comment.statusCode, comment.body.slice(0, 300)).toBe(201); const commentId = comment.json().id as string;
+    const denied = await app.inject({ method: 'POST', url: `${root}/revisions/${rev2}/comments`, headers: viewer.headers, payload: { body: 'x' } });
+    expect([denied.statusCode, denied.json().error.code]).toEqual([403, 'COLLABORATION_FORBIDDEN']);
+    const view = RevisionCollaborationSchema.parse((await app.inject({ url: `${root}/revisions/${rev2}`, headers: viewer.headers })).json());
+    const review = await app.inject({ method: 'POST', url: `${root}/revisions/${rev2}/reviews`, headers: reviewer.headers,
+      payload: { decision: 'APPROVED', expectedModelHash: view.revision.modelHash } });
+    expect(review.statusCode, review.body.slice(0, 300)).toBe(201);
+
+    // Direct SDK on the 0030 tables: the owner sees every member, a member only itself, another user nothing; anonymous is refused and no client writes.
+    const members = await owner.client.from('project_members').select('user_id,role').eq('project_id', id).order('role');
+    expect(members.error).toBeNull(); expect(members.data).toEqual([{ user_id: reviewer.id, role: 'reviewer' }, { user_id: viewer.id, role: 'viewer' }]);
+    expect((await viewer.client.from('project_members').select('user_id').eq('project_id', id)).data).toEqual([{ user_id: viewer.id }]);
+    expect((await other.client.from('project_members').select('user_id').eq('project_id', id)).data).toEqual([]);
+    expect((await owner.client.from('project_members').insert({ project_id: id, user_id: other.id, role: 'editor', added_by: owner.id })).error?.code).toBe('42501');
+    for (const table of ['project_revision_comments', 'project_revision_reviews'] as const) {
+      const own = await viewer.client.from(table).select('id').eq('project_id', id);
+      expect(own.error, table).toBeNull(); expect(own.data, table).toHaveLength(1);
+      expect((await other.client.from(table).select('id').eq('project_id', id)).data, table).toEqual([]);
+      expect((await publicClient.from(table).select('id').eq('project_id', id)).error?.code, table).toBe('42501');
+      expect((await owner.client.from(table).delete().eq('project_id', id)).error?.code, table).toBe('42501');
+    }
+    expect((await reviewer.client.from('project_revision_comments').update({ body: 'edited' }).eq('id', commentId)).error?.code).toBe('42501');
+    // An unsigned write is refused after the role check; a non-member learns only that the project is not found.
+    const forged = { p_action: 'comment', p_input: { projectId: id, revisionId: rev2, kind: 'COMMENT', body: 'forged', elementIds: [] }, p_envelope: '{}', p_signature: 'f'.repeat(64) };
+    expect((await reviewer.client.rpc('collaboration_write', forged)).error?.code).toBe('42501');
+    expect((await other.client.rpc('collaboration_write', forged)).error?.code).toBe('P1201');
+    expect((await other.client.rpc('collaboration_read', { p_action: 'workspace', p_project_id: id })).error?.code).toBe('P1201');
+    expect((await publicClient.rpc('collaboration_read', { p_action: 'workspace', p_project_id: id })).error).not.toBeNull();
+    // Removal ends access through the API and through PostgREST.
+    expect((await app.inject({ method: 'DELETE', url: `${root}/members/${viewer.id}`, headers: owner.headers })).statusCode).toBe(200);
+    expect((await app.inject({ url: root, headers: viewer.headers })).statusCode).toBe(404);
+    expect((await viewer.client.from('project_revision_comments').select('id').eq('project_id', id)).data).toEqual([]);
+    // The record is exactly what the API wrote: one comment and one review.
+    const after = RevisionCollaborationSchema.parse((await app.inject({ url: `${root}/revisions/${rev2}`, headers: owner.headers })).json());
+    expect([after.comments.map(c => c.id), after.reviews.length]).toEqual([[commentId], 1]);
+  }, 180_000);
 
   it('enforces V2 direct SDK RLS, blocks QA forgery and exposes only public current through its RPC', async () => {
     if (!app || !owner || !other || !publicClient || !admin) throw new Error('Local setup incomplete');

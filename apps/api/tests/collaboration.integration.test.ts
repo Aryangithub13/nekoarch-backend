@@ -97,10 +97,10 @@ describe('B44 S1: members, element-anchored comments, reviews and the change aud
   });
 
   // SEC-004: each cap is a count followed by an insert; without serialization, concurrent writes all see room and all insert.
-  it('holds the comment and member caps under concurrent writes', async () => {
+  it('holds the comment, member and review caps under concurrent writes', async () => {
     const projectId = (await ok('owner', 'POST', '/api/projects', { title: 'B44 caps' })).id as string;
-    const revisionId = ((await ok('owner', 'POST', `/api/projects/${projectId}/revisions`, { model: authored() })).revision as Json).id as string;
-    const root = `/api/projects/${projectId}/collaboration`;
+    const revision = (await ok('owner', 'POST', `/api/projects/${projectId}/revisions`, { model: authored() })).revision as Json;
+    const revisionId = revision.id as string, root = `/api/projects/${projectId}/collaboration`;
     const stored = async (sql: string) => Number((await db.pool.query(sql, [projectId])).rows[0].count);
     const tally = (codes: unknown[][]) => codes.reduce<Record<string, number>>((all, [s, c]) => ({ ...all, [`${s} ${c}`]: (all[`${s} ${c}`] ?? 0) + 1 }), {});
 
@@ -115,5 +115,10 @@ describe('B44 S1: members, element-anchored comments, reviews and the change aud
     expect(tally(await Promise.all(candidates.slice(18).map(userId => code('owner', 'POST', `${root}/members`, { userId, role: 'viewer' })))))
       .toEqual({ '201 null': 2, '409 COLLABORATION_LIMIT_REACHED': 10 });
     expect(await stored('select count(*) from public.project_members where project_id = $1 and removed_at is null')).toBe(20);
+
+    const review = () => code('owner', 'POST', `${root}/revisions/${revisionId}/reviews`, { decision: 'APPROVED', expectedModelHash: modelHash(revision.model) });
+    for (let i = 0; i < 95; i++) expect(await review()).toEqual([201, null]);
+    expect(tally(await Promise.all(Array.from({ length: 20 }, review)))).toEqual({ '201 null': 5, '409 COLLABORATION_LIMIT_REACHED': 15 });
+    expect(await stored('select count(*) from public.project_revision_reviews where project_id = $1')).toBe(100);
   }, 120_000);
 });
