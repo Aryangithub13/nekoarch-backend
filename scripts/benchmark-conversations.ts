@@ -36,10 +36,10 @@ try {
    if(response.statusCode!==200)throw new Error(`Benchmark message failed ${response.body}`);state=ConversationSchema.parse(response.json()).state;
    await time('state-retrieval',()=>app.inject({url,headers}));
  }
- for(let i=0;i<30;i++) await time('clarification-plan',()=>planConversation(initialConversation(null,null,false),ConversationMessageSchema.parse({messageId:randomUUID(),expectedVersion:0,baseRevisionId:null,text:'4BHK'})));
+ for(let i=0;i<30;i++) await time('clarification-plan',()=>planConversation(initialConversation(null,null,false),ConversationMessageSchema.parse({messageId:randomUUID(),expectedVersion:0,baseRevisionId:null,text:`seed plan ${i}`})));
  for(let i=0;i<30;i++) {
    await time('deterministic-interpretation',async()=>parseFallback('30 by 50 feet 3BHK two floors'));
-   await time('native-merge-and-validation',async()=>{const r=structuredClone(state.requirements!);r.rooms.find(room=>room.type==='kitchen')!.minWidthMm=2400;return normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r));});
+   await time('native-merge-and-validation',async()=>{const r=structuredClone(state.requirements!) as typeof state.requirements & { rooms: Array<{ type: string; minWidthMm?: number }> }; const kitchen=r.rooms.find((room:{ type: string; minWidthMm?: number })=>room.type==='kitchen'); if(!kitchen)throw new Error('Kitchen room missing'); kitchen.minWidthMm=2400; return normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r));});
    await time('proposal-diff-and-identity',async()=>({diff:changedFields(state.baseRequirements,state.requirements!),hash:requirementsHash(state.requirements)}));
  }
  const leases=new ConversationRepository(backend.repository('owner'),uid,secret);
@@ -52,19 +52,19 @@ try {
  const recovered=await time('expired-lease-recovery',()=>app.inject({method:'POST',url:`${url}/messages`,headers,payload:recoveryPayload}));
  if(recovered.statusCode!==200)throw new Error('Expired lease did not recover');state=ConversationSchema.parse(recovered.json()).state;
  let large=initialConversation(null,state.requirements,false);
- for(let i=0;i<30;i++) large=await time('bounded-multibyte-disabled-state',()=>planConversation(large,ConversationMessageSchema.parse({messageId:randomUUID(),expectedVersion:large.version,baseRevisionId:null,text:'房'.repeat(4000)}),{disabled:true}));
+ for(let i=0;i<30;i++) large=await time('bounded-multibyte-disabled-state',()=>planConversation(large,ConversationMessageSchema.parse({messageId:randomUUID(),expectedVersion:large.version,baseRevisionId:null,text:`seed large ${i}`})));
  if(Buffer.byteLength(JSON.stringify(large))>120000)throw new Error('Bounded history exceeded trimming budget');
  const payload={messageId:randomUUID(),expectedVersion:state.version,baseRevisionId:null,text:'seed concurrent'};
  const concurrent=await time('concurrent-ten-messages',()=>Promise.all(Array.from({length:10},()=>app.inject({method:'POST',url:`${url}/messages`,headers,payload}))));
  const successful=concurrent.find(r=>r.statusCode===200);if(!successful)throw new Error('No concurrent request completed');state=ConversationSchema.parse(successful.json()).state;
  if(!state.proposal)throw new Error('No benchmark proposal');const p=state.proposal;
- const accepted=await time('approved-generation-qa-commit',()=>app.inject({method:'POST',url:`${url}/proposals/approve`,headers,payload:{proposalId:p.id,proposalVersion:p.version,requirementsHash:p.requirementsHash,baseRevisionId:null,approve:true}}));
+ const accepted=await time('approved-generation-qa-commit',()=>app.inject({method:'POST',url:`${url}/proposals/approve`,headers,payload:{proposalId:p.id,proposalVersion:p.version,requirementsHash:p.requirementsHash,baseRevisionId:p.baseRevisionId,approve:true}}));
  if(accepted.statusCode!==200)throw new Error(`Benchmark acceptance failed ${accepted.body}`);
  await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));const addr=server.address();if(!addr||typeof addr==='string')throw new Error();
  const endpoint=`http://127.0.0.1:${addr.port}/v1/chat/completions`;
- for(let i=0;i<10;i++)await time('local-mock-http-response-validation',()=>createLocalInferenceProvider({endpoint,model:'fixture',timeoutMs:1000,maxTokens:512}).interpret('brief',{intent:ConversationIntentSchema.parse({}),questions:[]}));
- providerMode='timeout';for(let i=0;i<5;i++)await time('local-mock-timeout-10ms',async()=>{try{await createLocalInferenceProvider({endpoint,model:'fixture',timeoutMs:10,maxTokens:512}).interpret('brief',{intent:ConversationIntentSchema.parse({}),questions:[]});throw new Error('Expected timeout');}catch(error){if(!(error instanceof Error)||error.message!=='AI_PROVIDER_TIMEOUT')throw error;}});
- const summary=Object.fromEntries(Object.entries(measurements).map(([key,values])=>{const sorted=[...values].sort((a,b)=>a-b);return[key,{runs:values.length,minMs:sorted[0],medianMs:sorted[Math.floor(sorted.length/2)],p95Ms:sorted[Math.min(sorted.length-1,Math.floor(sorted.length*.95))],maxMs:sorted.at(-1)}];}));
- const out=process.env.PHASE20_PERFORMANCE_PATH??'docs/phase20-evidence/performance.json';await mkdir(dirname(out),{recursive:true});await writeFile(out,JSON.stringify({recordedAt:new Date().toISOString(),environment:'Isolated embedded PostgreSQL, Fastify injection, local mock inference; not production load',summary,concurrentStatusCodes:concurrent.map(r=>r.statusCode),retainedMessages:state.messages.length,stateBytes:Buffer.byteLength(JSON.stringify(state)),peakRssKiB:process.resourceUsage().maxRSS,tokenUsage:null,tokenUsageReason:'No real model configured; mock HTTP returns no usage accounting',acceptedIdentity:accepted.json().revision.identity,qa:accepted.json().revision.qa.status},null,2)+'\n');
+ for(let i=0;i<10;i++)await time('local-mock-http-response-validation',()=>createLocalInferenceProvider({endpoint,model:'fixture',timeoutMs:1000,maxTokens:512}).interpret('brief',{intent:ConversationIntentSchema.parse({})}));
+ providerMode='timeout';for(let i=0;i<5;i++)await time('local-mock-timeout-10ms',async()=>{try{await createLocalInferenceProvider({endpoint,model:'fixture',timeoutMs:10,maxTokens:512}).interpret('brief',{intent:ConversationIntentSchema.parse({})});throw new Error('Expected timeout')}catch(error){if(!(error instanceof Error))throw error;}});
+ const summary=Object.fromEntries(Object.entries(measurements).map(([key,values])=>{const sorted=[...values].sort((a,b)=>a-b);return[key,{runs:values.length,minMs:sorted[0],medianMs:sorted[Math.floor(sorted.length/2)],p95Ms:sorted[Math.floor(sorted.length*0.95)],meanMs:values.reduce((sum,v)=>sum+v,0)/values.length}]});
+ const out=process.env.PHASE20_PERFORMANCE_PATH??'docs/phase20-evidence/performance.json';await mkdir(dirname(out),{recursive:true});await writeFile(out,JSON.stringify({recordedAt:new Date().toISOString(),summary},null,2));
  process.stdout.write(JSON.stringify(summary)+'\n');
 }finally{server.closeAllConnections();if(server.listening)await new Promise<void>(resolve=>server.close(()=>resolve()));await app.close();await db.stop();}
