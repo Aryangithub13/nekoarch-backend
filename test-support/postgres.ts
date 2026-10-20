@@ -5,6 +5,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import EmbeddedPostgres from 'embedded-postgres';
 import pg, { type Pool, type PoolClient } from 'pg';
 
@@ -12,12 +13,26 @@ const supabaseDir = fileURLToPath(new URL('../supabase/', import.meta.url));
 
 /** TEST-003: embedded PostgreSQL fails opaquely (an initdb EACCES or exit 1, then a 120 s hook timeout) as root or without the
  * en_US.UTF-8 locale that embedded-postgres passes as --lc-messages. Name the cause before starting it. `locales` is `locale -a`. */
-export function embeddedPostgresPreflight(host: { uid: number | undefined; platform: string; locales: string | null }): string | null {
+export function embeddedPostgresPreflight(host: { uid: number | undefined; platform: string; locales: string | null; initdbError?: string | null }): string | null {
+  // npm 12 skips dependency install scripts unless package.json allowScripts approves them; without the postinstall the bundled libraries
+  // (libpq.so.5, ICU) are never linked and initdb exits 127. CI's npm 10 runs the script, so only fresh local installs see this.
+  if (host.initdbError && /shared librar/i.test(host.initdbError)) {
+    return 'The embedded PostgreSQL binaries cannot load their bundled libraries: its install script was skipped. Check `npm install-scripts ls`, then reinstall (`npm ci`).';
+  }
   if (host.uid === 0) return 'Embedded PostgreSQL cannot run as root: run the database tests as a non-root user (CI runs as the unprivileged runner).';
   if (host.platform === 'linux' && host.locales !== null && !/^en_US\.utf-?8$/im.test(host.locales)) {
     return 'Embedded PostgreSQL needs the en_US.UTF-8 locale: run `sudo locale-gen en_US.UTF-8` or `localedef -i en_US -f UTF-8 en_US.UTF-8` (CI does the former).';
   }
   return null;
+}
+/** stderr of a failing `initdb --version` from the installed platform package, or null when it runs (or cannot be located). */
+function initdbError(): string | null {
+  try {
+    // The package exports only dist/index.js, so its root is that entry's parent directory.
+    const dir = path.dirname(path.dirname(createRequire(import.meta.url).resolve(`@embedded-postgres/${process.platform}-${process.arch}`)));
+    const result = spawnSync(path.join(dir, 'native', 'bin', 'initdb'), ['--version'], { encoding: 'utf8' });
+    return result.status === 0 ? null : result.stderr || `exit ${result.status}`;
+  } catch { return null; }
 }
 function hostLocales(): string | null {
   const result = spawnSync('locale', ['-a'], { encoding: 'utf8' });
@@ -68,7 +83,7 @@ export async function seedTestDatabase(pool: Pool): Promise<void> {
 
 /** `migrations` selects a prefix of the ordered migrations, e.g. to test an upgrade from an earlier schema. */
 export async function startTestDatabase(options: { seed?: boolean; migrations?: (name: string) => boolean } = {}) {
-  const problem = embeddedPostgresPreflight({ uid: process.getuid?.(), platform: process.platform, locales: process.platform === 'linux' ? hostLocales() : null });
+  const problem = embeddedPostgresPreflight({ uid: process.getuid?.(), platform: process.platform, locales: process.platform === 'linux' ? hostLocales() : null, initdbError: initdbError() });
   if (problem) throw new Error(problem);
   const port = await availablePort();
   const databaseDir = await mkdtemp(path.join(tmpdir(), 'designflow-postgres-'));

@@ -1,0 +1,633 @@
+{
+  "startedAt": "2026-10-19T18:43:59.358Z",
+  "finishedAt": "2026-10-19T18:46:20.290Z",
+  "observedRequests": 4448,
+  "failures": [
+    {
+      "at": "2026-10-19T18:44:00.834Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/plans",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.plans TO anon;\",\"message\":\"permission denied for table plans\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "180",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:00 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:01.388Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/plans",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.plans TO anon;\",\"message\":\"permission denied for table plans\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "180",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:00 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:01.976Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/plans",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.plans TO anon;\",\"message\":\"permission denied for table plans\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "180",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:01 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "1",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:14.563Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_workflow_runs",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_workflow_runs TO anon;\",\"message\":\"permission denied for table project_workflow_runs\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "212",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:14 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:20.400Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_cost_estimates",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_cost_estimates TO anon;\",\"message\":\"permission denied for table project_revision_cost_estimates\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "232",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "1",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:24.241Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_takeoffs",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_takeoffs TO anon;\",\"message\":\"permission denied for table project_revision_takeoffs\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "220",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:23 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:44:32.203Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/architectural_conversations",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.architectural_conversations TO anon;\",\"message\":\"permission denied for table architectural_conversations\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "224",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:44:31 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "4"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:05.563Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_operations",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_operations TO anon;\",\"message\":\"permission denied for table project_revision_operations\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "224",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:05 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:05.571Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_operation_events",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_operation_events TO anon;\",\"message\":\"permission denied for table project_revision_operation_events\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "236",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:05 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:05.581Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_candidate_artifacts",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_candidate_artifacts TO anon;\",\"message\":\"permission denied for table project_revision_candidate_artifacts\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "242",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:05 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:06.525Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_compute_dispatches",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_compute_dispatches TO anon;\",\"message\":\"permission denied for table project_compute_dispatches\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "222",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:06 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:06.549Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/compute_read",
+      "method": "POST",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"permission denied for function compute_read\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "99",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:06 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:11.882Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_evidence_packages",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_evidence_packages TO anon;\",\"message\":\"permission denied for table project_revision_evidence_packages\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "238",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:11 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:11.902Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_design_concepts",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_design_concepts TO anon;\",\"message\":\"permission denied for table project_revision_design_concepts\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "234",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:11 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:11.941Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/evidence_write",
+      "method": "POST",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"permission denied for function evidence_write\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "101",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:11 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:11.950Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/design_concept_write",
+      "method": "POST",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"permission denied for function design_concept_write\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "107",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:11 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:11.957Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/evidence_read",
+      "method": "POST",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"permission denied for function evidence_read\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "100",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:11 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:13.461Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_comments",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_comments TO anon;\",\"message\":\"permission denied for table project_revision_comments\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "220",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:12 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:13.473Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_reviews",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_reviews TO anon;\",\"message\":\"permission denied for table project_revision_reviews\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:12 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:13.489Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/rpc/collaboration_read",
+      "method": "POST",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":null,\"message\":\"permission denied for function collaboration_read\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "105",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:12 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.696Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/projects",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.projects TO anon;\",\"message\":\"permission denied for table projects\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "186",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "1",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.707Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revisions",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revisions TO anon;\",\"message\":\"permission denied for table project_revisions\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "204",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.721Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_qa_runs",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_qa_runs TO anon;\",\"message\":\"permission denied for table project_revision_qa_runs\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.802Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/projects",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.projects TO anon;\",\"message\":\"permission denied for table projects\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "186",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.815Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revisions",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revisions TO anon;\",\"message\":\"permission denied for table project_revisions\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "keep-alive",
+        "content-length": "204",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "1"
+      }
+    },
+    {
+      "at": "2026-10-19T18:46:19.827Z",
+      "endpoint": "http://127.0.0.1:54321/rest/v1/project_revision_qa_runs",
+      "method": "GET",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "responseBody": "{\"code\":\"42501\",\"details\":null,\"hint\":\"Grant the required privileges to the current role with: GRANT SELECT ON public.project_revision_qa_runs TO anon;\",\"message\":\"permission denied for table project_revision_qa_runs\"}",
+      "jwtTimingClaims": {
+        "exp": 1983812996
+      },
+      "responseHeaders": {
+        "access-control-allow-origin": "*",
+        "connection": "close",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Mon, 19 Oct 2026 18:46:19 GMT",
+        "proxy-status": "PostgREST; error=42501",
+        "server": "postgrest/16.3",
+        "via": "kong/2.8.1",
+        "www-authenticate": "Bearer",
+        "x-kong-proxy-latency": "0",
+        "x-kong-upstream-latency": "2"
+      }
+    }
+  ],
+  "apiErrors": [],
+  "postgrestLogs": ""
+}

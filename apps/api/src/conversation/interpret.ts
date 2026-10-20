@@ -61,7 +61,8 @@ export function classifyTurn(raw: string, levels: { id: string; index: number }[
   const t = normalize(raw), revision = interpretRevision(raw, levels), changes = revision.requestedChanges.map(c => c.changeClass);
   // The Phase 30 grammar stops at restore wording, so "keep …" clauses beside a restore are read separately; an explicit constraint is never dropped.
   if (changes.includes('RESTORE')) {
-    const kept = interpretRevision(raw.replace(/\b(?:restore|revert|roll ?back|go back to|undo)\b/gi, 'consider'), levels);
+    // The neutral stand-in is no longer than the shortest replaced word, so a text within the turn limit stays within the grammar's limit.
+    const kept = interpretRevision(raw.replace(/\b(?:restore|revert|roll ?back|go back to|undo)\b/gi, 'see'), levels);
     revision.preservation = kept.preservation;
     revision.ambiguities.push(...kept.ambiguities.filter(q => /storey is meant/.test(q)));
   }
