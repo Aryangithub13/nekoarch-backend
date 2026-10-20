@@ -2,7 +2,7 @@
  "openapi": "3.0.3",
  "info": {
   "title": "NekoArch designflow API",
-  "version": "api-compatibility-v1+165.25abc1fa0880"
+  "version": "api-compatibility-v1+166.4e975130ab2f"
  },
  "components": {
   "securitySchemes": {
@@ -2935,6 +2935,288 @@
        "site",
        "rooms",
        "parametricArchitecture"
+      ],
+      "additionalProperties": false
+     },
+     {
+      "type": "object",
+      "properties": {
+       "program": {
+        "type": "object",
+        "properties": {
+         "buildingType": {
+          "type": "string",
+          "enum": [
+           "house",
+           "villa",
+           "apartment",
+           "office",
+           "cafe",
+           "restaurant",
+           "retail",
+           "clinic",
+           "school",
+           "mixed-use",
+           "community",
+           "studio"
+          ],
+          "default": "house"
+         },
+         "qualityTier": {
+          "type": "string",
+          "enum": [
+           "economy",
+           "standard",
+           "premium",
+           "luxury"
+          ],
+          "default": "standard"
+         },
+         "style": {
+          "type": "string",
+          "enum": [
+           "modern",
+           "contemporary",
+           "minimal",
+           "traditional",
+           "colonial",
+           "industrial",
+           "tropical",
+           "mediterranean"
+          ],
+          "default": "modern"
+         },
+         "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+         },
+         "budgetInr": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0,
+          "maximum": 100000000000
+         },
+         "spaces": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "kind": {
+             "type": "string",
+             "enum": [
+              "living",
+              "family",
+              "foyer",
+              "dining",
+              "kitchen",
+              "pantry",
+              "utility",
+              "store",
+              "master",
+              "bedroom",
+              "kids",
+              "guest",
+              "bathroom",
+              "toilet",
+              "dressing",
+              "study",
+              "office",
+              "library",
+              "puja",
+              "gym",
+              "theatre",
+              "servant",
+              "garage",
+              "reception",
+              "workspace",
+              "cabin",
+              "conference",
+              "serverRoom",
+              "seating",
+              "counter",
+              "commercialKitchen",
+              "retail",
+              "classroom",
+              "staffRoom",
+              "consultation",
+              "treatment",
+              "pharmacy",
+              "restroomMen",
+              "restroomWomen",
+              "hall",
+              "studio"
+             ]
+            },
+            "count": {
+             "type": "integer",
+             "minimum": 1,
+             "maximum": 40
+            },
+            "level": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 9
+            },
+            "areaM2": {
+             "type": "number",
+             "minimum": 1,
+             "maximum": 2000
+            },
+            "ensuite": {
+             "type": "boolean",
+             "default": false
+            },
+            "name": {
+             "type": "string",
+             "minLength": 1,
+             "maxLength": 60
+            }
+           },
+           "required": [
+            "kind",
+            "count"
+           ],
+           "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 40
+         },
+         "roofTerrace": {
+          "type": "boolean",
+          "default": false
+         },
+         "balconies": {
+          "type": "boolean",
+          "default": false
+         },
+         "brief": {
+          "type": "string",
+          "maxLength": 600
+         }
+        },
+        "required": [
+         "spaces"
+        ],
+        "additionalProperties": false
+       },
+       "site": {
+        "type": "object",
+        "properties": {
+         "boundary": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "x": {
+             "type": "integer",
+             "minimum": -100000000,
+             "maximum": 100000000
+            },
+            "z": {
+             "type": "integer",
+             "minimum": -100000000,
+             "maximum": 100000000
+            }
+           },
+           "required": [
+            "x",
+            "z"
+           ],
+           "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 256
+         },
+         "northMilliDegrees": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 359999,
+          "nullable": true,
+          "default": null
+         },
+         "setbacks": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "boundaryEdgeStart": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 3
+            },
+            "minimumMm": {
+             "anyOf": [
+              {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0,
+               "maximum": 120000
+              },
+              {
+               "type": "number",
+               "enum": [
+                0
+               ]
+              }
+             ]
+            }
+           },
+           "required": [
+            "boundaryEdgeStart",
+            "minimumMm"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 4,
+          "default": []
+         }
+        },
+        "required": [
+         "boundary"
+        ],
+        "additionalProperties": false
+       },
+       "floors": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10
+       },
+       "floorToFloorHeightMm": {
+        "type": "integer",
+        "minimum": 2700,
+        "maximum": 6000,
+        "default": 3000
+       },
+       "slabThicknessMm": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 300,
+        "default": 150
+       },
+       "exteriorWallThicknessMm": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 400,
+        "default": 230
+       },
+       "interiorWallThicknessMm": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 300,
+        "default": 120
+       },
+       "seed": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "default": "program-default"
+       }
+      },
+      "required": [
+       "program",
+       "site",
+       "floors"
       ],
       "additionalProperties": false
      },
@@ -8786,7 +9068,8 @@
         "enum": [
          "V1",
          "V2",
-         "PARAMETRIC"
+         "PARAMETRIC",
+         "BRIEF"
         ]
        },
        "status": {
@@ -11562,6 +11845,384 @@
          "provider",
          "model",
          "generalQuestion"
+        ],
+        "additionalProperties": false
+       },
+       "brief": {
+        "type": "object",
+        "properties": {
+         "buildingType": {
+          "type": "string",
+          "enum": [
+           "house",
+           "villa",
+           "apartment",
+           "office",
+           "cafe",
+           "restaurant",
+           "retail",
+           "clinic",
+           "school",
+           "mixed-use",
+           "community",
+           "studio"
+          ]
+         },
+         "floors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+         },
+         "site": {
+          "type": "object",
+          "properties": {
+           "widthMm": {
+            "type": "integer",
+            "minimum": 3000,
+            "maximum": 120000
+           },
+           "depthMm": {
+            "type": "integer",
+            "minimum": 3000,
+            "maximum": 120000
+           }
+          },
+          "required": [
+           "widthMm",
+           "depthMm"
+          ],
+          "additionalProperties": false
+         },
+         "spaces": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "kind": {
+             "type": "string",
+             "enum": [
+              "living",
+              "family",
+              "foyer",
+              "dining",
+              "kitchen",
+              "pantry",
+              "utility",
+              "store",
+              "master",
+              "bedroom",
+              "kids",
+              "guest",
+              "bathroom",
+              "toilet",
+              "dressing",
+              "study",
+              "office",
+              "library",
+              "puja",
+              "gym",
+              "theatre",
+              "servant",
+              "garage",
+              "reception",
+              "workspace",
+              "cabin",
+              "conference",
+              "serverRoom",
+              "seating",
+              "counter",
+              "commercialKitchen",
+              "retail",
+              "classroom",
+              "staffRoom",
+              "consultation",
+              "treatment",
+              "pharmacy",
+              "restroomMen",
+              "restroomWomen",
+              "hall",
+              "studio"
+             ]
+            },
+            "count": {
+             "type": "integer",
+             "minimum": 1,
+             "maximum": 40
+            },
+            "ensuite": {
+             "type": "boolean",
+             "default": false
+            },
+            "level": {
+             "type": "integer",
+             "minimum": -1,
+             "maximum": 9
+            },
+            "areaM2": {
+             "type": "number",
+             "minimum": 1,
+             "maximum": 2000
+            }
+           },
+           "required": [
+            "kind",
+            "count"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 40,
+          "default": []
+         },
+         "qualityTier": {
+          "type": "string",
+          "enum": [
+           "economy",
+           "standard",
+           "premium",
+           "luxury"
+          ]
+         },
+         "style": {
+          "type": "string",
+          "enum": [
+           "modern",
+           "contemporary",
+           "minimal",
+           "traditional",
+           "colonial",
+           "industrial",
+           "tropical",
+           "mediterranean"
+          ]
+         },
+         "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+         },
+         "budgetInr": {
+          "type": "integer",
+          "exclusiveMinimum": true,
+          "minimum": 0,
+          "maximum": 100000000000
+         },
+         "roofTerrace": {
+          "type": "boolean"
+         },
+         "balconies": {
+          "type": "boolean"
+         },
+         "notes": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "maxLength": 120
+          },
+          "maxItems": 12,
+          "default": []
+         },
+         "text": {
+          "type": "string",
+          "maxLength": 600
+         }
+        },
+        "additionalProperties": false
+       },
+       "design": {
+        "type": "object",
+        "properties": {
+         "buildingType": {
+          "type": "string",
+          "maxLength": 40
+         },
+         "floors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+         },
+         "footprintM": {
+          "type": "object",
+          "properties": {
+           "width": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 200
+           },
+           "depth": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 200
+           }
+          },
+          "required": [
+           "width",
+           "depth"
+          ],
+          "additionalProperties": false
+         },
+         "builtUpM2": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+         },
+         "carpetM2": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+         },
+         "plotM": {
+          "type": "object",
+          "properties": {
+           "width": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 200
+           },
+           "depth": {
+            "type": "number",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 200
+           }
+          },
+          "required": [
+           "width",
+           "depth"
+          ],
+          "additionalProperties": false
+         },
+         "plotAssumed": {
+          "type": "boolean"
+         },
+         "rooms": {
+          "type": "array",
+          "items": {
+           "type": "object",
+           "properties": {
+            "name": {
+             "type": "string",
+             "maxLength": 80
+            },
+            "level": {
+             "type": "integer",
+             "minimum": 0,
+             "maximum": 9
+            },
+            "areaM2": {
+             "type": "number",
+             "minimum": 0,
+             "maximum": 5000
+            },
+            "widthM": {
+             "type": "number",
+             "minimum": 0,
+             "maximum": 200
+            },
+            "depthM": {
+             "type": "number",
+             "minimum": 0,
+             "maximum": 200
+            }
+           },
+           "required": [
+            "name",
+            "level",
+            "areaM2",
+            "widthM",
+            "depthM"
+           ],
+           "additionalProperties": false
+          },
+          "maxItems": 60
+         },
+         "estimate": {
+          "type": "object",
+          "properties": {
+           "totalInr": {
+            "type": "integer",
+            "minimum": 0
+           },
+           "rangeInr": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "perSqftInr": {
+            "type": "integer",
+            "minimum": 0
+           },
+           "months": {
+            "type": "integer",
+            "exclusiveMinimum": true,
+            "minimum": 0,
+            "maximum": 120
+           },
+           "concreteM3": {
+            "type": "number",
+            "minimum": 0
+           },
+           "steelTonnes": {
+            "type": "number",
+            "minimum": 0
+           },
+           "bricks": {
+            "type": "integer",
+            "minimum": 0
+           },
+           "cementBags": {
+            "type": "integer",
+            "minimum": 0
+           },
+           "budgetStatus": {
+            "type": "string",
+            "enum": [
+             "WITHIN",
+             "TIGHT",
+             "OVER"
+            ],
+            "nullable": true
+           }
+          },
+          "required": [
+           "totalInr",
+           "rangeInr",
+           "perSqftInr",
+           "months",
+           "concreteM3",
+           "steelTonnes",
+           "bricks",
+           "cementBags",
+           "budgetStatus"
+          ],
+          "additionalProperties": false
+         },
+         "assumptions": {
+          "type": "array",
+          "items": {
+           "type": "string",
+           "maxLength": 300
+          },
+          "maxItems": 20
+         }
+        },
+        "required": [
+         "buildingType",
+         "floors",
+         "footprintM",
+         "builtUpM2",
+         "carpetM2",
+         "plotM",
+         "plotAssumed",
+         "rooms",
+         "estimate",
+         "assumptions"
         ],
         "additionalProperties": false
        }
@@ -49838,6 +50499,12 @@
           "type": "boolean",
           "enum": [
            true
+          ]
+         },
+         "engine": {
+          "type": "string",
+          "enum": [
+           "program"
           ]
          }
         },
@@ -91342,6 +92009,702 @@
           "deviation",
           "provenanceIdentical",
           "claims"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     },
+     "default": {
+      "description": "Typed error; error.code is one of components.x-error-codes",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{projectId}/revisions/{revisionId}/engineering-estimate": {
+   "get": {
+    "operationId": "get /api/projects/:projectId/revisions/:revisionId/engineering-estimate",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "parameters": [
+     {
+      "name": "projectId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "revisionId",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "format": "uuid"
+      }
+     },
+     {
+      "name": "tier",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "enum": [
+        "economy",
+        "standard",
+        "premium",
+        "luxury"
+       ]
+      }
+     },
+     {
+      "name": "city",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 60
+      }
+     },
+     {
+      "name": "budgetInr",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "exclusiveMinimum": true,
+       "minimum": 0,
+       "maximum": 100000000000
+      }
+     },
+     {
+      "name": "soilBearingKnM2",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "number",
+       "minimum": 50,
+       "maximum": 600
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Success",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projectId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionId": {
+           "type": "string",
+           "format": "uuid"
+          },
+          "revisionNumber": {
+           "type": "integer",
+           "exclusiveMinimum": true,
+           "minimum": 0
+          },
+          "generatorVersion": {
+           "type": "string",
+           "nullable": true
+          },
+          "buildingType": {
+           "type": "string",
+           "maxLength": 40,
+           "nullable": true
+          },
+          "estimate": {
+           "type": "object",
+           "properties": {
+            "schemaVersion": {
+             "type": "number",
+             "enum": [
+              1
+             ]
+            },
+            "basis": {
+             "type": "string",
+             "maxLength": 400
+            },
+            "currency": {
+             "type": "string",
+             "enum": [
+              "INR"
+             ]
+            },
+            "areas": {
+             "type": "object",
+             "properties": {
+              "plotM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "footprintM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "builtUpM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "builtUpSqft": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "carpetM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "carpetSqft": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "floors": {
+               "type": "integer",
+               "minimum": 1,
+               "maximum": 10
+              },
+              "groundCoveragePct": {
+               "type": "number",
+               "minimum": 0
+              },
+              "far": {
+               "type": "number",
+               "minimum": 0
+              }
+             },
+             "required": [
+              "plotM2",
+              "footprintM2",
+              "builtUpM2",
+              "builtUpSqft",
+              "carpetM2",
+              "carpetSqft",
+              "floors",
+              "groundCoveragePct",
+              "far"
+             ],
+             "additionalProperties": false
+            },
+            "structure": {
+             "type": "object",
+             "properties": {
+              "system": {
+               "type": "string",
+               "maxLength": 400
+              },
+              "concreteGrade": {
+               "type": "string",
+               "maxLength": 10
+              },
+              "steelGrade": {
+               "type": "string",
+               "maxLength": 10
+              },
+              "liveLoadKnM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "deadLoadKnM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "factoredLoadKnM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "slab": {
+               "type": "object",
+               "properties": {
+                "thicknessMm": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "maxSpanM": {
+                 "type": "number",
+                 "minimum": 0
+                },
+                "rule": {
+                 "type": "string",
+                 "maxLength": 400
+                }
+               },
+               "required": [
+                "thicknessMm",
+                "maxSpanM",
+                "rule"
+               ],
+               "additionalProperties": false
+              },
+              "beams": {
+               "type": "object",
+               "properties": {
+                "sizeMm": {
+                 "type": "string",
+                 "maxLength": 40
+                },
+                "maxSpanM": {
+                 "type": "number",
+                 "minimum": 0
+                },
+                "rule": {
+                 "type": "string",
+                 "maxLength": 400
+                }
+               },
+               "required": [
+                "sizeMm",
+                "maxSpanM",
+                "rule"
+               ],
+               "additionalProperties": false
+              },
+              "columns": {
+               "type": "object",
+               "properties": {
+                "count": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "sizeMm": {
+                 "type": "string",
+                 "maxLength": 40
+                },
+                "maxFactoredLoadKn": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "rule": {
+                 "type": "string",
+                 "maxLength": 400
+                }
+               },
+               "required": [
+                "count",
+                "sizeMm",
+                "maxFactoredLoadKn",
+                "rule"
+               ],
+               "additionalProperties": false
+              },
+              "footings": {
+               "type": "object",
+               "properties": {
+                "type": {
+                 "type": "string",
+                 "maxLength": 400
+                },
+                "sizeM": {
+                 "type": "string",
+                 "maxLength": 40
+                },
+                "depthM": {
+                 "type": "number",
+                 "minimum": 0
+                },
+                "soilBearingKnM2": {
+                 "type": "number",
+                 "minimum": 0
+                },
+                "rule": {
+                 "type": "string",
+                 "maxLength": 400
+                }
+               },
+               "required": [
+                "type",
+                "sizeM",
+                "depthM",
+                "soilBearingKnM2",
+                "rule"
+               ],
+               "additionalProperties": false
+              },
+              "stair": {
+               "type": "object",
+               "properties": {
+                "risers": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "riserMm": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "treadMm": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "widthMm": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "check": {
+                 "type": "string",
+                 "maxLength": 400
+                }
+               },
+               "required": [
+                "risers",
+                "riserMm",
+                "treadMm",
+                "widthMm",
+                "check"
+               ],
+               "additionalProperties": false,
+               "nullable": true
+              }
+             },
+             "required": [
+              "system",
+              "concreteGrade",
+              "steelGrade",
+              "liveLoadKnM2",
+              "deadLoadKnM2",
+              "factoredLoadKnM2",
+              "slab",
+              "beams",
+              "columns",
+              "footings",
+              "stair"
+             ],
+             "additionalProperties": false
+            },
+            "quantities": {
+             "type": "object",
+             "properties": {
+              "concreteM3": {
+               "type": "number",
+               "minimum": 0
+              },
+              "steelKg": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "steelTonnes": {
+               "type": "number",
+               "minimum": 0
+              },
+              "bricks": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "cementBags": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "sandM3": {
+               "type": "number",
+               "minimum": 0
+              },
+              "aggregateM3": {
+               "type": "number",
+               "minimum": 0
+              },
+              "plasterM2": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "flooringM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "wallTileM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "paintM2": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "waterproofingM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "doors": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "windows": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "windowAreaM2": {
+               "type": "number",
+               "minimum": 0
+              },
+              "excavationM3": {
+               "type": "number",
+               "minimum": 0
+              }
+             },
+             "required": [
+              "concreteM3",
+              "steelKg",
+              "steelTonnes",
+              "bricks",
+              "cementBags",
+              "sandM3",
+              "aggregateM3",
+              "plasterM2",
+              "flooringM2",
+              "wallTileM2",
+              "paintM2",
+              "waterproofingM2",
+              "doors",
+              "windows",
+              "windowAreaM2",
+              "excavationM3"
+             ],
+             "additionalProperties": false
+            },
+            "boq": {
+             "type": "array",
+             "items": {
+              "type": "object",
+              "properties": {
+               "code": {
+                "type": "string",
+                "maxLength": 10
+               },
+               "category": {
+                "type": "string",
+                "maxLength": 60
+               },
+               "item": {
+                "type": "string",
+                "maxLength": 400
+               },
+               "unit": {
+                "type": "string",
+                "maxLength": 10
+               },
+               "quantity": {
+                "type": "number",
+                "minimum": 0
+               },
+               "rateInr": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "amountInr": {
+                "type": "integer",
+                "minimum": 0
+               }
+              },
+              "required": [
+               "code",
+               "category",
+               "item",
+               "unit",
+               "quantity",
+               "rateInr",
+               "amountInr"
+              ],
+              "additionalProperties": false
+             },
+             "maxItems": 80
+            },
+            "summary": {
+             "type": "object",
+             "properties": {
+              "subtotalInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "contractorMarginInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "contingencyInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "gstInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "totalInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "perSqftInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "perM2Inr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "rangeInr": {
+               "type": "array",
+               "items": {
+                "type": "integer",
+                "minimum": 0
+               },
+               "minItems": 2,
+               "maxItems": 2
+              },
+              "cityFactor": {
+               "type": "number",
+               "minimum": 0
+              },
+              "byCategory": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "category": {
+                  "type": "string",
+                  "maxLength": 60
+                 },
+                 "amountInr": {
+                  "type": "integer",
+                  "minimum": 0
+                 },
+                 "sharePct": {
+                  "type": "number",
+                  "minimum": 0
+                 }
+                },
+                "required": [
+                 "category",
+                 "amountInr",
+                 "sharePct"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 20
+              }
+             },
+             "required": [
+              "subtotalInr",
+              "contractorMarginInr",
+              "contingencyInr",
+              "gstInr",
+              "totalInr",
+              "perSqftInr",
+              "perM2Inr",
+              "rangeInr",
+              "cityFactor",
+              "byCategory"
+             ],
+             "additionalProperties": false
+            },
+            "budget": {
+             "type": "object",
+             "properties": {
+              "budgetInr": {
+               "type": "integer",
+               "minimum": 0
+              },
+              "differenceInr": {
+               "type": "integer"
+              },
+              "status": {
+               "type": "string",
+               "enum": [
+                "WITHIN",
+                "TIGHT",
+                "OVER"
+               ]
+              }
+             },
+             "required": [
+              "budgetInr",
+              "differenceInr",
+              "status"
+             ],
+             "additionalProperties": false,
+             "nullable": true
+            },
+            "timeline": {
+             "type": "object",
+             "properties": {
+              "months": {
+               "type": "integer",
+               "exclusiveMinimum": true,
+               "minimum": 0
+              },
+              "phases": {
+               "type": "array",
+               "items": {
+                "type": "object",
+                "properties": {
+                 "phase": {
+                  "type": "string",
+                  "maxLength": 400
+                 },
+                 "weeks": {
+                  "type": "integer",
+                  "minimum": 0
+                 }
+                },
+                "required": [
+                 "phase",
+                 "weeks"
+                ],
+                "additionalProperties": false
+               },
+               "maxItems": 12
+              }
+             },
+             "required": [
+              "months",
+              "phases"
+             ],
+             "additionalProperties": false
+            },
+            "assumptions": {
+             "type": "array",
+             "items": {
+              "type": "string",
+              "maxLength": 400
+             },
+             "maxItems": 20
+            }
+           },
+           "required": [
+            "schemaVersion",
+            "basis",
+            "currency",
+            "areas",
+            "structure",
+            "quantities",
+            "boq",
+            "summary",
+            "budget",
+            "timeline",
+            "assumptions"
+           ],
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "projectId",
+          "revisionId",
+          "revisionNumber",
+          "generatorVersion",
+          "buildingType",
+          "estimate"
          ],
          "additionalProperties": false
         }

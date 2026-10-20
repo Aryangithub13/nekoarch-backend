@@ -23,7 +23,7 @@ describe('ordinary natural-language residential briefs', () => {
     expect(result.proposal).not.toBeNull();
     expect(result.requirements?.floors).toBe(2);
     expect(result.requirements?.site.boundary).toEqual([{ x: 0, z: 0 }, { x: width, z: 0 }, { x: width, z: depth }, { x: 0, z: depth }]);
-    expect(result.requirements?.rooms.filter(room => room.type === 'bedroom').reduce((sum, room) => sum + room.count, 0)).toBe(3);
+    expect((result.requirements as Exclude<typeof result.requirements, { program: unknown }>)?.rooms.filter(room => room.type === 'bedroom').reduce((sum, room) => sum + room.count, 0)).toBe(3);
   });
 
   it.each(['a garden', 'glass walls', 'a photorealistic render', 'a walkthrough video', 'a swimming pool', 'a rooftop terrace'])(

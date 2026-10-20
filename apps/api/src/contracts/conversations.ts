@@ -8,6 +8,7 @@ import { PreflightSchema } from '../revision/contracts.js';
 import { SelectedBlueprintRequirementsSchema, BlueprintV2RequirementsSchema, ParametricEditSchema } from '@designflow/generator';
 import { IntentCandidateSchema, NaturalLanguageDesignRequestSchema } from './requirement-interpretation.js';
 import { ActionSchema, MemoryEntrySchema, TURN_LIMITS, TurnSchema } from './conversation-memory.js';
+import { BriefSchema } from '../ai/brief.js';
 
 export const CONVERSATION_LIMITS = Object.freeze({ turns: 100, messages: 20, perProject: 20, perUser: 100, text: 4000, contextBytes: 12000, outputBytes: 16384, stateBytes: 131072, actions: 4 });
 const id = z.string().uuid();
@@ -28,7 +29,9 @@ export const ConversationIntentSchema = IntentCandidateSchema.extend({
 export type ConversationIntent = z.infer<typeof ConversationIntentSchema>;
 export const CreateConversationSchema = z.object({ conversationId: id, baseRevisionId: id.nullable(), layoutV2: z.object({}).strict().optional(),
   /** Phase 36, opt-in: allow a conversation on a revision without stored requirements (supplied or regenerated). Requirement messages are then refused. */
-  turnsOnly: z.literal(true).optional() }).strict();
+  turnsOnly: z.literal(true).optional(),
+  /** Program engine, opt-in: the conversation designs from the client's free brief (solver BRIEF). Implied for program-engine base revisions. */
+  engine: z.literal('program').optional() }).strict();
 export const ConversationParamsSchema = z.object({ projectId: id, conversationId: id }).strict();
 // Explicit native updates are user-only. Provider output cannot supply this object.
 const native = BlueprintV2RequirementsSchema.innerType().shape;
@@ -51,8 +54,19 @@ export const ProposalApprovalSchema = z.object({ proposalId: id, proposalVersion
 export const ProposalSchema = z.object({ id, version: z.number().int().positive(), baseRevisionId: id.nullable(),
   requirements: SelectedBlueprintRequirementsSchema, requirementsHash: z.string().regex(/^[a-f0-9]{64}$/),
   expiresAt: z.string().datetime(), changedFields: z.array(z.string().max(100)).max(32) }).strict();
+/** Program-engine proposals: what the design engine laid out and what it would cost (advisory summary of the dry-run generation). */
+export const DesignSummarySchema = z.object({
+  buildingType: z.string().max(40), floors: z.number().int().min(1).max(10),
+  footprintM: z.object({ width: z.number().positive().max(200), depth: z.number().positive().max(200) }).strict(),
+  builtUpM2: z.number().nonnegative().max(100000), carpetM2: z.number().nonnegative().max(100000),
+  plotM: z.object({ width: z.number().positive().max(200), depth: z.number().positive().max(200) }).strict(), plotAssumed: z.boolean(),
+  rooms: z.array(z.object({ name: z.string().max(80), level: z.number().int().min(0).max(9), areaM2: z.number().nonnegative().max(5000), widthM: z.number().nonnegative().max(200), depthM: z.number().nonnegative().max(200) }).strict()).max(60),
+  estimate: z.object({ totalInr: z.number().int().nonnegative(), rangeInr: z.tuple([z.number().int().nonnegative(), z.number().int().nonnegative()]), perSqftInr: z.number().int().nonnegative(), months: z.number().int().positive().max(120),
+    concreteM3: z.number().nonnegative(), steelTonnes: z.number().nonnegative(), bricks: z.number().int().nonnegative(), cementBags: z.number().int().nonnegative(), budgetStatus: z.enum(['WITHIN', 'TIGHT', 'OVER']).nullable() }).strict(),
+  assumptions: z.array(z.string().max(300)).max(20),
+}).strict();
 export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), version: z.number().int().min(0).max(100),
-  baseRevisionId: id.nullable(), solver: z.enum(['V1', 'V2', 'PARAMETRIC']),
+  baseRevisionId: id.nullable(), solver: z.enum(['V1', 'V2', 'PARAMETRIC', 'BRIEF']),
   status: z.enum(['DRAFT','NEEDS_CLARIFICATION','AWAITING_APPROVAL','SUBMITTED','REJECTED','FAILED']),
   baseRequirements: SelectedBlueprintRequirementsSchema.nullable().default(null),
   intent: ConversationIntentSchema, pendingIntent: ConversationIntentSchema.default({}), requirements: SelectedBlueprintRequirementsSchema.nullable(),
@@ -70,6 +84,9 @@ export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), v
   actions: z.array(ActionSchema).max(TURN_LIMITS.actions).optional(),
   // Conversational wording of the latest reply by a configured model (advisory text only; never authoritative state).
   reply: z.object({ messageId: id, text: z.string().min(1).max(2000), provider: z.string().max(64), model: z.string().max(100), generalQuestion: z.boolean() }).strict().optional(),
+  // Program engine (solver BRIEF), additive and optional: the accumulated design brief and the summary of the proposed design.
+  brief: BriefSchema.optional(),
+  design: DesignSummarySchema.optional(),
 }).strict();
 export type ConversationState = z.infer<typeof ConversationStateSchema>;
 export const ConversationSchema = z.object({ id, projectId: id, state: ConversationStateSchema }).strict();

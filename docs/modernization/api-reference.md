@@ -1,6 +1,6 @@
 # API reference (generated)
 
-Generated from [openapi.json](openapi.json) (`api-compatibility-v1+165.25abc1fa0880`) by `test-support/openapi.ts`; regenerate with `UPDATE_ROUTE_CATALOG=1 npx vitest run apps/api/tests/modernization.test.ts`. Do not edit.
+Generated from [openapi.json](openapi.json) (`api-compatibility-v1+166.4e975130ab2f`) by `test-support/openapi.ts`; regenerate with `UPDATE_ROUTE_CATALOG=1 npx vitest run apps/api/tests/modernization.test.ts`. Do not edit.
 Every error is `ApiErrorResponse` (`{ error: { code, message, requestId, fieldErrors? } }`); the codes and their statuses are in [error-codes.json](error-codes.json).
 Nested schemas, limits and patterns are in openapi.json. Per-phase behaviour is in the `docs/phase*/…-api.md` documents where they exist.
 
@@ -615,6 +615,7 @@ Request body (`application/json`):
 | `baseRevisionId` | string (uuid) \| null | yes |  |
 | `layoutV2` | object |  |  |
 | `turnsOnly` | true |  |  |
+| `engine` | "program" |  |  |
 
 **200**: Success (`application/json`, Conversation)
 
@@ -2446,6 +2447,30 @@ Request body (`application/json`):
 | `deviation` | object \| null | yes |  |
 | `provenanceIdentical` | boolean \| null | yes |  |
 | `claims` | object | yes |  |
+
+## GET `/api/projects/{projectId}/revisions/{revisionId}/engineering-estimate`
+
+Auth: bearer (Supabase session)
+
+| Parameter | In | Type | Required |
+|---|---|---|---|
+| `projectId` | path | string (uuid) | yes |
+| `revisionId` | path | string (uuid) | yes |
+| `tier` | query | "economy" \| "standard" \| "premium" \| "luxury" |  |
+| `city` | query | string |  |
+| `budgetInr` | query | integer |  |
+| `soilBearingKnM2` | query | number |  |
+
+**200**: Success (`application/json`)
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `projectId` | string (uuid) | yes |  |
+| `revisionId` | string (uuid) | yes |  |
+| `revisionNumber` | integer | yes |  |
+| `generatorVersion` | string \| null | yes |  |
+| `buildingType` | string \| null | yes |  |
+| `estimate` | object | yes |  |
 
 ## GET `/api/projects/{projectId}/revisions/{revisionId}/environmental/analyses`
 

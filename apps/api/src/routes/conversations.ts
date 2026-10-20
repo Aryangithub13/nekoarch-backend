@@ -22,7 +22,8 @@ import { loadContext } from '../conversation/context.js';
 import { closeOperation } from '../services/revision-service.js';
 import type { AppearancePool } from '../revision/pool.js';
 import type { ConversationState } from '../contracts/conversations.js';
-import { createConversationOrchestrator, createConfiguredReplyComposer } from '../config/ai.js';
+import { createConversationOrchestrator, createConfiguredReplyComposer, createConfiguredBriefExtractor } from '../config/ai.js';
+import { planBriefConversation, briefFromRequirements } from '../ai/brief-planner.js';
 import { type ConversationProvider } from '../ai/conversation-provider.js';
 import { saveProjectRevision } from '../services/project-service.js';
 import { CAPABILITIES, CapabilitySchema } from '../workflows/registry.js';
@@ -35,6 +36,7 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
   const root='/api/projects/:projectId/conversations', item=`${root}/:conversationId`;
   const provider=createConversationOrchestrator(env,configured,event=>app.log.info(event,'AI provider attempt'));
   const composer=createConfiguredReplyComposer(env);
+  const extractor=createConfiguredBriefExtractor(env);
   const pool=()=>{ if(!appearancePool) throw new ApiError(503,'REVISION_UNAVAILABLE','Revision execution is not configured'); return appearancePool; };
   app.post(root,{bodyLimit:8192},async request=>{
     const {repository,userId}=await requestContext(request,backend,true);
@@ -43,7 +45,10 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     if(input.baseRevisionId!==project.currentRevisionId) throw new ApiError(409,'REVISION_CONFLICT','Select the current revision explicitly');
     if(project.currentRevision && !project.currentRevision.normalizedRequirements && !input.turnsOnly) throw new ApiError(422,'NATIVE_REQUIREMENTS_UNAVAILABLE','The revision has no stored native requirements');
     if(project.currentRevision?.normalizedRequirements && !('layoutV2' in project.currentRevision.normalizedRequirements) && input.layoutV2) throw new ApiError(422,'SOLVER_VERSION_CONFLICT','A V1 revision cannot be silently upgraded');
-    const state=initialConversation(input.baseRevisionId,project.currentRevision?.normalizedRequirements ?? null,input.layoutV2!==undefined);
+    const base=project.currentRevision?.normalizedRequirements ?? null;
+    const state=initialConversation(input.baseRevisionId,base,input.layoutV2!==undefined);
+    // Program engine: on request for a new project, and always for program-engine revisions (the bounded planner cannot edit them).
+    if(input.layoutV2===undefined && !input.turnsOnly && ((input.engine==='program' && !base) || (base && 'program' in base))){ state.solver='BRIEF'; const brief=briefFromRequirements(base); if(brief) state.brief=brief; }
     return ConversationSchema.parse(await new ConversationRepository(repository,userId!,env.PROJECT_COMMIT_SECRET).write('create',{projectId,conversationId:input.conversationId,state}));
   });
   app.get(root,async request=>{
@@ -79,7 +84,9 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
       // Only reachable for conversations that used Phase 36 turns: a rebase onto a supplied revision, or active "keep" constraints.
       if(reserved.conversation.state.baseRevisionId && !reserved.conversation.state.baseRequirements) throw new ApiError(422,'NATIVE_REQUIREMENTS_UNAVAILABLE','The revision has no stored native requirements');
       if(activePreservation(reserved.conversation.state)) throw new ApiError(409,'PRESERVATION_CONFLICT','Active preservation constraints conflict with whole-design regeneration; release them first');
-      const planned=await planConversation(reserved.conversation.state,input,{...(provider?{provider}:{}),disabled:env.AI_CONVERSATION_MODE==='disabled',signal:controller.signal,...(restoredRequirements?{restoredRequirements}:{})});
+      const planned=reserved.conversation.state.solver==='BRIEF'
+        ? await planBriefConversation(reserved.conversation.state,input,{extractor,signal:controller.signal,disabled:env.AI_CONVERSATION_MODE==='disabled'})
+        : await planConversation(reserved.conversation.state,input,{...(provider?{provider}:{}),disabled:env.AI_CONVERSATION_MODE==='disabled',signal:controller.signal,...(restoredRequirements?{restoredRequirements}:{})});
       // A configured model words the reply. A general question that changed nothing keeps the previous design state.
       const previous=reserved.conversation.state;
       const composed=composer?await composer.compose({text:input.text,state:planned,previous},controller.signal):null;

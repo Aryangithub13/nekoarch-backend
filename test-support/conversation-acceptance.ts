@@ -28,9 +28,9 @@ export function conversationAcceptance(get:()=>{app:FastifyInstance;owner:{autho
   it('A/I: persists multi-turn requirements, explicitly approves and durably replays an independently QA accepted revision',async()=>{
     const c=await setup(),{app,owner}=get();
     await message(c,'I want a 4BHK house.');expect(c.state.questions.join(' ')).toContain('plot');
-    await message(c,'30 by 50 feet.');expect(c.state.requirements?.rooms.find(r=>r.type==='bedroom')?.count).toBe(4);
+    await message(c,'30 by 50 feet.');expect((c.state.requirements as Exclude<typeof c.state.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom')?.count).toBe(4);
     await message(c,'Make it two floors.');expect(c.state.status).toBe('AWAITING_APPROVAL');expect(c.state.requirements?.floors).toBe(2);
-    await message(c,'Put two bedrooms upstairs.');expect(c.state.status).toBe('AWAITING_APPROVAL');expect(c.state.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    await message(c,'Put two bedrooms upstairs.');expect(c.state.status).toBe('AWAITING_APPROVAL');expect((c.state.requirements as Exclude<typeof c.state.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
     expect((await app.inject({url:`/api/projects/${c.projectId}`,headers:owner})).json().currentRevisionId).toBeNull();
     const start=performance.now(),payload=approval(c.state);
     const accepted=await app.inject({method:'POST',url:`${c.url}/proposals/approve`,headers:owner,payload});timings.push({operation:'approve/generate/qa/commit',ms:performance.now()-start});expect(accepted.statusCode,accepted.body).toBe(200);
@@ -49,7 +49,7 @@ export function conversationAcceptance(get:()=>{app:FastifyInstance;owner:{autho
     const before=structuredClone(c.state.requirements!);
     await message(c,'Keep everything else the same but make the kitchen bigger.');expect(c.state.status).toBe('NEEDS_CLARIFICATION');expect(c.state.proposal).toBeNull();
     await message(c,'Use these values',{answers:[{field:'kitchen.minimumDimensions',value:{widthMm:2400,depthMm:2500}}]});expect(c.state.status).toBe('AWAITING_APPROVAL');
-    expect(c.state.requirements).toEqual({...before,rooms:before.rooms.map(r=>r.type==='kitchen'?{...r,minWidthMm:2400,minDepthMm:2500}:r)});expect(c.state.proposal?.changedFields).toEqual(['rooms']);
+    expect(c.state.requirements).toEqual({...before,rooms:(before as Exclude<typeof before, { program: unknown }>).rooms.map(r=>r.type==='kitchen'?{...r,minWidthMm:2400,minDepthMm:2500}:r)});expect(c.state.proposal?.changedFields).toEqual(['rooms']);
     const {app,owner}=get();const result=await app.inject({method:'POST',url:`${c.url}/proposals/approve`,headers:owner,payload:approval(c.state)});expect(result.statusCode,result.body).toBe(200);expect(result.json().revision.generatorVersion).toBe('precision-blueprint-v2');
   });
   it('C/D/J: rejects ambiguous, contradictory and unsupported requests without generating',async()=>{
@@ -64,7 +64,7 @@ export function conversationAcceptance(get:()=>{app:FastifyInstance;owner:{autho
     await message(c,'Move one bedroom upstairs');await message(c,'seed clarified');
     expect(c.state.status).toBe('NEEDS_CLARIFICATION');expect(c.state.proposal).toBeNull();expect(c.state.requirements).toEqual(before);
     const {app,owner}=get();expect(ConversationSchema.parse((await app.inject({url:c.url,headers:owner})).json()).state.pendingBedroomMove).toBe(true);
-    await message(c,'Put two bedrooms upstairs');expect(c.state.status).toBe('AWAITING_APPROVAL');expect(c.state.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    await message(c,'Put two bedrooms upstairs');expect(c.state.status).toBe('AWAITING_APPROVAL');expect((c.state.requirements as Exclude<typeof c.state.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
     const d=await setup(solverInput({site:{boundary:lSite,northMilliDegrees:0}}));
     const nativeBefore=structuredClone(d.state.requirements!);
     await message(d,'30 by 50 feet');expect(d.state.status).toBe('NEEDS_CLARIFICATION');
@@ -98,7 +98,7 @@ export function conversationAcceptance(get:()=>{app:FastifyInstance;owner:{autho
     const c=await setup(solverInput()),{app,owner}=get();const originalRevision=c.state.baseRevisionId!;
     await message(c,'Make the kitchen bigger',{answers:[{field:'kitchen.minimumDimensions',value:{widthMm:2200,depthMm:2300}}]});const old=approval(c.state);
     await message(c,'seed changed');const obsolete=await app.inject({method:'POST',url:`${c.url}/proposals/approve`,headers:owner,payload:old});expect(obsolete.statusCode).toBe(409);
-    await message(c,'Use the previous version',{restoreRevisionId:originalRevision});expect(c.state.status).toBe('AWAITING_APPROVAL');expect(c.state.requirements?.rooms.find(r=>r.type==='kitchen')?.minWidthMm).toBe(1800);
+    await message(c,'Use the previous version',{restoreRevisionId:originalRevision});expect(c.state.status).toBe('AWAITING_APPROVAL');expect((c.state.requirements as Exclude<typeof c.state.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='kitchen')?.minWidthMm).toBe(1800);
     const foreign=await setup(solverInput());const denied=await app.inject({method:'POST',url:`${c.url}/messages`,headers:owner,payload:{messageId:randomUUID(),expectedVersion:c.state.version,baseRevisionId:c.state.baseRevisionId,text:'Use the previous version',restoreRevisionId:foreign.state.baseRevisionId}});expect(denied.statusCode).toBe(404);
   });
   it('lists with safe pagination and deletes conversation data without deleting accepted history',async()=>{

@@ -18,7 +18,7 @@ type Coverage = SceneManifest['coverage'][number];
 const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 const EYE_HEIGHT_MM = 1600, DOOR_LEAF_MM = 40, WINDOW_PANE_MM = 10;
 export const LIMITATIONS = [
-  'Supported input is the Phase 23 bounded orthogonal profile: at most two storeys, one straight stair, no columns.',
+  'Supported input is the bounded orthogonal profile: at most ten storeys, straight stair flights, no columns.',
   'Wall solids are butt-ended prisms (model convention); corner notches are closed by VISUAL_PLACEHOLDER junction fills that are not quantities.',
   'Door leaves and window panes are generic VISUAL_PLACEHOLDER components; no product, glazing, thermal or fire property is asserted.',
   'Stair undersides are a mass fill to the source level because the soffit is not modeled; landings are walking surfaces without modeled thickness.',

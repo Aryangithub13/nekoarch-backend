@@ -361,8 +361,8 @@ describe('Phase 35.1 regeneration preflight (refuses generator-driven regenerati
 describe('Phase 35.1 capability disclosure', () => {
   it('discovers the enforced limits and the unsupported tall-building operations with stable identifiers', () => {
     const d = discovery();
-    expect(d.modelLimits.map(l => [l.limitId, l.value])).toEqual([['BUILDING_MODEL_MAX_LEVELS', 256], ['GENERATION_MAX_FLOORS', 2], ['BIM_PROFILE_MAX_STOREYS', 2],
-      ['SELECTIVE_REVISION_APPEARANCE_PROFILE', 2], ['ZONE_ASSESSMENT_MAX_ZONES', 64], ['QUANTITY_TAKEOFF_MAX_ENTITIES', 5000]]);
+    expect(d.modelLimits.map(l => [l.limitId, l.value])).toEqual([['BUILDING_MODEL_MAX_LEVELS', 256], ['GENERATION_MAX_FLOORS', 2], ['BIM_PROFILE_MAX_STOREYS', 10],
+      ['SELECTIVE_REVISION_APPEARANCE_PROFILE', 10], ['ZONE_ASSESSMENT_MAX_ZONES', 64], ['QUANTITY_TAKEOFF_MAX_ENTITIES', 5000]]);
     // Phase 35 delivered deterministic zone regeneration and partitioned processing; only what they do not cover is still listed as unsupported.
     expect(d.unsupportedOperations.map(o => [o.operationId, o.status])).toEqual([['SUPERTALL_GENERATION', 'UNSUPPORTED'], ['GENERATIVE_ZONE_REGENERATION', 'UNSUPPORTED'],
       ['ENVELOPE_GEOMETRY_REGENERATION', 'UNSUPPORTED'], ['PARTITIONED_ARTIFACT_SERVICES', 'UNSUPPORTED'], ['VALIDATED_ENGINEERING_SOLVERS', 'UNSUPPORTED']]);
@@ -376,14 +376,14 @@ describe('Phase 35.1 capability disclosure', () => {
     expect(MODEL_LIMITS.find(l => l.limitId === 'ZONE_ASSESSMENT_MAX_ZONES')!.value).toBe(ZONE_LIMITS.zones);
     expect(MODEL_LIMITS.find(l => l.limitId === 'QUANTITY_TAKEOFF_MAX_ENTITIES')!.value).toBe(TAKEOFF_LIMITS.entities);
     expect(UNSUPPORTED_OPERATIONS.filter(o => o.preflightRoute).every(o => o.preflightRoute!.endsWith('/engineering-assessment/zones/regeneration-preflight'))).toBe(true);
-    // The BIM profile limit is the real gate's: 2 storeys pass, 3 are refused.
-    expect([bimProfile(tower({ storeys: 2 })), bimProfile(tower({ storeys: 3 }))]).toEqual([{ eligible: true, refusalCode: null },
+    // The BIM profile limit is the real gate's: 10 storeys pass, 11 are refused (program-engine designs extended it from 2).
+    expect([bimProfile(tower({ storeys: 10 })), bimProfile(tower({ storeys: 11 }))]).toEqual([{ eligible: true, refusalCode: null },
       { eligible: false, refusalCode: 'BIM_UNSUPPORTED_MODEL' }]);
   });
 
   it('F3: the selective-revision limit gates appearance changes through a preflight refusal (not an error), and does not gate restore', () => {
     const rev = (id: string, revisionNumber: number, storeys: number) => ({ id, revisionNumber, parentRevisionId: null, model: tower({ storeys }), generatorVersion: null });
-    const source = rev('33333333-3333-4333-8333-333333333333', 1, 3), base = rev('22222222-2222-4222-8222-222222222222', 2, 4);
+    const source = rev('33333333-3333-4333-8333-333333333333', 1, 3), base = rev('22222222-2222-4222-8222-222222222222', 2, 11);
     const c: PlanContext = { projectId: ids.projectId, base, baseAppearance: null, baseOutputs: [], source: { ...source, appearance: null, outputs: [] } };
     const appearance = planRevision(c, buildIntent({ text: 'Make the exterior walls darker.' }, base, []));
     expect(appearance).toMatchObject({ status: 'UNSUPPORTED', kind: 'APPEARANCE_MODIFY', blockers: [expect.objectContaining({ code: 'SCENE_UNSUPPORTED_MODEL' })] });
@@ -391,7 +391,7 @@ describe('Phase 35.1 capability disclosure', () => {
     expect(restore).toMatchObject({ status: 'AWAITING_CONSENT', kind: 'RESTORE' });
     const rows = Object.fromEntries(MODEL_LIMITS.map(l => [l.limitId, l]));
     expect(rows.BIM_PROFILE_MAX_STOREYS!.appliesTo).not.toContain('SELECTIVE_REVISION');
-    expect(rows.SELECTIVE_REVISION_APPEARANCE_PROFILE).toMatchObject({ value: 2, appliesTo: ['SELECTIVE_REVISION_APPEARANCE_MODIFY'] });
+    expect(rows.SELECTIVE_REVISION_APPEARANCE_PROFILE).toMatchObject({ value: 10, appliesTo: ['SELECTIVE_REVISION_APPEARANCE_MODIFY'] });
     expect(rows.SELECTIVE_REVISION_APPEARANCE_PROFILE!.onExceed).toMatch(/^200 preflight with status UNSUPPORTED and blocker SCENE_UNSUPPORTED_MODEL .*RESTORE is not gated/);
   });
 

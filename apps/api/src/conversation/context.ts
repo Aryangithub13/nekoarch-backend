@@ -60,7 +60,7 @@ export function projectFacts(loaded: Omit<Loaded, 'document'>, state: Conversati
     fact('appearance', loaded.appearance?.presetIds.length ? `Exterior appearance layer: ${loaded.appearance.presetIds.map(p => PRESETS[p as keyof typeof PRESETS]?.label ?? p).join('; ')} (visual only).`
       : 'No exterior appearance layer; exterior walls use the default placeholder material.', loaded.appearance ? 'PROJECT_RECORD' : 'MISSING', `revision:${base.id}`);
     const r = base.normalizedRequirements;
-    if (r) fact('requirements', `Stored requirements: ${r.floors} floor(s); rooms ${counts(r.rooms.flatMap(room => Array<string>(room.count).fill(room.type)))}.`, 'PROJECT_RECORD', `revision:${base.id}`);
+    if (r && !('program' in r)) fact('requirements', `Stored requirements: ${r.floors} floor(s); rooms ${counts(r.rooms.flatMap(room => Array<string>(room.count).fill(room.type)))}.`, 'PROJECT_RECORD', `revision:${base.id}`);
     else fact('requirements', 'This revision has no stored native requirements (a supplied or regenerated model), so requirement-driven regeneration is unavailable for it.', 'MISSING', `revision:${base.id}`);
   }
   const brief = bundle.brief?.brief;

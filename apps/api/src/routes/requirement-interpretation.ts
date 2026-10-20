@@ -19,7 +19,7 @@ export function requirementInterpretationRoutes(app: FastifyInstance, backend: B
       throw new ApiError(422, 'V2_INTERPRETATION_UNSUPPORTED', 'Modify V2 requirements through structured generation; the current language interpreter cannot preserve V2 preferences.');
     }
     const start = performance.now();
-    const result = await interpretRequirements(input, input.baseRevisionId ? project.currentRevision?.normalizedRequirements ?? null : null,
+    const result = await interpretRequirements(input, input.baseRevisionId ? (r => r && !('program' in r) ? r : null)(project.currentRevision?.normalizedRequirements ?? null) : null,
       { disabled: env.AI_INTERPRETER_MODE === 'disabled', timeoutMs: env.AI_INTERPRETER_TIMEOUT_MS, maxOutputTokens: env.AI_INTERPRETER_MAX_OUTPUT_TOKENS, ...options });
     request.log.info({ interpretationId: result.interpretationId, provider: result.provider, model: result.providerModel, interpreterVersion: result.interpreterVersion,
       durationMs: performance.now() - start, status: result.status, validation: result.provenance.validation, clarificationCount: result.unresolvedQuestions.length,

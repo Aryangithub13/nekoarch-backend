@@ -68,9 +68,9 @@ describe('Project briefs held out from the rubric', () => {
     expect(state.status).toBe('AWAITING_APPROVAL');
     expect(state.intent).toMatchObject({ kitchenConnection: 'dining', relationshipKind: 'adjacent', dining: 1 });
     expect(state.intent.relationship).toBeUndefined();
-    expect(state.requirements!.rooms.some(r => r.type === 'dining')).toBe(true);
+    expect((state.requirements as Exclude<typeof state.requirements, { program: unknown }>)!.rooms.some(r => r.type === 'dining')).toBe(true);
     // Normalization orders the endpoints of this undirected edge.
-    expect(state.requirements!.relationships.map(e => [[e.from.type, e.to.type].sort().join('-'), e.kind])).toContainEqual(['dining-kitchen', 'adjacent']);
+    expect((state.requirements as Exclude<typeof state.requirements, { program: unknown }>)!.relationships.map(e => [[e.from.type, e.to.type].sort().join('-'), e.kind])).toContainEqual(['dining-kitchen', 'adjacent']);
   });
   it('keeps the modification path for an existing design (relationship edits are not reinterpreted as a brief)', async () => {
     const base = (await brief('2 bedroom house on a 30x40 ft plot, dining room')).requirements!;

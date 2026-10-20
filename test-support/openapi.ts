@@ -17,6 +17,7 @@ import { ConversationListSchema, ConversationMessageSchema, ConversationPageSche
 import { ActionDecisionResponseSchema, ActionDecisionSchema, ConversationContextSchema, RebaseRequestSchema, RebaseResponseSchema, TurnRequestSchema,
   TurnResponseSchema } from '../apps/api/src/contracts/conversation-turns.js';
 import { TakeoffDetailSchema, TakeoffListSchema, TakeoffRequestSchema } from '../apps/api/src/contracts/takeoffs.js';
+import { BuildingEstimateQuerySchema, BuildingEstimateResponseSchema } from '../apps/api/src/contracts/building-estimate.js';
 import { ConstructionDetailSchema, ConstructionListSchema, ConstructionRequestSchema } from '../apps/api/src/contracts/construction.js';
 import { CostDetailSchema, CostListSchema, CostRequestSchema } from '../apps/api/src/contracts/costs.js';
 import { WorkflowPlanSchema, WorkflowRequestSchema, WorkflowRunSchema } from '../apps/api/src/contracts/workflows.js';
@@ -118,6 +119,7 @@ export const CONTRACTS: Record<string, Op> = {
   [`POST ${V}/rebase`]: { body: RebaseRequestSchema, response: RebaseResponseSchema }, [`GET ${V}/context`]: { query: empty, response: ConversationContextSchema },
   [`POST ${T}`]: { body: TakeoffRequestSchema, response: TakeoffDetailSchema, status: 201 }, [`GET ${T}`]: { query: PageQuerySchema, response: TakeoffListSchema },
   [`GET ${T}/:takeoffId`]: { response: TakeoffDetailSchema },
+  [`GET ${R}/engineering-estimate`]: { query: BuildingEstimateQuerySchema, response: BuildingEstimateResponseSchema },
   [`POST ${C}`]: { body: ConstructionRequestSchema, response: ConstructionDetailSchema, status: 201 }, [`GET ${C}`]: { query: PageQuerySchema, response: ConstructionListSchema },
   [`GET ${C}/:calculationId`]: { response: ConstructionDetailSchema },
   [`POST ${C}/:calculationId/cost-estimates`]: { body: CostRequestSchema, response: CostDetailSchema, status: 201 },
