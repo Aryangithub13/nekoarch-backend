@@ -83,9 +83,10 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
       // A configured model words the reply. A general question that changed nothing keeps the previous design state.
       const previous=reserved.conversation.state;
       const composed=composer?await composer.compose({text:input.text,state:planned,previous},controller.signal):null;
-      // The design is the structured requirements; before any exist, the intent collected so far must be unchanged too.
+      // The design is the structured requirements; before any exist, the design-defining intent collected so far must be
+      // unchanged too. Words in a question ("living room", "light") do not change plot, floors, rooms or relationships.
       const sameRequirements=JSON.stringify(planned.requirements)===JSON.stringify(previous.requirements);
-      const unchanged=sameRequirements && (planned.requirements!==null || JSON.stringify(planned.intent)===JSON.stringify(previous.intent));
+      const unchanged=sameRequirements && (planned.requirements!==null || JSON.stringify(designFields(planned.intent))===JSON.stringify(designFields(previous.intent)));
       const reply=composed?{messageId:input.messageId,text:composed.text,provider:composed.provider,model:composed.model,generalQuestion:composed.generalQuestion&&unchanged}:undefined;
       const state=reply?.generalQuestion?{...previous,version:planned.version,messages:planned.messages,reply}:{...planned,...(reply?{reply}:{reply:undefined})};
       if (controller.signal.aborted) throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
@@ -203,4 +204,11 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
     const conversation=ConversationSchema.parse(await new ConversationRepository(repository,userId!).read('get',params));
     return (await loadContext(repository,params.projectId,params.conversationId,conversation.state)).document;
   });
+}
+
+/** The intent fields that define a design; annotations (unsupported, inferred, contradictions) and room defaults do not. */
+const DESIGN_FIELDS = ['site', 'floors', 'bedrooms', 'groundFloorBedrooms', 'upperFloorBedrooms', 'bathrooms', 'parking', 'study', 'roomChange', 'relationship', 'kitchenConnection', 'kitchenMinWidthMm', 'kitchenMinDepthMm', 'circulationWidthMm', 'noStairs'] as const;
+function designFields(intent: ConversationState['intent']) {
+  const record = intent as Record<string, unknown>;
+  return Object.fromEntries(DESIGN_FIELDS.map(field => [field, record[field] ?? null]));
 }

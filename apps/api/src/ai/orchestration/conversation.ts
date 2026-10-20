@@ -32,7 +32,7 @@ export function configuredAdapters(policy:AiPolicy,credentials:Readonly<Record<s
     }else{
       const url=validateRemoteEndpoint(p.endpoint,policy.allowedRemoteHosts);
       adapters.set(p.providerId,{async execute(r,m,s){
-        const body=JSON.stringify({model:m.modelId,stream:false,temperature:0,max_tokens:Math.min(r.maxOutputTokens,m.maxOutputTokens),response_format:{type:'json_object'},messages:[{role:'system',content:INTENT_SYSTEM_PROMPT},{role:'user',content:JSON.stringify({text:r.text,context:r.context})}]});
+        const body=JSON.stringify({model:m.modelId,stream:false,temperature:0,max_tokens:Math.min(r.maxOutputTokens,m.maxOutputTokens),...(m.reasoningEffort?{reasoning_effort:m.reasoningEffort}:{}),response_format:{type:'json_object'},messages:[{role:'system',content:INTENT_SYSTEM_PROMPT},{role:'user',content:JSON.stringify({text:r.text,context:r.context})}]});
         return parseCompletion(await remoteCompletion(url,body,key,s));
       }});
     }

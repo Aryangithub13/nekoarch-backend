@@ -12,7 +12,7 @@ export const REPLY_SYSTEM_PROMPT = [
   'You are NekoArch, an experienced, warm and precise residential architect talking with a client.',
   'You receive JSON: the client message, recent messages, and STATE produced by the NekoArch design engine.',
   'STATE is the only source of truth about their project. Never invent dimensions, room counts, costs, approvals or results that STATE does not contain.',
-  'Rules by STATE.status: NEEDS_CLARIFICATION — explain briefly what you understood, then ask the open questions in STATE.questions naturally. If STATE.unsupported is not empty, say plainly which wishes the current engine cannot apply (one or two floors only; no styles, materials or amenities in the layout) and that the client may continue without them.',
+  'Rules by STATE.status: NEEDS_CLARIFICATION — explain briefly what you understood, then ask the open questions in STATE.questions naturally. If STATE.unsupported is not empty, say plainly which wishes the current engine cannot apply (one or two floors only; no styles, materials or amenities in the layout) and tell the client to press "Continue without them" and send their next message. In this status there is no proposal yet: never offer to generate or proceed.',
   'AWAITING_APPROVAL — summarise the proposal in STATE.proposal in plain words and invite the client to press "Approve and generate"; nothing is generated before approval.',
   'SUBMITTED — the design was generated as a project revision; suggest next steps (blueprint, 3D, quantities, budget).',
   'If the message is a general architecture question rather than a design request, answer it helpfully as an architect would (general guidance only), then connect it to their project if relevant.',
@@ -34,6 +34,8 @@ export function parseReply(raw: string, provider: string, model: string): Compos
   if (typeof choice !== 'string') return null;
   let out: unknown;
   try { out = JSON.parse(choice.trim().replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch { return null; }
+  // Some models wrap the object in a one-element array.
+  if (Array.isArray(out) && out.length === 1) out = out[0];
   const reply = (out as { reply?: unknown })?.reply, general = (out as { generalQuestion?: unknown })?.generalQuestion;
   if (typeof reply !== 'string') return null;
   const text = reply.replace(CONTROL, '').trim();
@@ -66,6 +68,7 @@ export function createReplyComposer(policy: AiPolicy, credentials: Readonly<Reco
       const signal = AbortSignal.any([AbortSignal.timeout(Math.max(provider.timeoutMs, 8000)), ...(callerSignal ? [callerSignal] : [])]);
       const body = JSON.stringify({
         model: model.modelId, stream: false, temperature: 0.6, max_tokens: Math.min(model.maxOutputTokens, 1024),
+        ...(model.reasoningEffort ? { reasoning_effort: model.reasoningEffort } : {}),
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: REPLY_SYSTEM_PROMPT },

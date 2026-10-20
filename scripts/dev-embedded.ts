@@ -35,7 +35,8 @@ const out = process.env.DEV_SESSION_FILE ?? path.join(root, '.dev-embedded', 'se
 const aiFile = path.join(root, '.env.ai.local');
 try { process.loadEnvFile(aiFile); } catch { /* no local AI configuration */ }
 const geminiKey = process.env.AI_PROVIDER_GEMINI_API_KEY;
-const geminiModel = process.env.AI_GEMINI_MODEL ?? 'gemini-2.5-flash';
+// gemini-3.5-flash-lite answers in about 2 s and its free tier is not limited to 5 requests/min like gemini-3.5-flash (measured 20 Oct 2026).
+const geminiModel = process.env.AI_GEMINI_MODEL ?? 'gemini-3.5-flash-lite';
 if (geminiKey && !process.env.AI_ROUTING_CONFIG)
   process.env.AI_ROUTING_CONFIG = JSON.stringify({
     privacyClass: 'REMOTE_ALLOWED', allowMetered: true, deterministicFallback: true, timeoutMs: 15000,
@@ -45,7 +46,7 @@ if (geminiKey && !process.env.AI_ROUTING_CONFIG)
       endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
       apiKeyEnv: 'AI_PROVIDER_GEMINI_API_KEY',
       capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'],
-      models: [{ modelId: geminiModel, capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048 }],
+      models: [{ modelId: geminiModel, capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048, reasoningEffort: 'low' }],
     }],
   });
 
