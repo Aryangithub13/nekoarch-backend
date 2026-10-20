@@ -94,7 +94,7 @@ describe('Phase 21 security and configuration',()=>{
   it('preserves deterministic relative moves and native replacement with advisory models',async()=>{
     const p=orchestratedConversation(AiPolicySchema.parse({providers:[provider('a')]}),new Map([['a',adapter({upperFloorBedrooms:1})]]));
     const msg=(text:string)=>({messageId:randomUUID(),expectedVersion:0,baseRevisionId:null,text});
-    let s=await planConversation(initialConversation(null,null,false),msg('30 by 50 feet 3BHK two floors'),{provider:p});s=await planConversation(s,msg('Move one bedroom upstairs'),{provider:p});s=await planConversation(s,msg('seed kept'),{provider:p});expect(s.pendingBedroomMove).toBe(true);expect(s.proposal).toBeNull();s=await planConversation(s,msg('Put two bedrooms upstairs'),{provider:p});expect(s.proposal).not.toBeNull();expect(s.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    let s=await planConversation(initialConversation(null,null,false),msg('30 by 50 feet 3BHK two floors'),{provider:p});s=await planConversation(s,msg('Move one bedroom upstairs'),{provider:p});s=await planConversation(s,msg('seed kept'),{provider:p});expect(s.pendingBedroomMove).toBe(true);expect(s.proposal).toBeNull();s=await planConversation(s,msg('Put two bedrooms upstairs'),{provider:p});expect(s.proposal).not.toBeNull();expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
   });
 });
 

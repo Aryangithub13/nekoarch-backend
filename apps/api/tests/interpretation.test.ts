@@ -204,7 +204,9 @@ it('rejects hidden geometry and duplicate clarification answers', () => {
 it('enforces a closed import boundary for all AI modules and their contract', () => {
   const dir = fileURLToPath(new URL('../src/ai/', import.meta.url));
   const files = [...readdirSync(dir, { recursive: true, encoding: 'utf8' }).filter(f => f.endsWith('.ts')).map(f => dir + f), fileURLToPath(new URL('../src/contracts/requirement-interpretation.ts', import.meta.url))];
-  const allowed = new Set(['../contracts/conversations.js', '../lib/generation-identity.js', '../lib/errors.js', './conversation-provider.js', './architectural-interpreter.js', 'node:crypto', 'zod', '@designflow/generator', '@designflow/shared', '../contracts/requirement-interpretation.js', './fallback-parser.js', './interpreter-provider.js', '../contracts/ai-orchestration.js', '../../contracts/ai-orchestration.js', '../../contracts/conversations.js', './orchestration/transport.js', './transport.js', './registry.js', './orchestrator.js', '../conversation-provider.js', '../interpreter-provider.js', 'node:https', 'node:dns/promises', 'node:net']);
+  const allowed = new Set(['../contracts/conversations.js', '../lib/generation-identity.js', '../lib/errors.js', './conversation-provider.js', './architectural-interpreter.js', 'node:crypto', 'zod', '@designflow/generator', '@designflow/shared', '../contracts/requirement-interpretation.js', './fallback-parser.js', './interpreter-provider.js', '../contracts/ai-orchestration.js', '../../contracts/ai-orchestration.js', '../../contracts/conversations.js', './orchestration/transport.js', './transport.js', './registry.js', './orchestrator.js', '../conversation-provider.js', '../interpreter-provider.js', 'node:https', 'node:dns/promises', 'node:net',
+    // Program engine (solver BRIEF): the brief modules, the planner helpers they reuse and the pure concept estimate.
+    './brief.js', './brief-parser.js', './brief-extractor.js', './conversation-planner.js', '../estimate/building-estimate.js']);
   for (const file of files) {
     const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
     const visit = (node: ts.Node) => {
@@ -216,7 +218,8 @@ it('enforces a closed import boundary for all AI modules and their contract', ()
           expect(allowed.has(name), `${file}: ${name}`).toBe(true);
           if (ts.isImportDeclaration(node) && ['@designflow/generator', '@designflow/shared'].includes(name)) {
             const binding = node.importClause?.namedBindings; expect(binding && ts.isNamedImports(binding)).toBe(true);
-            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['modifyParametricRequirements', 'ParametricEditSchema', 'normalizeBlueprintForVersion', 'blueprintVersionForRequirements', 'NormalizedBlueprintV2Requirements', 'normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres']).toContain(e.propertyName?.text ?? e.name.text);
+            if (binding && ts.isNamedImports(binding)) for (const e of binding.elements) expect(['modifyParametricRequirements', 'ParametricEditSchema', 'normalizeBlueprintForVersion', 'blueprintVersionForRequirements', 'NormalizedBlueprintV2Requirements', 'normalizeBlueprintRequirements', 'BlueprintRequirements', 'NormalizedBlueprintRequirements', 'BlueprintRequirementsSchema', 'toMillimetres',
+              'BUILDING_TYPES', 'QUALITY_TIERS', 'SPACE_KIND_NAMES', 'SPACE_KINDS', 'synonymIndex', 'SpaceKind', 'BuildingType', 'BlueprintError', 'generateProgramBlueprint', 'isResidential', 'TIER_AREA_FACTOR']).toContain(e.propertyName?.text ?? e.name.text);
           }
         }
       }

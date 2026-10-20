@@ -14,12 +14,12 @@ export const MODEL_LIMITS = Object.freeze([
     onExceed: '400 VALIDATION_ERROR when a revision is saved', appliesTo: ['BUILDING_MODEL'] },
   { limitId: 'GENERATION_MAX_FLOORS', value: 2, unit: 'floors', enforcedBy: 'Generator requirement schemas (blueprint floors 1 | 2, parametric floors ≤ 2)',
     onExceed: '400 VALIDATION_ERROR at the generation route', appliesTo: ['GENERATION'] },
-  { limitId: 'BIM_PROFILE_MAX_STOREYS', value: 2, unit: 'levels', enforcedBy: 'Bounded BIM source profile (bim/core sourceModel), with element-count and orthogonality limits',
+  { limitId: 'BIM_PROFILE_MAX_STOREYS', value: 10, unit: 'levels', enforcedBy: 'Bounded BIM source profile (bim/core sourceModel), with element-count and orthogonality limits',
     onExceed: '422 BIM_UNSUPPORTED_MODEL, surfaced as STRUCTURAL_/ENVIRONMENTAL_/BUILDING_SYSTEMS_/KNOWLEDGE_SOURCE_UNSUPPORTED or SCENE_UNSUPPORTED_MODEL',
     appliesTo: ['BIM', 'STRUCTURAL_ANALYSIS', 'ENVIRONMENTAL_ANALYSIS', 'BUILDING_SYSTEMS_ANALYSIS', 'SPECIALIZED_KNOWLEDGE', 'SCENE_3D', 'ZONE_PARTITION_BIM'] },
   // Selective revision is gated only for appearance changes, and it refuses through its preflight rather than with an error; RESTORE does not
   // use this profile (revision/plan.ts restore branch, revision-service restore execution).
-  { limitId: 'SELECTIVE_REVISION_APPEARANCE_PROFILE', value: 2, unit: 'levels', enforcedBy: 'Selective revision appearance planning (BIM projection of the base revision, revision/plan.ts)',
+  { limitId: 'SELECTIVE_REVISION_APPEARANCE_PROFILE', value: 10, unit: 'levels', enforcedBy: 'Selective revision appearance planning (BIM projection of the base revision, revision/plan.ts)',
     onExceed: '200 preflight with status UNSUPPORTED and blocker SCENE_UNSUPPORTED_MODEL (not an error response); RESTORE is not gated by this profile',
     appliesTo: ['SELECTIVE_REVISION_APPEARANCE_MODIFY'] },
   { limitId: 'ZONE_ASSESSMENT_MAX_ZONES', value: ZONE_LIMITS.zones, unit: 'zones', enforcedBy: 'Zone declaration schema (assessment, preflight, regeneration and partition requests)',

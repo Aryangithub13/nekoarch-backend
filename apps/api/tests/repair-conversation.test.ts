@@ -38,12 +38,12 @@ it('clarification units clear the depth override and complete mixed replacements
 });
 it.each(['bedrooms', 'Bedrooms', 'BEDROOMS', 'BeDrOoMs'])('normalizes plural room capture %s', async name => {
   const s = await turn(initialConversation(null, normalizeBlueprintRequirements(requirements()), false), `${name} 3 by 4 m`);
-  expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.rooms.find(r => r.type === 'bedroom')?.minWidthMm).toBe(3000);
+  expect(s.status).toBe('AWAITING_APPROVAL'); expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r => r.type === 'bedroom')?.minWidthMm).toBe(3000);
 });
 it('reduces floors with resolved native room allocation and generates independently accepted geometry', async () => {
   const r = normalizeBlueprintRequirements(requirements(2));
   const s = await turn(initialConversation(null, r, false), 'one floor', { nativeUpdate: { rooms: r.rooms.map(room => ({ ...room, level: 0 })) } });
-  expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.stair).toBeUndefined();
+  expect(s.status).toBe('AWAITING_APPROVAL'); expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.stair).toBeUndefined();
   const model = generateBlueprint(s.requirements!).model;
   expect(model.levels).toHaveLength(1); expect(model.stairs).toHaveLength(0); expect(auditBlueprint(model, generatorOptions).status).toBe('PASS');
 });
@@ -55,8 +55,8 @@ it('does not silently relocate explicit upper-floor rooms', async () => {
 it.each(['zero study', 'no study', 'remove study'])('removes optional room intent: %s', async text => {
   const r = normalizeBlueprintRequirements({ ...requirements(), rooms: [...requirements().rooms, { type: 'study', count: 1 }] });
   const s = await turn(initialConversation(null, r, false), text);
-  expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.rooms.some(room => room.type === 'study')).toBe(false);
-  expect(s.requirements?.rooms.every(room => room.count > 0)).toBe(true);
+  expect(s.status).toBe('AWAITING_APPROVAL'); expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.some(room => room.type === 'study')).toBe(false);
+  expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.every(room => room.count > 0)).toBe(true);
 });
 it.each(['remove guest room', 'no guest room', 'zero guest rooms'])('does not guess which bedroom is a guest room: %s', async text => {
   const r = normalizeBlueprintRequirements(requirements());
@@ -66,7 +66,7 @@ it.each(['remove guest room', 'no guest room', 'zero guest rooms'])('does not gu
 it('zero count removes explicit relationships to that removed room only', async () => {
   const r = normalizeBlueprintRequirements({ ...requirements(), rooms: [...requirements().rooms, { type: 'study', count: 1 }], relationships: [{ from: { type: 'study', ordinal: 1 }, to: { type: 'living', ordinal: 1 }, kind: 'adjacent', strength: 'hard' }] });
   const s = await turn(initialConversation(null, r, false), 'zero study');
-  expect(s.status).toBe('AWAITING_APPROVAL'); expect(s.requirements?.relationships).toEqual([]);
+  expect(s.status).toBe('AWAITING_APPROVAL'); expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.relationships).toEqual([]);
 });
 
 it('complete dimension answers permit width-only and depth-only corrections without stale units', async () => {

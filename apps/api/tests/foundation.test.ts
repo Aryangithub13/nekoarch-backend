@@ -363,7 +363,7 @@ it('allows only the public generator integration boundary and keeps Three.js out
     const imports = [...readFileSync(file, 'utf8').matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g)];
     for (const match of imports) {
       if (match[1] === '@designflow/generator') {
-        expect(['contracts/conversations.ts', 'ai/conversation-planner.ts', 'contracts/requirement-interpretation.ts', 'ai/architectural-interpreter.ts', 'contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'services/solver-v2-qa.ts', 'services/parametric-qa.ts', 'contracts/workflows.ts', 'workflows/planner.ts', 'workflows/registry.ts', 'lib/generation-identity.ts',
+        expect(['contracts/conversations.ts', 'ai/conversation-planner.ts', 'ai/brief.ts', 'ai/brief-parser.ts', 'ai/brief-extractor.ts', 'ai/brief-planner.ts', 'contracts/requirement-interpretation.ts', 'ai/architectural-interpreter.ts', 'contracts/generation.ts', 'services/generation-service.ts', 'contracts/projects.ts', 'services/project-service.ts', 'services/solver-v2-qa.ts', 'services/parametric-qa.ts', 'contracts/workflows.ts', 'workflows/planner.ts', 'workflows/registry.ts', 'lib/generation-identity.ts',
           // Phase 28: candidates are built through the existing generator (D1) and the validator re-derives its gate outcomes (§26).
           'optimization/candidate.ts', 'optimization/study.ts', 'optimization/validate.ts'].map(path => join(sourceRoot, path))).toContain(file);
       } else {

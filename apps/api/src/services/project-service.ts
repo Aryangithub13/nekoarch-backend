@@ -3,7 +3,7 @@ import { solverV2QaOptions } from './solver-v2-qa.js';
 import { createHmac, randomUUID } from 'node:crypto';
 import type { FastifyBaseLogger } from 'fastify';
 import { ArchitecturalBuildingModelV2Schema, type BuildingModelV2 } from '@designflow/shared';
-import { generateBlueprint, generateBlueprintV2, generateParametricBlueprint, normalizeBlueprintForVersion, blueprintVersionForRequirements, normalizeBlueprintV2Requirements, normalizeParametricRequirements, BlueprintError } from '@designflow/generator';
+import { generateBlueprint, generateBlueprintV2, generateParametricBlueprint, generateProgramBlueprint, normalizeBlueprintForVersion, blueprintVersionForRequirements, normalizeBlueprintV2Requirements, normalizeParametricRequirements, BlueprintError } from '@designflow/generator';
 import { auditBlueprint, BlueprintQaReportSchema, PRODUCT_DEFAULTS_RULE_PACK } from '@designflow/blueprint-qa';
 import type { z } from 'zod';
 import { ProjectDetailSchema, RevisionCommitResponseSchema, type GenerateRevisionRequestSchema, type SaveRevisionRequestSchema } from '../contracts/projects.js';
@@ -53,7 +53,7 @@ export async function saveProjectRevision(repository: ProjectRepository, userId:
   try {
     if (normalizedRequirements) {
       logger?.info(trace, 'blueprint generation started');
-      const generated = version === 'parametric-architecture-v1' ? generateParametricBlueprint(normalizedRequirements, { timeoutMs: 10000 }) : version === 'precision-blueprint-v2' ? generateBlueprintV2(normalizedRequirements, { timeoutMs: 10000 }) : generateBlueprint(normalizedRequirements);
+      const generated = version === 'program-architecture-v1' ? generateProgramBlueprint(normalizedRequirements, { timeoutMs: 10000 }) : version === 'parametric-architecture-v1' ? generateParametricBlueprint(normalizedRequirements, { timeoutMs: 10000 }) : version === 'precision-blueprint-v2' ? generateBlueprintV2(normalizedRequirements, { timeoutMs: 10000 }) : generateBlueprint(normalizedRequirements);
       rawModel = generated.model;
       logger?.info({ ...trace, modelHash: modelHash(rawModel), candidateAttempts: generated.metadata.candidateAttempts,
         selectedCandidate: generated.metadata.selectedCandidate }, 'blueprint generation executed');

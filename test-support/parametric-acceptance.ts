@@ -27,7 +27,7 @@ export function parametricAcceptance(context: () => ProjectTestContext) {
     const state = ConversationSchema.parse(message.json()).state;
     expect(state.questions).toEqual([]); expect(state.unsupported).toEqual([]); expect(state.status).toBe('AWAITING_APPROVAL');
     const p = state.proposal!;
-    expect(p.changedFields).toEqual(['parametricArchitecture']); expect(p.requirements.rooms).toEqual(original.normalizedRequirements!.rooms);
+    expect(p.changedFields).toEqual(['parametricArchitecture']); expect((p.requirements as Exclude<typeof p.requirements, { program: unknown }>).rooms).toEqual((original.normalizedRequirements! as Exclude<NonNullable<typeof original.normalizedRequirements>, { program: unknown }>).rooms);
     const beforeApproval = await app.inject({ url, headers: owner }); expect(beforeApproval.json().currentRevision.id).toBe(original.id);
     const approval = { proposalId: p.id, proposalVersion: p.version, requirementsHash: p.requirementsHash, baseRevisionId: p.baseRevisionId, approve: true };
     const responses = await Promise.all([1, 2].map(() => app.inject({ method: 'POST', url: `${conversationUrl}/proposals/approve`, headers: owner, payload: approval })));

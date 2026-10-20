@@ -26,6 +26,7 @@ import { workflowsRoutes } from './routes/workflows.js';
 import { costsRoutes } from './routes/costs.js';
 import { constructionRoutes } from './routes/construction.js';
 import { takeoffsRoutes } from './routes/takeoffs.js';
+import { buildingEstimateRoutes } from './routes/building-estimate.js';
 import { projectsRoutes } from './routes/projects.js';
 import helmet from '@fastify/helmet';
 import { installLimits } from './lib/http-protection.js';
@@ -151,6 +152,7 @@ export function buildApp(options: { env: Env; backend?: Backend; logger?: Logger
     requirementInterpretationRoutes(scope, backend, options.env, options.interpreter);
     conversationsRoutes(scope, backend, options.env, options.conversationProvider, pools.appearance);
     takeoffsRoutes(scope, backend, options.env);
+    buildingEstimateRoutes(scope, backend);
     bimRoutes(scope, backend);
     structuralRoutes(scope, backend, options.env);
     environmentalRoutes(scope, backend, options.env);

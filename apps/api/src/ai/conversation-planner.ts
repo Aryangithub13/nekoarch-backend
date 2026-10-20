@@ -11,18 +11,21 @@ import type { ConversationProvider } from './conversation-provider.js';
 import { AiProviderError } from '../contracts/ai-orchestration.js';
 import { ApiError } from '../lib/errors.js';
 
-type Requirements = NonNullable<ConversationState['requirements']>;
+/** The bounded V1/V2/parametric planner never handles program-engine requirements (solver BRIEF has its own planner). */
+type Requirements = Exclude<NonNullable<ConversationState['requirements']>, { program: unknown }>;
+const asBounded = (r: ConversationState['requirements'] | undefined): Requirements | null => r && !('program' in r) ? r : null;
 /** Shared by Phase 20 messages and Phase 36 turns: instructions or credentials embedded in user text are refused, never interpreted. */
 export function assertSafeConversationText(text: string) {
   if (/\b(?:ignore (?:all |previous |system )*instructions|system prompt|execute sql|run shell|service.role|approve true)\b|-----BEGIN .*PRIVATE KEY|\bBearer\s+\S+/i.test(text)) throw new ApiError(422,'UNSAFE_CONVERSATION_INPUT','Instructions or credentials outside architectural intent are not accepted');
 }
-export function initialConversation(baseRevisionId: string | null, requirements: Requirements | null, v2: boolean): ConversationState {
+export function initialConversation(baseRevisionId: string | null, requirements: ConversationState['requirements'], v2: boolean): ConversationState {
   return ConversationStateSchema.parse({ schemaVersion: 1, version: 0, baseRevisionId, solver: requirements && 'parametricArchitecture' in requirements ? 'PARAMETRIC' : requirements && 'layoutV2' in requirements || v2 ? 'V2' : 'V1',
     status: 'DRAFT', intent: {}, baseRequirements: requirements, requirements, questions: [], unsupported: [], explanations: [], fieldSources: requirements ? { base: 'PERSISTED' } : {},
     summary: 'No proposal has been approved.', proposal: null, messages: [], provider: { kind: 'fallback', model: 'bounded-conversation-v1', failure: null } });
 }
-export function changedFields(before: Requirements | null, after: Requirements) {
-  return Object.keys(after).filter(k => JSON.stringify(before?.[k as keyof Requirements]) !== JSON.stringify(after[k as keyof Requirements])).sort();
+export function changedFields(before: object | null, after: object) {
+  const b = before as Record<string, unknown> | null, a = after as Record<string, unknown>;
+  return Object.keys(a).filter(k => JSON.stringify(b?.[k]) !== JSON.stringify(a[k])).sort();
 }
 // Explicit native replacements supersede pending language for the same fields.
 // Discard that language before validating it, so its old clarification cannot
@@ -169,7 +172,7 @@ function applyNative(r: Requirements, c: ConversationIntent, questions: string[]
   } else if (c.accessSide || c.parking || c.privacy !== undefined || c.daylight !== undefined || c.ventilation !== undefined) questions.push('These preferences require explicit layoutV2 opt-in in a new conversation; this V1 proposal is not upgraded automatically.');
 }
 
-export async function planConversation(previous: ConversationState, message: ConversationMessage, options: { provider?: ConversationProvider; disabled?: boolean; signal?: AbortSignal; restoredRequirements?: Requirements } = {}): Promise<ConversationState> {
+export async function planConversation(previous: ConversationState, message: ConversationMessage, options: { provider?: ConversationProvider; disabled?: boolean; signal?: AbortSignal; restoredRequirements?: ConversationState['requirements'] } = {}): Promise<ConversationState> {
   assertSafeConversationText(message.text);
   const state = structuredClone(previous); state.version++; state.proposal = null; state.questions = []; state.explanations = []; state.status = 'NEEDS_CLARIFICATION';
   state.messages = [...state.messages,{id:message.messageId,text:message.text,createdAt:new Date().toISOString()}].slice(-20);
@@ -181,7 +184,7 @@ export async function planConversation(previous: ConversationState, message: Con
     state.intent=ConversationIntentSchema.parse({}); state.pendingIntent=ConversationIntentSchema.parse({});state.unsupported=[];state.pendingBedroomMove=false;
     state.explanations=[`Proposed requirements copied from explicitly selected revision ${message.restoreRevisionId}. Approval will generate a new revision using the current base identity.`];
     state.fieldSources={restoredRevision:'USER_EXPLICIT'};
-    return finalize(state,options.restoredRequirements);
+    return finalize(state,asBounded(options.restoredRequirements));
   }
   // Exact local grammar only: provider output cannot supply a parametric edit.
   const wingCommand = /^(?:set|increase|reduce) (?:the )?(ground|upper) floor (west wing width|south wing depth|width|depth) to (\d+) mm[.!]?$/i.exec(message.text.trim());
@@ -192,7 +195,7 @@ export async function planConversation(previous: ConversationState, message: Con
   if (patch.upperFloorBedrooms !== undefined || patch.groundFloorBedrooms !== undefined || message.nativeUpdate?.rooms) state.pendingBedroomMove=false;
   const relativeMove=/\bmove\s+(one|two|three|\d+)\s+bedrooms?\s+(upstairs|downstairs)\b/i.exec(message.text);
   if(relativeMove) {
-    const bedrooms=state.requirements?.rooms.filter(room=>room.type==='bedroom');
+    const bedrooms=asBounded(state.requirements)?.rooms.filter(room=>room.type==='bedroom');
     if(!bedrooms?.length || bedrooms.some(room=>room.level===undefined)) {
       state.pendingBedroomMove=true;
       delete patch.upperFloorBedrooms;delete patch.groundFloorBedrooms;
@@ -259,7 +262,7 @@ export async function planConversation(previous: ConversationState, message: Con
   state.pendingIntent = pending;
   state.questions.push(...intent.contradictions.map(f => `Resolve contradictory ${f} requirements.`));
   if (ambiguous) return finalize(state,null);
-  let r = state.requirements ? structuredClone(state.requirements) : null;
+  let r = asBounded(state.requirements) ? structuredClone(asBounded(state.requirements)) : null;
   try {
     if (!r) {
       // A new brief has no room graph to edit: "kitchen connected to the dining" is the brief's kitchen relationship, which also implies that room.
@@ -277,7 +280,7 @@ export async function planConversation(previous: ConversationState, message: Con
       state.explanations.push(...interpreted.assumptions.map(a=>a.reason).filter((v,i,a)=>a.indexOf(v)===i));
       for (const a of interpreted.assumptions) state.fieldSources[a.field]=a.source as 'PRODUCT_DEFAULT'|'USER_INFERRED';
       r = interpreted.structuredRequirements;
-      if (r && state.solver==='V2') r = normalizeBlueprintForVersion({...r,layoutV2:{}},'precision-blueprint-v2');
+      if (r && state.solver==='V2') r = asBounded(normalizeBlueprintForVersion({...r,layoutV2:{}},'precision-blueprint-v2'));
     }
     if (r) {
       applyNative(r,previous.requirements ? pending : intent,state.questions);
@@ -300,7 +303,7 @@ export async function planConversation(previous: ConversationState, message: Con
         if (state.solver !== 'PARAMETRIC') state.questions.push('Wing edits require an existing explicitly generated parametric revision.');
         else { r = modifyParametricRequirements(r, parametricEdit); state.fieldSources.parametricArchitecture = 'USER_EXPLICIT'; }
       }
-      r = normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r));
+      r = asBounded(normalizeBlueprintForVersion(r,blueprintVersionForRequirements(r)));
     }
   } catch { state.questions.push('The proposed changes conflict with the native room, site, floor or relationship constraints. Supply consistent values; no requirements were replaced.'); r=null; }
   if (intent.kitchenLarger) state.explanations.push('Kitchen minimum dimensions do not guarantee a larger physical room after generation.');

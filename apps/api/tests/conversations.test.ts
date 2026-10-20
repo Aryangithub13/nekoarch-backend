@@ -42,7 +42,7 @@ describe('bounded native conversation reasoning',()=>{
     s=await planConversation(s,message('seed changed'));
     expect(s.status).toBe('NEEDS_CLARIFICATION');expect(s.proposal).toBeNull();expect(s.requirements).toEqual(before);
     s=await planConversation(s,message('Put two bedrooms upstairs'));
-    expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    expect(s.status).toBe('AWAITING_APPROVAL');expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
     expect(s.requirements?.seed).toBe('changed');
   });
   it('bounds multibyte display history in disabled mode while preserving native requirements',async()=>{
@@ -76,9 +76,9 @@ describe('bounded native conversation reasoning',()=>{
   it('understands explicit room dimensions, supported movement and service adjacency',async()=>{
     let s=await planConversation(initialConversation(null,null,true),message('30 by 50 feet 2BHK two floors'));
     s=await planConversation(s,message('Make the kitchen 3 by 4 metres'));
-    expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.rooms.find(r=>r.type==='kitchen')?.minWidthMm).toBe(3000);
-    s=await planConversation(s,message('Move the kitchen upstairs'));expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.rooms.find(r=>r.type==='kitchen')?.level).toBe(1);
-    s=await planConversation(s,message('bathroom adjacent to kitchen'));expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.relationships.some(r=>r.from.type==='bathroom'&&r.to.type==='kitchen')).toBe(true);
+    expect(s.status).toBe('AWAITING_APPROVAL');expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='kitchen')?.minWidthMm).toBe(3000);
+    s=await planConversation(s,message('Move the kitchen upstairs'));expect(s.status).toBe('AWAITING_APPROVAL');expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='kitchen')?.level).toBe(1);
+    s=await planConversation(s,message('bathroom adjacent to kitchen'));expect(s.status).toBe('AWAITING_APPROVAL');expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.relationships.some(r=>r.from.type==='bathroom'&&r.to.type==='kitchen')).toBe(true);
   });
   it('asks instead of applying singular room dimensions to multiple bedrooms',async()=>{
     let s=await planConversation(initialConversation(null,null,false),message('30 by 50 feet 3BHK'));
@@ -93,7 +93,7 @@ describe('bounded native conversation reasoning',()=>{
     let s=await planConversation(initialConversation(null,null,false),message('30 by 50 feet 3BHK two floors'));
     s=await planConversation(s,message('Move one bedroom upstairs'));expect(s.proposal).toBeNull();expect(s.questions.join(' ')).toContain('unspecified');
     s=await planConversation(s,message('Put one bedroom upstairs'));expect(s.status).toBe('AWAITING_APPROVAL');
-    s=await planConversation(s,message('Move one bedroom upstairs'));expect(s.status).toBe('AWAITING_APPROVAL');expect(s.requirements?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
+    s=await planConversation(s,message('Move one bedroom upstairs'));expect(s.status).toBe('AWAITING_APPROVAL');expect((s.requirements as Exclude<typeof s.requirements, { program: unknown }>)?.rooms.find(r=>r.type==='bedroom'&&r.level===1)?.count).toBe(2);
   });
   it('disabled mode returns no proposal and cannot authorize a generation',async()=>{
     const s=await planConversation(initialConversation(null,null,false),message('30x50 feet 3BHK'),{disabled:true});expect(s.status).toBe('FAILED');expect(s.proposal).toBeNull();

@@ -8,3 +8,4 @@ export { assertPlanInvariants } from './invariants.js';
 export { placeFurniture, furnitureFootprint, FURNITURE_DIMENSIONS } from './furniture.js';
 export * from './blueprint/index.js';
 export * from './solver-v2/index.js';
+export * from './program/index.js';

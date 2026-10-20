@@ -17,6 +17,7 @@ const safeRoutes = new Set([
   // Phase 36
   `${conversation}/turns`, `${conversation}/actions/:actionId/decisions`, `${conversation}/rebase`, `${conversation}/context`,
   takeoff, `${takeoff}/:takeoffId`, construction, `${construction}/:calculationId`,
+  `${revision}/engineering-estimate`,
   `${construction}/:calculationId/cost-estimates`, `${revision}/cost-estimates`, `${revision}/cost-estimates/:costEstimateId`,
   ...['', '/validation', '/elements', '/elements/:elementId', '/relationships', '/diff/:otherRevisionId', '/export.json', '/export.ifc'].map(suffix => `${revision}/bim${suffix}`),
   ...['/validate', '/analyses', '/analyses/:analysisId', '/status'].flatMap(suffix => [`${revision}/structural${suffix}`, `${revision}/environmental${suffix}`, `${revision}/systems${suffix}`]),
