@@ -11531,6 +11531,39 @@
          "additionalProperties": false
         },
         "maxItems": 8
+       },
+       "reply": {
+        "type": "object",
+        "properties": {
+         "messageId": {
+          "type": "string",
+          "format": "uuid"
+         },
+         "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+         },
+         "provider": {
+          "type": "string",
+          "maxLength": 64
+         },
+         "model": {
+          "type": "string",
+          "maxLength": 100
+         },
+         "generalQuestion": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "messageId",
+         "text",
+         "provider",
+         "model",
+         "generalQuestion"
+        ],
+        "additionalProperties": false
        }
       },
       "required": [

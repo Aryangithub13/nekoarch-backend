@@ -158,9 +158,14 @@ describe('Provider path: mode, merge and fallback never lose stated constraints'
 });
 
 describe('Remote transport allow-list is unchanged', () => {
-  it('accepts only https, an allow-listed host and the exact /v1/chat/completions path', () => {
+  it('accepts only https, an allow-listed host and an exact completion path (standard or Gemini OpenAI-compatible)', () => {
     expect(validateRemoteEndpoint('https://api.example.com/v1/chat/completions', ['api.example.com']).href).toBe('https://api.example.com/v1/chat/completions');
-    for (const url of ['https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', 'http://api.example.com/v1/chat/completions', 'https://evil.example.org/v1/chat/completions', 'https://api.example.com/v1/chat/completions?key=x'])
-      expect(() => validateRemoteEndpoint(url, ['api.example.com', 'generativelanguage.googleapis.com'])).toThrow();
+    expect(validateRemoteEndpoint('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', ['generativelanguage.googleapis.com']).pathname).toBe('/v1beta/openai/chat/completions');
+    for (const url of [
+      'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', // host not allow-listed below
+      'http://api.example.com/v1/chat/completions', 'https://evil.example.org/v1/chat/completions', 'https://api.example.com/v1/chat/completions?key=x',
+      'https://api.example.com/v1beta/models', 'https://api.example.com/v1beta/openai/chat/completions/extra', 'https://api.example.com/v2/chat/completions',
+    ])
+      expect(() => validateRemoteEndpoint(url, ['api.example.com'])).toThrow();
   });
 });
