@@ -42,8 +42,9 @@ export function parseFallback(text: string): IntentCandidate {
     if (c.parking !== undefined && c.parking !== n) conflict('parking'); c.parking = n;
   });
   if ((c.parking ?? 0) > 0) addUnsupported('parking');
-  consume(/\b(?:single[ -]stor(?:e)?y|only\s+1\s+floor|(\d+)[ -]*(?:floors?|stor(?:e)?ys?))\b/g, m => {
-    const n = Number(m[1] ?? 1); if (c.floors !== undefined && c.floors !== n) conflict('floors'); c.floors = n;
+  // "single/double floor|storey" are the everyday ways of saying 1 and 2 floors.
+  consume(/\b(?:single[ -](?:stor(?:e)?y|floor)|(double)[ -](?:stor(?:e)?y|floor)|only\s+1\s+floor|(\d+)[ -]*(?:floors?|stor(?:e)?ys?))\b/g, m => {
+    const n = m[1] ? 2 : Number(m[2] ?? 1); if (c.floors !== undefined && c.floors !== n) conflict('floors'); c.floors = n;
   });
   consume(/\b(\d+)\s*-?\s*bhk\b/g, m => { const n = Number(m[1]); if (c.bedrooms !== undefined && c.bedrooms !== n) conflict('bedrooms'); c.bedrooms = n; });
   const ground = '(?:on\\s+the\\s+ground\\s+floor|on\\s+ground\\s+floor|downstairs|ground\\s+floor|neeche)';
@@ -85,7 +86,7 @@ export function parseFallback(text: string): IntentCandidate {
   if (/\bkitchen\b/.test(t)) c.kitchen ??= 'unspecified';
   if (/\b(?:bedrooms?|bhk|bathrooms?|washrooms?)\b/.test(t)) addUnsupported('unsupported_constraint');
   // Filler is intentionally finite: new vocabulary requires clarification, never silent interpretation.
-  const filler = new Set('i have a an the my me make want need would like prefer preferably please house home modern nice good natural maximize plot site on with and aur hai ka ki ke chahiye rakhna me floor ground downstairs upstairs upar neeche bedroom bedrooms kitchen dining living room rooms study connected connect to near adjacent next open plan but for keep same everything only mujhe ghar pe par ho bhi mein paas'.split(' '));
+  const filler = new Set('i have a an the my me make want need would like prefer preferably please house home modern nice good natural maximize plot site on with and aur hai ka ki ke chahiye rakhna me floor ground downstairs upstairs upar neeche bedroom bedrooms kitchen dining living room rooms study connected connect to near adjacent next open plan but for keep same everything only mujhe ghar pe par ho bhi mein paas create design build draw can could you small compact villa bungalow residence residential building family'.split(' '));
   const residual = t.replace(/[.,!?;:]/g, ' ').trim().split(/\s+/).filter(Boolean);
   if (residual.some(s => !filler.has(s))) addUnsupported('unrecognized_language');
   return c;
