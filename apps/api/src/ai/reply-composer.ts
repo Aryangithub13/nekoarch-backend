@@ -58,27 +58,32 @@ function grounding(state: ConversationState) {
 export function createReplyComposer(policy: AiPolicy, credentials: Readonly<Record<string, string>>): ReplyComposer | null {
   const provider = policy.providers.find(p => p.enabled && p.endpoint && p.models.some(m => m.enabled));
   if (!provider) return null;
-  const model = provider.models.find(m => m.enabled)!;
+  // Models declaring EXPLANATION word replies first; the remaining enabled models are fallbacks (e.g. on a rate limit).
+  const enabled = provider.models.filter(m => m.enabled);
+  const models = [...enabled.filter(m => m.capabilities.includes('EXPLANATION')), ...enabled.filter(m => !m.capabilities.includes('EXPLANATION'))];
   const key = provider.apiKeyEnv ? credentials[provider.apiKeyEnv] : undefined;
   if (provider.apiKeyEnv && !key) return null;
   validateCredential(key);
   const remote = provider.type === 'REMOTE_OPENAI_COMPATIBLE' ? validateRemoteEndpoint(provider.endpoint!, policy.allowedRemoteHosts) : null;
   return {
     async compose({ text, state, previous }, callerSignal) {
-      const signal = AbortSignal.any([AbortSignal.timeout(Math.max(provider.timeoutMs, 8000)), ...(callerSignal ? [callerSignal] : [])]);
-      const body = JSON.stringify({
-        model: model.modelId, stream: false, temperature: 0.6, max_tokens: Math.min(model.maxOutputTokens, 1024),
-        ...(model.reasoningEffort ? { reasoning_effort: model.reasoningEffort } : {}),
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: REPLY_SYSTEM_PROMPT },
-          { role: 'user', content: JSON.stringify({ message: text, recentMessages: previous.messages.slice(-6).map(m => m.text), STATE: grounding(state) }) },
-        ],
-      });
-      try {
-        const raw = remote ? await remoteCompletion(remote, body, key, signal) : await localCompletion(provider.endpoint!, body, key, signal);
-        return parseReply(raw, provider.providerId, model.modelId);
-      } catch { return null; }
+      const content = JSON.stringify({ message: text, recentMessages: previous.messages.slice(-6).map(m => m.text), STATE: grounding(state) });
+      for (const model of models) {
+        if (callerSignal?.aborted) return null;
+        const signal = AbortSignal.any([AbortSignal.timeout(Math.max(provider.timeoutMs, 8000)), ...(callerSignal ? [callerSignal] : [])]);
+        const body = JSON.stringify({
+          model: model.modelId, stream: false, temperature: 0.6, max_tokens: Math.min(model.maxOutputTokens, 1024),
+          ...(model.reasoningEffort ? { reasoning_effort: model.reasoningEffort } : {}),
+          response_format: { type: 'json_object' },
+          messages: [{ role: 'system', content: REPLY_SYSTEM_PROMPT }, { role: 'user', content }],
+        });
+        try {
+          const raw = remote ? await remoteCompletion(remote, body, key, signal) : await localCompletion(provider.endpoint!, body, key, signal);
+          const reply = parseReply(raw, provider.providerId, model.modelId);
+          if (reply) return reply;
+        } catch { /* try the next model */ }
+      }
+      return null;
     },
   };
 }

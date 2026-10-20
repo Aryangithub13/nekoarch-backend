@@ -88,7 +88,11 @@ export function conversationsRoutes(app: FastifyInstance, backend: Backend, env:
       const sameRequirements=JSON.stringify(planned.requirements)===JSON.stringify(previous.requirements);
       const unchanged=sameRequirements && (planned.requirements!==null || JSON.stringify(designFields(planned.intent))===JSON.stringify(designFields(previous.intent)));
       const reply=composed?{messageId:input.messageId,text:composed.text,provider:composed.provider,model:composed.model,generalQuestion:composed.generalQuestion&&unchanged}:undefined;
-      const state=reply?.generalQuestion?{...previous,version:planned.version,messages:planned.messages,reply}:{...planned,...(reply?{reply}:{reply:undefined})};
+      // With a model reply, a message that changes no design field (a question, greeting or a wish the engine cannot apply)
+      // keeps the previous design state: the reply explains it, and stray words never block a pending proposal.
+      const explicit=!!(input.removeUnsupported?.length||input.restoreRevisionId||input.nativeUpdate||input.answers?.length);
+      const keepDesign=!!reply&&unchanged&&!explicit;
+      const state=keepDesign?{...previous,version:planned.version,messages:planned.messages,reply}:{...planned,...(reply?{reply}:{reply:undefined})};
       if (controller.signal.aborted) throw new ApiError(408,'REQUEST_CANCELLED','The conversation request was cancelled');
       const result=ConversationSchema.parse(await conversations.write('finish',{...params,token,state}));
       request.log.info({conversationId:params.conversationId,version:state.version,status:state.status,provider:state.provider.kind,providerFailure:state.provider.failure,orchestration:state.orchestration,durationMs:performance.now()-started},'conversation message processed');

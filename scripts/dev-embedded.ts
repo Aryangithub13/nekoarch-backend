@@ -35,8 +35,10 @@ const out = process.env.DEV_SESSION_FILE ?? path.join(root, '.dev-embedded', 'se
 const aiFile = path.join(root, '.env.ai.local');
 try { process.loadEnvFile(aiFile); } catch { /* no local AI configuration */ }
 const geminiKey = process.env.AI_PROVIDER_GEMINI_API_KEY;
-// gemini-3.5-flash-lite answers in about 2 s and its free tier is not limited to 5 requests/min like gemini-3.5-flash (measured 20 Oct 2026).
-const geminiModel = process.env.AI_GEMINI_MODEL ?? 'gemini-3.5-flash-lite';
+// Replies: gemini-3.6-flash (better wording, ~2 s). Understanding: gemini-3.5-flash-lite (fast, generous free limits),
+// so the 5 requests/min free limit of the Flash tier is spent on replies only (measured 20 Oct 2026).
+const geminiModel = process.env.AI_GEMINI_MODEL ?? 'gemini-3.6-flash';
+const geminiIntentModel = process.env.AI_GEMINI_INTENT_MODEL ?? 'gemini-3.5-flash-lite';
 if (geminiKey && !process.env.AI_ROUTING_CONFIG)
   process.env.AI_ROUTING_CONFIG = JSON.stringify({
     privacyClass: 'REMOTE_ALLOWED', allowMetered: true, deterministicFallback: true, timeoutMs: 15000,
@@ -46,7 +48,10 @@ if (geminiKey && !process.env.AI_ROUTING_CONFIG)
       endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
       apiKeyEnv: 'AI_PROVIDER_GEMINI_API_KEY',
       capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'],
-      models: [{ modelId: geminiModel, capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048, reasoningEffort: 'low' }],
+      models: [
+        { modelId: geminiIntentModel, capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048, reasoningEffort: 'low' },
+        ...(geminiModel === geminiIntentModel ? [] : [{ modelId: geminiModel, capabilities: ['EXPLANATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048, reasoningEffort: 'low' }]),
+      ],
     }],
   });
 
@@ -99,7 +104,7 @@ const session = {
 };
 await mkdir(path.dirname(out), { recursive: true });
 await writeFile(out, `${JSON.stringify(session, null, 2)}\n`, { mode: 0o600 });
-process.stdout.write(`AI: ${process.env.AI_ROUTING_CONFIG ? (geminiKey ? `Google Gemini (${geminiModel})` : 'configured routing') : 'deterministic parser (no AI key)'}
+process.stdout.write(`AI: ${process.env.AI_ROUTING_CONFIG ? (geminiKey ? `Google Gemini (replies ${geminiModel}, understanding ${geminiIntentModel})` : 'configured routing') : 'deterministic parser (no AI key)'}
 `);
 process.stdout.write(`designflow embedded dev backend on ${session.apiUrl} (session file: ${out})\n${JSON.stringify(seedLog)}\n`);
 
