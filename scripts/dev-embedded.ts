@@ -17,7 +17,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sampleCostingPolicy } from '@designflow/boq-cost';
 import { buildApp } from '../apps/api/src/app.js';
-import { parseEnv } from '../apps/api/src/config/env.js';
+import { embeddedEnv } from './dev-embedded-env.js';
 import { createPgBackend } from '../test-support/pg-backend.js';
 import { createTestUser, startTestDatabase } from '../test-support/postgres.js';
 import { requirements } from '../packages/blueprint-qa/tests/fixtures.js';
@@ -29,6 +29,26 @@ const port = Number(process.env.PORT ?? 3001);
 const origins = process.env.CORS_ORIGINS ?? [3000, 3200, 3201, 3300].flatMap(port => [`http://localhost:${port}`, `http://127.0.0.1:${port}`]).join(',');
 const out = process.env.DEV_SESSION_FILE ?? path.join(root, '.dev-embedded', 'session.json');
 
+// Optional AI: AI_PROVIDER_GEMINI_API_KEY (and optionally AI_GEMINI_MODEL) from the environment or the git-ignored
+// .env.ai.local file. With a key, Google Gemini (OpenAI-compatible endpoint) extracts intent and words replies;
+// without one the deterministic parser and templates are used. The key never leaves this server process.
+const aiFile = path.join(root, '.env.ai.local');
+try { process.loadEnvFile(aiFile); } catch { /* no local AI configuration */ }
+const geminiKey = process.env.AI_PROVIDER_GEMINI_API_KEY;
+const geminiModel = process.env.AI_GEMINI_MODEL ?? 'gemini-2.5-flash';
+if (geminiKey && !process.env.AI_ROUTING_CONFIG)
+  process.env.AI_ROUTING_CONFIG = JSON.stringify({
+    privacyClass: 'REMOTE_ALLOWED', allowMetered: true, deterministicFallback: true, timeoutMs: 15000,
+    allowedRemoteHosts: ['generativelanguage.googleapis.com'],
+    providers: [{
+      providerId: 'gemini', type: 'REMOTE_OPENAI_COMPATIBLE', enabled: true, timeoutMs: 10000,
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+      apiKeyEnv: 'AI_PROVIDER_GEMINI_API_KEY',
+      capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'],
+      models: [{ modelId: geminiModel, capabilities: ['ARCHITECTURAL_INTENT_EXTRACTION', 'LANGUAGE_INTERPRETATION', 'EXPLANATION'], privacyClass: 'REMOTE_ALLOWED', costClass: 'METERED', maxOutputTokens: 2048 }],
+    }],
+  });
+
 const db = await startTestDatabase();
 const secret: string = (await db.pool.query('select secret from project_private.commit_key')).rows[0].secret;
 const users = { owner: await createTestUser(db.pool), other: await createTestUser(db.pool) };
@@ -37,8 +57,7 @@ const devToken = (value: string | undefined) => value && /^[A-Za-z0-9._-]{16,128
 const tokens = { owner: devToken(process.env.DEV_OWNER_TOKEN), other: devToken(process.env.DEV_OTHER_TOKEN) };
 if (tokens.owner === tokens.other) throw new Error('DEV_OWNER_TOKEN and DEV_OTHER_TOKEN must differ');
 const app = buildApp({
-  env: parseEnv({ NODE_ENV: 'development', SUPABASE_URL: 'http://127.0.0.1:54321', SUPABASE_ANON_KEY: 'embedded-dev-unused', PROJECT_COMMIT_SECRET: secret,
-    CORS_ORIGINS: origins, LOG_LEVEL: process.env.LOG_LEVEL ?? 'warn', RATE_LIMIT_ENABLED: 'false', HOST: '127.0.0.1', PORT: String(port) }),
+  env: embeddedEnv(process.env, { secret, origins, port }),
   backend: createPgBackend(db.pool, { [tokens.owner]: users.owner, [tokens.other]: users.other }),
 });
 
@@ -79,6 +98,8 @@ const session = {
 };
 await mkdir(path.dirname(out), { recursive: true });
 await writeFile(out, `${JSON.stringify(session, null, 2)}\n`, { mode: 0o600 });
+process.stdout.write(`AI: ${process.env.AI_ROUTING_CONFIG ? (geminiKey ? `Google Gemini (${geminiModel})` : 'configured routing') : 'deterministic parser (no AI key)'}
+`);
 process.stdout.write(`designflow embedded dev backend on ${session.apiUrl} (session file: ${out})\n${JSON.stringify(seedLog)}\n`);
 
 let closing = false;

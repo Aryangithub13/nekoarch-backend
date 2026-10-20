@@ -70,7 +70,7 @@ export function errorCatalog(): ErrorCatalog {
   };
   for (const file of program.getSourceFiles()) {
     if (file.isDeclarationFile || !file.fileName.includes('/apps/api/src/')) continue;
-    const rel = path.relative(root, file.fileName);
+    const rel = path.relative(root, file.fileName).split(path.sep).join('/');
     const visit = (node: ts.Node) => {
       // SQLSTATE tables: { P1234: [status, 'CODE', message] }.
       if (ts.isPropertyAssignment(node) && (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) && /^[0-9A-Z]{5}$/.test(node.name.text)

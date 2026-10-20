@@ -68,6 +68,8 @@ export const ConversationStateSchema = z.object({ schemaVersion: z.literal(1), v
   memory: z.array(MemoryEntrySchema).max(TURN_LIMITS.memory).optional(),
   turns: z.array(TurnSchema).max(TURN_LIMITS.turns).optional(),
   actions: z.array(ActionSchema).max(TURN_LIMITS.actions).optional(),
+  // Conversational wording of the latest reply by a configured model (advisory text only; never authoritative state).
+  reply: z.object({ messageId: id, text: z.string().min(1).max(2000), provider: z.string().max(64), model: z.string().max(100), generalQuestion: z.boolean() }).strict().optional(),
 }).strict();
 export type ConversationState = z.infer<typeof ConversationStateSchema>;
 export const ConversationSchema = z.object({ id, projectId: id, state: ConversationStateSchema }).strict();

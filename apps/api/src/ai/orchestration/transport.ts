@@ -11,10 +11,12 @@ export function publicAddresses(addresses:readonly string[]) {
   if(!addresses.length || addresses.length>32 || addresses.some(address=>isIP(address)!==4 || prohibited.check(address,'ipv4')))throw new AiProviderError('PROVIDER_POLICY_REJECTED');
   return [...addresses].sort();
 }
+/** OpenAI-compatible completion paths: the standard one and Google Gemini's documented compatibility path. */
+export const REMOTE_COMPLETION_PATHS: readonly string[] = ['/v1/chat/completions', '/v1beta/openai/chat/completions'];
 export function validateRemoteEndpoint(value:string,allowedHosts:readonly string[]) {
   try {
     const url=new URL(value);
-    if(url.protocol!=='https:' || url.port && url.port!=='443' || url.username || url.password || url.search || url.hash || url.pathname!=='/v1/chat/completions' || isIP(url.hostname) || !allowedHosts.includes(url.hostname) || !/^[a-z0-9.-]+$/.test(url.hostname) || url.hostname.endsWith('.') || url.hostname==='localhost' || url.hostname.endsWith('.localhost'))throw new Error();
+    if(url.protocol!=='https:' || url.port && url.port!=='443' || url.username || url.password || url.search || url.hash || !REMOTE_COMPLETION_PATHS.includes(url.pathname) || isIP(url.hostname) || !allowedHosts.includes(url.hostname) || !/^[a-z0-9.-]+$/.test(url.hostname) || url.hostname.endsWith('.') || url.hostname==='localhost' || url.hostname.endsWith('.localhost'))throw new Error();
     return url;
   }catch{throw new AiProviderError('PROVIDER_POLICY_REJECTED');}
 }

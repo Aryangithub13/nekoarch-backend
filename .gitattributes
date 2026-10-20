@@ -1,0 +1,6 @@
+# These files have byte-level release checksums; keep checkout bytes identical
+# on Windows and Linux without weakening the migration or API drift checks.
+/supabase/migrations/*.sql text eol=lf
+/supabase/migrations.sha256 text eol=lf
+/docs/modernization/*.json text eol=lf
+/docs/modernization/api-reference.md text eol=lf
